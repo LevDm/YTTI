@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Ytat",
+    "slug": "Ytat",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon7.png",
+    "plugins": [
+      [
+        "expo-notifications"
+      ]
+    ],
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash7.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#000"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon7.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.levdm.Diary"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

@@ -93,7 +93,7 @@ const LanguageStoreRu = {
   
           "язык",
           "местоположение",
-          "функциональные экраны", 
+          "функции", 
           "обращение",
           "погода", 
           "другое"
@@ -260,7 +260,7 @@ const LanguageStoreEng = {
   
           "language",
           "location", 
-          "function screens",
+          "functions",
           "accost",
           "weather", 
           "others"

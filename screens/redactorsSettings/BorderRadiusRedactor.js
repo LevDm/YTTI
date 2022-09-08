@@ -12,18 +12,10 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import Slider from '@react-native-community/slider';
-
-import LanguagesAppList from "../../language/language";
 import languagesAppList, { languagesApp } from "../../Languages";
-import ThemesColorsAppList from "../../styles/ColorsApp";
 import themesColorsAppList, { themesApp } from "../../Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
-import ColorSplash from "../../componets/StyleColorSplash";
 
-import Svg, { Path } from "react-native-svg";
-
-//import BasePressable from "../../componets/base/BasePressable"
 import { 
     BasePressable,
     BaseCheckBox,
@@ -71,18 +63,18 @@ export default BorderRadiusRedactor = ({
     return (
         <View
             style = {{
-                //alignItems: 'flex-end',
+
             }}
         >
         <View
             style = {{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
             }}
         >
             <Text
-                style = {{color: Thema.neutrals.tertiary}}
+                style = {[staticStyles.adaptiveText, {color: Thema.neutrals.secondary}]}
             >
                 {Language.synhronous} {Language.synhronousState[`${synchronousSlider}`]}
             </Text>
@@ -116,19 +108,22 @@ export default BorderRadiusRedactor = ({
         <View
             style = {{
                 justifyContent: 'center',
-                height: 160,
-                paddingTop: 5,
-                marginBottom: 9
+                marginBottom: 10
             }}
         >
         {['Basic','Additional'].map((item, index)=>(
         <View
             key = {String('slider'+item)}
+            style = {{marginTop: 20}}
         >
-            <Text>{item === 'Basic'? Language.type.basic : Language.type.additional}</Text>
+            <Text
+                style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
+            >
+                {item === 'Basic'? Language.type.basic : Language.type.additional}
+            </Text>
             <BaseSlider
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                signaturesStyle = {{color: Thema.neutrals.tertiary}}
+                signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}
                 
                 minimumValue={borderRadiusValues.min}
                 maximumValue={borderRadiusValues.max}
@@ -147,5 +142,24 @@ export default BorderRadiusRedactor = ({
 }
 
 const staticStyles = StyleSheet.create({
-    
+    text: {
+        fontSize: 16, 
+        fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    adaptiveText: {
+        fontSize: 16, 
+        fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5,
+        textAlign: 'justify', 
+        width: '70%'
+    },
+    signaturesText: {
+        fontSize: 16, 
+        fontVariant: ['small-caps'],
+        fontWeight: '400',
+        fontSize: 12,
+    }
 });

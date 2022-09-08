@@ -175,7 +175,7 @@ const SettingsScreen = (props) => {
     const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
 
     const Thema = themesColorsAppList[ThemeColorsAppIndex]
-    const Language = languagesAppList[LanguageAppIndex]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
     const [appConfig, setAppConfig] = useState(props.appConfig);
@@ -205,7 +205,7 @@ const SettingsScreen = (props) => {
     const [previewFixed, setPreviewFixed] = useState(false);
 
     const animValueWidthLine = useSharedValue(
-        (((Language.SettingsScreen.StructureScreen.params[0]).length) * (staticStyles.frontFLText.fontSize * 0.75) + 10)
+        (((Language.StructureScreen.params[0]).length) * (staticStyles.frontFLText.fontSize * 0.75) + 10)
     );
     const animValueMarginLeft = useSharedValue(0);
     const animValueTranslateX = useSharedValue(0);
@@ -443,7 +443,7 @@ const SettingsScreen = (props) => {
         if(countAccent != accentParam){
             let width = Math.round(aListWidths[countAccent]-10);
             if(isNaN(width) || width  === undefined){
-                const numberPrimelSymbols = (Language.SettingsScreen.StructureScreen.params[0]).length;
+                const numberPrimelSymbols = (Language.StructureScreen.params[0]).length;
                 const widthSymbol = staticStyles.frontFLText.fontSize * 0.75;
                 width = numberPrimelSymbols * widthSymbol + 10;
             }
@@ -604,7 +604,7 @@ const SettingsScreen = (props) => {
                         }}
                     >
                         <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.neutrals.primary}]}>
-                            {Language.SettingsScreen.HeaderTitle}
+                            {Language.HeaderTitle}
                         </Text>
                     </View>
                 </View>
@@ -643,7 +643,7 @@ const SettingsScreen = (props) => {
                                 }}
                             >
                                 <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.neutrals.primary}]}>
-                                    {Language.SettingsScreen.StructureScreen.categorys[item.indexSection]}
+                                    {Language.StructureScreen.categorys[item.indexSection]}
                                 </Text>
                             </View>
                         )}
@@ -680,7 +680,7 @@ const SettingsScreen = (props) => {
                             <BasePressable
                                 type={'t'}
                                 style={staticStyles.frontFLPressable}
-                                text={Language.SettingsScreen.StructureScreen.params[index]}
+                                text={Language.StructureScreen.params[index]}
                                 textStyle={[staticStyles.frontFLText, {color: Thema.neutrals.primary}]}
                                 rippleColor={Thema.accents.quaternary}
                                 onPress={()=>{selectParametr(item, index)}}
@@ -743,6 +743,11 @@ const SettingsScreen = (props) => {
             }}
             renderItem={({item, index})=>{
                 const RedactorComponent = item.paramRedactorComponent;
+                const redactorName = Language.StructureScreen.params[
+                    allStructurParams.findIndex((element, index)=>{
+                        if(item.param == element.param){return index+1}
+                    })
+                ]
                 return (
                     <Animated.View
                         key={String(item.param+index)}  
@@ -751,20 +756,26 @@ const SettingsScreen = (props) => {
                             appStyle.lists.shadow? staticStyles.shadow : {},
                             {
                                 borderRadius: appStyle.borderRadius.basic,
-                                paddingVertical: 5 + 10 * appStyle.borderRadius.basic/32,
+                                paddingVertical: 5,// + 10 * appStyle.borderRadius.basic/32,
                                 marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
                                 marginVertical: appStyle.lists.proximity,
+                                justifyContent: 'flex-start'
                             }
                         ]}
                         onLayout={(event)=>{stacker(listHeights, setListHeights, event.nativeEvent.layout.height+2*appStyle.lists.proximity)}}
-                    >      
-                        <Text style={staticStyles.SLParamHeaderText}>
-                            {Language.SettingsScreen.StructureScreen.params[
-                                allStructurParams.findIndex((element, index)=>{
-                                    if(item.param == element.param){return index+1}
-                                })
-                            ]}
-                        </Text>
+                    >   
+                        <View
+                            style={{ 
+                                flexDirection: 'row', 
+                                width: '100%',
+                                marginBottom: 10, 
+                                alignItems: 'center',
+                                paddingHorizontal: 5 * appStyle.borderRadius.basic/32 
+                            }}
+                        >
+                            <Text style={staticStyles.SLParamHeaderText}>{redactorName}</Text>
+                            <Text style={[staticStyles.SLParamHeaderText, {backgroundColor: '#aaaaaa1f', borderRadius: 15, width: 24, height: 24, textAlign: 'center', marginLeft: 10, fontSize: 18}]}>?</Text>
+                        </View>
                         {RedactorComponent != null && 
                         <RedactorComponent
                             appStyle={appStyle}
@@ -780,6 +791,7 @@ const SettingsScreen = (props) => {
                             ThemeColorsAppIndex={ThemeColorsAppIndex}
                             LanguageAppIndex={LanguageAppIndex}
                         />}
+                        
                     </Animated.View>
                 )
             }}
@@ -941,10 +953,10 @@ const staticStyles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     SLParamHeaderText: {
-        fontSize: 16,
+        fontSize: 20,
         //position: 'absolute',
         fontWeight: 'bold',
-        letterSpacing: 1.3,
+        letterSpacing: 1.8,
         fontVariant: ['small-caps'],
     },
     SLHeaderArea:{

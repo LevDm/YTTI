@@ -131,13 +131,16 @@ export const BaseSlider = ({
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 width: "100%",
-                height: 60
+                height: 40,
+                paddingBottom: 15
+                //backgroundColor: 'red'
             }]}
         >
             <Text
                 style = {[signaturesStyle, {
                     position: 'absolute',
-                    left: 0,
+                    left: 10,
+                    bottom: 5
                 }]}
             >
                 {signaturesText.left}
@@ -161,7 +164,8 @@ export const BaseSlider = ({
             <Text
                 style = {[signaturesStyle, {
                     position: 'absolute',
-                    right: 0,
+                    right: 10,
+                    bottom: 5
                 }]}
             >
                 {signaturesText.right}

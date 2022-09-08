@@ -99,7 +99,49 @@ const LanguageStoreRu = {
           "другое"
         ]
       },
-      
+      Redactors: {
+        fillets: {
+          synhronous: "Синхронизация значений",
+          synhronousState: {true: "включена", false: "выключена"},
+          type: {
+            basic: "Базовые элементы", 
+            additional: "Дополнительные элементы"
+          },
+          slider: {min: "прямее", max: "круглее"}
+        },
+        navigationMenu: {
+          type: "",
+          types: ["","",""],
+          menuParams: "",
+          height: "",
+          slider: {min: "", max: ""},
+          signature: "",
+          signatureState: {true: "", false: ""},
+          verticalPosition: "",
+          horizontalPosition: "",
+          horizontalPositions: ["","",""]
+        },
+        loadAnimation: {
+          info: "",
+          show: "",
+          showState: {true: "", false: ""},
+        },
+        lists: {
+          textSize: "",
+          slider: {min: "", max: ""},
+          proximity: "",
+          fullWidth: "",
+          fullWidthState: {true: "", false: ""},
+          shadows: "",
+          shadowsState: {true: "", false: ""},  
+        },
+        bobberButton: {
+          position: "",
+          positions: ["","",""],
+          size: "",
+          slider: {min: "", max: ""},
+        }
+      }
     },
     TasksScreen: {
       HeaderTitle: 'Задачи',
@@ -224,6 +266,49 @@ const LanguageStoreEng = {
           "others"
         ]
       },
+      Redactors: {
+        fillets: {
+          synhronous: "Value synchronization",
+          synhronousState: {true: "on", false: "off"},
+          type: {
+            basic: "Basic elements", 
+            additional: "Additional elements"
+          },
+          slider: {min: "straighter", max: "rounder"}
+        },
+        navigationMenu: {
+          type: "",
+          types: ["","",""],
+          menuParams: "",
+          height: "",
+          slider: {min: "", max: ""},
+          signature: "",
+          signatureState: {true: "", false: ""},
+          verticalPosition: "",
+          horizontalPosition: "",
+          horizontalPositions: ["","",""]
+        },
+        loadAnimation: {
+          info: "",
+          show: "",
+          showState: {true: "", false: ""},
+        },
+        lists: {
+          textSize: "",
+          slider: {min: "", max: ""},
+          proximity: "",
+          fullWidth: "",
+          fullWidthState: {true: "", false: ""},
+          shadows: "",
+          shadowsState: {true: "", false: ""},  
+        },
+        bobberButton: {
+          position: "",
+          positions: ["","",""],
+          size: "",
+          slider: {min: "", max: ""},
+        }
+      }
     },
     TasksScreen: {
       HeaderTitle: 'Tasks',

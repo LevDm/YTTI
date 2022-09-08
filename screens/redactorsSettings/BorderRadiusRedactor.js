@@ -14,8 +14,10 @@ import {
 
 import Slider from '@react-native-community/slider';
 
-import LanguagesAppList, { languagesApp } from "../../language/language";
-import ThemesColorsAppList, { themesApp } from "../../styles/ColorsApp";
+import LanguagesAppList from "../../language/language";
+import languagesAppList, { languagesApp } from "../../Languages";
+import ThemesColorsAppList from "../../styles/ColorsApp";
+import themesColorsAppList, { themesApp } from "../../Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
 import ColorSplash from "../../componets/StyleColorSplash";
 
@@ -33,8 +35,6 @@ const borderRadiusValues = {min: 0, max: 32, step: 1}
 
 export default BorderRadiusRedactor = ({
     appStyle,
-    setAppStyle,
-    r_setAppStyle,
 
     setPreviewAppStyle,
     getNewAppStyleObject,
@@ -47,32 +47,25 @@ export default BorderRadiusRedactor = ({
 
     const [synchronousSlider, setSynchronousSlider] = useState(appStyle.borderRadius.basic == appStyle.borderRadius.additional);
 
-    const setPrew = (value) => {
-        let newAppStyle = getNewAppStyleObject();
-        newAppStyle.borderRadius.basic = Number(value);
-        newAppStyle.borderRadius.additional = Number(value);
-        setPreviewAppStyle(newAppStyle);
-    }
+    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.fillets
 
-    const setPrewBasic = (valueBasic) => {
-        let newAppStyle = getNewAppStyleObject();
-        newAppStyle.borderRadius.basic = Number(valueBasic);
-        setPreviewAppStyle(newAppStyle);
-    }
-
-    const setPrewAdd = (valueAdditional) => {
-        let newAppStyle = getNewAppStyleObject();
-        newAppStyle.borderRadius.additional = Number(valueAdditional);
+    const settingBorderRadius = (type, value, isComplete) =>{
+        const newAppStyle = getNewAppStyleObject();
+        if(type == "Basic" || synchronousSlider){
+            isComplete? setSliderValueBasic(value) : null
+            newAppStyle.borderRadius.basic = Number(value);
+        }
+        if(type == "Additional" || synchronousSlider){
+            isComplete? setSliderValueAdditional(value) : null
+            newAppStyle.borderRadius.additional = Number(value);
+        }
         setPreviewAppStyle(newAppStyle);
     }
 
     const change = () =>{
-        //let newAppStyle = getNewAppStyleObject();
-        //newAppStyle.splachLoadShow = (!loadSplash)
-        //console.log(loadSplash)
-        //setAppStyle(newAppStyle)
-        //dataRedactor("storedAppStyle",newAppStyle);
-        setSynchronousSlider(!synchronousSlider)
+        setSliderValueAdditional(sliderValueBasic)
+        setSynchronousSlider(!synchronousSlider)     
     }
 
     return (
@@ -84,48 +77,42 @@ export default BorderRadiusRedactor = ({
         <View
             style = {{
                 flexDirection: 'row',
-                //backgroundColor: 'red',
                 justifyContent: 'space-between',
                 alignItems: 'center'
             }}
         >
             <Text
-                style = {{color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral}}
+                style = {{color: Thema.neutrals.tertiary}}
             >
-                {`This slider synhronous: ${synchronousSlider}`}
+                {Language.synhronous} {Language.synhronousState[`${synchronousSlider}`]}
             </Text>
             <BaseSwitch
                 size={24}
                 style = {{
-                    right: 20
+                    right: 20,
                 }}
                 trackStyle={{
-                    borderRadius: appStyle.borderRadius.additional
+                    borderRadius: appStyle.borderRadius.additional,
                 }}
                 thumbStyle = {{
                     borderRadius: appStyle.borderRadius.additional,
                     borderWidth: 3,
-                    borderColor: synchronousSlider? ThemesColorsAppList[ThemeColorsAppIndex].sky : ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp
+                    borderColor:  Thema.icons.accents[synchronousSlider?"primary":"quaternary"]
                 }}
                 colors={{
                     track: { 
-                        false: ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp, 
-                        true: ThemesColorsAppList[ThemeColorsAppIndex].sky  
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary
                     },
                     thumb: { 
-                        false: ThemesColorsAppList[ThemeColorsAppIndex].symbolLight, 
-                        true: ThemesColorsAppList[ThemeColorsAppIndex].symbolLight  
+                        false: Thema.icons.neutrals.primary, 
+                        true: Thema.icons.neutrals.primary,  
                     }
                 }}
                 primeValue={synchronousSlider}
                 onChange={change}
             />
         </View>
-
-        
-
-        
-
         <View
             style = {{
                 justifyContent: 'center',
@@ -134,55 +121,27 @@ export default BorderRadiusRedactor = ({
                 marginBottom: 9
             }}
         >
-        {['Basic','Additional'].map((item, index)=>{
-            //if (synchronousSlider && index > 0) { return }
-            return(
-                <View
-                    key = {String('slider'+item)}
-                >
-                    <Text>{item}</Text>
-                    <BaseSlider
-                        signaturesText = {{left: 'straighter',right: 'rounder'}}
-                        signaturesStyle = {{color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral}}
-                        
-                        minimumValue={borderRadiusValues.min}
-                        maximumValue={borderRadiusValues.max}
-                        step = {borderRadiusValues.step}
-                        value = {item === 'Basic'? sliderValueBasic : sliderValueAdditional}
-                        onSlidingComplete = {(value)=>{
-                            if(synchronousSlider){
-                                setSliderValueBasic(value);
-                                setSliderValueAdditional(value);
-                                setPrew(value);
-                            } else {
-                                if (item === 'Basic'){
-                                    setSliderValueBasic(value);
-                                    setPrewBasic(value);
-                                }  else if (item === 'Additional'){
-                                    setSliderValueAdditional(value);
-                                    setPrewAdd(value);
-                                } 
-                            }    
-                        }}
-                        onValueChange = {(value)=>{
-                            if(synchronousSlider){
-                                setPrew(value);
-                            } else {
-                                if (item === 'Basic'){
-                                    setPrewBasic(value);
-                                }  else if (item === 'Additional'){
-                                    setPrewAdd(value);
-                                } 
-                            }
-                                
-                        }}
-                        minimumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUp}
-                        maximumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp}
-                        thumbTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].sky}
-                    />
-                </View>
-            )
-        })}
+        {['Basic','Additional'].map((item, index)=>(
+        <View
+            key = {String('slider'+item)}
+        >
+            <Text>{item === 'Basic'? Language.type.basic : Language.type.additional}</Text>
+            <BaseSlider
+                signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+                signaturesStyle = {{color: Thema.neutrals.tertiary}}
+                
+                minimumValue={borderRadiusValues.min}
+                maximumValue={borderRadiusValues.max}
+                step = {borderRadiusValues.step}
+                value = {item === 'Basic'? sliderValueBasic : sliderValueAdditional}
+                onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
+                onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
+                minimumTrackTintColor = {Thema.icons.accents.primary}
+                maximumTrackTintColor = {Thema.icons.accents.quaternary}
+                thumbTintColor = {Thema.icons.accents.primary}
+            />
+        </View>
+        ))}
         </View>
     </View>)
 }

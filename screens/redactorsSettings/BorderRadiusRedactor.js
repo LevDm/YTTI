@@ -23,7 +23,8 @@ import {
     BaseSlider 
 } from "../../componets/base/BaseElements";
 
-const borderRadiusValues = {min: 0, max: 32, step: 1}
+//const borderRadiusValues = {min: 0, max: 32, step: 1}
+import { borderRadiusValues } from "../../AppDefault";
 
 export default BorderRadiusRedactor = ({
     appStyle,
@@ -44,11 +45,11 @@ export default BorderRadiusRedactor = ({
 
     const settingBorderRadius = (type, value, isComplete) =>{
         const newAppStyle = getNewAppStyleObject();
-        if(type == "Basic" || synchronousSlider){
+        if(type == "basic" || synchronousSlider){
             isComplete? setSliderValueBasic(value) : null
             newAppStyle.borderRadius.basic = Number(value);
         }
-        if(type == "Additional" || synchronousSlider){
+        if(type == "additional" || synchronousSlider){
             isComplete? setSliderValueAdditional(value) : null
             newAppStyle.borderRadius.additional = Number(value);
         }
@@ -108,18 +109,17 @@ export default BorderRadiusRedactor = ({
         <View
             style = {{
                 justifyContent: 'center',
-                marginBottom: 10
             }}
         >
-        {['Basic','Additional'].map((item, index)=>(
+        {['basic','additional'].map((item, index)=>(
         <View
             key = {String('slider'+item)}
-            style = {{marginTop: 20}}
+            style = {{marginTop: 15}}
         >
             <Text
                 style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
             >
-                {item === 'Basic'? Language.type.basic : Language.type.additional}
+                {Language.type[item]}
             </Text>
             <BaseSlider
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
@@ -128,7 +128,7 @@ export default BorderRadiusRedactor = ({
                 minimumValue={borderRadiusValues.min}
                 maximumValue={borderRadiusValues.max}
                 step = {borderRadiusValues.step}
-                value = {item === 'Basic'? sliderValueBasic : sliderValueAdditional}
+                value = {item === 'basic'? sliderValueBasic : sliderValueAdditional}
                 onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
                 onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
                 minimumTrackTintColor = {Thema.icons.accents.primary}
@@ -144,21 +144,20 @@ export default BorderRadiusRedactor = ({
 const staticStyles = StyleSheet.create({
     text: {
         fontSize: 16, 
-        fontVariant: ['small-caps'], 
+        //fontVariant: ['small-caps'], 
         fontWeight: '400', 
         letterSpacing: 0.5
     },
     adaptiveText: {
         fontSize: 16, 
-        fontVariant: ['small-caps'], 
+        //fontVariant: ['small-caps'], 
         fontWeight: '400', 
         letterSpacing: 0.5,
         textAlign: 'justify', 
         width: '70%'
     },
     signaturesText: {
-        fontSize: 16, 
-        fontVariant: ['small-caps'],
+        //fontVariant: ['small-caps'],
         fontWeight: '400',
         fontSize: 12,
     }

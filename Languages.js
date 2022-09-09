@@ -122,9 +122,9 @@ const LanguageStoreRu = {
           horizontalPositions: ["Слева","По центру","Справа"]
         },
         loadAnimation: {
-          info: "",
-          show: "",
-          showState: {true: "", false: ""},
+          info: "...",
+          show: "Показ анимации при запуске",
+          showState: {true: "включен", false: "выключен"},
         },
         lists: {
           textSize: "",
@@ -289,9 +289,9 @@ const LanguageStoreEng = {
           horizontalPositions: ["Left","Center","Right"]
         },
         loadAnimation: {
-          info: "",
-          show: "",
-          showState: {true: "", false: ""},
+          info: "...",
+          show: "Animation on startup",
+          showState: {true: "on", false: "off"},
         },
         lists: {
           textSize: "",

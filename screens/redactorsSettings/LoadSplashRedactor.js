@@ -10,13 +10,10 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import LanguagesAppList, {languagesApp} from "../../language/language";
-import ThemesColorsAppList, {themesApp} from "../../styles/ColorsApp";
+import languagesAppList, {languagesApp}  from "../../Languages";
+import themesColorsAppList, {themesApp} from "../../Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
-import ColorSplash from "../../componets/StyleColorSplash";
 
-//import BasePressable from "../../componets/base/BasePressable";
-//import BaseSwitch from "../../componets/base/BaseSwitch";
 import { 
     BasePressable,
     BaseCheckBox,
@@ -40,26 +37,27 @@ export default LoadSplashRedactor = ({
     const loadSplashShowSetting = () =>{
         let newAppStyle = getNewAppStyleObject();
         newAppStyle.splachLoadShow = (!loadSplash)
-        //console.log(loadSplash)
         setAppStyle(newAppStyle)
         dataRedactor("storedAppStyle",newAppStyle);
         setLoadSplash(!loadSplash)
     }
 
+    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.loadAnimation
+
     return (
     <View
         style = {{
             flexDirection: 'row',
-            //backgroundColor: 'red',
             justifyContent: 'space-between',
             alignItems: 'center',
             height: 60
         }}
     >
         <Text
-            style = {{color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral}}
+            style = {[staticStyles.text, {color: Thema.neutrals.secondary, width: '70%', textAlign: 'justify'}]}
         >
-            Show: {String(loadSplash)}
+            {Language.show} {Language.showState[`${loadSplash}`]}
         </Text>
         <BaseSwitch
             size={24}
@@ -72,16 +70,16 @@ export default LoadSplashRedactor = ({
             thumbStyle = {{
                 borderRadius: appStyle.borderRadius.additional,
                 borderWidth: 3,
-                borderColor: loadSplash? ThemesColorsAppList[ThemeColorsAppIndex].sky : ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp
+                borderColor:  loadSplash? Thema.accents.primary : Thema.accents.quaternary
             }}
             colors={{
                 track: { 
-                    false: ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp, 
-                    true: ThemesColorsAppList[ThemeColorsAppIndex].sky  
+                    false: Thema.accents.quaternary, 
+                    true: Thema.accents.primary  
                 },
                 thumb: { 
-                    false: ThemesColorsAppList[ThemeColorsAppIndex].symbolLight, 
-                    true: ThemesColorsAppList[ThemeColorsAppIndex].symbolLight  
+                    false: Thema.icons.neutrals.primary, 
+                    true: Thema.icons.neutrals.primary,  
                 }
             }}
             primeValue={loadSplash}
@@ -92,5 +90,15 @@ export default LoadSplashRedactor = ({
 }
 
 const staticStyles = StyleSheet.create({
-    
+    text: {
+        fontSize: 16, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    signaturesText: {
+        //fontVariant: ['small-caps'],
+        fontWeight: '400',
+        fontSize: 12,
+    }
 });

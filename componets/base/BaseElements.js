@@ -190,9 +190,9 @@ export const BaseCheckBox = ({
             props = {props}
             style = {[
                 {
-                    minHeight: 40,
-                    minWidth: 40,
-                    backgroundColor: '#00ff0000'    
+                    minHeight: 30,
+                    minWidth: 30,
+                    //backgroundColor: '#00ff000f'    
                 }, 
                 style
             ]}
@@ -219,7 +219,7 @@ export const BaseCheckBox = ({
                         borderWidth: Check? 2 : 0,
                         minHeight: 30,
                         minWidth: 30,
-                        marginHorizontal: 10,
+                        //marginHorizontal: 10,
                         borderColor: ColorsChange.true,
                         justifyContent: "center",
                         alignContent: 'center'

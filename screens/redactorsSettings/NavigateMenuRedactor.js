@@ -10,8 +10,10 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import LanguagesAppList, {languagesApp} from "../../language/language";
-import ThemesColorsAppList, {themesApp} from "../../styles/ColorsApp";
+import LanguagesAppList from "../../language/language";
+import ThemesColorsAppList from "../../styles/ColorsApp";
+import languagesAppList, {languagesApp}  from "../../Languages";
+import themesColorsAppList, {themesApp} from "../../Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
 import ColorSplash from "../../componets/StyleColorSplash";
 
@@ -22,10 +24,11 @@ import { BlurView } from "expo-blur";
 import { 
     BasePressable,
     BaseCheckBox,
+    BaseSlider,
     BaseSwitch 
 } from "../../componets/base/BaseElements";
 
-const menuTypes = ['classical','classical_animated','hidden'];
+const menuTypes = ['classical','classical_animated','hidden', 'not'];
 
 const positionNavigateMenu = {min: 20, max: 80, step: 5}
 const valuePosition = ['left','center','right']
@@ -44,7 +47,8 @@ export default NavigateMenuRedactor = ({
     ThemeColorsAppIndex,
     LanguageAppIndex  
 }) => {
-    
+    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.navigationMenu
 
     const navigationMenuTypeSetting = (newType)=>{
         if(newType !== appStyle.navigationMenu.type){
@@ -81,7 +85,7 @@ export default NavigateMenuRedactor = ({
     const [checkGroup, setCheckGroup] = useState(getGroup(appStyle.navigationMenu.type));
     const checkBoxPress = (type) => {
         const newGroup = getGroup(type)
-        console.log(' type /ch g / new ch g',type, checkGroup, newGroup)
+        //console.log(' type /ch g / new ch g',type, checkGroup, newGroup)
         //if(type != appStyle.navigationMenu.type){
             
             //navigationMenuTypeSetting(type);
@@ -129,11 +133,9 @@ export default NavigateMenuRedactor = ({
 
     return (<>
     <Text
-        style = {{
-            //marginTop: 10,
-        }}
+        style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
     >
-        Type
+        {Language.type}
     </Text>
     <View 
         style = {[{
@@ -145,11 +147,10 @@ export default NavigateMenuRedactor = ({
                 <BaseCheckBox
                     key = {item+index}
                     style = {{
-                        borderRadius: appStyle.borderRadius.additional,
-                        marginVertical: 5
+                        //borderRadius: appStyle.borderRadius.additional,
                     }}
                     //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
-                    Item = {<Text>{item}</Text>}
+                    Item = {<Text style = {[staticStyles.listText, {color: Thema.neutrals.secondary}]}>{Language.types[index]}</Text>}
                     Check = {checkGroup[index]}
                     onPress = {()=>{checkBoxPress(item)}}
                     BoxBorderRadius = {appStyle.borderRadius.additional}
@@ -160,18 +161,16 @@ export default NavigateMenuRedactor = ({
     </View>
     
     <Text
-        style = {{
-            marginTop: 10,
-        }}
+        style = {[staticStyles.text, {color: Thema.neutrals.secondary, marginTop: 10,}]}
     >
-        additional settings navigate menu
+        {Language.menuParams}
     </Text>
 
     <View
         style = {[
             {
-                marginTop: 10,
-                height: 160
+                //marginTop: 10,
+                //height: 130
             }, 
             !checkGroup[2]? {              
                 flexDirection: 'row',
@@ -184,72 +183,54 @@ export default NavigateMenuRedactor = ({
     >   
         {checkGroup[2] && <>
         <Text
-        
+            style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
         >
-            {`position vertical: ${appStyle.navigationMenu.position.vertical}`}
+            {Language.verticalPosition}
         </Text>
+        <BaseSlider
+            signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}
+
+            style = {{
+                flex: 1
+                //width: "70%"
+            }}
+            minimumValue={positionNavigateMenu.min}
+            maximumValue={positionNavigateMenu.max}
+            step = {positionNavigateMenu.step}
+            value = {sliderValueVert}
+            onSlidingComplete = {(value)=>{                 
+                setSliderValueVert(value);
+                setPrewBasicVertPos(value);
+            }}
+            onValueChange = {(value)=>{              
+                setPrewBasicVertPos(value);
+            }}
+            minimumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUp}
+            maximumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp}
+            thumbTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].sky}
+        />
+
         <View
             style = {{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                width: "100%",
-                height: 80,
-                
+                //flexDirection: 'row',
+                //alignItems: 'center',
+                //justifyContent: 'space-around',
+                height: 60,
+                marginTop: 10
             }}
         >
-            <Text
-                style = {{
-                    position: 'absolute',
-                    left: 0,
-                    color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral
-
-                }}
-            >
-                Up
-            </Text>
-            <Slider
-                style = {{
-                    flex: 1
-                    //width: "70%"
-                }}
-                minimumValue={positionNavigateMenu.min}
-                maximumValue={positionNavigateMenu.max}
-                step = {positionNavigateMenu.step}
-                value = {sliderValueVert}
-                onSlidingComplete = {(value)=>{                 
-                    setSliderValueVert(value);
-                    setPrewBasicVertPos(value);
-                }}
-                onValueChange = {(value)=>{              
-                    setPrewBasicVertPos(value);
-                }}
-                minimumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUp}
-                maximumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp}
-                thumbTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].sky}
-            />
-            <Text
-                style = {{
-                    position: 'absolute',
-                    right: 0,
-                    color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral
-
-                }}
-            >
-                Down
-            </Text>
-        </View>
-        
         <Text
-        
+            style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
         >
-            {`position horizontal: ${appStyle.navigationMenu.position.horizontal}`}
+            {Language.horizontalPosition}
         </Text>
         <View
             style = {{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-around',
-                //height: 60,
+                //height: 50,
                 //backgroundColor: 'red'
             }}
         >
@@ -262,7 +243,7 @@ export default NavigateMenuRedactor = ({
                             //marginVertical: 5
                         }}
                         //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
-                        Item = {<Text>{item}</Text>}
+                        Item = {<Text style = {[staticStyles.listText, {color: Thema.neutrals.secondary}]} >{Language.horizontalPositions[index]}</Text>}
                         Check = {checkGroupHorPos[index]}
                         onPress = {()=>{horizontalPositionSetting(item, index)}}
                         BoxBorderRadius = {appStyle.borderRadius.additional}
@@ -271,7 +252,7 @@ export default NavigateMenuRedactor = ({
                 )
             })}
         </View>
-
+        </View>
         </>}
         {!checkGroup[2] && 
         <View
@@ -280,72 +261,48 @@ export default NavigateMenuRedactor = ({
             }}
         >
             <Text
-            
+                style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
             >
-                {`height: ${String(appStyle.navigationMenu.height)}`}
+                {Language.height}
             </Text>
-            <View
+            <BaseSlider
+                signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+                signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}        
+                
                 style = {{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: "100%",
-                    height: 80,
-                    
+                    flex: 1
+                    //width: "70%"
                 }}
-            >
-                <Text
-                    style = {{
-                        position: 'absolute',
-                        left: 0,
-                        color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral
+                minimumValue={heightNavigateMenu.min}
+                maximumValue={heightNavigateMenu.max}
+                step = {heightNavigateMenu.step}
+                value = {sliderValueMenuHeight}
+                onSlidingComplete = {(value)=>{                 
+                    setSliderValueMenuHeight(value);
+                    setPrewBasicMenuHeight(value);
+                }}
+                onValueChange = {(value)=>{              
+                    setPrewBasicMenuHeight(value);
+                }}
+                minimumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUp}
+                maximumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp}
+                thumbTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].sky}
+            />
 
-                    }}
-                >
-                    Up
-                </Text>
-                <Slider
-                    style = {{
-                        flex: 1
-                        //width: "70%"
-                    }}
-                    minimumValue={heightNavigateMenu.min}
-                    maximumValue={heightNavigateMenu.max}
-                    step = {heightNavigateMenu.step}
-                    value = {sliderValueMenuHeight}
-                    onSlidingComplete = {(value)=>{                 
-                        setSliderValueMenuHeight(value);
-                        setPrewBasicMenuHeight(value);
-                    }}
-                    onValueChange = {(value)=>{              
-                        setPrewBasicMenuHeight(value);
-                    }}
-                    minimumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUp}
-                    maximumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp}
-                    thumbTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].sky}
-                />
-                <Text
-                    style = {{
-                        position: 'absolute',
-                        right: 0,
-                        color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral
-
-                    }}
-                >
-                    Down
-                </Text>
-            </View>
-            
-            
             <View
                 style ={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
+                    marginTop: 10,
+                    //backgroundColor: 'red',
                     height: 60
                 }}
             >
-            <Text>
-                {`signature: ${String(appStyle.navigationMenu.signatureIcons)}`}
+            <Text
+                style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
+            >
+                {Language.signature} {Language.signatureState[signature]}
             </Text>
             <BaseSwitch
                 size={24}
@@ -381,5 +338,22 @@ export default NavigateMenuRedactor = ({
 }
 
 const staticStyles = StyleSheet.create({
-    
+    text: {
+        fontSize: 16, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    listText: {
+        marginLeft: 3,
+        fontSize: 14, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    signaturesText: { 
+        //fontVariant: ['small-caps'],
+        fontWeight: '400',
+        fontSize: 12,
+    }
 });

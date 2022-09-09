@@ -110,16 +110,16 @@ const LanguageStoreRu = {
           slider: {min: "прямее", max: "круглее"}
         },
         navigationMenu: {
-          type: "",
-          types: ["","",""],
-          menuParams: "",
-          height: "",
-          slider: {min: "", max: ""},
-          signature: "",
-          signatureState: {true: "", false: ""},
-          verticalPosition: "",
-          horizontalPosition: "",
-          horizontalPositions: ["","",""]
+          type: "Тип меню",
+          types: ["Классическое","Классическое анимированное","Скрытое","Нет меню"],
+          menuParams: "Параметры меню",
+          height: "Высота",
+          slider: {min: "ниже", max: "выше"},
+          signature: "Подписи иконок",
+          signatureState: {true: "включены", false: "выключены"},
+          verticalPosition: "Вертикальное положение",
+          horizontalPosition: "Горизонтальное положение",
+          horizontalPositions: ["Слева","По центру","Справа"]
         },
         loadAnimation: {
           info: "",
@@ -277,16 +277,16 @@ const LanguageStoreEng = {
           slider: {min: "straighter", max: "rounder"}
         },
         navigationMenu: {
-          type: "",
-          types: ["","",""],
-          menuParams: "",
-          height: "",
-          slider: {min: "", max: ""},
-          signature: "",
-          signatureState: {true: "", false: ""},
-          verticalPosition: "",
-          horizontalPosition: "",
-          horizontalPositions: ["","",""]
+          type: "Type menu",
+          types: ["Classical","Classical animated","Hidden", "Not"],
+          menuParams: "Menu params",
+          height: "Height",
+          slider: {min: "up", max: "more"},
+          signature: "Icons signature",
+          signatureState: {true: "on", false: "off"},
+          verticalPosition: "Vertical position",
+          horizontalPosition: "Horizontal position",
+          horizontalPositions: ["Left","Center","Right"]
         },
         loadAnimation: {
           info: "",

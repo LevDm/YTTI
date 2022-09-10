@@ -953,7 +953,7 @@ const staticStyles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     SLParamHeaderText: {
-        fontSize: 20,
+        fontSize: 18,
         //position: 'absolute',
         fontWeight: 'bold',
         letterSpacing: 1.8,

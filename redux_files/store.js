@@ -29,7 +29,8 @@ const appStyle = {
         fullWidth: false
     },
     functionButton: {
-        position: 'right'
+        position: 'right',
+        size: 60,
     }
 }
 

@@ -2,14 +2,17 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import LanguagesAppList, {languagesApp} from "../../language/language";
-import ThemesColorsAppList, {themesApp} from "../../styles/ColorsApp";
+import LanguagesAppList from "../../language/language";
+import ThemesColorsAppList from "../../styles/ColorsApp";
+import languagesAppList, {languagesApp}  from "../../Languages";
+import themesColorsAppList, {themesApp} from "../../Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
 import ColorSplash from "../../componets/StyleColorSplash";
 import Slider from '@react-native-community/slider';
 import { 
     BasePressable,
     BaseCheckBox,
+    BaseSlider,
     BaseSwitch 
 } from "../../componets/base/BaseElements";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,9 +22,9 @@ const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
 
-const listsTextSize = {min: 10, max: 20, step: 1}
-
-const listsProximity = {min: 1, max: 5, step: 1}
+//const listsTextSize = {min: 10, max: 20, step: 1}
+//const listsProximity = {min: 1, max: 5, step: 1}
+import { listsTextSize, listsProximity } from "../../AppDefault";
 
 export default ListsRedactor = ({
     appStyle,
@@ -31,6 +34,9 @@ export default ListsRedactor = ({
     ThemeColorsAppIndex,
     LanguageAppIndex  
 }) => {
+    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.lists
+
 
     const [sliderTextSizeValue, setSliderTextSizeValue] = useState(appStyle.lists.textSize);
 
@@ -69,161 +75,106 @@ export default ListsRedactor = ({
 
 
     return (<>
-        <Text>text size</Text>
-        <View
+        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}>{Language.textSize}</Text>
+        <BaseSlider
+            signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}        
+            
             style = {{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                width: "100%",
-                height: 60,
-                
+                flex: 1
+                //width: "70%"
             }}
-        >
-            <Text
-                style = {{
-                    position: 'absolute',
-                    left: 0,
-                    color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral
-                }}
-            >
-                smalle
-            </Text>
-            <Slider
-                style = {{
-                    flex: 1
-                    //width: "70%"
-                }}
-                minimumValue={listsTextSize.min}
-                maximumValue={listsTextSize.max}
-                step = {listsTextSize.step}
-                value = {sliderTextSizeValue}
-                onSlidingComplete = {(value)=>{                 
-                    setSliderTextSizeValue(value);
-                    setPrewTextSize(value);
-                }}
-                onValueChange = {(value)=>{              
-                    setPrewTextSize(value);
-                }}
-                minimumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUp}
-                maximumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp}
-                thumbTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].sky}
-            />
-            <Text
-                style = {{
-                    position: 'absolute',
-                    right: 0,
-                    color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral
-                }}
-            >
-                more
-            </Text>
-        </View>
-
-        <Text>proximity</Text>
-        <View
-            style = {{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                width: "100%",
-                height: 60,
-                
+            minimumValue={listsTextSize.min}
+            maximumValue={listsTextSize.max}
+            step = {listsTextSize.step}
+            value = {sliderTextSizeValue}
+            onSlidingComplete = {(value)=>{                 
+                setSliderTextSizeValue(value);
+                setPrewTextSize(value);
             }}
-        >
-            <Text
-                style = {{
-                    position: 'absolute',
-                    left: 0,
-                    color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral
-                }}
-            >
-                smalle
-            </Text>
-            <Slider
-                style = {{
-                    flex: 1
-                    //width: "70%"
-                }}
-                minimumValue={listsProximity.min}
-                maximumValue={listsProximity.max}
-                step = {listsProximity.step}
-                value = {sliderProximityValue}
-                onSlidingComplete = {(value)=>{                 
-                    setSliderProximityValue(value);
-                    setPrewProximity(value);
-                }}
-                onValueChange = {(value)=>{              
-                    setPrewProximity(value);
-                }}
-                minimumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUp}
-                maximumTrackTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp}
-                thumbTintColor = {ThemesColorsAppList[ThemeColorsAppIndex].sky}
-            />
-            <Text
-                style = {{
-                    position: 'absolute',
-                    right: 0,
-                    color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral
-                }}
-            >
-                more
-            </Text>
-        </View>
-        
-        <View
-            style = {{
-                flexDirection: 'row',
-                //backgroundColor: 'red',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                height: 60
+            onValueChange = {(value)=>{              
+                setPrewTextSize(value);
             }}
-        >
-        <Text
-            style = {{color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral}}
-        >
-            full width: {String(fullWidth)}
-        </Text>
-        <BaseSwitch
-            size={24}
-            style = {{
-                right: 20
-            }}
-            trackStyle={{
-                borderRadius: appStyle.borderRadius.additional,
-            }}
-            thumbStyle = {{
-                borderRadius: appStyle.borderRadius.additional,
-                borderWidth: 3,
-                borderColor: fullWidth? ThemesColorsAppList[ThemeColorsAppIndex].sky : ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp,
-            }}
-            colors={{
-                track: { 
-                    false: ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp, 
-                    true: ThemesColorsAppList[ThemeColorsAppIndex].sky  
-                },
-                thumb: { 
-                    false: ThemesColorsAppList[ThemeColorsAppIndex].symbolLight, 
-                    true: ThemesColorsAppList[ThemeColorsAppIndex].symbolLight  
-                }
-            }}
-            primeValue={fullWidth}
-            onChange={fullWidthChange}
+            minimumTrackTintColor = {Thema.icons.accents.tertiary}
+            maximumTrackTintColor = {Thema.icons.accents.quaternary}
+            thumbTintColor = {Thema.icons.accents.primary}
         />
-        </View>
+        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary, marginTop: 15}]}>{Language.proximity}</Text>
+        <BaseSlider
+            signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]} 
 
+            style = {{
+                flex: 1
+                //width: "70%"
+            }}
+            minimumValue={listsProximity.min}
+            maximumValue={listsProximity.max}
+            step = {listsProximity.step}
+            value = {sliderProximityValue}
+            onSlidingComplete = {(value)=>{                 
+                setSliderProximityValue(value);
+                setPrewProximity(value);
+            }}
+            onValueChange = {(value)=>{              
+                setPrewProximity(value);
+            }}
+            minimumTrackTintColor = {Thema.icons.accents.tertiary}
+            maximumTrackTintColor = {Thema.icons.accents.quaternary}
+            thumbTintColor = {Thema.icons.accents.primary}
+        />
         <View
             style = {{
                 flexDirection: 'row',
                 //backgroundColor: 'red',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                height: 60
+                height: 60,
+                marginTop: 15
             }}
         >
-        <Text
-            style = {{color: ThemesColorsAppList[ThemeColorsAppIndex].symbolNeutral}}
+            <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary, textAlign: 'justify', width: '70%'}]}>
+                {Language.fullWidth} {Language.fullWidthState[`${fullWidth}`]}
+            </Text>
+            <BaseSwitch
+                size={24}
+                style = {{
+                    right: 20
+                }}
+                trackStyle={{
+                    borderRadius: appStyle.borderRadius.additional,
+                }}
+                thumbStyle = {{
+                    borderRadius: appStyle.borderRadius.additional,
+                    borderWidth: 3,
+                    borderColor: Thema.icons.accents[fullWidth?"primary" : "quaternary"],
+                }}
+                colors={{
+                    track: { 
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary  
+                    },
+                    thumb: { 
+                        false: Thema.icons.neutrals.primary, 
+                        true: Thema.icons.neutrals.primary  
+                    }
+                }}
+                primeValue={fullWidth}
+                onChange={fullWidthChange}
+            />
+        </View>
+        <View
+            style = {{
+                flexDirection: 'row',
+                //backgroundColor: 'red',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                height: 60,
+                marginTop: 15
+            }}
         >
-            Shadow: {String(shadowUse)}
+        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary, textAlign: 'justify', width: '70%'}]}>
+            {Language.shadows} {Language.shadowsState[`${shadowUse}`]}
         </Text>
         <BaseSwitch
             size={24}
@@ -236,16 +187,16 @@ export default ListsRedactor = ({
             thumbStyle = {{
                 borderRadius: appStyle.borderRadius.additional,
                 borderWidth: 3,
-                borderColor: shadowUse? ThemesColorsAppList[ThemeColorsAppIndex].sky : ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp,
+                borderColor: Thema.icons.accents[shadowUse?"primary" : "quaternary"],
             }}
             colors={{
                 track: { 
-                    false: ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp, 
-                    true: ThemesColorsAppList[ThemeColorsAppIndex].sky  
+                    false: Thema.icons.accents.quaternary, 
+                    true: Thema.icons.accents.primary  
                 },
                 thumb: { 
-                    false: ThemesColorsAppList[ThemeColorsAppIndex].symbolLight, 
-                    true: ThemesColorsAppList[ThemeColorsAppIndex].symbolLight  
+                    false: Thema.icons.neutrals.primary, 
+                    true: Thema.icons.neutrals.primary  
                 }
             }}
             primeValue={shadowUse}
@@ -261,4 +212,22 @@ const staticStyles = StyleSheet.create({
         fontWeight: 'bold',
         fontVariant: ['small-caps']
     },
+    text: {
+        fontSize: 16, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    listText: {
+        marginLeft: 5,
+        fontSize: 14, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    signaturesText: { 
+        //fontVariant: ['small-caps'],
+        fontWeight: '400',
+        fontSize: 12,
+    }
 });

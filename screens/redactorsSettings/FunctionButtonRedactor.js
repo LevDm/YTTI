@@ -2,14 +2,18 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import LanguagesAppList, {languagesApp} from "../../language/language";
-import ThemesColorsAppList, {themesApp} from "../../styles/ColorsApp";
+import LanguagesAppList from "../../language/language";
+import ThemesColorsAppList from "../../styles/ColorsApp";
+import languagesAppList, {languagesApp}  from "../../Languages";
+import themesColorsAppList, {themesApp} from "../../Themes";
+
 import dataRedactor from "../../async_data_manager/data_redactor";
 import ColorSplash from "../../componets/StyleColorSplash";
 import Slider from '@react-native-community/slider';
 import { 
     BasePressable,
     BaseCheckBox,
+    BaseSlider,
     BaseSwitch 
 } from "../../componets/base/BaseElements";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,8 +23,9 @@ const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
 
-const positionFunctionButton = {min: 0, max: 2, step: 1}
-const valuePosition = ['left','center','right']
+//const sizeButton = {min: 40, max: 70, step: 5}
+//const valuePosition = ['left','center','right']
+import { sizeButton, valuePosition } from "../../AppDefault";
 
 export default ListsRedactor = ({
     appStyle,
@@ -30,14 +35,11 @@ export default ListsRedactor = ({
     ThemeColorsAppIndex,
     LanguageAppIndex  
 }) => {
+    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.bobberButton
 
-    const [sliderValue, setSliderValue] = useState(valuePosition.indexOf(appStyle.functionButton.position));
+    const [sliderValue, setSliderValue] = useState(valuePosition.indexOf(appStyle.functionButton.size));
 
-    const setPrewBasic = (value) => {
-        let newAppStyle = getNewAppStyleObject();
-        newAppStyle.functionButton.position = valuePosition[Number(value)];
-        setPreviewAppStyle(newAppStyle);
-    }
     const getGroup = (type) => {
         let group = []
         for (let i of valuePosition){
@@ -58,8 +60,21 @@ export default ListsRedactor = ({
         setPreviewAppStyle(newAppStyle);
     };
 
+    const settingBorderRadius = (type, value, isComplete) =>{
+        const newAppStyle = getNewAppStyleObject();
+        if(type == "basic" || synchronousSlider){
+            isComplete? setSliderValueBasic(value) : null
+            newAppStyle.borderRadius.basic = Number(value);
+        }
+        if(type == "additional" || synchronousSlider){
+            isComplete? setSliderValueAdditional(value) : null
+            newAppStyle.borderRadius.additional = Number(value);
+        }
+        setPreviewAppStyle(newAppStyle);
+    }
+
     return (<>
-        <Text>position </Text>
+        <Text>position</Text>
         <View 
             style = {[{}]}
         >
@@ -80,7 +95,22 @@ export default ListsRedactor = ({
                     />
                 )
             })}
+
         </View>
+        <BaseSlider
+            signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}
+            
+            minimumValue={sizeButton.min}
+            maximumValue={sizeButton.max}
+            step = {sizeButton.step}
+            value = {sliderValue}
+            onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
+            onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
+            minimumTrackTintColor = {Thema.icons.accents.primary}
+            maximumTrackTintColor = {Thema.icons.accents.quaternary}
+            thumbTintColor = {Thema.icons.accents.primary}
+        />
     </>)
 }
 

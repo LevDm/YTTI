@@ -74,9 +74,7 @@ export default BorderRadiusRedactor = ({
                 alignItems: 'center',
             }}
         >
-            <Text
-                style = {[staticStyles.adaptiveText, {color: Thema.neutrals.secondary}]}
-            >
+            <Text style = {[staticStyles.adaptiveText, {color: Thema.neutrals.secondary}]}>
                 {Language.synhronous} {Language.synhronousState[`${synchronousSlider}`]}
             </Text>
             <BaseSwitch

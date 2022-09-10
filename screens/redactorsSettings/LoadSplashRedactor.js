@@ -70,16 +70,16 @@ export default LoadSplashRedactor = ({
             thumbStyle = {{
                 borderRadius: appStyle.borderRadius.additional,
                 borderWidth: 3,
-                borderColor:  loadSplash? Thema.accents.primary : Thema.accents.quaternary
+                borderColor: Thema.icons.accents[loadSplash?"primary" : "quaternary"],
             }}
             colors={{
                 track: { 
-                    false: Thema.accents.quaternary, 
-                    true: Thema.accents.primary  
+                    false: Thema.icons.accents.quaternary, 
+                    true: Thema.icons.accents.primary  
                 },
                 thumb: { 
                     false: Thema.icons.neutrals.primary, 
-                    true: Thema.icons.neutrals.primary,  
+                    true: Thema.icons.neutrals.primary  
                 }
             }}
             primeValue={loadSplash}

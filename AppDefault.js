@@ -12,7 +12,12 @@ export const menuTypes = ['classical','classical_animated','hidden', 'not'];
 export const positionNavigateMenu = {min: 20, max: 80, step: 5}
 export const valuePosition = ['left','center','right']
 export const heightNavigateMenu = {min: 35, max: 65, step: 5}
-
+//lists
+export const listsTextSize = {min: 10, max: 20, step: 1}
+export const listsProximity = {min: 1, max: 5, step: 1}
+//bobber button
+export const sizeButton = {min: 40, max: 70, step: 5}
+//export const valuePosition = ['left','center','right']
 
 
 //APPERANCE
@@ -36,7 +41,8 @@ export const defaultAppStyle = {
         fullWidth: false
     },
     functionButton: {
-        position: 'right'
+        position: 'right',
+        size: 60,
     }
 }
 

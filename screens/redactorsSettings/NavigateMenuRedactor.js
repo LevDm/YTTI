@@ -127,7 +127,7 @@ export default NavigateMenuRedactor = ({
             Check = {checkGroup[index]}
             onPress = {()=>{checkBoxPress(item)}}
             BoxBorderRadius = {appStyle.borderRadius.additional}
-            ColorsChange = {{true: Thema.accents.primary, false: Thema.accents.quaternary}}
+            ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
         />
         ))}
     </View>
@@ -161,11 +161,10 @@ export default NavigateMenuRedactor = ({
             onValueChange = {(value)=>{              
                 setPrewBasicVertPos(value);
             }}
-            minimumTrackTintColor = {Thema.accents.tertiary}
-            maximumTrackTintColor = {Thema.accents.quaternary}
-            thumbTintColor = {Thema.accents.primary}
+            minimumTrackTintColor = {Thema.icons.accents.tertiary}
+            maximumTrackTintColor = {Thema.icons.accents.quaternary}
+            thumbTintColor = {Thema.icons.accents.primary}
         />
-
         <View
             style = {{
                 height: 60,
@@ -192,7 +191,7 @@ export default NavigateMenuRedactor = ({
                     Check = {checkGroupHorPos[index]}
                     onPress = {()=>{horizontalPositionSetting(item, index)}}
                     BoxBorderRadius = {appStyle.borderRadius.additional}
-                    ColorsChange = {{true: Thema.accents.primary, false: Thema.accents.quaternary}}
+                    ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
                 />
                 ))}
             </View>
@@ -220,9 +219,9 @@ export default NavigateMenuRedactor = ({
                 onValueChange = {(value)=>{              
                     setPrewBasicMenuHeight(value);
                 }}
-                minimumTrackTintColor = {Thema.accents.tertiary}
-                maximumTrackTintColor = {Thema.accents.quaternary}
-                thumbTintColor = {Thema.accents.primary}
+                minimumTrackTintColor = {Thema.icons.accents.tertiary}
+                maximumTrackTintColor = {Thema.icons.accents.quaternary}
+                thumbTintColor = {Thema.icons.accents.primary}
             />
             <View
                 style ={{
@@ -233,9 +232,7 @@ export default NavigateMenuRedactor = ({
                     height: 60
                 }}
             >
-                <Text
-                    style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
-                >
+                <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}>
                     {Language.signature} {Language.signatureState[signature]}
                 </Text>
                 <BaseSwitch
@@ -249,12 +246,12 @@ export default NavigateMenuRedactor = ({
                     thumbStyle = {{
                         borderRadius: appStyle.borderRadius.additional,
                         borderWidth: 3,
-                        borderColor: Thema.accents[signature? "primary" : "quaternary"]  ,
+                        borderColor: Thema.icons.accents[signature? "primary" : "quaternary"]  ,
                     }}
                     colors={{
                         track: { 
-                            false: Thema.accents.quaternary, 
-                            true: Thema.accents.primary
+                            false: Thema.icons.accents.quaternary, 
+                            true: Thema.icons.accents.primary  
                         },
                         thumb: { 
                             false: Thema.icons.neutrals.primary, 

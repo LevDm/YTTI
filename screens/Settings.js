@@ -535,7 +535,7 @@ const SettingsScreen = (props) => {
         return {
             //opacity: withTiming(animValueBobberButtonExpand.value == 1? 1 : 0.9, {duration: duration}),
             transform: [
-                {translateY: withTiming(animValueBobberButtonVisible.value == 0? -65 : 0, {duration: duration})}
+                {translateY: withTiming(animValueBobberButtonVisible.value == 0? -(5+appStyle.functionButton.size) : 0, {duration: duration})}
             ] 
         }
     })
@@ -822,8 +822,8 @@ const SettingsScreen = (props) => {
                 position: 'absolute',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
-                height: 125,
-                width: 60,
+                height: 5+2*appStyle.functionButton.size,
+                width: appStyle.functionButton.size,
                 bottom: appStyle.navigationMenu.height + 5,//'8%', // if navigatemenu = 'hidden'->2, 'classical_animated'->8, 'classical'->8, 
                 right: positionBobberButton[appStyle.functionButton.position]
             }]}
@@ -857,10 +857,10 @@ const SettingsScreen = (props) => {
                     >
                         <BasePressable
                             type={"i"}
-                            icon={{name: iconName, size: 24, color:"black"}}
+                            icon={{name: iconName, size: 24, color: Thema.icons.neutrals.primary}}
                             style={{
-                                height: 60,
-                                width: 60,
+                                height: appStyle.functionButton.size,
+                                width: appStyle.functionButton.size,
                                 borderRadius: appStyle.borderRadius.additional,
                                 backgroundColor: Thema.accents.secondary,
                                 shadowColor: "#000",

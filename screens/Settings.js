@@ -144,11 +144,11 @@ const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 
 //bober button heigt = 60
 const bottomBord = deviceWidth*0.04+60
-const positionBobberButton = {
-    center: (deviceWidth*0.5-30),
-    left: (deviceWidth*0.98-60),
-    right: (deviceWidth*0.02)
-}
+const positionBobberButton =(buttonSize)=>({
+    center: (deviceWidth*0.5-(buttonSize/2)),
+    left: (deviceWidth-5-buttonSize),
+    right: (5)
+})
 
 const SettingsScreen = (props) => {
     store.subscribe(() => {
@@ -825,7 +825,7 @@ const SettingsScreen = (props) => {
                 height: 5+2*appStyle.functionButton.size,
                 width: appStyle.functionButton.size,
                 bottom: appStyle.navigationMenu.height + 5,//'8%', // if navigatemenu = 'hidden'->2, 'classical_animated'->8, 'classical'->8, 
-                right: positionBobberButton[appStyle.functionButton.position]
+                right: positionBobberButton(appStyle.functionButton.size)[appStyle.functionButton.position]
             }]}
         >   
             {["apply", "jumpUp"].map((item, index)=>{

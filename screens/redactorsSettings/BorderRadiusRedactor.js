@@ -74,9 +74,10 @@ export default BorderRadiusRedactor = ({
                 alignItems: 'center',
             }}
         >
-            <Text style = {[staticStyles.adaptiveText, {color: Thema.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.neutrals.secondary}]}>
                 {Language.synhronous} {Language.synhronousState[`${synchronousSlider}`]}
             </Text>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
             <BaseSwitch
                 size={24}
                 style = {{
@@ -109,32 +110,32 @@ export default BorderRadiusRedactor = ({
                 justifyContent: 'center',
             }}
         >
-        {['basic','additional'].map((item, index)=>(
-        <View
-            key = {String('slider'+item)}
-            style = {{marginTop: 15}}
-        >
-            <Text
-                style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
+            {['basic','additional'].map((item, index)=>(
+            <View
+                key = {String('slider'+item)}
+                style = {{marginTop: 15}}
             >
-                {Language.type[item]}
-            </Text>
-            <BaseSlider
-                signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}
-                
-                minimumValue={borderRadiusValues.min}
-                maximumValue={borderRadiusValues.max}
-                step = {borderRadiusValues.step}
-                value = {item === 'basic'? sliderValueBasic : sliderValueAdditional}
-                onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
-                onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
-                minimumTrackTintColor = {Thema.icons.accents.primary}
-                maximumTrackTintColor = {Thema.icons.accents.quaternary}
-                thumbTintColor = {Thema.icons.accents.primary}
-            />
-        </View>
-        ))}
+                <Text
+                    style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
+                >
+                    {Language.type[item]}
+                </Text>
+                <BaseSlider
+                    signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+                    signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}
+                    
+                    minimumValue={borderRadiusValues.min}
+                    maximumValue={borderRadiusValues.max}
+                    step = {borderRadiusValues.step}
+                    value = {item === 'basic'? sliderValueBasic : sliderValueAdditional}
+                    onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
+                    onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
+                    minimumTrackTintColor = {Thema.icons.accents.primary}
+                    maximumTrackTintColor = {Thema.icons.accents.quaternary}
+                    thumbTintColor = {Thema.icons.accents.primary}
+                />
+            </View>
+            ))}
         </View>
     </View>)
 }
@@ -158,5 +159,14 @@ const staticStyles = StyleSheet.create({
         //fontVariant: ['small-caps'],
         fontWeight: '400',
         fontSize: 12,
+    },
+    switchText: {
+        textAlign: 'justify', 
+        width: '70%',
+    },
+    verticalLine: {
+        height: 45,
+        width: 1.5,
+        marginRight: 10
     }
 });

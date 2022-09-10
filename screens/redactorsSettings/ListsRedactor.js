@@ -133,9 +133,10 @@ export default ListsRedactor = ({
                 marginTop: 15
             }}
         >
-            <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary, textAlign: 'justify', width: '70%'}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.neutrals.secondary}]}>
                 {Language.fullWidth} {Language.fullWidthState[`${fullWidth}`]}
             </Text>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
             <BaseSwitch
                 size={24}
                 style = {{
@@ -173,9 +174,10 @@ export default ListsRedactor = ({
                 marginTop: 15
             }}
         >
-        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary, textAlign: 'justify', width: '70%'}]}>
+        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.neutrals.secondary}]}>
             {Language.shadows} {Language.shadowsState[`${shadowUse}`]}
         </Text>
+        <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
         <BaseSwitch
             size={24}
             style = {{
@@ -229,5 +231,14 @@ const staticStyles = StyleSheet.create({
         //fontVariant: ['small-caps'],
         fontWeight: '400',
         fontSize: 12,
+    },
+    switchText: {
+        textAlign: 'justify', 
+        width: '70%',
+    },
+    verticalLine: {
+        height: 45,
+        width: 1.5,
+        marginRight: 10
     }
 });

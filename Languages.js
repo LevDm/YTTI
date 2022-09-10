@@ -136,10 +136,10 @@ const LanguageStoreRu = {
           shadowsState: {true: "включены", false: "выключены"},  
         },
         bobberButton: {
-          position: "",
-          positions: ["","",""],
-          size: "",
-          slider: {min: "", max: ""},
+          position: "Положение на экране",
+          positions: ["Слева","По центру","Справа"],
+          size: "Размер кнопки",
+          slider: {min: "меньше", max: "больше"},
         }
       }
     },
@@ -303,10 +303,10 @@ const LanguageStoreEng = {
           shadowsState: {true: "on", false: "off"},  
         },
         bobberButton: {
-          position: "",
-          positions: ["","",""],
-          size: "",
-          slider: {min: "", max: ""},
+          position: "Position on screen",
+          positions: ["Left","Center","Right"],
+          size: "Button size",
+          slider: {min: "less", max: "more"},
         }
       }
     },

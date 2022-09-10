@@ -1,6 +1,6 @@
 const Emerald = { 
     theme: "emerald",
-    statusBar: 'dark',//'auto','inverted' ,'light' ,'dark'
+    statusBar: 'light',//'auto','inverted' ,'light' ,'dark'
     accents: {
         primary: '#50c878',
         secondary: '#73d28e', 
@@ -8,8 +8,8 @@ const Emerald = {
         quaternary: '#aee5ba',
     },
     neutrals: {
-        primary: '#000', 
-        secondary: '#fff', 
+        primary: '#fff', 
+        secondary: '#000', 
         tertiary: '#808080',
     },
     icons: {

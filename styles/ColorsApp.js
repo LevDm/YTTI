@@ -70,7 +70,7 @@ const Emerald = {
 
     //NEW FORMAT
     theme: "emerald",
-    statusBar: 'dark',//'auto','inverted' ,'light' ,'dark'
+    statusBar: 'light',//'auto','inverted' ,'light' ,'dark'
     accents: {
         primary: '#50c878',
         secondary: '#73d28e', 

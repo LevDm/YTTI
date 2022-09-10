@@ -38,7 +38,7 @@ export default ListsRedactor = ({
     const Thema = themesColorsAppList[ThemeColorsAppIndex]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.bobberButton
 
-    const [sliderValue, setSliderValue] = useState(valuePosition.indexOf(appStyle.functionButton.size));
+    const [sliderValue, setSliderValue] = useState(appStyle.functionButton.size);
 
     const getGroup = (type) => {
         let group = []
@@ -54,27 +54,22 @@ export default ListsRedactor = ({
 
     const positionButtonSetting = (positionType, index) => {
         setCheckGroup(getGroup(positionType));
-
-        let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = getNewAppStyleObject();
         newAppStyle.functionButton.position = valuePosition[index];
         setPreviewAppStyle(newAppStyle);
     };
 
-    const settingBorderRadius = (type, value, isComplete) =>{
+    const settingSizeButton = (value, isComplete) =>{
         const newAppStyle = getNewAppStyleObject();
-        if(type == "basic" || synchronousSlider){
-            isComplete? setSliderValueBasic(value) : null
-            newAppStyle.borderRadius.basic = Number(value);
-        }
-        if(type == "additional" || synchronousSlider){
-            isComplete? setSliderValueAdditional(value) : null
-            newAppStyle.borderRadius.additional = Number(value);
-        }
+        isComplete? setSliderValue(value) : null
+        newAppStyle.functionButton.size = Number(value);
         setPreviewAppStyle(newAppStyle);
     }
 
     return (<>
-        <Text>position</Text>
+        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}>
+            {Language.position}
+        </Text>
         <View 
             style = {[{}]}
         >
@@ -84,10 +79,10 @@ export default ListsRedactor = ({
                         key = {item+index}
                         style = {{
                             borderRadius: appStyle.borderRadius.additional,
-                            marginVertical: 5
+                            //marginVertical: 5
                         }}
                         //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
-                        Item = {<Text>{item}</Text>}
+                        Item = {<Text style = {[staticStyles.listText, {color: Thema.neutrals.secondary}]}>{Language.positions[index]}</Text>}
                         Check = {checkGroup[index]}
                         onPress = {()=>{positionButtonSetting(item, index)}}
                         BoxBorderRadius = {appStyle.borderRadius.additional}
@@ -95,8 +90,10 @@ export default ListsRedactor = ({
                     />
                 )
             })}
-
         </View>
+        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary, marginTop: 15}]}>
+            {Language.size}
+        </Text>
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}
@@ -105,8 +102,8 @@ export default ListsRedactor = ({
             maximumValue={sizeButton.max}
             step = {sizeButton.step}
             value = {sliderValue}
-            onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
-            onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
+            onSlidingComplete = {(value)=>{settingSizeButton(value, true)}}
+            onValueChange = {(value)=>{settingSizeButton(value, false)}}
             minimumTrackTintColor = {Thema.icons.accents.primary}
             maximumTrackTintColor = {Thema.icons.accents.quaternary}
             thumbTintColor = {Thema.icons.accents.primary}
@@ -115,9 +112,22 @@ export default ListsRedactor = ({
 }
 
 const staticStyles = StyleSheet.create({
-    themeName: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        fontVariant: ['small-caps']
+    text: {
+        fontSize: 16, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
     },
+    listText: {
+        marginLeft: 5,
+        fontSize: 14, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    signaturesText: { 
+        //fontVariant: ['small-caps'],
+        fontWeight: '400',
+        fontSize: 12,
+    }
 });

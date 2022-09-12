@@ -2,13 +2,10 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import LanguagesAppList from "../../language/language";
-import ThemesColorsAppList from "../../styles/ColorsApp";
 import languagesAppList, {languagesApp}  from "../../Languages";
 import themesColorsAppList, {themesApp} from "../../Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
-import ColorSplash from "../../componets/StyleColorSplash";
-import Slider from '@react-native-community/slider';
+
 import { 
     BasePressable,
     BaseCheckBox,

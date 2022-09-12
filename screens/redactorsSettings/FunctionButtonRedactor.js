@@ -2,21 +2,18 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import LanguagesAppList from "../../language/language";
-import ThemesColorsAppList from "../../styles/ColorsApp";
 import languagesAppList, {languagesApp}  from "../../Languages";
 import themesColorsAppList, {themesApp} from "../../Themes";
 
 import dataRedactor from "../../async_data_manager/data_redactor";
-import ColorSplash from "../../componets/StyleColorSplash";
-import Slider from '@react-native-community/slider';
+
 import { 
     BasePressable,
     BaseCheckBox,
     BaseSlider,
     BaseSwitch 
 } from "../../componets/base/BaseElements";
-import { LinearGradient } from 'expo-linear-gradient';
+
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
 const deviceHeight = Dimensions.get('window').height
@@ -86,7 +83,7 @@ export default ListsRedactor = ({
                         Check = {checkGroup[index]}
                         onPress = {()=>{positionButtonSetting(item, index)}}
                         BoxBorderRadius = {appStyle.borderRadius.additional}
-                        ColorsChange = {{true: ThemesColorsAppList[ThemeColorsAppIndex].sky, false: ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp}}
+                        ColorsChange = {{true: Thema.accents.primary, false: Thema.accents.quaternary}}
                     />
                 )
             })}

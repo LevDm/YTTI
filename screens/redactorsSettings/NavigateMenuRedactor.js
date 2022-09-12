@@ -13,12 +13,7 @@ import {
 import languagesAppList, {languagesApp}  from "../../Languages";
 import themesColorsAppList, {themesApp} from "../../Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
-import ColorSplash from "../../componets/StyleColorSplash";
 
-import Slider from '@react-native-community/slider';
-import { BlurView } from "expo-blur";
-//import BasePressable from "../../componets/base/BasePressable";
-//import BaseCheckBox from "../../componets/base/BaseCheckBox";
 import { 
     BasePressable,
     BaseCheckBox,

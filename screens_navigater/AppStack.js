@@ -28,7 +28,7 @@ const Scr = ({ navigation, route }) => {
                 flex: 1,
                 alignItems: 'center', 
                 justifyContent: 'center',
-                backgroundColor: 'blue'
+                backgroundColor: '#000000'
             }}
         >
             <Text>Screen {route.name}</Text>
@@ -104,10 +104,16 @@ function AppStack(props) {
     return (
         <Stack.Navigator
             initialRouteName = {"Splash"}
-            gestureEnabled = {false}
-            animationTypeForReplace={"pop"}
+
             screenOptions = {{
-                headerShown: false
+                headerShown: false,
+                presentation: 'transparentModal',
+                animationTypeForReplace: "fade",
+                //animationEnabled: false,
+                gestureEnabled: false,
+                cardStyle: {
+                    backgroundColor: 'transparent'
+                },
             }}
         > 
             <Stack.Screen name="App" component={AppDrawer} />

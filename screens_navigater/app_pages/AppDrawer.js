@@ -20,6 +20,8 @@ const Scr = ({ navigation, route }) => {
       if(route.name == "Colors"){navigation.navigate("Settings")}
 
       if(route.name == "Splash"){navigation.navigate("App")}
+
+      if(route.name == "Home"){navigation.navigate("Splash")}
     }
     const tabBar = route.name == "Home" || route.name == "Settings" || route.name == "Ohter"
     return (
@@ -101,13 +103,24 @@ function AppDrawer(props) {
             setAppConfig(jstore.appConfig);
         }
     })
+    const jet = props.navigation.getState()
+    const lvl1 = jet.routes[jet.index]
+    //console.log(lvl1)
+    const lvl2 = lvl1.state? lvl1.state.routes[lvl1.state.index] : lvl1
+    //console.log(lvl2)
+    const lvl3 = lvl2.state? lvl2.state.routes[lvl2.state.index] : lvl2
+    console.log(lvl3.name)
+
+    const swipeEnabl = !(lvl3.name == "Colors")
 
     return (
         <Drawer.Navigator 
-            useLegacyImplementation
-            gestureEnabled = {false}
+            //useLegacyImplementation
+            
             animationTypeForReplace={"pop"}
             screenOptions = {{
+                //gestureEnabled: false,
+                swipeEnabled: swipeEnabl,
                 headerShown: false,
                 swipeEdgeWidth: 300
             }}

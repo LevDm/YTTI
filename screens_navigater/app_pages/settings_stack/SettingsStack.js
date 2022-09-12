@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, Button } from 'react-native';
 
 import { createStackNavigator } from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { connect } from 'react-redux';
 import store from '../../../redux_files/store';
@@ -26,7 +27,7 @@ const Scr = ({ navigation, route }) => {
                 flex: 1,
                 alignItems: 'center', 
                 justifyContent: 'center',
-                backgroundColor: 'blue'
+                //backgroundColor: 'blue'
             }}
         >
             <Text>Screen {route.name}</Text>
@@ -104,14 +105,30 @@ function SettingsStack(props) {
     return (
         <Stack.Navigator
             initialRouteName = {"Settings"}
-            gestureEnabled = {false}
-            animationTypeForReplace={"pop"}
+            
+            
+            //animationTypeForReplace={"pop"}
+            //presentation = {'Modal'}
             screenOptions = {{
-                headerShown: false
+                headerShown: false,
+                animationEnabled: false,
+                gestureEnabled: false,
+                cardStyle: {
+                    backgroundColor: 'green'
+                },
             }}
         >
             <Stack.Screen name="Settings" component={Scr} />
-            <Stack.Screen name="Colors" component={Scr} />
+            <Stack.Screen 
+                name="Colors" 
+                component={Scr} 
+                options={{
+                    cardStyle: {
+                        backgroundColor: 'tomato',
+                    },
+                }}
+                
+            />
         </Stack.Navigator>
     );
 }

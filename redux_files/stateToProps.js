@@ -46,6 +46,15 @@ function mapStateToProps(component) {
                 };
             }
         }
+        case "NAVIGATER": {
+            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            return function(state) {
+                return {
+                    appStyle: state.appStyle,
+                    appConfig: state.appConfig,
+                };
+            }
+        }
         default: return undefined;
     }
 }

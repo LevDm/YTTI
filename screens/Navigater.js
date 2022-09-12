@@ -31,6 +31,8 @@ let deviceWidth = Dimensions.get('window').width
 import TabBar from "./TabBar";
 import ScreensHeader from "./ScreensHeader";
 
+import AppStack from "../screens_navigater/AppStack";
+
 const Tab = createBottomTabNavigator();
 const Tabs = (props) => {
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
@@ -82,6 +84,10 @@ const Tabs = (props) => {
         {
             number: 3,
             component: SettingsScreen,
+        },
+        {
+            number: 4,
+            component: AppStack,
         },
     ]
 

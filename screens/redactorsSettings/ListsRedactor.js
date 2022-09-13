@@ -2,8 +2,8 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import languagesAppList, {languagesApp}  from "../../Languages";
-import themesColorsAppList, {themesApp} from "../../Themes";
+import languagesAppList, {languagesApp}  from "../../app_values/Languages";
+import themesColorsAppList, {themesApp} from "../../app_values/Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
 
 import { 
@@ -11,7 +11,7 @@ import {
     BaseCheckBox,
     BaseSlider,
     BaseSwitch 
-} from "../../componets/base/BaseElements";
+} from "../../general_components/base_components/BaseElements";
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
@@ -21,7 +21,7 @@ const deviceWidth = Dimensions.get('window').width
 
 //const listsTextSize = {min: 10, max: 20, step: 1}
 //const listsProximity = {min: 1, max: 5, step: 1}
-import { listsTextSize, listsProximity } from "../../AppDefault";
+import { listsTextSize, listsProximity } from "../../app_values/AppDefault";
 
 export default ListsRedactor = ({
     appStyle,
@@ -72,10 +72,10 @@ export default ListsRedactor = ({
 
 
     return (<>
-        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}>{Language.textSize}</Text>
+        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>{Language.textSize}</Text>
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}        
+            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}        
             
             style = {{
                 flex: 1
@@ -96,10 +96,10 @@ export default ListsRedactor = ({
             maximumTrackTintColor = {Thema.icons.accents.quaternary}
             thumbTintColor = {Thema.icons.accents.primary}
         />
-        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary, marginTop: 15}]}>{Language.proximity}</Text>
+        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary, marginTop: 15}]}>{Language.proximity}</Text>
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]} 
+            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]} 
 
             style = {{
                 flex: 1
@@ -130,7 +130,7 @@ export default ListsRedactor = ({
                 marginTop: 15
             }}
         >
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
                 {Language.fullWidth} {Language.fullWidthState[`${fullWidth}`]}
             </Text>
             <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
@@ -171,7 +171,7 @@ export default ListsRedactor = ({
                 marginTop: 15
             }}
         >
-        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
             {Language.shadows} {Language.shadowsState[`${shadowUse}`]}
         </Text>
         <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>

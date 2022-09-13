@@ -3,7 +3,7 @@ import { Animated, StyleSheet,View, Text, Dimensions, Pressable, Alert, Activity
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import ThemesColorsAppList from "../styles/ColorsApp";
-import { BasePressable } from "../componets/base/BaseElements";
+import { BasePressable } from "../general_components/base_components/BaseElements";
 
 const deviceWidth = Dimensions.get('window').width;
 

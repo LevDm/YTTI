@@ -13,7 +13,7 @@ import {
     BasePressable,
     BaseCheckBox,
     BaseSwitch 
-} from "../componets/base/BaseElements";
+} from "../general_components/base_components/BaseElements";
 
 import Constants from "expo-constants";
 import { transform } from "@motify/core/node_modules/framer-motion";

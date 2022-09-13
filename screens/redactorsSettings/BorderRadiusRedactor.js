@@ -12,8 +12,8 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, { languagesApp } from "../../Languages";
-import themesColorsAppList, { themesApp } from "../../Themes";
+import languagesAppList, { languagesApp } from "../../app_values/Languages";
+import themesColorsAppList, { themesApp } from "../../app_values/Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
 
 import { 
@@ -21,10 +21,10 @@ import {
     BaseCheckBox,
     BaseSwitch,
     BaseSlider 
-} from "../../componets/base/BaseElements";
+} from "../../general_components/base_components/BaseElements";
 
 //const borderRadiusValues = {min: 0, max: 32, step: 1}
-import { borderRadiusValues } from "../../AppDefault";
+import { borderRadiusValues } from "../../app_values/AppDefault";
 
 export default BorderRadiusRedactor = ({
     appStyle,
@@ -74,7 +74,7 @@ export default BorderRadiusRedactor = ({
                 alignItems: 'center',
             }}
         >
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
                 {Language.synhronous} {Language.synhronousState[`${synchronousSlider}`]}
             </Text>
             <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
@@ -116,13 +116,13 @@ export default BorderRadiusRedactor = ({
                 style = {{marginTop: 15}}
             >
                 <Text
-                    style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
+                    style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}
                 >
                     {Language.type[item]}
                 </Text>
                 <BaseSlider
                     signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                    signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}
+                    signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
                     
                     minimumValue={borderRadiusValues.min}
                     maximumValue={borderRadiusValues.max}

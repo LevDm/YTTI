@@ -4,7 +4,7 @@ import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList,
 
 import LanguagesAppList, {languagesApp} from "../../language/language";
 import ThemesColorsAppList from "../../styles/ColorsApp";
-import themesColorsAppList, {themesApp} from "../../Themes";
+import themesColorsAppList, {themesApp} from "../../app_values/Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
 import ColorSplash from "../../componets/StyleColorSplash";
 
@@ -14,7 +14,7 @@ import {
     BasePressable,
     BaseCheckBox,
     BaseSwitch 
-} from "../../componets/base/BaseElements";
+} from "../../general_components/base_components/BaseElements";
 
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
@@ -76,7 +76,7 @@ export default ThemeRedacor = ({
                         position: 'absolute',
                         borderRadius: appStyle.borderRadius.additional,
                         borderWidth: index === themesApp.indexOf(appStyle.theme)? 3 : 0,
-                        borderColor: themesColorsAppList[themesApp.indexOf(appStyle.theme)].accents.primary,
+                        borderColor: themesColorsAppList[themesApp.indexOf(appStyle.theme)].basics.accents.primary,
                         justifyContent: 'center',
                         alignItems: 'center',
                         transform: [
@@ -85,7 +85,7 @@ export default ThemeRedacor = ({
                     }}
                 >   
                     <LinearGradient
-                        colors={[themesColorsAppList[index].accents.primary, themesColorsAppList[index].accents.quaternary]}
+                        colors={[themesColorsAppList[index].basics.accents.primary, themesColorsAppList[index].basics.accents.quaternary]}
                         style={{
                             position: 'absolute',
                             height: itemSize-10,

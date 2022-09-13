@@ -22,12 +22,14 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import LanguagesAppList, {languagesApp} from "../../language/language";
-import ThemesColorsAppList, {themesApp} from "../../styles/ColorsApp";
+
+import languagesAppList, {languagesApp} from "../../app_values/Languages";
+import themesColorsAppList, {themesApp} from "../../app_values/Themes";
+const Thema = themesColorsAppList[0]
 
 export const BasePressable = ({
     type = "ti",
-    icon = {name: "border-none-variant", size: 25, color: ThemesColorsAppList[0].symbolDark },
+    icon = {name: "border-none-variant", size: 25, color: Thema.icons.neutrals.primary },
     text = "Text",
     textStyle = {},
     style = {},
@@ -35,7 +37,7 @@ export const BasePressable = ({
     onPress,
     onLongPress,
     direction = "row", //column || row ?&&(-reverse)
-    rippleColor = ThemesColorsAppList[0].shadowBlack,
+    rippleColor = '#00000080',
     }) => {
 
     for (let stylesObject of [textStyle, style, styleItemContainer]) {
@@ -69,12 +71,12 @@ export const BasePressable = ({
                     {
                         //borderRadius: appStyle.borderRadius.additional
                     }
-                ]} 
-                android_ripple = {{
+                ]}
+                android_ripple = {rippleColor? {
                     color: rippleColor,
                     borderless: true,
                     foreground: true
-                }}
+                } : {}}
                 unstable_pressDelay = {300}
                 onLongPress = {onLongPress}
                 onPress = {onPress}
@@ -100,7 +102,7 @@ export const BasePressable = ({
                     <MaterialCommunityIcons 
                         name = {icon.name == undefined? "border-none-variant" : icon.name} 
                         size = {icon.size == undefined? 25 : icon.size} 
-                        color = {icon.color == undefined? ThemesColorsAppList[0].symbolDark : icon.color}
+                        color = {icon.color == undefined? Thema.icons.neutrals.primary : icon.color}
                     />
                     }
                 </View>
@@ -178,8 +180,8 @@ export const BaseCheckBox = ({
     Item = <Text>Text</Text>,
     BoxBorderRadius = 12,
     style = {},
-    rippleColor = ThemesColorsAppList[0].shadowBlack,
-    ColorsChange = {true: ThemesColorsAppList[0].symbolDark, false: ThemesColorsAppList[0].symbolNeutral},
+    rippleColor = '#00000080',
+    ColorsChange = {true: Thema.icons.neutrals.primary, false: Thema.icons.neutrals.secondary},
     Check = false,
     onLongPress,
     onPress,

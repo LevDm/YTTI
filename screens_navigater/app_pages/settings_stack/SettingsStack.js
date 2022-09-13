@@ -9,8 +9,8 @@ import store from '../../../redux_files/store';
 import mapStateToProps from "../../../redux_files/stateToProps";
 import mapDispatchToProps from "../../../redux_files/dispatchToProps";
 
-import themesColorsAppList, { themesApp } from '../../../Themes';
-import languagesAppList, { languagesApp } from "../../../Languages";
+import themesColorsAppList, { themesApp } from '../../../app_values/Themes';
+import languagesAppList, { languagesApp } from "../../../app_values/Languages";
 
 const Scr = ({ navigation, route }) => {
     const go = ()=> {

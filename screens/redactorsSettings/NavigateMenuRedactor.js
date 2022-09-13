@@ -10,8 +10,8 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, {languagesApp}  from "../../Languages";
-import themesColorsAppList, {themesApp} from "../../Themes";
+import languagesAppList, {languagesApp}  from "../../app_values/Languages";
+import themesColorsAppList, {themesApp} from "../../app_values/Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
 
 import { 
@@ -19,13 +19,13 @@ import {
     BaseCheckBox,
     BaseSlider,
     BaseSwitch 
-} from "../../componets/base/BaseElements";
+} from "../../general_components/base_components/BaseElements";
 
 //const menuTypes = ['classical','classical_animated','hidden', 'not'];
 //const positionNavigateMenu = {min: 20, max: 80, step: 5}
 //const valuePosition = ['left','center','right']
 //const heightNavigateMenu = {min: 35, max: 65, step: 5}
-import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu } from "../../AppDefault";
+import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu } from "../../app_values/AppDefault";
 
 export default NavigateMenuRedactor = ({
     appStyle,
@@ -106,7 +106,7 @@ export default NavigateMenuRedactor = ({
     };
 
     return (<>
-    <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}>
+    <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
         {Language.type}
     </Text>
     <View 
@@ -118,7 +118,7 @@ export default NavigateMenuRedactor = ({
         <BaseCheckBox
             key = {item+index}
             //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
-            Item = {<Text style = {[staticStyles.listText, {color: Thema.neutrals.secondary}]}>{Language.types[index]}</Text>}
+            Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.types[index]}</Text>}
             Check = {checkGroup[index]}
             onPress = {()=>{checkBoxPress(item)}}
             BoxBorderRadius = {appStyle.borderRadius.additional}
@@ -126,7 +126,7 @@ export default NavigateMenuRedactor = ({
         />
         ))}
     </View>
-    <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary, marginTop: 15,}]}>
+    <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary, marginTop: 15,}]}>
         {Language.menuParams}
     </Text>
     <View
@@ -135,12 +135,12 @@ export default NavigateMenuRedactor = ({
         }]}
     >   
         {checkGroup[2] && <>
-        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
             {Language.verticalPosition}
         </Text>
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}
+            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
 
             style = {{
                 flex: 1
@@ -167,7 +167,7 @@ export default NavigateMenuRedactor = ({
             }}
         >
             <Text
-                style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}
+                style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}
             >
                 {Language.horizontalPosition}
             </Text>
@@ -182,7 +182,7 @@ export default NavigateMenuRedactor = ({
                 <BaseCheckBox
                     key = {item+index}
                     //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
-                    Item = {<Text style = {[staticStyles.listText, {color: Thema.neutrals.secondary}]} >{Language.horizontalPositions[index]}</Text>}
+                    Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositions[index]}</Text>}
                     Check = {checkGroupHorPos[index]}
                     onPress = {()=>{horizontalPositionSetting(item, index)}}
                     BoxBorderRadius = {appStyle.borderRadius.additional}
@@ -193,12 +193,12 @@ export default NavigateMenuRedactor = ({
         </View>
         </>}
         {!checkGroup[2] && <>
-            <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
                 {Language.height}
             </Text>
             <BaseSlider
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}        
+                signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}        
                 
                 style = {{
                     flex: 1
@@ -227,7 +227,7 @@ export default NavigateMenuRedactor = ({
                     height: 60
                 }}
             >
-                <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.neutrals.secondary}]}>
+                <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
                     {Language.signature} {Language.signatureState[signature]}
                 </Text>
                 <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>

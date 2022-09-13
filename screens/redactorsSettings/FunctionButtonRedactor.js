@@ -2,8 +2,8 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import languagesAppList, {languagesApp}  from "../../Languages";
-import themesColorsAppList, {themesApp} from "../../Themes";
+import languagesAppList, {languagesApp}  from "../../app_values/Languages";
+import themesColorsAppList, {themesApp} from "../../app_values/Themes";
 
 import dataRedactor from "../../async_data_manager/data_redactor";
 
@@ -12,7 +12,7 @@ import {
     BaseCheckBox,
     BaseSlider,
     BaseSwitch 
-} from "../../componets/base/BaseElements";
+} from "../../general_components/base_components/BaseElements";
 
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
@@ -22,7 +22,7 @@ const deviceWidth = Dimensions.get('window').width
 
 //const sizeButton = {min: 40, max: 70, step: 5}
 //const valuePosition = ['left','center','right']
-import { sizeButton, valuePosition } from "../../AppDefault";
+import { sizeButton, valuePosition } from "../../app_values/AppDefault";
 
 export default ListsRedactor = ({
     appStyle,
@@ -64,7 +64,7 @@ export default ListsRedactor = ({
     }
 
     return (<>
-        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
             {Language.position}
         </Text>
         <View 
@@ -79,21 +79,21 @@ export default ListsRedactor = ({
                             //marginVertical: 5
                         }}
                         //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
-                        Item = {<Text style = {[staticStyles.listText, {color: Thema.neutrals.secondary}]}>{Language.positions[index]}</Text>}
+                        Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.positions[index]}</Text>}
                         Check = {checkGroup[index]}
                         onPress = {()=>{positionButtonSetting(item, index)}}
                         BoxBorderRadius = {appStyle.borderRadius.additional}
-                        ColorsChange = {{true: Thema.accents.primary, false: Thema.accents.quaternary}}
+                        ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
                     />
                 )
             })}
         </View>
-        <Text style = {[staticStyles.text, {color: Thema.neutrals.secondary, marginTop: 15}]}>
+        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary, marginTop: 15}]}>
             {Language.size}
         </Text>
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.neutrals.tertiary}]}
+            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
             
             minimumValue={sizeButton.min}
             maximumValue={sizeButton.max}

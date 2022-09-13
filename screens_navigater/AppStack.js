@@ -8,8 +8,8 @@ import {connect} from 'react-redux';
 import mapStateToProps from "../redux_files/stateToProps";
 import mapDispatchToProps from "../redux_files/dispatchToProps";
 
-import themesColorsAppList, {themesApp} from "../Themes";
-import languagesAppList, {languagesApp} from "../Languages";
+import themesColorsAppList, {themesApp} from "../app_values/Themes";
+import languagesAppList, {languagesApp} from "../app_values/Languages";
 
 import AppDrawer from './app_pages/AppDrawer';
 

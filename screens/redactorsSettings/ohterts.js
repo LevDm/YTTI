@@ -20,7 +20,7 @@ import {
     BasePressable,
     BaseCheckBox,
     BaseSwitch 
-} from "../../componets/base/BaseElements";
+} from "../../general_components/base_components/BaseElements";
 
 export default Ohter = ({
     appStyle,

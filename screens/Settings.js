@@ -26,8 +26,8 @@ import Animated, {
 import Constants from "expo-constants";
 
 
-import themesColorsAppList, {themesApp} from "../Themes";
-import languagesAppList, {languagesApp} from "../Languages";
+import themesColorsAppList, {themesApp} from "../app_values/Themes";
+import languagesAppList, {languagesApp} from "../app_values/Languages";
 
 import store from "../redux_files/store";
 import {connect} from 'react-redux';
@@ -40,7 +40,7 @@ import {
     BasePressable,
     BaseCheckBox,
     BaseSwitch 
-} from "../componets/base/BaseElements";
+} from "../general_components/base_components/BaseElements";
 
 import ThemeRedacor from "./redactorsSettings/ThemeRedactor";
 import BorderRadiusRedactor from "./redactorsSettings/BorderRadiusRedactor";
@@ -579,7 +579,7 @@ const SettingsScreen = (props) => {
             style={[
                 staticStyles.FlatListsArea,
                 {
-                    backgroundColor: Thema.accents.primary,
+                    backgroundColor: Thema.basics.accents.primary,
                     //height: (Constants.statusBarHeight+1)+ 30 + 35,
                     paddingTop: (Constants.statusBarHeight+1)
                 }
@@ -603,7 +603,7 @@ const SettingsScreen = (props) => {
                             alignItems: 'flex-start',
                         }}
                     >
-                        <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.neutrals.primary}]}>
+                        <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
                             {Language.HeaderTitle}
                         </Text>
                     </View>
@@ -642,7 +642,7 @@ const SettingsScreen = (props) => {
                                     alignItems: 'flex-start',
                                 }}
                             >
-                                <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.neutrals.primary}]}>
+                                <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
                                     {Language.StructureScreen.categorys[item.indexSection]}
                                 </Text>
                             </View>
@@ -653,7 +653,7 @@ const SettingsScreen = (props) => {
             <View style={[staticStyles.FlatListsArea]}>
                 <Animated.View 
                     style={[animStyleIndicatorLine, { 
-                        backgroundColor: Thema.accents.quaternary,
+                        backgroundColor: Thema.icons.accents.quaternary,
                         position: 'absolute',
                         bottom: 0,
                         height: 4,
@@ -681,8 +681,8 @@ const SettingsScreen = (props) => {
                                 type={'t'}
                                 style={staticStyles.frontFLPressable}
                                 text={Language.StructureScreen.params[index]}
-                                textStyle={[staticStyles.frontFLText, {color: Thema.neutrals.primary}]}
-                                rippleColor={Thema.accents.quaternary}
+                                textStyle={[staticStyles.frontFLText, {color: Thema.texts.neutrals.primary}]}
+                                rippleColor={false}
                                 onPress={()=>{selectParametr(item, index)}}
                             />
                         </View>
@@ -862,7 +862,7 @@ const SettingsScreen = (props) => {
                                 height: appStyle.functionButton.size,
                                 width: appStyle.functionButton.size,
                                 borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: Thema.accents.secondary,
+                                backgroundColor: Thema.basics.accents.secondary,
                                 shadowColor: "#000",
                                 shadowOffset: {
                                     width: 0,

@@ -25,7 +25,7 @@ import {
     BasePressable,
     BaseCheckBox,
     BaseSwitch 
-} from "../componets/base/BaseElements";
+} from "../general_components/base_components/BaseElements";
 
 
 import Constants from "expo-constants";

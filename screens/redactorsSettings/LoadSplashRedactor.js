@@ -10,15 +10,15 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, {languagesApp}  from "../../Languages";
-import themesColorsAppList, {themesApp} from "../../Themes";
+import languagesAppList, {languagesApp}  from "../../app_values/Languages";
+import themesColorsAppList, {themesApp} from "../../app_values/Themes";
 import dataRedactor from "../../async_data_manager/data_redactor";
 
 import { 
     BasePressable,
     BaseCheckBox,
     BaseSwitch 
-} from "../../componets/base/BaseElements";
+} from "../../general_components/base_components/BaseElements";
 
 export default LoadSplashRedactor = ({
     appStyle,
@@ -54,7 +54,7 @@ export default LoadSplashRedactor = ({
             height: 60
         }}
     >
-        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
             {Language.show} {Language.showState[`${loadSplash}`]}
         </Text>
         <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>

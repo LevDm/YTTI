@@ -10,7 +10,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import NetInfo from '@react-native-community/netinfo';
 import ThemeColorsAppList from "./../../styles/ColorsApp";
 const ColorsApp = ThemeColorsAppList[0]
-import { BasePressable } from "../base/BaseElements";
+import { BasePressable } from "../../general_components/base_components/BaseElements";
 import WeatherItem from "./WeatherItem";
 
 import * as Location from 'expo-location';

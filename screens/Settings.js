@@ -188,7 +188,7 @@ const SettingsScreen = (props) => {
 
    
     const [accentParam, setAccentParam] = useState(0);
-  
+    const [accentCategory, setAccentCategory] = useState(0);
 
     const [listWidths, setListWidths] = useState([]);
     const [listHeights, setListHeights] = useState([]);
@@ -354,6 +354,25 @@ const SettingsScreen = (props) => {
     }
     useEffect(()=>{countDerivedValues()},[previewFixed, appStyle])
 
+    const animValueCategory = useSharedValue(0)
+    const animStyleCategory = useAnimatedStyle(() => {
+        const duration = 200;
+        return {
+            //opacity: withTiming(animValueBobberButtonExpand.value == 1? 1 : 0.9, {duration: duration}),
+            transform: [
+                {translateY: withTiming( 
+                    interpolate(
+                        animValueCategory.value, 
+                        [ 0, 1 ],
+                        [ 0, -30],
+                        { extrapolateRight: Extrapolate.CLAMP }
+                    ),
+                    {duration: duration}
+                )}
+            ] 
+        }
+    }) 
+
     const logg = (info) =>{
         console.log(info)
     }
@@ -455,8 +474,11 @@ const SettingsScreen = (props) => {
             animValueWidthLine.value = width;
             animValueMarginLeft.value = left;
 
-            runOnJS(setAccentParam)(countAccent)
-            runOnJS(newCategoryOnAccent)(countAccent)
+            accentParam != countAccent? runOnJS(setAccentParam)(countAccent) : null
+            //runOnJS(newCategoryOnAccent)(countAccent)
+            const countCategory = allStructurParams[countAccent].indexSection
+            countCategory != accentCategory? runOnJS(setAccentCategory)(countCategory) : null
+            //animValueCategory.value = allStructurParams[countAccent].indexSection //* itemCategoryHeight
         }
 
 
@@ -571,7 +593,34 @@ const SettingsScreen = (props) => {
         
         splashOut()
         //splashStart(previewAppStyle.theme, themesApp.indexOf(previewAppStyle.theme));
-    }
+    }   
+    const tingDuration = 200
+    const entering = (targetValues) => {
+        'worklet';
+        const animations = {
+          opacity: withTiming(1, { duration: tingDuration }),
+        };
+        const initialValues = {
+          opacity: 0,
+        };
+        return {
+          initialValues,
+          animations,
+        };
+    };
+    const exiting = (targetValues) => {
+        'worklet';
+        const animations = {
+          opacity: withTiming(0, { duration: tingDuration }),
+        };
+        const initialValues = {
+          opacity: 1,
+        };
+        return {
+          initialValues,
+          animations,
+        };
+    };
 
     return (
     <>  
@@ -588,11 +637,14 @@ const SettingsScreen = (props) => {
             <View
                 style={{
                     flexDirection: 'row',
+                    height: itemCategoryHeight
                 }}
             >
                 <View 
                     style = {[staticStyles.SLtopBord,{ 
-                        alignItems: 'flex-end'
+                        alignItems: 'flex-end',
+                        //backgroundColor: 'red',
+                        //zIndex: 5
                     }]}
                 >
                     <View
@@ -613,41 +665,34 @@ const SettingsScreen = (props) => {
                         alignItems: 'flex-start',
                     }]}
                 >
-                    <FlatList
-                        ref={flatCategorysListRef}
-                        style = {{
-                            height: itemCategoryHeight
-                        }}
-                        showsVerticalScrollIndicator={false}
-                        scrollEnabled={false}
-                        snapToInterval={itemCategoryHeight}
-                        getItemLayout={(data, index) => (
-                            {
-                                length: itemCategoryHeight, 
-                                offset: itemCategoryHeight * index, 
-                                index: index
-                            }
-                        )}
-                        initialScrollIndex={0}
-                        data={allCategorys}
-                        keyExtractor={(item, index) => {
-                            return item.category + index
-                        }}
-                        renderItem={({item, index})=>(
-                            <View
-                                style = {{
-                                    height: 30,
-                                    flex: 1,
-                                    justifyContent: 'center',
-                                    alignItems: 'flex-start',
-                                }}
-                            >
-                                <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
-                                    {Language.StructureScreen.categorys[item.indexSection]}
-                                </Text>
-                            </View>
-                        )}
-                    />
+                    <Animated.View
+                        style = {[{
+                            height: itemCategoryHeight,
+                        }]}
+                    >
+                        {allCategorys.map((item, index)=>{  
+                            if(accentCategory == index){
+                                return (
+                                    <Animated.View
+                                        key={`${Math.random()}`}
+                                        style = {{
+                                            height: itemCategoryHeight,
+                                            position: 'absolute',
+
+                                            justifyContent: 'center',
+                                            alignItems: 'flex-start',
+                                        }}
+                                        //entering={entering}
+                                        exiting={exiting}
+                                    >
+                                        <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
+                                            {Language.StructureScreen.categorys[item.indexSection]}
+                                        </Text>
+                                    </Animated.View>
+                                ) 
+                            }  
+                        })}
+                    </Animated.View>
                 </View>
             </View>
             <View style={[staticStyles.FlatListsArea]}>
@@ -974,7 +1019,7 @@ const staticStyles = StyleSheet.create({
         fontWeight: 'bold',
         //fontStyle: 'italic',
         //color: 'white',
-        opacity: .90,
+        //opacity: .90,
         //textShadowRadius: 0.5,
         //textShadowColor: 'black',
         letterSpacing: 0.5,

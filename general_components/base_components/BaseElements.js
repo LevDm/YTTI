@@ -13,12 +13,20 @@ import {
 import Slider from "@react-native-community/slider";
 
 import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    interpolate,
+    useSharedValue, 
+    useAnimatedStyle, 
+    withTiming, 
+    useAnimatedScrollHandler, 
+    cancelAnimation,
+    useAnimatedRef,
+    useDerivedValue,
+    scrollTo,
+    runOnJS,
     interpolateColor,
+    interpolate,
     Extrapolate,
-    withTiming
+    runOnUI,
+    Easing 
 } from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -37,7 +45,7 @@ export const BasePressable = ({
     onPress,
     onLongPress,
     direction = "row", //column || row ?&&(-reverse)
-    rippleColor = '#00000080',
+    rippleColor = '#00000030',
     }) => {
 
     for (let stylesObject of [textStyle, style, styleItemContainer]) {
@@ -53,7 +61,20 @@ export const BasePressable = ({
             if( stylesObject == textStyle ){ textStyle = newStyle } 
             if( stylesObject == styleItemContainer ){ styleItemContainer = newStyle } 
         } 
-    } 
+    }
+    
+    let rippleRadius = 15
+    if(style.width && style.height){
+        if(style.width >= style.height){
+            rippleRadius = style.width/2
+        } else {
+            rippleRadius = style.height/2
+        }
+    } else if(style.width){
+        rippleRadius = style.width/2
+    } else if(style.height){
+        rippleRadius = style.height/2
+    }
 
     return (
         <View 
@@ -75,6 +96,7 @@ export const BasePressable = ({
                 android_ripple = {rippleColor? {
                     color: rippleColor,
                     borderless: true,
+                    radius: rippleRadius,
                     foreground: true
                 } : {}}
                 unstable_pressDelay = {300}
@@ -187,6 +209,24 @@ export const BaseCheckBox = ({
     onPress,
 }, props) => {
 
+    const dynamicStylePrimaryBox = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            borderWidth: withTiming((Check? 2 : 0), {duration: duration}),
+            borderRadius: withTiming(BoxBorderRadius, {duration: duration}),
+            borderColor: withTiming(ColorsChange.true, {duration: duration}),
+        }
+    }, [Check,BoxBorderRadius, ColorsChange])
+
+    const dynamicStyleSecondaryBox = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            margin: withTiming((Check? 2 : 4), {duration: duration}),
+            borderRadius: withTiming((BoxBorderRadius-4), {duration: duration}),
+            backgroundColor: withTiming((Check? ColorsChange.true : ColorsChange.false) , {duration: duration})
+        }
+    }, [Check, BoxBorderRadius, ColorsChange])
+
     return (
         <View
             props = {props}
@@ -215,30 +255,27 @@ export const BaseCheckBox = ({
                 onLongPress = {onLongPress}
                 onPress = {onPress}
             >
-                <View
-                    style = {{
-                        borderRadius: BoxBorderRadius,
-                        borderWidth: Check? 2 : 0,
+                <Animated.View
+                    style = {[dynamicStylePrimaryBox, {
+                        //borderRadius: BoxBorderRadius,
+                        //borderWidth: Check? 2 : 0,
                         minHeight: 30,
                         minWidth: 30,
-                        //marginHorizontal: 10,
-                        borderColor: ColorsChange.true,
+                        //borderColor: ColorsChange.true,
                         justifyContent: "center",
                         alignContent: 'center'
-                    }}
+                    }]}
                 >
-                    <View
-                        style = {{
-                            borderRadius: BoxBorderRadius-4,
-                            margin: Check? 2 : 4,
+                    <Animated.View
+                        style = {[dynamicStyleSecondaryBox, {
+                            //borderRadius: BoxBorderRadius-4,
+                            //margin: Check? 2 : 4,
                             flex: 1,
-                            backgroundColor: Check? ColorsChange.true : ColorsChange.false,
-                        }}
+                            //backgroundColor: Check? ColorsChange.true : ColorsChange.false,
+                        }]}
                     />
-                </View>
-                
+                </Animated.View>
                 {Item}
-
             </Pressable>
         </View>
     );
@@ -258,53 +295,22 @@ export const BaseSwitch = ({
 }, props) => {
 
     const [switchValue, setSwitchValue] = useState(primeValue);
-    const animationState = useSharedValue(false);
 
-    useEffect(()=>{
-        if (animationState.value != switchValue) {animationState.value = switchValue};
-    },[switchValue])
-
-
-    const animStyleBG = useAnimatedStyle(()=>{
-        return {
-            
-            backgroundColor: withTiming( 
-                interpolateColor(
-                    animationState.value, 
-                    [0, 1],
-                    [colors.track.false, colors.track.true]  
-                ),
-                {duration: duration}
-            ),
+    const dynamicStyleTrack = useAnimatedStyle(()=>{
+        return {    
+            backgroundColor: withTiming((switchValue? colors.track.true : colors.track.false), {duration: duration}),
         }
-    })
+    },[switchValue, colors])
     
 
-    const animatedStyle = useAnimatedStyle(()=>{
+    const dynamicStyleTrumb = useAnimatedStyle(()=>{
         return {
-            backgroundColor: withTiming( 
-                interpolateColor(
-                    animationState.value, 
-                    [0, 1],
-                    [colors.thumb.false, colors.thumb.true]  
-                ),
-                {duration: duration}
-            ),
+            backgroundColor: withTiming((!switchValue? colors.thumb.true : colors.thumb.false), {duration: duration}),
             transform: [
-                {   translateX: withTiming( 
-                        interpolate(
-                            animationState.value, 
-                            [ 0, 1 ],
-                            [ -size*0.5, size*0.6],
-                            { extrapolateRight: Extrapolate.CLAMP }
-                        ),
-                        {duration: duration}
-                    ),
-                    
-                }
+                {translateX: withTiming((size*(!switchValue? -0.5 : 0.6)), {duration: duration})}
             ],
         }
-    })
+    },[switchValue, colors])
 
     return (
         <View
@@ -322,7 +328,7 @@ export const BaseSwitch = ({
                 height: size*0.75,
                 width: size*1.1,
                 justifyContent: 'center',
-            }, trackStyle, animStyleBG]}
+            }, trackStyle, dynamicStyleTrack]}
             onPress = {()=>{
                 setSwitchValue(!switchValue)
                 if(onChange != undefined){onChange()};
@@ -334,7 +340,7 @@ export const BaseSwitch = ({
                     width: size,
                     //opacity: .3,
                     position: 'absolute' 
-                }, thumbStyle, animatedStyle]}
+                }, thumbStyle, dynamicStyleTrumb]}
             />
         </AnimatedPressable>
         </View>

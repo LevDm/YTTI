@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { 
     StyleSheet, 
     Text, 
-    Pressable, 
+    Pressable,
+    TextInput, 
     FlatList, 
     SectionList, 
     View, 
@@ -11,8 +12,11 @@ import {
 import Animated, {
     useSharedValue, 
     useAnimatedStyle, 
-    withTiming, 
-    useAnimatedScrollHandler, 
+    withTiming,
+    withDelay,
+    withSequence, 
+    useAnimatedScrollHandler,
+    useAnimatedProps, 
     cancelAnimation,
     useAnimatedRef,
     useDerivedValue,
@@ -142,6 +146,7 @@ for (let el of structure){
 
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 //bober button heigt = 60
 const bottomBord = deviceWidth*0.04+60
@@ -189,7 +194,8 @@ const SettingsScreen = (props) => {
 
    
     const [accentParam, setAccentParam] = useState(0);
-    const [accentCategory, setAccentCategory] = useState(0);
+    //const [accentCategory, setAccentCategory] = useState(0);
+    const accentCategory = useSharedValue(0);
 
     const [listWidths, setListWidths] = useState([]);
     const [listHeights, setListHeights] = useState([]);
@@ -283,7 +289,6 @@ const SettingsScreen = (props) => {
             let visibleBobber = ((isUpScroll || isEnd) && isStart) && !previewFixed
 
             cancelAnimation(animValueBobberButtonVisible);
-
             animValueBobberButtonVisible.value = visibleBobber? 0 : bottomBord
 
             let useScroll = event.contentOffset.y
@@ -355,24 +360,7 @@ const SettingsScreen = (props) => {
     }
     useEffect(()=>{countDerivedValues()},[previewFixed, appStyle])
 
-    const animValueCategory = useSharedValue(0)
-    const animStyleCategory = useAnimatedStyle(() => {
-        const duration = 200;
-        return {
-            //opacity: withTiming(animValueBobberButtonExpand.value == 1? 1 : 0.9, {duration: duration}),
-            transform: [
-                {translateY: withTiming( 
-                    interpolate(
-                        animValueCategory.value, 
-                        [ 0, 1 ],
-                        [ 0, -30],
-                        { extrapolateRight: Extrapolate.CLAMP }
-                    ),
-                    {duration: duration}
-                )}
-            ] 
-        }
-    }) 
+
 
     const logg = (info) =>{
         console.log(info)
@@ -460,7 +448,6 @@ const SettingsScreen = (props) => {
         accentBarXScroll = current + action
 
 
-        if(countAccent != accentParam){
             let width = Math.round(aListWidths[countAccent]-10);
             if(isNaN(width) || width  === undefined){
                 const numberPrimelSymbols = (Language.StructureScreen.params[0]).length;
@@ -471,16 +458,10 @@ const SettingsScreen = (props) => {
 
             cancelAnimation(animValueWidthLine);
             cancelAnimation(animValueMarginLeft);
-
             animValueWidthLine.value = width;
             animValueMarginLeft.value = left;
 
-            accentParam != countAccent? runOnJS(setAccentParam)(countAccent) : null
-            //runOnJS(newCategoryOnAccent)(countAccent)
-            const countCategory = allStructurParams[countAccent].indexSection
-            countCategory != accentCategory? runOnJS(setAccentCategory)(countCategory) : null
-            //animValueCategory.value = allStructurParams[countAccent].indexSection //* itemCategoryHeight
-        }
+            accentCategory.value = allStructurParams[countAccent].indexSection
 
 
         scrollTo(
@@ -493,25 +474,23 @@ const SettingsScreen = (props) => {
 
 
     const selectParametr = (item, index) => {
-        if(index != accentParam){
-            let itemIndex = 0;
-            let sectionIndex = 0;
-            for(let i = 0; i<structure.length; i++){               
-                for(let j = 0; j<structure[i].data.length; j++){
-                    if(structure[i].category === item.category && structure[i].data[j].param === item.param){
-                        itemIndex = j;
-                        sectionIndex = i;
-                        break;
-                    }
+        let itemIndex = 0;
+        let sectionIndex = 0;
+        for(let i = 0; i<structure.length; i++){               
+            for(let j = 0; j<structure[i].data.length; j++){
+                if(structure[i].category === item.category && structure[i].data[j].param === item.param){
+                    itemIndex = j;
+                    sectionIndex = i;
+                    break;
                 }
             }
-            
-            sectListRef.current.scrollToLocation({
-                itemIndex: itemIndex+1,
-                sectionIndex: sectionIndex,
-                animated: false
-            })
         }
+        
+        sectListRef.current.scrollToLocation({
+            itemIndex: itemIndex+1,
+            sectionIndex: sectionIndex,
+            animated: false
+        })
     }
 
     const stacker = (list, setList, newValue) => {
@@ -594,34 +573,22 @@ const SettingsScreen = (props) => {
         
         splashOut()
         //splashStart(previewAppStyle.theme, themesApp.indexOf(previewAppStyle.theme));
-    }   
-    const tingDuration = 200
-    const entering = (targetValues) => {
-        'worklet';
-        const animations = {
-          opacity: withTiming(1, { duration: tingDuration }),
-        };
-        const initialValues = {
-          opacity: 0,
-        };
+    }  
+    
+    //category updater
+    const categoryStyle = useAnimatedStyle(()=>{
+        const duration = 250
         return {
-          initialValues,
-          animations,
-        };
-    };
-    const exiting = (targetValues) => {
-        'worklet';
-        const animations = {
-          opacity: withTiming(0, { duration: tingDuration }),
-        };
-        const initialValues = {
-          opacity: 1,
-        };
+            opacity: withSequence(withTiming(0*accentCategory.value, {duration: 0}), withTiming(1, {duration: duration}))
+        }
+    })
+    const categoryText = useAnimatedProps(()=>{
         return {
-          initialValues,
-          animations,
-        };
-    };
+            text: Language.StructureScreen.categorys[accentCategory.value],
+        }
+    },[Language])
+
+    
 
     return (
     <>  
@@ -661,40 +628,18 @@ const SettingsScreen = (props) => {
                         </Text>
                     </View>
                 </View>
-                <View 
-                    style = {[staticStyles.SLtopBord,{ 
+                <Animated.View
+                    style = {[staticStyles.SLtopBord, { 
                         alignItems: 'flex-start',
+                        justifyContent: 'center',
                     }]}
                 >
-                    <Animated.View
-                        style = {[{
-                            height: itemCategoryHeight,
-                        }]}
-                    >
-                        {allCategorys.map((item, index)=>{  
-                            if(accentCategory == index){
-                                return (
-                                    <Animated.View
-                                        key={`${Math.random()}`}
-                                        style = {{
-                                            height: itemCategoryHeight,
-                                            position: 'absolute',
-
-                                            justifyContent: 'center',
-                                            alignItems: 'flex-start',
-                                        }}
-                                        //entering={entering}
-                                        exiting={exiting}
-                                    >
-                                        <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
-                                            {Language.StructureScreen.categorys[item.indexSection]}
-                                        </Text>
-                                    </Animated.View>
-                                ) 
-                            }  
-                        })}
-                    </Animated.View>
-                </View>
+                    <AnimatedTextInput     
+                        editable = {false}
+                        style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: Thema.texts.neutrals.primary}]}
+                        animatedProps={categoryText}
+                    />
+                </Animated.View>
             </View>
             <View style={[staticStyles.FlatListsArea]}>
                 <Animated.View 
@@ -754,6 +699,8 @@ const SettingsScreen = (props) => {
                                 backgroundColor: 'white',
                                 marginVertical: !previewFixed? appStyle.lists.proximity  : 0, 
                                 marginTop: category == 'style'? 0 : (!previewFixed? appStyle.lists.proximity : 0),
+                                //position: 'absolute',
+                                //zIndex: 999
                             }
                         ]}
                     >
@@ -777,6 +724,7 @@ const SettingsScreen = (props) => {
                             <View
                                 style={{
                                     height: deviceHeight/4,
+                                    //zIndex: 999
                                 }}
                             >
                                 <Text>
@@ -805,7 +753,8 @@ const SettingsScreen = (props) => {
                                 paddingVertical: 5,// + 10 * appStyle.borderRadius.basic/32,
                                 marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
                                 marginVertical: appStyle.lists.proximity,
-                                justifyContent: 'flex-start'
+                                justifyContent: 'flex-start',
+                                //zIndex: -999
                             }
                         ]}
                         onLayout={(event)=>{stacker(listHeights, setListHeights, event.nativeEvent.layout.height+2*appStyle.lists.proximity)}}
@@ -918,6 +867,7 @@ const SettingsScreen = (props) => {
                                 shadowRadius: 4,
                                 elevation: 4,
                             }}
+                            //rippleColor={}
                             onPress={pressFunction}
                         />
                     </Animated.View>
@@ -958,7 +908,7 @@ const staticStyles = StyleSheet.create({
     },
     frontFLText: {
         fontSize: 16,
-        opacity: .9,
+        //opacity: .9,
         fontWeight: 'bold',
         fontVariant: ['small-caps'],
         //color:  'white'//ThemesColorsAppList[0].skyUpUpUp//

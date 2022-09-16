@@ -189,7 +189,7 @@ export default NavigateMenuRedactor = ({
             thumbStyle = {{
                 borderRadius: appStyle.borderRadius.additional,
                 borderWidth: 3,
-                borderColor: Thema.icons.accents[signature? "primary" : "quaternary"]  ,
+                borderColor: Thema.icons.accents[rippleEffect? "primary" : "quaternary"],
             }}
             colors={{
                 track: { 

@@ -163,7 +163,7 @@ const Classical = ({
                                         justifyContent: 'flex-start'
                                     }
                                 ]}
-                                android_ripple = {{color: ColorsApp.navigatorFieldIcon,borderless: true}}
+                                android_ripple = {appStyle.navigationMenu.rippleEffect? {color: ColorsApp.navigatorFieldIcon,borderless: true} : false}
                             >
                                 {isFocused && 
                                     <Animated.View 

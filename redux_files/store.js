@@ -4,6 +4,8 @@ import ThemesColorsAppList from '../styles/ColorsApp';
 
 const types = ["classical","classical_animated","hidden"]
 
+import { defaultAppStyle, defaultAppConfig } from '../app_values/AppDefault';
+
 const appStyle = {
     theme: "emerald",
     borderRadius: {
@@ -57,8 +59,8 @@ const initialState = {
     loadStatusLanguage: false,
 
     tasks: [],
-    appStyle: appStyle,
-    appConfig: appConfig,
+    appStyle: defaultAppStyle,
+    appConfig: defaultAppConfig,
 
     languageApp: 'en',
     splash: false,

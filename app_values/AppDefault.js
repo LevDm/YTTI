@@ -31,7 +31,8 @@ export const defaultAppStyle = {
         type: menuTypes[0],
         height: 50,
         position: {vertical: 0 , horizontal : 'right'},
-        signatureIcons: true
+        signatureIcons: true,
+        rippleEffect: true
     },
     splachLoadShow: true,
     lists: {

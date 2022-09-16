@@ -82,6 +82,14 @@ export default NavigateMenuRedactor = ({
         setSignature(!signature)
     }
 
+    const [rippleEffect, setRippleEffect] = useState(appStyle.navigationMenu.rippleEffect);
+    const rippleEffectChange = () =>{
+        let newAppStyle = getNewAppStyleObject();
+        newAppStyle.navigationMenu.rippleEffect = !rippleEffect;
+        setPreviewAppStyle(newAppStyle);
+        setRippleEffect(!rippleEffect)
+    }
+
     const [sliderValueVert, setSliderValueVert] = useState(appStyle.navigationMenu.position.vertical);
     const setPrewBasicVertPos = (value) => {
         let newAppStyle = getNewAppStyleObject();
@@ -105,10 +113,24 @@ export default NavigateMenuRedactor = ({
         setPreviewAppStyle(newAppStyle);
     };
 
+    const tingDuration = 200
+    const entering = (targetValues) => {
+        'worklet';
+        const animations = {
+          opacity: withTiming(1, { duration: tingDuration }),
+        };
+        const initialValues = {
+          opacity: 0,
+        };
+        return {
+          initialValues,
+          animations,
+        };
+    };
     const exiting = (targetValues) => {
         'worklet';
         const animations = {
-          opacity: withTiming(0, { duration: 300 }),
+          opacity: withTiming(0, { duration: tingDuration }),
         };
         const initialValues = {
           opacity: 1,
@@ -144,11 +166,55 @@ export default NavigateMenuRedactor = ({
         {Language.menuParams}
     </Text>
     <View
+        style ={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            //marginTop: 15,
+            height: 60
+        }}
+    >
+        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+            {Language.rippleEffect} {Language.rippleEffectState[rippleEffect]}
+        </Text>
+        <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+        <BaseSwitch
+            size={24}
+            style = {{
+                right: 20
+            }}
+            trackStyle={{
+                borderRadius: appStyle.borderRadius.additional,
+            }}
+            thumbStyle = {{
+                borderRadius: appStyle.borderRadius.additional,
+                borderWidth: 3,
+                borderColor: Thema.icons.accents[signature? "primary" : "quaternary"]  ,
+            }}
+            colors={{
+                track: { 
+                    false: Thema.icons.accents.quaternary, 
+                    true: Thema.icons.accents.primary  
+                },
+                thumb: { 
+                    false: Thema.icons.neutrals.primary, 
+                    true: Thema.icons.neutrals.primary  
+                }
+            }}
+            primeValue={rippleEffect}
+            onChange={rippleEffectChange}
+        />
+    </View>
+    <View
         style = {[{
 
         }]}
     >   
-        {checkGroup[2] && <Animated.View exiting={exiting}>
+        {checkGroup[2] && 
+        <Animated.View 
+            exiting={exiting} 
+            entering={entering}
+        >
         <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
             {Language.verticalPosition}
         </Text>
@@ -206,7 +272,11 @@ export default NavigateMenuRedactor = ({
             </View>
         </View>
         </Animated.View>}
-        {!checkGroup[2] && <Animated.View exiting={exiting}>
+        {!checkGroup[2] && 
+        <Animated.View 
+            exiting={exiting} 
+            entering={entering}
+        >
             <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
                 {Language.height}
             </Text>

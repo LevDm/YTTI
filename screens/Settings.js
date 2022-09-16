@@ -21,7 +21,8 @@ import Animated, {
     interpolateColor,
     interpolate,
     Extrapolate,
-    runOnUI, 
+    runOnUI,
+    Easing 
 } from 'react-native-reanimated';
 import Constants from "expo-constants";
 
@@ -230,10 +231,10 @@ const SettingsScreen = (props) => {
 
     
     const animStyleIndicatorLine = useAnimatedStyle(() => {
-        const duration = 170;
+        const duration = 450;
         return {
             width: withTiming(animValueWidthLine.value, {duration: duration-20}),
-            left: withTiming(5+animValueMarginLeft.value, {duration: duration}),
+            left: withTiming(5+animValueMarginLeft.value, {duration: duration, easing: Easing.bezier(0.45, 0, 0.55, 1)}),
             transform: [
                 {translateX: animValueTranslateX.value}
             ] 
@@ -466,7 +467,7 @@ const SettingsScreen = (props) => {
                 const widthSymbol = staticStyles.frontFLText.fontSize * 0.75;
                 width = numberPrimelSymbols * widthSymbol + 10;
             }
-            const left = aListWidths.reduce(((countValue, currentValue, index)=>(index < countAccent? (countValue+currentValue) : countValue)), 2);
+            const left = aListWidths.reduce(((countValue, currentValue, index)=>(index < countAccent? (countValue+currentValue) : countValue)), 0);
 
             cancelAnimation(animValueWidthLine);
             cancelAnimation(animValueMarginLeft);

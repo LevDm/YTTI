@@ -25,6 +25,8 @@ import { getHeaderTitle } from '@react-navigation/elements';
 import Svg, {Path} from "react-native-svg";
 import { transform } from "@motify/core/node_modules/framer-motion";
 
+import Classical from "../general_components/tab_bars/Classical"
+
 let deviceHeight = Dimensions.get('window').height
 let deviceWidth = Dimensions.get('window').width
 
@@ -98,7 +100,7 @@ const Tabs = (props) => {
             tabBar={(props) => (   
                 <>
                 {!keyboardVisible && 
-                <TabBar 
+                <Classical
                     {...props} 
                     appStyle={appStyle}
                     appConfig={appConfig}
@@ -107,7 +109,7 @@ const Tabs = (props) => {
                     LanguageAppIndex={LanguageAppIndex}
 
 
-                    type={appStyle.navigationMenu.type}
+                    //type={appStyle.navigationMenu.type}
 
                     ColorsApp = {ThemesColorsAppList[ThemeColorsAppIndex]} 
                     LanguageStore = {LanguagesAppList[LanguageAppIndex]}

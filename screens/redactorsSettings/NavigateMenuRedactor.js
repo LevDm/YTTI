@@ -105,6 +105,20 @@ export default NavigateMenuRedactor = ({
         setPreviewAppStyle(newAppStyle);
     };
 
+    const exiting = (targetValues) => {
+        'worklet';
+        const animations = {
+          opacity: withTiming(0, { duration: 300 }),
+        };
+        const initialValues = {
+          opacity: 1,
+        };
+        return {
+          initialValues,
+          animations,
+        };
+    };
+
     return (<>
     <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
         {Language.type}
@@ -134,7 +148,7 @@ export default NavigateMenuRedactor = ({
 
         }]}
     >   
-        {checkGroup[2] && <>
+        {checkGroup[2] && <Animated.View exiting={exiting}>
         <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
             {Language.verticalPosition}
         </Text>
@@ -191,8 +205,8 @@ export default NavigateMenuRedactor = ({
                 ))}
             </View>
         </View>
-        </>}
-        {!checkGroup[2] && <>
+        </Animated.View>}
+        {!checkGroup[2] && <Animated.View exiting={exiting}>
             <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
                 {Language.height}
             </Text>
@@ -258,7 +272,7 @@ export default NavigateMenuRedactor = ({
                     onChange={signatureChange}
                 />
             </View>
-        </>}
+        </Animated.View>}
     </View>
     </>)
 }

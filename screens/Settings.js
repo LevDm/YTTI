@@ -588,7 +588,36 @@ const SettingsScreen = (props) => {
         }
     },[Language])
 
-    
+    const dynamicStyleListItems = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            borderRadius: withTiming(appStyle.borderRadius.basic, {duration: duration}),
+            marginHorizontal: withTiming((appStyle.lists.fullWidth? 0 : 10), {duration: duration}),
+            marginVertical: withTiming(appStyle.lists.proximity, {duration: duration}),
+        }
+    })
+
+    const dynamicStyleListItemsHeaders = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            paddingHorizontal:  withTiming((5 * appStyle.borderRadius.basic/32), {duration: duration}),
+        }
+    })
+
+    const dynamicStyleBobberButton = useAnimatedStyle(()=>{
+        const duration = 300
+        const position =(buttonSize)=>({
+            center: (deviceWidth*0.5-(buttonSize/2)),
+            left: (deviceWidth-5-buttonSize),
+            right: (5)
+        })
+        return {
+            height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
+            width:  withTiming(appStyle.functionButton.size, {duration: duration}),
+            bottom:  withTiming((appStyle.navigationMenu.height + 5), {duration: duration}),
+            right: withTiming( (position(appStyle.functionButton.size)[appStyle.functionButton.position]), {duration: duration}),
+        }
+    })
 
     return (
     <>  
@@ -748,29 +777,33 @@ const SettingsScreen = (props) => {
                         style={[
                             staticStyles.SLArea, 
                             appStyle.lists.shadow? staticStyles.shadow : {},
+                            dynamicStyleListItems,
                             {
-                                borderRadius: appStyle.borderRadius.basic,
-                                paddingVertical: 5,// + 10 * appStyle.borderRadius.basic/32,
-                                marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
-                                marginVertical: appStyle.lists.proximity,
                                 justifyContent: 'flex-start',
-                                //zIndex: -999
+                                paddingVertical: 5,// + 10 * appStyle.borderRadius.basic/32,
+
+                                //borderRadius: appStyle.borderRadius.basic,
+                                //marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
+                                //marginVertical: appStyle.lists.proximity,
                             }
                         ]}
                         onLayout={(event)=>{stacker(listHeights, setListHeights, event.nativeEvent.layout.height+2*appStyle.lists.proximity)}}
                     >   
-                        <View
-                            style={{ 
+                        <Animated.View
+                            style={[ 
+                                dynamicStyleListItemsHeaders, 
+                                { 
                                 flexDirection: 'row', 
                                 width: '100%',
                                 marginBottom: 10, 
                                 alignItems: 'center',
-                                paddingHorizontal: 5 * appStyle.borderRadius.basic/32 
-                            }}
+
+                                //paddingHorizontal: 5 * appStyle.borderRadius.basic/32 
+                            }]}
                         >
                             <Text style={staticStyles.SLParamHeaderText}>{redactorName}</Text>
                             <Text style={[staticStyles.SLParamHeaderText, {backgroundColor: '#aaaaaa1f', borderRadius: 15, width: 24, height: 24, textAlign: 'center', marginLeft: 10, fontSize: 18}]}>?</Text>
-                        </View>
+                        </Animated.View>
                         {RedactorComponent != null && 
                         <RedactorComponent
                             appStyle={appStyle}
@@ -813,14 +846,15 @@ const SettingsScreen = (props) => {
 
         {/*BOBBER BUTTON*/}
         <Animated.View 
-            style = {[animStyleBobberButton, {
+            style = {[animStyleBobberButton, dynamicStyleBobberButton, {
                 position: 'absolute',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
-                height: 5+2*appStyle.functionButton.size,
-                width: appStyle.functionButton.size,
-                bottom: appStyle.navigationMenu.height + 5,//'8%', // if navigatemenu = 'hidden'->2, 'classical_animated'->8, 'classical'->8, 
-                right: positionBobberButton(appStyle.functionButton.size)[appStyle.functionButton.position]
+
+                //height: 5+2*appStyle.functionButton.size,
+                //width: appStyle.functionButton.size,
+                //bottom: appStyle.navigationMenu.height + 5,//'8%', // if navigatemenu = 'hidden'->2, 'classical_animated'->8, 'classical'->8, 
+                //right: positionBobberButton(appStyle.functionButton.size)[appStyle.functionButton.position]
             }]}
         >   
             {["apply", "jumpUp"].map((item, index)=>{

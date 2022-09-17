@@ -26,7 +26,8 @@ import Animated, {
     interpolate,
     Extrapolate,
     runOnUI,
-    Easing 
+    Easing, 
+    useAnimatedProps
 } from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -76,11 +77,23 @@ export const BasePressable = ({
         rippleRadius = style.height/2
     }
 
+
+    const dynamicStyle = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            height: withTiming(style.height, {duration: duration}),
+            width: withTiming(style.width, {duration: duration}),
+            borderRadius: withTiming(style.borderRadius, {duration: duration}),
+            backgroundColor: withTiming(style.backgroundColor, {duration: duration}),
+        }
+    })
+
     return (
-        <View 
+        <Animated.View 
             style = {[
                 staticStyles.area, 
-                style, 
+                style,
+                dynamicStyle, 
                 {
                     //borderRadius: appStyle.borderRadius.additional
                 }
@@ -129,10 +142,11 @@ export const BasePressable = ({
                     }
                 </View>
             </Pressable>
-        </View>               
+        </Animated.View>               
     )
 }
 
+const AnimatedSlider = Animated.createAnimatedComponent(Slider)
 export const BaseSlider = ({
     signaturesText = {left: 'left bord',right: 'right bord'},
     signaturesStyle = {},
@@ -169,10 +183,11 @@ export const BaseSlider = ({
             >
                 {signaturesText.left}
             </Text>
-            <Slider                
+            <AnimatedSlider                
                 style = {{
                     flex: 1,
                 }}
+                //animatedProps={dynamicColors}
                 maximumTrackTintColor = {maximumTrackTintColor}
                 minimumTrackTintColor = {minimumTrackTintColor}
                 thumbTintColor = {thumbTintColor}

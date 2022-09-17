@@ -16,16 +16,11 @@ import {
 } from 'react-native-reanimated';
 
 
-import LanguagesAppList, {languagesApp} from "../language/language";
-import ThemesColorsAppList, {themesApp} from "../styles/ColorsApp";
-import dataRedactor from "../async_data_manager/data_redactor";
-import ColorSplash from "../componets/StyleColorSplash";
+import LanguagesAppList, {languagesApp} from "../../../../../../language/language";
+import ThemesColorsAppList, {themesApp} from "../../../../../../styles/ColorsApp";
 
-import { 
-    BasePressable,
-    BaseCheckBox,
-    BaseSwitch 
-} from "../general_components/base_components/BaseElements";
+
+import { BasePressable } from "../../../../../../general_components/base_components/BaseElements";
 
 
 import Constants from "expo-constants";

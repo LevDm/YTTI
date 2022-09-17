@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Keyboard } from "react-native";
 // components
-import ListItems from "../componets/Listitems";
-import ModalInput from "../componets/ModalInput";
-import TrojanButton from "../componets/TrojanButton";
+import ListItems from "../../../componets/Listitems";
+import ModalInput from "../../../componets/ModalInput";
+import TrojanButton from "../../../componets/TrojanButton";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {connect} from 'react-redux';
-import mapStateToProps from "../redux_files/stateToProps";
-import mapDispatchToProps from "../redux_files/dispatchToProps";
-import store from "../redux_files/store";
+import mapStateToProps from "../../../redux_files/stateToProps";
+import mapDispatchToProps from "../../../redux_files/dispatchToProps";
+import store from "../../../redux_files/store";
 
 //import LanguageStor from "../language/language";
 
-import ThemesColorsAppList, {themesApp} from "../styles/ColorsApp";
-import LanguagesAppList, {languagesApp} from "../language/language";
+import ThemesColorsAppList, {themesApp} from "../../../styles/ColorsApp";
+import LanguagesAppList, {languagesApp} from "../../../language/language";
 
 
-const HomeScreen = (props) => {
+const Home = (props) => {
  
     //const [LanguageStore, setLanguageStore] = useState(LanguageStor[0])
     //const [tasks, setTasks] = useState(baseTasksList);
@@ -207,4 +207,4 @@ const HomeScreen = (props) => {
         
     );
 }
-export default  connect(mapStateToProps('HOME_SCREEN'),mapDispatchToProps('HOME_SCREEN'))(HomeScreen);
+export default  connect(mapStateToProps('HOME_SCREEN'),mapDispatchToProps('HOME_SCREEN'))(Home);

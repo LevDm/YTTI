@@ -2,17 +2,15 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import languagesAppList, {languagesApp}  from "../../app_values/Languages";
-import themesColorsAppList, {themesApp} from "../../app_values/Themes";
-
-import dataRedactor from "../../async_data_manager/data_redactor";
+import languagesAppList, {languagesApp}  from "../../../../../app_values//Languages";
+import themesColorsAppList, {themesApp} from "../../../../../app_values//Themes";
 
 import { 
     BasePressable,
     BaseCheckBox,
     BaseSlider,
     BaseSwitch 
-} from "../../general_components/base_components/BaseElements";
+} from "../../../../../general_components/base_components/BaseElements";
 
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
@@ -22,7 +20,7 @@ const deviceWidth = Dimensions.get('window').width
 
 //const sizeButton = {min: 40, max: 70, step: 5}
 //const valuePosition = ['left','center','right']
-import { sizeButton, valuePosition } from "../../app_values/AppDefault";
+import { sizeButton, valuePosition } from "../../../../../app_values//AppDefault";
 
 export default ListsRedactor = ({
     appStyle,
@@ -94,7 +92,7 @@ export default ListsRedactor = ({
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
-            
+            areaStyle = {{marginLeft: 60}}
             minimumValue={sizeButton.min}
             maximumValue={sizeButton.max}
             step = {sizeButton.step}

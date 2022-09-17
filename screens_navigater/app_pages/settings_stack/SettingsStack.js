@@ -12,6 +12,8 @@ import mapDispatchToProps from "../../../redux_files/dispatchToProps";
 import themesColorsAppList, { themesApp } from '../../../app_values/Themes';
 import languagesAppList, { languagesApp } from "../../../app_values/Languages";
 
+import Settings from './settings/Settings';
+
 const Scr = ({ navigation, route }) => {
     const go = ()=> {
       if(route.name == "Settings"){navigation.navigate("Colors")}
@@ -118,9 +120,9 @@ function SettingsStack(props) {
                 },
             }}
         >
-            <Stack.Screen name="Settings" component={Scr} />
+            <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen 
-                name="Colors" 
+                name="Pallete" 
                 component={Scr} 
                 options={{
                     cardStyle: {

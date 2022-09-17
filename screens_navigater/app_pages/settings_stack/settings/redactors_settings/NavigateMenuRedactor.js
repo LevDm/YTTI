@@ -10,22 +10,21 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, {languagesApp}  from "../../app_values/Languages";
-import themesColorsAppList, {themesApp} from "../../app_values/Themes";
-import dataRedactor from "../../async_data_manager/data_redactor";
+import languagesAppList, {languagesApp}  from "../../../../../app_values/Languages";
+import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 
 import { 
     BasePressable,
     BaseCheckBox,
     BaseSlider,
     BaseSwitch 
-} from "../../general_components/base_components/BaseElements";
+} from "../../../../../general_components/base_components/BaseElements";
 
 //const menuTypes = ['classical','classical_animated','hidden', 'not'];
 //const positionNavigateMenu = {min: 20, max: 80, step: 5}
 //const valuePosition = ['left','center','right']
 //const heightNavigateMenu = {min: 35, max: 65, step: 5}
-import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu } from "../../app_values/AppDefault";
+import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu } from "../../../../../app_values/AppDefault";
 
 export default NavigateMenuRedactor = ({
     appStyle,
@@ -221,10 +220,7 @@ export default NavigateMenuRedactor = ({
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
-
-            style = {{
-                flex: 1
-            }}
+            areaStyle = {{marginLeft: 60}}
             minimumValue={positionNavigateMenu.min}
             maximumValue={positionNavigateMenu.max}
             step = {positionNavigateMenu.step}
@@ -283,10 +279,7 @@ export default NavigateMenuRedactor = ({
             <BaseSlider
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
                 signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}        
-                
-                style = {{
-                    flex: 1
-                }}
+                areaStyle = {{marginLeft: 60}}
                 minimumValue={heightNavigateMenu.min}
                 maximumValue={heightNavigateMenu.max}
                 step = {heightNavigateMenu.step}

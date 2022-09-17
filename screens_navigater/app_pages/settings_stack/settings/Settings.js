@@ -31,38 +31,39 @@ import Animated, {
 import Constants from "expo-constants";
 
 
-import themesColorsAppList, {themesApp} from "../app_values/Themes";
-import languagesAppList, {languagesApp} from "../app_values/Languages";
+import themesColorsAppList, {themesApp} from "../../../../app_values/Themes";
+import languagesAppList, {languagesApp} from "../../../../app_values/Languages";
 
-import store from "../redux_files/store";
+import store from "../../../../redux_files/store";
 import {connect} from 'react-redux';
-import mapStateToProps from "../redux_files/stateToProps";
-import mapDispatchToProps from "../redux_files/dispatchToProps";
+import mapStateToProps from "../../../../redux_files/stateToProps";
+import mapDispatchToProps from "../../../../redux_files/dispatchToProps";
 
-import dataRedactor from "../async_data_manager/data_redactor";
+import dataRedactor from "../../../../async_data_manager/data_redactor";
 
 import { 
     BasePressable,
     BaseCheckBox,
     BaseSwitch 
-} from "../general_components/base_components/BaseElements";
+} from "../../../../general_components/base_components/BaseElements";
 
-import ThemeRedacor from "./redactorsSettings/ThemeRedactor";
-import BorderRadiusRedactor from "./redactorsSettings/BorderRadiusRedactor";
-import NavigateMenuRedactor from "./redactorsSettings/NavigateMenuRedactor";
-import LoadSplashRedactor  from "./redactorsSettings/LoadSplashRedactor";
-import LanguageRedactor from "./redactorsSettings/LanguageRedactor";
-import ListsRedactor from "./redactorsSettings/ListsRedactor";
-import FunctionButtonRedactor from "./redactorsSettings/FunctionButtonRedactor";
+import ThemeRedacor from "./redactors_settings/ThemeRedactor";
+import BorderRadiusRedactor from "./redactors_settings/BorderRadiusRedactor";
+import NavigateMenuRedactor from "./redactors_settings/NavigateMenuRedactor";
+import LoadSplashRedactor  from "./redactors_settings/LoadSplashRedactor";
+import LanguageRedactor from "./redactors_settings/LanguageRedactor";
+import ListsRedactor from "./redactors_settings/ListsRedactor";
+import FunctionButtonRedactor from "./redactors_settings/FunctionButtonRedactor";
 
-import TextAnimate from "../componets/TextAnimate";
 
-import Ohter from "./redactorsSettings/ohterts";
-import StyleChangePreview from "./StyleChangePreview";
-import BobberButton from "./SettingsBobberButton";
+import Ohter from "./redactors_settings/ohterts";
+import StyleChangePreview from "./preview/StyleChangePreview";
+
 import { LinearGradient } from 'expo-linear-gradient';
 
-import ColorSplash from "../componets/StyleColorSplash";
+import ColorSplash from "../../../../componets/StyleColorSplash";
+
+import Classical from "../../../../general_components/tab_bars/Classical";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -156,7 +157,8 @@ const positionBobberButton =(buttonSize)=>({
     right: (5)
 })
 
-const SettingsScreen = (props) => {
+const Settings = (props) => {
+    //console.log(props)
     store.subscribe(() => {
         let jstore = store.getState();
 
@@ -918,7 +920,7 @@ const SettingsScreen = (props) => {
         />
     </>);  
 };
-export default connect(mapStateToProps('SETTINGS_SCREEN'), mapDispatchToProps('SETTINGS_SCREEN'))(SettingsScreen);
+export default connect(mapStateToProps('SETTINGS_SCREEN'), mapDispatchToProps('SETTINGS_SCREEN'))(Settings);
 
 const staticStyles = StyleSheet.create({
     FlatListsArea: {

@@ -24,6 +24,8 @@ import StatusBarColor from './componets/StatusBarColor';
 
 import 'react-native-gesture-handler';
 
+import AppStack from './screens_navigater/AppStack'
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -93,7 +95,7 @@ export default function App() {
     //if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !ready){
       console.log('>APP_READY_AND_RUNNING')
       
-      if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
+      //if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
       //setReady(true);
       setAppIsReady(true)
     }
@@ -131,7 +133,7 @@ export default function App() {
     <Provider store = {store}>
     <View style = {staticStyles.AppContainer} onLayout={onLayoutRootView}>
       <NavigationContainer>
-        <Tabs/>
+        <AppStack />
       </NavigationContainer>
       <StatusBar 
         style={styleStatusBar? styleStatusBar : 'auto'} 

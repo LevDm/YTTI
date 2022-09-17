@@ -16,7 +16,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const AnalyticScreen = () => {
+const Analytic = () => {
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -96,7 +96,7 @@ const AnalyticScreen = () => {
     
 }
 
-export default AnalyticScreen;
+export default Analytic;
 
 async function schedulePushNotification() {
   console.log('async push')

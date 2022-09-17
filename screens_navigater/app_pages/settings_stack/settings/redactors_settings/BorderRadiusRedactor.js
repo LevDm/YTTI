@@ -12,19 +12,18 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, { languagesApp } from "../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../app_values/Themes";
-import dataRedactor from "../../async_data_manager/data_redactor";
+import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
+import themesColorsAppList, { themesApp } from "../../../../../app_values/Themes";
 
 import { 
     BasePressable,
     BaseCheckBox,
     BaseSwitch,
     BaseSlider 
-} from "../../general_components/base_components/BaseElements";
+} from "../../../../../general_components/base_components/BaseElements";
 
 //const borderRadiusValues = {min: 0, max: 32, step: 1}
-import { borderRadiusValues } from "../../app_values/AppDefault";
+import { borderRadiusValues } from "../../../../../app_values/AppDefault";
 
 export default BorderRadiusRedactor = ({
     appStyle,
@@ -123,7 +122,7 @@ export default BorderRadiusRedactor = ({
                 <BaseSlider
                     signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
                     signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
-                    
+                    areaStyle = {{marginLeft: 60}}
                     minimumValue={borderRadiusValues.min}
                     maximumValue={borderRadiusValues.max}
                     step = {borderRadiusValues.step}

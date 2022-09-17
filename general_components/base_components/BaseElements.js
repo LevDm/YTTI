@@ -165,14 +165,15 @@ export const BaseSlider = ({
 
     return (
         <View      
-            style = {[areaStyle,{
+            style = {[{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                width: "100%",
+                //width: "100%",
+                flex: 1,
                 height: 40,
                 paddingBottom: 15
                 //backgroundColor: 'red'
-            }]}
+            }, areaStyle]}
         >
             <Text
                 style = {[signaturesStyle, {

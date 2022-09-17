@@ -4,9 +4,9 @@ import { Keyboard, View, Pressable, TouchableOpacity, Text, Animated, ActivityIn
 import { StyleSheet } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import HomeScreen from "../screens/Home";
-import SettingsScreen from "../screens/Settings";
-import AnalyticScreen from "../screens/Analytic";
+import Home from "../screens_navigater/app_pages/home/Home";
+import Settings from "../screens_navigater/app_pages/settings_stack/settings/Settings";
+import Analytic from "../screens_navigater/app_pages/analytic/Analytic";
 
 import store from "../redux_files/store";
 import {connect} from 'react-redux';
@@ -63,7 +63,6 @@ const Tabs = (props) => {
     });
 
     const [keyboardVisible, setKeyboardVisible] = useState(false);
-
     useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {setKeyboardVisible(true);});
         const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {setKeyboardVisible(false);});
@@ -77,15 +76,15 @@ const Tabs = (props) => {
     const screens = [
         {
             number: 1,
-            component: HomeScreen,
+            component: Home,
         },
         {
             number: 2,
-            component: AnalyticScreen,
+            component: Analytic,
         },
         {
             number: 3,
-            component: SettingsScreen,
+            component: Settings,
         },
         {
             number: 4,

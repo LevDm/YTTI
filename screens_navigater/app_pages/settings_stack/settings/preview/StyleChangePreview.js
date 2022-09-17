@@ -3,17 +3,17 @@ import React, {useState, useRef, useEffect} from "react";
 import {StyleSheet, Animated, Text,Pressable, ScrollView,FlatList, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
-import LanguagesAppList, {languagesApp} from "../language/language";
-import ThemesColorsAppList, {themesApp} from "../styles/ColorsApp";
-import dataRedactor from "../async_data_manager/data_redactor";
-import ColorSplash from "../componets/StyleColorSplash";
+import LanguagesAppList, {languagesApp} from "../../../../../language/language";
+import ThemesColorsAppList, {themesApp} from "../../../../../styles/ColorsApp";
+import dataRedactor from "../../../../../async_data_manager/data_redactor";
+import ColorSplash from "../../../../../componets/StyleColorSplash";
 
 //import BasePressable from "../componets/base/BasePressable";
 import { 
     BasePressable,
     BaseCheckBox,
     BaseSwitch 
-} from "../general_components/base_components/BaseElements";
+} from "../../../../../general_components/base_components/BaseElements";
 
 import Constants from "expo-constants";
 import { transform } from "@motify/core/node_modules/framer-motion";
@@ -22,7 +22,7 @@ import { transform } from "@motify/core/node_modules/framer-motion";
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
-import Preview, {Phone} from "./Preview";
+import Preview, {Phone} from "./make/Preview";
 
 export default StyleChangePreview = ({
     appStyle,

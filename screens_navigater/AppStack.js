@@ -22,13 +22,15 @@ const Scr = ({ navigation, route }) => {
       if(route.name == "Splash"){navigation.navigate("App")}
     }
     const tabBar = route.name == "Home" || route.name == "Settings" || route.name == "Ohter"
+    setTimeout(()=>{navigation.navigate('App')}, 50)
+    
     return (
         <View
             style ={{
                 flex: 1,
                 alignItems: 'center', 
                 justifyContent: 'center',
-                backgroundColor: '#000000'
+                backgroundColor: 'black'
             }}
         >
             <Text>Screen {route.name}</Text>

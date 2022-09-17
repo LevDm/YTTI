@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, Dimensions } from 'react-native';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
@@ -10,8 +10,14 @@ import mapDispatchToProps from "../../redux_files/dispatchToProps";
 
 import themesColorsAppList, {themesApp} from "../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../app_values/Languages";
-
+import {deviceWidth } from '../../app_values/AppDefault';
+const deviceHeight = Dimensions.get('screen').height
 import SettingsStack from './settings_stack/SettingsStack';
+
+import Home from './home/Home';
+import Analytic from './analytic/Analytic';
+
+import Classical from '../../general_components/tab_bars/Classical';
 
 const Scr = ({ navigation, route }) => {
     const go = ()=> {
@@ -113,21 +119,54 @@ function AppDrawer(props) {
 
     const swipeEnabl = !(lvl3.name == "Colors")
 
+    //console.log(lvl1)
+
     return (
         <Drawer.Navigator 
             //useLegacyImplementation
-            
             animationTypeForReplace={"pop"}
             screenOptions = {{
                 //gestureEnabled: false,
                 swipeEnabled: swipeEnabl,
-                headerShown: false,
-                swipeEdgeWidth: 300
+                //headerShown: false,
+                swipeEdgeWidth: lvl3.name =='SettingsStack'? deviceWidth/4 : deviceWidth/2,
+                drawerStyle: {
+                  backgroundColor: 'white',
+                  
+                },
+                header: ({ navigation, route, options }) => {
+                  //const title = getHeaderTitle(options, route.name);
+                
+                  return (
+                    <View
+                      style = {{
+                        position: 'absolute',
+                        top: deviceHeight -appStyle.navigationMenu.height,
+                        backgroundColor: 'red',
+                        //height: 10
+                      }}
+                    >
+                    {/*NAVIGATION MENU*/}
+                    <Classical
+                        //{...props}
+                        state = {lvl1.state}
+                        route = {props.route}  
+                        navigation = {props.navigation}
+                        
+                        appStyle={appStyle}
+                        appConfig={appConfig}
+
+                        ThemeColorsAppIndex={ThemeColorsAppIndex}
+                        LanguageAppIndex={LanguageAppIndex}
+                    />  
+                    </View>
+                  );
+                }
             }}
         >
-            <Drawer.Screen name="Home" component={Scr} />
+            <Drawer.Screen name="Home" component={Home} />
             <Drawer.Screen name="SettingsStack" component={SettingsStack} />
-            <Drawer.Screen name="Ohter" component={Scr} />
+            <Drawer.Screen name="Analytic" component={Analytic} />
         </Drawer.Navigator>
     );
 }

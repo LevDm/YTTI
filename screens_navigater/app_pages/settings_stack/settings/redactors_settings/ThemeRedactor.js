@@ -2,19 +2,8 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import LanguagesAppList, {languagesApp} from "../../language/language";
-import ThemesColorsAppList from "../../styles/ColorsApp";
-import themesColorsAppList, {themesApp} from "../../app_values/Themes";
-import dataRedactor from "../../async_data_manager/data_redactor";
-import ColorSplash from "../../componets/StyleColorSplash";
 
-//import BasePressable from "../../componets/base/BasePressable";
-
-import { 
-    BasePressable,
-    BaseCheckBox,
-    BaseSwitch 
-} from "../../general_components/base_components/BaseElements";
+import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";

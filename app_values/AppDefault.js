@@ -2,9 +2,9 @@ import { Dimensions } from 'react-native';
 import Constants from "expo-constants";
 
 //CONSTANS
-const deviceHeight = Dimensions.get('window').height
-const deviceWidth = Dimensions.get('window').width
-const statusBarHeight = Constants.statusBarHeight+1
+export const deviceHeight = Dimensions.get('window').height
+export const deviceWidth = Dimensions.get('window').width
+export const statusBarHeight = Constants.statusBarHeight+1
 //fillets
 export const borderRadiusValues = {min: 0, max: 32, step: 1}
 //navigation menu

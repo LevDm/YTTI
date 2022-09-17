@@ -18,13 +18,16 @@ import store from './redux_files/store';
 
 import dataLoader from './async_data_manager/data_loader';
 
-import HelloModal from './componets/HelloAppModal';
+
 import ThemesColorsAppList, {themesApp} from './styles/ColorsApp';
-import StatusBarColor from './componets/StatusBarColor';
+
+import Splash from './screens_navigater/app_loadSplash/Splash';
 
 import 'react-native-gesture-handler';
 
 import AppStack from './screens_navigater/AppStack'
+
+import AppDrawer from "./screens_navigater/AppDrawer"
 
 SplashScreen.preventAutoHideAsync();
 
@@ -95,7 +98,7 @@ export default function App() {
     //if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !ready){
       console.log('>APP_READY_AND_RUNNING')
       
-      //if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
+      if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
       //setReady(true);
       setAppIsReady(true)
     }
@@ -133,15 +136,14 @@ export default function App() {
     <Provider store = {store}>
     <View style = {staticStyles.AppContainer} onLayout={onLayoutRootView}>
       <NavigationContainer>
-        <AppStack />
+        <AppDrawer/>
       </NavigationContainer>
       <StatusBar 
         style={styleStatusBar? styleStatusBar : 'auto'} 
         hidden = {false}
         animated={true}
       />
-    
-    {helloModalVisible && <HelloModal visible={helloModalVisible} setVisible={setHelloModalVisible} appTheme = {appStyle.theme}/>}
+      {helloModalVisible && <Splash setSplashOut={setHelloModalVisible}/>}
     </View>  
     </Provider>
   );  

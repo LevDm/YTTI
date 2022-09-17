@@ -49,19 +49,51 @@ const ShadowRing = ({number, size}) => {
 }
 
 
-import ThemesColorsAppList, {themesApp} from "../styles/ColorsApp";
+
+import themesColorsAppList, {themesApp} from "../../app_values/Themes";
+import languagesAppList, {languagesApp} from "../../app_values/Languages";
 
 import { connect } from "react-redux";
-import mapDispatchToProps from "../redux_files/dispatchToProps";
-import mapStateToProps from "../redux_files/stateToProps";
+import store from "../../redux_files/store"
+import mapDispatchToProps from "../../redux_files/dispatchToProps";
+import mapStateToProps from "../../redux_files/stateToProps";
 
 
-const HelloModal = (props) => {
+const Splash = (props) => {
     const size = 180;
     const duration = 1000;
-    
+
+    //const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
+    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
+
+    const [appStyle, setAppStyle] = useState(props.appStyle);
+    //const [appConfig, setAppConfig] = useState(props.appConfig);
+
+    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    //const Language = languagesAppList[LanguageAppIndex]
+
+    store.subscribe(() => {
+        let jstore = store.getState();
+
+        //if(LanguageAppIndex != languagesApp.indexOf(jstore.appConfig.languageApp)){
+        //    setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
+        //}
+
+        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
+            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
+        }
+
+        if (appStyle != jstore.appStyle) {
+            setAppStyle(jstore.appStyle);
+        }
+
+        //if (appConfig != jstore.appConfig) {
+        //    setAppConfig(jstore.appConfig);
+        //}
+    })
+
     //
-    const [colorsApp, setColorsApp] = useState(ThemesColorsAppList[themesApp.indexOf(props.appTheme)]);
+    const [colorsApp, setColorsApp] = useState();
     
     const [statusAnimated, setStatusAnimated] = useState(true);
     
@@ -87,11 +119,12 @@ const HelloModal = (props) => {
                 useNativeDriver: false
             }).start(()=>{
                 setTimeout(()=>{
-                    //setRingsVisible(false);
-                    props.r_setSplash(false);
-                    props.setVisible(false);
-                    //setStatusAnimated(true);
-                    //console.log('end animation')
+                    
+                    //props.r_setSplash(false);
+                    //props.setVisible(false);
+                    props.setSplashOut(false)
+                    //props.navigation.navigate('App')
+
                 },300)
             });
         }
@@ -111,38 +144,13 @@ const HelloModal = (props) => {
         
     },[])
 
-    /*
-    if(props.visible && statusAnimated){
-        setRingsVisible(true);
-        console.log('HELLO')
-        setStatusAnimated(false);
-        setTimeout(()=>{
-            setStartIconAnimate(true);
-        },400)
-
-        setTimeout(()=>{
-            //setRingsVisible(false);
-            AnimatedCircle(index);
-            setIndex(index === 0? 1 : 0)
-        },1000) 
-    }
-    
-    const animatedDownBg = animatedValue.interpolate({
-        inputRange: inputRange,
-        outputRange: ['black', 'black', 'black', colorsApp.sky, colorsApp.sky]
-    });
-    const animatedUpBg = animatedValue.interpolate({
-        inputRange: inputRange,
-        outputRange: [colorsApp.sky, colorsApp.sky, colorsApp.sky, 'black', 'black']
-    });
-    */
     return (
         
             <Animated.View
                 style = {[StyleSheet.absoluteFill,{
                     backgroundColor: animatedValue.interpolate({
                         inputRange: inputRange,
-                        outputRange: ['black', 'black', 'black', colorsApp.sky, colorsApp.sky]
+                        outputRange: ['black', 'black', 'black', Thema.basics.accents.primary, Thema.basics.accents.primary]
                     }), 
                     justifyContent: 'center',
                     alignItems: 'center'
@@ -207,7 +215,7 @@ const HelloModal = (props) => {
                                 borderRadius: 90,
                                 backgroundColor: animatedValue.interpolate({
                                     inputRange: inputRange,
-                                    outputRange: [colorsApp.sky, colorsApp.sky, colorsApp.sky, 'black', 'black']
+                                    outputRange: [Thema.basics.accents.primary, Thema.basics.accents.primary, Thema.basics.accents.primary, 'black', 'black']
                                 }),
                                 opacity: animatedValue.interpolate({
                                     inputRange: [0, .25, .5, .501 ,1],
@@ -240,4 +248,4 @@ const HelloModal = (props) => {
     )
 }
 
-export default connect(mapStateToProps('SPLASH'), mapDispatchToProps('SPLASH'))(HelloModal);
+export default connect(mapStateToProps('SPLASH'), mapDispatchToProps('SPLASH'))(Splash);

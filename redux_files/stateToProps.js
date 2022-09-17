@@ -55,6 +55,14 @@ function mapStateToProps(component) {
                 };
             }
         }
+        case "SPLASH": {
+            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            return function(state) {
+                return {
+                    appStyle: state.appStyle,
+                };
+            };
+        };
         default: return undefined;
     }
 }

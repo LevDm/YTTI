@@ -11,65 +11,9 @@ import mapDispatchToProps from "../redux_files/dispatchToProps";
 import themesColorsAppList, {themesApp} from "../app_values/Themes";
 import languagesAppList, {languagesApp} from "../app_values/Languages";
 
-import AppDrawer from './app_pages/AppDrawer';
+import AppDrawer from './AppDrawer';
 
-const Scr = ({ navigation, route }) => {
-    const go = ()=> {
-      if(route.name == "Settings"){navigation.navigate("Colors")}
-      //if(route.name == "SettingsDr"){navigation.navigate("ColorsSt")}
-      if(route.name == "Colors"){navigation.navigate("Settings")}
-
-      if(route.name == "Splash"){navigation.navigate("App")}
-    }
-    const tabBar = route.name == "Home" || route.name == "Settings" || route.name == "Ohter"
-    setTimeout(()=>{navigation.navigate('App')}, 50)
-    
-    return (
-        <View
-            style ={{
-                flex: 1,
-                alignItems: 'center', 
-                justifyContent: 'center',
-                backgroundColor: 'black'
-            }}
-        >
-            <Text>Screen {route.name}</Text>
-            <Button
-              title={"Go"}
-              onPress={go}
-            >
-            </Button>
-            {tabBar && 
-            <View
-              style = {{
-                position: 'absolute',
-                backgroundColor: 'red',
-                height: 60,
-                width: 180,
-                flexDirection: 'row',
-                bottom: 10
-              }}
-            >
-              <Button
-                title={"Home"}
-                color={route.name == "Home"?'green' : 'red'}
-                onPress={()=>{navigation.navigate("Home")}}
-              />
-              <Button
-                title={"Settings"}
-                color={route.name == "Settings"?'green' : 'red'}
-                onPress={()=>{navigation.navigate("SettingsStack")}}
-              />
-              <Button
-                title={"Ohter"}
-                color={route.name == "Ohter"?'green' : 'red'}
-                onPress={()=>{navigation.navigate("Ohter")}}
-              />
-            </View>
-            }
-        </View>
-    )
-}
+import Splash from './app_loadSplash/Splash';
 
 const Stack = createStackNavigator();
 
@@ -105,8 +49,8 @@ function AppStack(props) {
 
     return (
         <Stack.Navigator
-            initialRouteName = {"Splash"}
-
+            initialRouteName = {props.initial}
+            detachInactiveScreens = {false}
             screenOptions = {{
                 headerShown: false,
                 presentation: 'transparentModal',
@@ -119,9 +63,9 @@ function AppStack(props) {
             }}
         > 
             <Stack.Screen name="App" component={AppDrawer} />
-            <Stack.Screen name="Splash" component={Scr} />
+            <Stack.Screen name="Splash" component={Splash} />
         </Stack.Navigator>
     );
 }
 
-export default connect(mapStateToProps("TABS_NAVIGATER"), mapDispatchToProps("TABS_NAVIGATER"))(AppStack);
+export default connect(mapStateToProps("NAVIGATER"), mapDispatchToProps("NAVIGATER"))(AppStack);

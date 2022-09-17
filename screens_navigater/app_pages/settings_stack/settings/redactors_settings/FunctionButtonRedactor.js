@@ -92,7 +92,7 @@ export default ListsRedactor = ({
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
-            areaStyle = {{marginLeft: 60}}
+            areaStyle = {{marginHorizontal: 20}}
             minimumValue={sizeButton.min}
             maximumValue={sizeButton.max}
             step = {sizeButton.step}

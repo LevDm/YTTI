@@ -122,7 +122,7 @@ export default BorderRadiusRedactor = ({
                 <BaseSlider
                     signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
                     signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
-                    areaStyle = {{marginLeft: 60}}
+                    areaStyle = {{marginHorizontal: 20}}
                     minimumValue={borderRadiusValues.min}
                     maximumValue={borderRadiusValues.max}
                     step = {borderRadiusValues.step}

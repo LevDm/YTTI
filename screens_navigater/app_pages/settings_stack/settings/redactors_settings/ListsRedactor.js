@@ -75,7 +75,7 @@ export default ListsRedactor = ({
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}        
-            areaStyle = {{marginLeft: 60}}
+            areaStyle = {{marginHorizontal: 20}}
             minimumValue={listsTextSize.min}
             maximumValue={listsTextSize.max}
             step = {listsTextSize.step}
@@ -95,7 +95,7 @@ export default ListsRedactor = ({
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]} 
-            areaStyle = {{marginLeft: 60}}
+            areaStyle = {{marginHorizontal: 20}}
             minimumValue={listsProximity.min}
             maximumValue={listsProximity.max}
             step = {listsProximity.step}

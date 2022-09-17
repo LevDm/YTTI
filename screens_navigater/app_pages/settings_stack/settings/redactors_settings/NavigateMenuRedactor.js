@@ -220,7 +220,7 @@ export default NavigateMenuRedactor = ({
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
-            areaStyle = {{marginLeft: 60}}
+            areaStyle = {{marginHorizontal: 20}}
             minimumValue={positionNavigateMenu.min}
             maximumValue={positionNavigateMenu.max}
             step = {positionNavigateMenu.step}
@@ -279,7 +279,7 @@ export default NavigateMenuRedactor = ({
             <BaseSlider
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
                 signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}        
-                areaStyle = {{marginLeft: 60}}
+                areaStyle = {{marginHorizontal: 20}}
                 minimumValue={heightNavigateMenu.min}
                 maximumValue={heightNavigateMenu.max}
                 step = {heightNavigateMenu.step}

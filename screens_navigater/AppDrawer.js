@@ -19,6 +19,8 @@ import Analytic from './app_pages/analytic/Analytic';
 
 import Classical from '../general_components/tab_bars/Classical';
 
+import NavigationMenu from '../general_components/NavigationMenu';
+
 const Drawer = createDrawerNavigator();
 
 
@@ -60,19 +62,11 @@ function AppDrawer(props) {
                 swipeEnabled: true,
                 swipeEdgeWidth: deviceWidth/2, //(lvl3.name =='SettingsStack'? deviceWidth/4 :) 
                 drawerStyle: {
-                    backgroundColor: 'white',
+                    backgroundColor: Thema.basics.grounds.primary,
                 },
                 header: ({ navigation, route }) => {
-
                   return (
-                    <View
-                      style = {{
-                        position: 'absolute',
-                        top: deviceHeight -appStyle.navigationMenu.height,
-                      }}
-                    >
-                    {/*NAVIGATION MENU*/}
-                    <Classical
+                    <NavigationMenu
                         state = {navigation.getState()}
                         route = {route}  
                         navigation = {navigation}
@@ -82,8 +76,7 @@ function AppDrawer(props) {
 
                         ThemeColorsAppIndex={ThemeColorsAppIndex}
                         LanguageAppIndex={LanguageAppIndex}
-                    />  
-                    </View>
+                    />
                   );
                 }
             }}

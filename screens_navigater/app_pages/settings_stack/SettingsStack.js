@@ -116,7 +116,7 @@ function SettingsStack(props) {
                 animationEnabled: false,
                 gestureEnabled: false,
                 cardStyle: {
-                    backgroundColor: 'green'
+                    backgroundColor: Thema.basics.grounds.secondary
                 },
             }}
         >

@@ -146,10 +146,10 @@ const LanguageStoreRu = {
       }
     },
     TasksScreen: {
-      HeaderTitle: 'Задачи',
+      HeaderTitle: 'задачи',
     },
     AnalyticsScreen: {
-      HeaderTitle: 'Аналитика',
+      HeaderTitle: 'аналитика',
     },
     Weather: {
       actualWeather: 'Актуальная погода',
@@ -315,10 +315,10 @@ const LanguageStoreEng = {
       }
     },
     TasksScreen: {
-      HeaderTitle: 'Tasks',
+      HeaderTitle: 'tasks',
     },
     AnalyticsScreen: {
-      HeaderTitle: 'Analytics',
+      HeaderTitle: 'analytics',
     },
     Weather: {
       actualWeather: 'Actual weather',

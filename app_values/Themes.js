@@ -47,7 +47,7 @@ const Emerald = {
     navigateBar: {
         ground: '#fff',
         icons: {active: '#000', notActive: '#000'},
-        text: '#000',
+        text: {active: '#6b8e23', notActive: '#000'},
     },
     specials: {
         fire: {
@@ -108,8 +108,8 @@ const Olive = {
     },
     navigateBar: {
         ground: '#fff',
-        icons: {active: '#000', notActive: '#000'},
-        text: '#000',
+        icons: {active: '#6b8e23', notActive: '#000'},
+        text: {active: '#6b8e23', notActive: '#000'},
     },
     specials: {
         fire: {
@@ -171,7 +171,7 @@ const Gold = {
     navigateBar: {
         ground: '#fff',
         icons: {active: '#000', notActive: '#000'},
-        text: '#000',
+        text: {active: '#6b8e23', notActive: '#000'},
     },
     specials: {
         fire: {

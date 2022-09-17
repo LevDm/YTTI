@@ -37,25 +37,11 @@ const Classical = ({
     ThemeColorsAppIndex,
     LanguageAppIndex,
 }) => {
-    //const state = navigation.getState()
-
-    //console.log(state)
-
-    const [keyboardVisible, setKeyboardVisible] = useState(false);
-    useEffect(() => {
-        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {setKeyboardVisible(true);});
-        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {setKeyboardVisible(false);});
-
-        return () => {
-            showSubscription.remove();
-            hideSubscription.remove();
-        };
-    }, []);
 
     const Thema = themesColorsAppList[ThemeColorsAppIndex]
     const Language = languagesAppList[LanguageAppIndex]
 
-    const tingDuration = 300
+    const tingDuration = 400
     const entering = (targetValues) => {
         'worklet';
         const animations = {
@@ -83,6 +69,8 @@ const Classical = ({
         };
     };
 
+    
+
     return (
         <View
             style = {[
@@ -92,139 +80,122 @@ const Classical = ({
                     width: deviceWidth,
                     //position: 'absolute',
                     //bottom: 0, 
-                    backgroundColor: 'white',
+                    backgroundColor: Thema.navigateBar.ground,
                     flexDirection: 'row',
                     borderTopWidth: 1,
-                    borderColor: '#00000015'
+                    borderColor: '#00000010'
                 }
             ]}
         >
             {state.routes.map((route, index) => {
-
                 const isFocused = state.index === index;
-                //navigation.isFocused()
-                const onPress = () => {
-                    /*
-                    const event = navigation.emit({
-                        type: 'tabPress',
-                        target: route.key,
-                        canPreventDefault: true,
-                    });
-
-                    if (!isFocused && !event.defaultPrevented) {
-                        navigation.navigate({ name: route.name, merge: true });
-                    }
-                    */
-                    navigation.navigate(route.name)
-                    //navigation.jumpTo(route.name)
-                };
-                       
-                let iconName;
                 let size = 19;
-                let color = Thema.navigateBar.icons.active;
                 size = (appStyle.navigationMenu.height-5-15)//(appStyle.navigationMenu.signatureIcons? 15 : 0)
                 size = (size > 32? 32 : size)
 
                 const iconsNames = {focus: '', notFocus: ''}
-                let tabBarName = ''      
+                let screenName = ''
 
                 switch(route.name){
                     case "Home":
                         iconsNames.focus = 'home-edit';
                         iconsNames.notFocus = 'home-edit-outline';
-                        tabBarName = Language.TasksScreen.HeaderTitle;
+                        screenName = Language.TasksScreen.HeaderTitle;
                         break;
 
                     case "Analytic":
                         iconsNames.focus = 'circle-slice-1';
                         iconsNames.notFocus = 'circle-outline';
-                        tabBarName = Language.AnalyticsScreen.HeaderTitle;
+                        screenName = Language.AnalyticsScreen.HeaderTitle;
                         break;
 
                     case "SettingsStack": 
                         iconsNames.focus = 'cog'; 
                         iconsNames.notFocus = 'cog-outline';
-                        tabBarName = Language.SettingsScreen.HeaderTitle;
+                        screenName = Language.SettingsScreen.HeaderTitle;
                         break;
 
                     default:
+                        iconsNames.focus = "border-none-variant"
+                        iconsNames.notFocus = "border-none-variant"
+                        screenName = 'screenName'
                 }
 
                 return (
-                    <View 
+                    <Pressable
                         key = {`${Math.random()}`}
-                        style = {[
-                            {
-                                //borderRadius: 12,
-                                //borderTopWidth: 1,
-                                //borderLeftWidth: 1,
-                                //borderRightWidth: 1,
-                                //borderColor: isFocused? ColorsApp.navigatorFieldIcon: '#00000000',
-                                //margin: 2,
-                                //alignItems: 'flex-start',
-                                flex: 1,
-                                zIndex: -10
+                        disabled = {isFocused}
+                        onPress={()=>{
+                            navigation.navigate(route.name)
+                        }}
+                        style={[
+                                {
+                                flex: 1, 
+                                alignItems: 'center',
+                                alignContent: 'center',
+                                paddingTop: appStyle.navigationMenu.height > 55? 8 : 3,
+                                justifyContent: 'flex-start',
                             }
                         ]}
+                        android_ripple = {appStyle.navigationMenu.rippleEffect? {color: Thema.navigateBar.icons.active, borderless: true} : false}
                     >
-                        <View
-                            style={[
-                                {
-                                    flex: 1,
-                                    //justifyContent: 'flex-start',
-                                    //backgroundColor: 'red',
-                                    //marginBottom: 5
-                                }
-                            ]}
-                        >
-                            <Pressable
-                                //key = {route.key}
-                                accessibilityRole="button"
-                                accessibilityState={isFocused ? { selected: true } : {}}
-                                onPress={onPress}
-                                //onLongPress={onLongPress}
-                                style={[
-                                     {
-                                        flex: 1, 
-                                        alignItems: 'center',
-                                        paddingTop: appStyle.navigationMenu.height > 55? 8 : 3,
-                                        justifyContent: 'flex-start'
-                                    }
-                                ]}
-                                android_ripple = {appStyle.navigationMenu.rippleEffect? {color: Thema.navigateBar.icons.active,borderless: true} : false}
+                        {isFocused && 
+                            <Animated.View 
+                                //exiting={exiting}
+                                style = {{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                                entering={entering}
                             >
-                                {isFocused && 
-                                    <Animated.View 
-                                        //exiting={exiting}
-                                        entering={entering}
-                                    >
-                                        <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {color}/>
-                                    </Animated.View>        
-                                }
-                                {!isFocused && 
-                                    <Animated.View
-                                        exiting={exiting}
-                                        //entering={entering}
-                                    >
-                                        <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {color}/>
-                                    </Animated.View>        
-                                }
-
+                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Thema.navigateBar.icons.active}/>
                                 {appStyle.navigationMenu.signatureIcons &&
                                 <Text
                                     style = {[
                                         {
                                             fontSize: 10,
+                                            width: '100%',
+                                            textAlign: 'center',
+                                            fontVariant: ['small-caps'],
+                                            fontWeight: '600',
+                                            color: Thema.navigateBar.text.active
                                         }
                                     ]}
                                 >
-                                    {tabBarName}
+                                    {screenName}
                                 </Text>
                                 }
-                                
-                            </Pressable>    
-                        </View> 
-                    </View>
+                            </Animated.View>        
+                        }
+                        {!isFocused && 
+                            <Animated.View
+                                exiting={exiting}
+                                style = {{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Thema.navigateBar.icons.notActive}/>
+                                {appStyle.navigationMenu.signatureIcons &&
+                                <Text
+                                    style = {[
+                                        {
+                                            fontSize: 10,
+                                            width: '100%',
+                                            textAlign: 'center',
+                                            fontVariant: ['small-caps'],
+                                            fontWeight: '600',
+                                            color: Thema.navigateBar.text.notActive
+                                        }
+                                    ]}
+                                >
+                                    {screenName}
+                                </Text>
+                                }
+                            </Animated.View>        
+                        }
+                    </Pressable>    
+
                 );
             })}
         </View>

@@ -74,7 +74,7 @@ export default NavigateMenuRedactor = ({
     const checkBoxPress = (type) => {
         const newGroup = getGroup(type)
         let newAppStyle = getNewAppStyleObject();
-        if(type == "hidden"){
+        if(type == "hidden" || type =="not"){
             newAppStyle.navigationMenu.height = 0
         }
         newAppStyle.navigationMenu.type = type

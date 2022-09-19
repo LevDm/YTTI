@@ -13,6 +13,7 @@ const deviceWidth = Dimensions.get('window').width
 
 export default ThemeRedacor = ({
     appStyle,
+    previewAppStyle,
     setPreviewAppStyle,
     getNewAppStyleObject,
 
@@ -22,6 +23,7 @@ export default ThemeRedacor = ({
     const Thema = themesColorsAppList[ThemeColorsAppIndex]
     const colorScheme = `${Thema.theme} `+Appearance.getColorScheme();
     
+    console.log(Appearance.getColorScheme())
 
     const flatListRef = useRef()
     const scrollX = React.useRef(new Animated.Value(0)).current;
@@ -113,11 +115,11 @@ export default ThemeRedacor = ({
             )}
             onMomentumScrollEnd = {(event)=>{
                 const thisIndex = Math.floor(event.nativeEvent.contentOffset.x/itemSize)
-                console.log(event.nativeEvent.contentOffset.x/itemSize)
-                //if(thisIndex != chosenThemeIndex){
+                //console.log(event.nativeEvent.contentOffset.x/itemSize)
+                if(thisIndex != themesApp.indexOf(previewAppStyle.theme)){
                     
                     changeThema(thisIndex)
-                //}
+                }
             }}
 
             contentContainerStyle = {{

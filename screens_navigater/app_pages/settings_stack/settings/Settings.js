@@ -672,6 +672,7 @@ const Settings = (props) => {
                                 marginLeft: 15,
                             }}
                             onPress={back}
+                            rippleColor={Thema.texts.neutrals.primary}
                         />
                         }
                         {appStyle.navigationMenu.type != 'not' && <View style={{height: 30, width: 30}}/>}
@@ -832,6 +833,9 @@ const Settings = (props) => {
                             appStyle={appStyle}
                             setAppStyle={setAppStyle}
                             r_setAppStyle={props.r_setAppStyle}
+
+                            previewAppStyle={previewAppStyle}
+
                             getNewAppStyleObject={getNewAppStyleObject}
                             setPreviewAppStyle={setPreviewAppStyle}
 
@@ -924,7 +928,7 @@ const Settings = (props) => {
                                 shadowRadius: 4,
                                 elevation: 4,
                             }}
-                            //rippleColor={}
+                            rippleColor={Thema.icons.neutrals.primary}
                             onPress={pressFunction}
                         />
                     </Animated.View>

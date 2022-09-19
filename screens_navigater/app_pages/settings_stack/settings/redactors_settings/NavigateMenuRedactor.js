@@ -24,7 +24,7 @@ import {
 //const positionNavigateMenu = {min: 20, max: 80, step: 5}
 //const valuePosition = ['left','center','right']
 //const heightNavigateMenu = {min: 35, max: 65, step: 5}
-import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu } from "../../../../../app_values/AppDefault";
+import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu, drawerPositions } from "../../../../../app_values/AppDefault";
 
 export default NavigateMenuRedactor = ({
     appStyle,
@@ -53,6 +53,16 @@ export default NavigateMenuRedactor = ({
     const getGroupPositions = (type) => {
         let group = []
         for (let i of valuePosition){
+            let check = false
+            if(type === i){check = true}
+            group.push(check)
+        }
+        return group
+    };
+
+    const getGroupPositionsDrawer = (type) => {
+        let group = []
+        for (let i of drawerPositions){
             let check = false
             if(type === i){check = true}
             group.push(check)
@@ -109,6 +119,15 @@ export default NavigateMenuRedactor = ({
 
         let newAppStyle = getNewAppStyleObject();
         newAppStyle.navigationMenu.position.horizontal = positionType//valuePosition[index];
+        setPreviewAppStyle(newAppStyle);
+    };
+
+    const [drawerPosition, setDrawerPosition] = useState(getGroupPositionsDrawer(appStyle.navigationMenu.drawerPosition));
+    const drawerPositionSetting = (drawerPosition, index) => {
+        setDrawerPosition(getGroupPositionsDrawer(drawerPosition));
+
+        let newAppStyle = getNewAppStyleObject();
+        newAppStyle.navigationMenu.drawerPosition = drawerPosition//valuePosition[index];
         setPreviewAppStyle(newAppStyle);
     };
 
@@ -204,6 +223,7 @@ export default NavigateMenuRedactor = ({
             onChange={rippleEffectChange}
         />
     </View>
+
     <View
         style = {[{
 
@@ -214,28 +234,72 @@ export default NavigateMenuRedactor = ({
             exiting={exiting} 
             entering={entering}
         >
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
-            {Language.verticalPosition}
-        </Text>
-        <BaseSlider
-            signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
-            areaStyle = {{marginHorizontal: 20}}
-            minimumValue={positionNavigateMenu.min}
-            maximumValue={positionNavigateMenu.max}
-            step = {positionNavigateMenu.step}
-            value = {sliderValueVert}
-            onSlidingComplete = {(value)=>{                 
-                setSliderValueVert(value);
-                setPrewBasicVertPos(value);
+        <View
+            style = {{
+                height: 120,
+                marginTop: 15
             }}
-            onValueChange = {(value)=>{              
-                setPrewBasicVertPos(value);
+        >
+            <Text
+                style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}
+            >
+                {Language.horizontalPositionDrawer}
+            </Text>
+            <View
+                style = {{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                }}
+            >
+                {drawerPositions.map((item, index)=>(
+                <BaseCheckBox
+                    key = {item+index}
+                    //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+                    Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositionsDrawer[index]}</Text>}
+                    Check = {drawerPosition[index]}
+                    onPress = {()=>{drawerPositionSetting(item, index)}}
+                    BoxBorderRadius = {appStyle.borderRadius.additional}
+                    ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
+                />
+                ))}
+            </View>
+        </View>
+        </Animated.View>}
+        {checkGroup[1] && 
+        <Animated.View 
+            exiting={exiting} 
+            entering={entering}
+        >
+        <View
+            style = {{
+                height: 60,
+                //marginTop: 15
             }}
-            minimumTrackTintColor = {Thema.icons.accents.tertiary}
-            maximumTrackTintColor = {Thema.icons.accents.quaternary}
-            thumbTintColor = {Thema.icons.accents.primary}
-        />
+        >
+            <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+                {Language.verticalPosition}
+            </Text>
+            <BaseSlider
+                signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+                signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
+                areaStyle = {{marginHorizontal: 20}}
+                minimumValue={positionNavigateMenu.min}
+                maximumValue={positionNavigateMenu.max}
+                step = {positionNavigateMenu.step}
+                value = {sliderValueVert}
+                onSlidingComplete = {(value)=>{                 
+                    setSliderValueVert(value);
+                    setPrewBasicVertPos(value);
+                }}
+                onValueChange = {(value)=>{              
+                    setPrewBasicVertPos(value);
+                }}
+                minimumTrackTintColor = {Thema.icons.accents.tertiary}
+                maximumTrackTintColor = {Thema.icons.accents.quaternary}
+                thumbTintColor = {Thema.icons.accents.primary}
+            />
+        </View>
         <View
             style = {{
                 height: 60,
@@ -268,11 +332,17 @@ export default NavigateMenuRedactor = ({
             </View>
         </View>
         </Animated.View>}
-        {!checkGroup[2] && 
+        {checkGroup[0] && 
         <Animated.View 
             exiting={exiting} 
             entering={entering}
         >
+            <View
+                style = {{
+                    height: 60,
+                    //marginTop: 15
+                }}
+            >
             <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
                 {Language.height}
             </Text>
@@ -295,6 +365,7 @@ export default NavigateMenuRedactor = ({
                 maximumTrackTintColor = {Thema.icons.accents.quaternary}
                 thumbTintColor = {Thema.icons.accents.primary}
             />
+            </View>
             <View
                 style ={{
                     flexDirection: 'row',

@@ -8,10 +8,11 @@ export const statusBarHeight = Constants.statusBarHeight+1
 //fillets
 export const borderRadiusValues = {min: 0, max: 32, step: 1}
 //navigation menu
-export const menuTypes = ['classical','classical_animated','hidden', 'not'];
+export const menuTypes = ['classical','hidden', 'not'];
 export const positionNavigateMenu = {min: -150, max: 150, step: 10}
 export const valuePosition = ['left','center','right']
 export const heightNavigateMenu = {min: 35, max: 65, step: 5}
+export const drawerPositions = ['left', 'right']
 //lists
 export const listsTextSize = {min: 10, max: 20, step: 1}
 export const listsProximity = {min: 1, max: 5, step: 1}
@@ -32,7 +33,8 @@ export const defaultAppStyle = {
         height: 50,
         position: {vertical: 0 , horizontal : 'right'},
         signatureIcons: true,
-        rippleEffect: true
+        rippleEffect: true,
+        drawerPosition: 'right'
     },
     splachLoadShow: true,
     lists: {

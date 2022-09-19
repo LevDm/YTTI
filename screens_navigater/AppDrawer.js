@@ -60,6 +60,7 @@ function AppDrawer(props) {
             animationTypeForReplace={"pop"}
             screenOptions = {{
                 swipeEnabled: true,
+                drawerPosition: appStyle.navigationMenu.drawerPosition === 'left'? 'left' : 'right',
                 swipeEdgeWidth: deviceWidth/2, //(lvl3.name =='SettingsStack'? deviceWidth/4 :) 
                 drawerStyle: {
                     backgroundColor: Thema.basics.grounds.primary,

@@ -111,7 +111,7 @@ const LanguageStoreRu = {
         },
         navigationMenu: {
           type: "Тип меню",
-          types: ["Классическое","Классическое анимированное","Скрытое","Нет меню"],
+          types: ["Классическое","Скрытое","Выдвижная панель"],
           menuParams: "Параметры меню",
           rippleEffect: 'Эффект пульсации при нажатии',
           rippleEffectState: {true: "включен", false: "выключен"},
@@ -121,7 +121,9 @@ const LanguageStoreRu = {
           signatureState: {true: "включены", false: "выключены"},
           verticalPosition: "Вертикальное положение",
           horizontalPosition: "Горизонтальное положение",
-          horizontalPositions: ["Слева","По центру","Справа"]
+          horizontalPositions: ["Слева","По центру","Справа"],
+          horizontalPositionDrawer: "Панель выдвигается",
+          horizontalPositionsDrawer: ["Слева","Справа"]
         },
         loadAnimation: {
           info: "...",
@@ -280,7 +282,7 @@ const LanguageStoreEng = {
         },
         navigationMenu: {
           type: "Type menu",
-          types: ["Classical","Classical animated","Hidden", "Not"],
+          types: ["Classical","Hidden", "Retractable panel"],
           menuParams: "Menu params",
           rippleEffect: 'Ripple effect when pressed',
           rippleEffectState: {true: "on", false: "off"},
@@ -290,7 +292,9 @@ const LanguageStoreEng = {
           signatureState: {true: "on", false: "off"},
           verticalPosition: "Vertical position",
           horizontalPosition: "Horizontal position",
-          horizontalPositions: ["Left","Center","Right"]
+          horizontalPositions: ["Left","Center","Right"],
+          horizontalPositionDrawer: "Panel slides out",
+          horizontalPositionsDrawer: ["Left","Right"]
         },
         loadAnimation: {
           info: "...",

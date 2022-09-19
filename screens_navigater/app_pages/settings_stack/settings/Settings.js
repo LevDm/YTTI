@@ -621,6 +621,10 @@ const Settings = (props) => {
         }
     })
 
+    const back = () => {
+        props.navigation.goBack()
+    }
+
     return (
     <>  
         <View
@@ -641,19 +645,36 @@ const Settings = (props) => {
             >
                 <View 
                     style = {[staticStyles.SLtopBord,{ 
-                        alignItems: 'flex-end',
+                        //alignItems: 'flex-end',
                         //backgroundColor: 'red',
                         //zIndex: 5
+                        flex: 1,
+                        //justifyContent: 'space-between',
+                        
                     }]}
                 >
                     <View
                         style = {{
                             height: 30,
                             flex: 1,
-                            justifyContent: 'center',
-                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            flexDirection: 'row'
                         }}
                     >
+                        {appStyle.navigationMenu.type == 'not' &&
+                        <BasePressable 
+                            type="i"
+                            icon={{name: "backburger", size: 25, color: Thema.texts.neutrals.primary}}
+                            style={{
+                                height: 30, 
+                                width: 30, 
+                                marginLeft: 15,
+                            }}
+                            onPress={back}
+                        />
+                        }
+                        {appStyle.navigationMenu.type != 'not' && <View style={{height: 30, width: 30}}/>}
                         <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
                             {Language.HeaderTitle}
                         </Text>

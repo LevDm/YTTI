@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
-
+import { Appearance } from 'react-native';
 
 import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 
@@ -20,6 +20,9 @@ export default ThemeRedacor = ({
     LanguageAppIndex  
 }) => {
     const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const colorScheme = `${Thema.theme} `+Appearance.getColorScheme();
+    
+
     const flatListRef = useRef()
     const scrollX = React.useRef(new Animated.Value(0)).current;
     const [chosenThemeIndex, setChosenThemeIndex] = useState(themesApp.indexOf(appStyle.theme))
@@ -95,6 +98,7 @@ export default ThemeRedacor = ({
     }
 
     return (<>
+        <Text>{colorScheme}</Text>
         <Animated.FlatList
             ref = {flatListRef}
             

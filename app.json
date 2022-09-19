@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Ytat",
-    "slug": "Ytat",
+    "name": "YTAT",
+    "slug": "YTAT",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon7.png",
@@ -11,11 +11,6 @@
       ]
     ],
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/splash7.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#000"
-    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -26,6 +21,11 @@
       "supportsTablet": true
     },
     "android": {
+      "splash": {
+        "image": "./assets/splashY.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#000000"
+      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon7.png",
         "backgroundColor": "#FFFFFF"

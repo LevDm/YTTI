@@ -22,6 +22,7 @@ import dataLoader from './async_data_manager/data_loader';
 import ThemesColorsAppList, {themesApp} from './styles/ColorsApp';
 
 import Splash from './screens_navigater/app_loadSplash/Splash';
+import SplashY from './screens_navigater/app_loadSplash/SplashY';
 
 import 'react-native-gesture-handler';
 
@@ -143,7 +144,7 @@ export default function App() {
         hidden = {false}
         animated={true}
       />
-      {helloModalVisible && <Splash setSplashOut={setHelloModalVisible}/>}
+      {helloModalVisible && <SplashY setSplashOut={setHelloModalVisible}/>}
     </View>  
     </Provider>
   );  

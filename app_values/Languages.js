@@ -92,7 +92,7 @@ const LanguageStoreRu = {
           "кнопка поплавок",
   
           "язык",
-          "местоположение",
+          //"местоположение",
           "функции", 
           "обращение",
           "погода", 
@@ -263,7 +263,7 @@ const LanguageStoreEng = {
           "bobber button",
   
           "language",
-          "location", 
+          //"location", 
           "functions",
           "accost",
           "weather", 

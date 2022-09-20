@@ -137,7 +137,7 @@ const SplashY = (props) => {
     const enteringLogo= (targetValues) => {
         'worklet';
         const animations = {
-            opacity: withDelay(circleDuration, withTiming(1, { duration: circleDuration/2})),
+            opacity: withDelay(circleDuration, withTiming(1, { duration: circleDuration/3})),
         };
         const initialValues = {
           opacity: 0
@@ -151,7 +151,7 @@ const SplashY = (props) => {
     const enteringY = (targetValues) => {
         'worklet';
         const animations = {
-            opacity: withDelay(circleDuration/2, withTiming(0, { duration: circleDuration/2})),
+            opacity: withDelay(circleDuration/4, withTiming(0, { duration: circleDuration/2})),
         };
         const initialValues = {
           opacity: 1

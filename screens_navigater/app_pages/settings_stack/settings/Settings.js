@@ -29,7 +29,7 @@ import Animated, {
     Easing 
 } from 'react-native-reanimated';
 import Constants from "expo-constants";
-
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import themesColorsAppList, {themesApp} from "../../../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../../../app_values/Languages";
@@ -74,27 +74,33 @@ const structure = [
         category: "style",
         data: [
             {
-                param: "theme", 
+                param: "theme",
+                icon:  "palette",
                 paramRedactorComponent: ThemeRedacor
             },
             {
                 param: "angle",
+                icon:  "vector-rectangle",
                 paramRedactorComponent: BorderRadiusRedactor
             },
             {
                 param: "navigate menu",
+                icon:  "menu",
                 paramRedactorComponent: NavigateMenuRedactor
             },
             {
                 param: "load splash",
+                icon:  "animation-play",
                 paramRedactorComponent: LoadSplashRedactor
             },
             {
                 param: "lists",
+                icon:  "view-list",
                 paramRedactorComponent: ListsRedactor
             },
             {
                 param: "function button",
+                icon:  "balloon",
                 paramRedactorComponent: FunctionButtonRedactor
             }, 
         ]
@@ -105,36 +111,68 @@ const structure = [
         data: [
             {
                 param: "language",
+                icon:  "earth",
                 paramRedactorComponent: LanguageRedactor
             }, 
-            {
-                param:"location",
-                paramRedactorComponent: null
-            }, 
+            //{
+            //    param:"location",
+            //    icon:  "balloon",
+            //    paramRedactorComponent: null
+            //}, 
             {
                 param:"screens",
+                icon:  "store",
                 paramRedactorComponent: null
             }, 
             {
                 param:"accost",
+                icon:  "account",
                 paramRedactorComponent: null
             },
             {
                 param:"weather",
+                icon:  "weather-cloudy-clock",
                 paramRedactorComponent: null
             }, 
             {
                 param:"ohter",
+                icon:  "qrcode-scan",
                 paramRedactorComponent: null
             },
         ]
     }
 ]
 
+//<MaterialCommunityIcons name="palette" size={24} color="black" />
+//<MaterialCommunityIcons name="vector-rectangle" size={24} color="black" />
+//<MaterialCommunityIcons name="menu" size={24} color="black" />
+//<MaterialCommunityIcons name="animation-play" size={24} color="black" />
+//<MaterialCommunityIcons name="view-list" size={24} color="black" />
+//<MaterialCommunityIcons name="balloon" size={24} color="black" />
+
+//<MaterialCommunityIcons name="web" size={24} color="black" />
+//<MaterialCommunityIcons name="weather-cloudy-clock" size={24} color="black" /> <MaterialCommunityIcons name="earth" size={24} color="black" />
+//<MaterialCommunityIcons name="account" size={24} color="black" />
+//<MaterialCommunityIcons name="store" size={24} color="black" />
+//<MaterialCommunityIcons name="qrcode-scan" size={24} color="black" />
+
+//<MaterialCommunityIcons name="check-bold" size={24} color="black" />
+
+
+//<MaterialCommunityIcons name="check-bold" size={24} color="black" />
+
+
+//<MaterialCommunityIcons name="keyboard-backspace" size={24} color="black" />
+
 const allStructurParams = [];
 for (let el of structure){
     for (let item of el.data){
-        allStructurParams.push({param: item.param, category: el.category, indexSection: el.indexSection});
+        allStructurParams.push({
+            param: item.param, 
+            icon: item.icon, 
+            category: el.category, 
+            indexSection: el.indexSection
+        });
     }
 }
 
@@ -825,8 +863,8 @@ const Settings = (props) => {
                                 //paddingHorizontal: 5 * appStyle.borderRadius.basic/32 
                             }]}
                         >
-                            <Text style={staticStyles.SLParamHeaderText}>{redactorName}</Text>
-                            <Text style={[staticStyles.SLParamHeaderText, {backgroundColor: '#aaaaaa1f', borderRadius: 15, width: 24, height: 24, textAlign: 'center', marginLeft: 10, fontSize: 18}]}>?</Text>
+                            <MaterialCommunityIcons name={item.icon} size={20} color={Thema.texts.neutrals.secondary} />
+                            <Text style={[staticStyles.SLParamHeaderText, {color: Thema.texts.neutrals.secondary}]}>{redactorName}</Text>
                         </Animated.View>
                         {RedactorComponent != null && 
                         <RedactorComponent
@@ -1010,6 +1048,7 @@ const staticStyles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     SLParamHeaderText: {
+        marginLeft: 5,
         fontSize: 18,
         //position: 'absolute',
         fontWeight: 'bold',

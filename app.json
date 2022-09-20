@@ -4,7 +4,7 @@
     "slug": "YTAT",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon7.png",
+    "icon": "./assets/iconY.png",
     "plugins": [
       [
         "expo-notifications"
@@ -24,11 +24,11 @@
       "splash": {
         "image": "./assets/splashY.png",
         "resizeMode": "contain",
-        "backgroundColor": "#000000"
+        "backgroundColor": "black"
       },
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon7.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/iconY.png",
+        "backgroundColor": "black"
       },
       "package": "com.levdm.Diary"
     },

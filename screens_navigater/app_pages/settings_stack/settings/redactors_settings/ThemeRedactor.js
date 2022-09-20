@@ -4,6 +4,7 @@ import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList,
 import { Appearance } from 'react-native';
 
 import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
+import nightThemesColorsAppList, {nightThemesApp} from "../../../../../app_values/ThemesNight";
 
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
@@ -20,10 +21,20 @@ export default ThemeRedacor = ({
     ThemeColorsAppIndex,
     LanguageAppIndex  
 }) => {
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
-    const colorScheme = `${Thema.theme} `+Appearance.getColorScheme();
-    
-    console.log(Appearance.getColorScheme())
+    const [Thema, setThema] = useState(themesColorsAppList[ThemeColorsAppIndex])
+
+    Appearance.addChangeListener(()=>{
+        const systemColorScheme = Appearance.getColorScheme()
+        if(systemColorScheme == 'dark'){
+            if(Thema.scheme != 'dark'){
+                setThema(nightThemesColorsAppList[ThemeColorsAppIndex])
+            }
+        } else {
+            if(Thema.scheme != 'light'){
+                setThema(themesColorsAppList[ThemeColorsAppIndex])
+            }
+        }
+    })
 
     const flatListRef = useRef()
     const scrollX = React.useRef(new Animated.Value(0)).current;
@@ -100,7 +111,7 @@ export default ThemeRedacor = ({
     }
 
     return (<>
-        <Text>{colorScheme}</Text>
+        <Text>{Thema.scheme} {Thema.theme}</Text>
         <Animated.FlatList
             ref = {flatListRef}
             

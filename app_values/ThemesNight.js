@@ -1,6 +1,6 @@
 const Emerald = { 
     theme: "emerald",
-    scheme: 'light',
+    scheme: 'dark',
     statusBar: 'light',//'auto','inverted' ,'light' ,'dark'
     basics: {
         accents: {
@@ -63,7 +63,7 @@ const Emerald = {
 
 const Olive = {
     theme: "olive",
-    scheme: 'light',
+    scheme: 'dark',
     statusBar: 'light',//'auto','inverted' ,'light' ,'dark'
     basics: {
         accents: {
@@ -126,7 +126,7 @@ const Olive = {
 
 const Gold = {
     theme: "gold",
-    scheme: 'light',
+    scheme: 'dark',
     statusBar: 'dark',//'auto','inverted' ,'light' ,'dark'
     basics: {
         accents: {
@@ -187,6 +187,6 @@ const Gold = {
     }
 }
 
-const themesColorsAppList = [Emerald, Olive, Gold]
-export default themesColorsAppList;
-export const themesApp = ["emerald", "olive", "gold"]; 
+const nightThemesColorsAppList = [Emerald, Olive, Gold]
+export default nightThemesColorsAppList;
+export const nightThemesApp = ["emerald", "olive", "gold"]; 

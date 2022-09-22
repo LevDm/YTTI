@@ -24,11 +24,11 @@
       "splash": {
         "image": "./assets/splashY.png",
         "resizeMode": "contain",
-        "backgroundColor": "black"
+        "backgroundColor": "#000000"
       },
       "adaptiveIcon": {
         "foregroundImage": "./assets/iconY.png",
-        "backgroundColor": "black"
+        "backgroundColor": "#000000"
       },
       "package": "com.levdm.Diary"
     },

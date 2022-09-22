@@ -12,6 +12,12 @@ import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
+//<MaterialCommunityIcons name="white-balance-sunny" size={24} color="black" />
+
+//<MaterialCommunityIcons name="weather-sunny" size={24} color="black" />
+//<MaterialCommunityIcons name="moon-waning-crescent" size={24} color="black" />
+//<MaterialCommunityIcons name="theme-light-dark" size={24} color="black" />
+
 export default ThemeRedacor = ({
     appStyle,
     previewAppStyle,
@@ -21,8 +27,18 @@ export default ThemeRedacor = ({
     ThemeColorsAppIndex,
     LanguageAppIndex  
 }) => {
-    const [Thema, setThema] = useState(themesColorsAppList[ThemeColorsAppIndex])
 
+    const schemeThemes = (systemScheme) => {
+        if(systemScheme == 'dark'){
+            return nightThemesColorsAppList
+        } else {
+            return themesColorsAppList
+        }
+    }
+    
+    const [Thema, setThema] = useState(schemeThemes(Appearance.getColorScheme())[ThemeColorsAppIndex])
+
+    
     Appearance.addChangeListener(()=>{
         const systemColorScheme = Appearance.getColorScheme()
         if(systemColorScheme == 'dark'){

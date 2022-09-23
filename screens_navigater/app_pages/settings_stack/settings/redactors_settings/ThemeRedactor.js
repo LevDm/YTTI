@@ -28,7 +28,8 @@ export default ThemeRedacor = ({
     LanguageAppIndex  
 }) => {
 
-    const schemeThemes = (systemScheme) => {
+    const schemeThemes = () => {
+        const systemScheme = Appearance.getColorScheme()
         if(systemScheme == 'dark'){
             return nightThemesColorsAppList
         } else {
@@ -36,20 +37,11 @@ export default ThemeRedacor = ({
         }
     }
     
-    const [Thema, setThema] = useState(schemeThemes(Appearance.getColorScheme())[ThemeColorsAppIndex])
+    const [Thema, setThema] = useState(schemeThemes()[ThemeColorsAppIndex])
 
-    
     Appearance.addChangeListener(()=>{
-        const systemColorScheme = Appearance.getColorScheme()
-        if(systemColorScheme == 'dark'){
-            if(Thema.scheme != 'dark'){
-                setThema(nightThemesColorsAppList[ThemeColorsAppIndex])
-            }
-        } else {
-            if(Thema.scheme != 'light'){
-                setThema(themesColorsAppList[ThemeColorsAppIndex])
-            }
-        }
+        const shemeList = schemeThemes()
+        if(shemeList[0].scheme != Thema.scheme){setThema(shemeList[ThemeColorsAppIndex])}
     })
 
     const flatListRef = useRef()

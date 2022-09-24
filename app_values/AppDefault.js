@@ -24,6 +24,7 @@ export const sizeButton = {min: 46, max: 64, step: 2}
 //APPERANCE
 export const defaultAppStyle = {
     theme: "emerald",
+    colorScheme: 'auto',
     borderRadius: {
         basic: 12, 
         additional: 12

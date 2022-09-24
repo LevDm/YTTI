@@ -18,6 +18,8 @@ const deviceWidth = Dimensions.get('window').width
 //<MaterialCommunityIcons name="moon-waning-crescent" size={24} color="black" />
 //<MaterialCommunityIcons name="theme-light-dark" size={24} color="black" />
 
+import ColorShemeSwitch from "../../../../../general_components/ColorShemeSwitch";
+
 export default ThemeRedacor = ({
     appStyle,
     previewAppStyle,
@@ -30,10 +32,16 @@ export default ThemeRedacor = ({
 
     const schemeThemes = () => {
         const systemScheme = Appearance.getColorScheme()
-        if(systemScheme == 'dark'){
+        if(appStyle.colorSheme == 'light'){
+            return themesColorsAppList
+        } else if(appStyle.colorSheme == 'dark'){
             return nightThemesColorsAppList
         } else {
-            return themesColorsAppList
+            if(systemScheme == 'dark'){
+                return nightThemesColorsAppList
+            } else {
+                return themesColorsAppList
+            }
         }
     }
     
@@ -118,8 +126,26 @@ export default ThemeRedacor = ({
         setPreviewAppStyle(newAppStyle)
     }
 
+    const [ lscheme, setLScheme ] = useState(appStyle.colorSheme)
+
+    const switching = ()=>{
+        const schemes = ['auto', 'light', 'dark'] 
+        let index = schemes.indexOf(lscheme)
+        index = (index+1) == schemes.length? 0 : index+1
+        setLScheme(schemes[index])
+        
+        let newAppStyle = getNewAppStyleObject();
+        newAppStyle.colorSheme = schemes[index]
+        setPreviewAppStyle(newAppStyle)
+    }
+
     return (<>
         <Text>{Thema.scheme} {Thema.theme}</Text>
+        <ColorShemeSwitch
+            scheme = {lscheme}
+            sizeIcon = {30}
+            switching = {switching}
+        />
         <Animated.FlatList
             ref = {flatListRef}
             

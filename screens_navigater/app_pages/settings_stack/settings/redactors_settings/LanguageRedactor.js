@@ -33,6 +33,7 @@ export default LanguageRedactor = ({
     LanguageStore,
 
     ThemeColorsAppIndex,
+    ThemeSchema,
     LanguageAppIndex  
 }) => {
     const getGroup = (type) => {

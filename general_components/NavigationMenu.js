@@ -32,6 +32,7 @@ const NavigationMenu = ({
     appConfig,
 
     ThemeColorsAppIndex,
+    ThemeSchema,
     LanguageAppIndex,
 }) => {
     const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -45,7 +46,7 @@ const NavigationMenu = ({
         };
     }, []);
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
     
@@ -115,6 +116,7 @@ const NavigationMenu = ({
                 appConfig={appConfig}
 
                 ThemeColorsAppIndex={ThemeColorsAppIndex}
+                ThemeSchema={ThemeSchema}
                 LanguageAppIndex={LanguageAppIndex}
             />
             }
@@ -128,6 +130,7 @@ const NavigationMenu = ({
                 appConfig={appConfig}
 
                 ThemeColorsAppIndex={ThemeColorsAppIndex}
+                ThemeSchema={ThemeSchema}
                 LanguageAppIndex={LanguageAppIndex}
             />
             }

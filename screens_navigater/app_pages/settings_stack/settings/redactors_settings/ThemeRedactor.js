@@ -27,30 +27,19 @@ export default ThemeRedacor = ({
     getNewAppStyleObject,
 
     ThemeColorsAppIndex,
+    ThemeSchema,
     LanguageAppIndex  
 }) => {
-
-    const schemeThemes = () => {
-        const systemScheme = Appearance.getColorScheme()
-        if(appStyle.colorSheme == 'light'){
-            return themesColorsAppList
-        } else if(appStyle.colorSheme == 'dark'){
-            return nightThemesColorsAppList
-        } else {
-            if(systemScheme == 'dark'){
-                return nightThemesColorsAppList
-            } else {
-                return themesColorsAppList
-            }
-        }
-    }
     
-    const [Thema, setThema] = useState(schemeThemes()[ThemeColorsAppIndex])
+    const [schema, setSchema] = useState(appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : appStyle.colorScheme)
 
-    Appearance.addChangeListener(()=>{
-        const shemeList = schemeThemes()
-        if(shemeList[0].scheme != Thema.scheme){setThema(shemeList[ThemeColorsAppIndex])}
+    Appearance.addChangeListener(({colorScheme})=>{
+        if(appStyle.colorScheme == 'auto'){
+            setSchema(colorScheme)
+        }
     })
+
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
     const flatListRef = useRef()
     const scrollX = React.useRef(new Animated.Value(0)).current;
@@ -79,6 +68,8 @@ export default ThemeRedacor = ({
             outputRange: [0.8, 0.84, 1, 0.84, 0.8]
         })
 
+        const schem = 'light'
+
         return (
             <Pressable
                 key = {String(item+index)} 
@@ -97,7 +88,7 @@ export default ThemeRedacor = ({
                         position: 'absolute',
                         borderRadius: appStyle.borderRadius.additional,
                         borderWidth: index === themesApp.indexOf(appStyle.theme)? 3 : 0,
-                        borderColor: themesColorsAppList[themesApp.indexOf(appStyle.theme)].basics.accents.primary,
+                        borderColor: themesColorsAppList[themesApp.indexOf(appStyle.theme)][schem].basics.accents.primary,
                         justifyContent: 'center',
                         alignItems: 'center',
                         transform: [
@@ -106,7 +97,7 @@ export default ThemeRedacor = ({
                     }}
                 >   
                     <LinearGradient
-                        colors={[themesColorsAppList[index].basics.accents.primary, themesColorsAppList[index].basics.accents.quaternary]}
+                        colors={[themesColorsAppList[index][schem].basics.accents.primary, themesColorsAppList[index][schem].basics.accents.quaternary]}
                         style={{
                             position: 'absolute',
                             height: itemSize-10,
@@ -129,18 +120,18 @@ export default ThemeRedacor = ({
     const [ lscheme, setLScheme ] = useState(appStyle.colorSheme)
 
     const switching = ()=>{
-        const schemes = ['auto', 'light', 'dark'] 
+        const schemes = ['light', 'auto', 'dark'] 
         let index = schemes.indexOf(lscheme)
         index = (index+1) == schemes.length? 0 : index+1
         setLScheme(schemes[index])
-        
+        setSchema(schemes[index])
         let newAppStyle = getNewAppStyleObject();
-        newAppStyle.colorSheme = schemes[index]
+        newAppStyle.colorScheme = schemes[index]
         setPreviewAppStyle(newAppStyle)
     }
 
     return (<>
-        <Text>{Thema.scheme} {Thema.theme}</Text>
+        <Text>{schema} {Thema.theme}</Text>
         <ColorShemeSwitch
             scheme = {lscheme}
             sizeIcon = {30}

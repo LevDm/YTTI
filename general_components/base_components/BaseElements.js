@@ -34,7 +34,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import languagesAppList, {languagesApp} from "../../app_values/Languages";
 import themesColorsAppList, {themesApp} from "../../app_values/Themes";
-const Thema = themesColorsAppList[0]
+const Thema = themesColorsAppList[0]['light']
 
 export const BasePressable = ({
     type = "ti",

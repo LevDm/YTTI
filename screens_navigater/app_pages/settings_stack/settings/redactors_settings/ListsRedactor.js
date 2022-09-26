@@ -28,9 +28,10 @@ export default ListsRedactor = ({
     getNewAppStyleObject,
 
     ThemeColorsAppIndex,
+    ThemeSchema,
     LanguageAppIndex  
 }) => {
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.lists
 
 

@@ -10,13 +10,13 @@ const Emerald = {
             quaternary: '#aee5ba',
         },
         neutrals: {
-            primary: '#fff', 
-            secondary: '#000', 
+            primary: '#000', 
+            secondary: '#fff', 
             tertiary: '#808080',
         },
         grounds: {
-            primary: '#fff', 
-            secondary: '#f5f5f5', 
+            primary: '#222', 
+            secondary: '#333', 
         },
     },
     texts: {
@@ -27,8 +27,8 @@ const Emerald = {
             quaternary: '#aee5ba',
         },
         neutrals: {
-            primary: '#fff', 
-            secondary: '#000', 
+            primary: '#000', 
+            secondary: '#fff', 
             tertiary: '#808080',
         },
     },
@@ -46,9 +46,9 @@ const Emerald = {
         },
     },
     navigateBar: {
-        ground: '#fff',
-        icons: {active: '#000', notActive: '#000'},
-        text: {active: '#6b8e23', notActive: '#000'},
+        ground: '#333',
+        icons: {active: '#50c878', notActive: '#fff'},
+        text: {active: '#50c878', notActive: '#fff'},
     },
     specials: {
         fire: {

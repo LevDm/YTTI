@@ -32,6 +32,7 @@ export default BorderRadiusRedactor = ({
     getNewAppStyleObject,
 
     ThemeColorsAppIndex,
+    ThemeSchema,
     LanguageAppIndex   
 }) => {
     const [sliderValueBasic, setSliderValueBasic] = useState(appStyle.borderRadius.basic);
@@ -39,7 +40,7 @@ export default BorderRadiusRedactor = ({
 
     const [synchronousSlider, setSynchronousSlider] = useState(appStyle.borderRadius.basic == appStyle.borderRadius.additional);
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.fillets
 
     const settingBorderRadius = (type, value, isComplete) =>{

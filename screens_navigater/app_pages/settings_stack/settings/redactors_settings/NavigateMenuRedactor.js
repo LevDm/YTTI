@@ -35,9 +35,10 @@ export default NavigateMenuRedactor = ({
     getNewAppStyleObject,
 
     ThemeColorsAppIndex,
+    ThemeSchema,
     LanguageAppIndex  
 }) => {
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.navigationMenu
 
     const getGroup = (type) => {

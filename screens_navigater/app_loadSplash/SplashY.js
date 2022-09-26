@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from "react";
-import { StyleSheet, View, Pressable, Dimensions } from "react-native";
+import { StyleSheet, View, Pressable, Dimensions, Appearance } from "react-native";
 import Constants from "expo-constants";
 
 import Animated, {
@@ -46,14 +46,23 @@ import Svg, { Circle, Rect, Ellipse  } from "react-native-svg";
 const SplashY = (props) => {
     const size = 180;
     const duration = 1000;
-
-    //const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
     const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
+
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
+
+    Appearance.addChangeListener(({colorScheme})=>{
+        if(appStyle.colorScheme == 'auto'){
+            setThemeSchema(colorScheme)
+        }
+    })
+
+    //const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
+    
     //const [appConfig, setAppConfig] = useState(props.appConfig);
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     //const Language = languagesAppList[LanguageAppIndex]
 
     store.subscribe(() => {
@@ -65,6 +74,10 @@ const SplashY = (props) => {
 
         if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
             setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
+        }
+
+        if(ThemeSchema != jstore.appStyle.colorScheme){
+            setThemeSchema(jstore.appStyle.colorScheme);
         }
 
         if (appStyle != jstore.appStyle) {

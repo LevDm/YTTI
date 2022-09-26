@@ -29,6 +29,7 @@ export default LoadSplashRedactor = ({
     getNewAppStyleObject,
 
     ThemeColorsAppIndex,
+    ThemeSchema,
     LanguageAppIndex  
 }) => {
 
@@ -42,7 +43,7 @@ export default LoadSplashRedactor = ({
         setLoadSplash(!loadSplash)
     }
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.loadAnimation
 
     return (

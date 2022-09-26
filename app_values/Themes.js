@@ -187,6 +187,23 @@ const Gold = {
     }
 }
 
-const themesColorsAppList = [Emerald, Olive, Gold]
+import nightThemesColorsAppList from "./ThemesNight"
+
+const themesColorsAppList = [
+    {
+        light: Emerald,
+        dark: nightThemesColorsAppList[0]
+    },
+    {
+        light: Olive,
+        dark: nightThemesColorsAppList[1]
+    },
+    {
+        light: Gold,
+        dark: nightThemesColorsAppList[2]
+    }, 
+]
+
+const themesColorsAppList0 = [Emerald, Olive, Gold]
 export default themesColorsAppList;
 export const themesApp = ["emerald", "olive", "gold"]; 

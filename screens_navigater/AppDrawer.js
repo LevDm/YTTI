@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button, Dimensions } from 'react-native';
+import { View, Text, Button, Dimensions, Appearance } from 'react-native';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
@@ -31,7 +31,15 @@ function AppDrawer(props) {
     const [appStyle, setAppStyle] = useState(props.appStyle);
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
+
+    Appearance.addChangeListener(({colorScheme})=>{
+        if(appStyle.colorScheme == 'auto'){
+            setThemeSchema(colorScheme)
+        }
+    })
+
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
     store.subscribe(() => {
@@ -43,6 +51,10 @@ function AppDrawer(props) {
 
         if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
             setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
+        }
+
+        if(ThemeSchema != jstore.appStyle.colorScheme){
+            setThemeSchema(jstore.appStyle.colorScheme);
         }
 
         if (appStyle != jstore.appStyle) {
@@ -76,6 +88,7 @@ function AppDrawer(props) {
                         appConfig={appConfig}
 
                         ThemeColorsAppIndex={ThemeColorsAppIndex}
+                        ThemeSchema={ThemeSchema}
                         LanguageAppIndex={LanguageAppIndex}
                     />
                   );

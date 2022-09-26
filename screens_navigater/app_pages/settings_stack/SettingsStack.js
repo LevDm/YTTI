@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Text, Button, Appearance } from 'react-native';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -81,7 +81,15 @@ function SettingsStack(props) {
     const [appStyle, setAppStyle] = useState(props.appStyle);
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
+
+    Appearance.addChangeListener(({colorScheme})=>{
+        if(appStyle.colorScheme == 'auto'){
+            setThemeSchema(colorScheme)
+        }
+    })
+
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
     store.subscribe(() => {
@@ -93,6 +101,10 @@ function SettingsStack(props) {
 
         if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
             setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
+        }
+
+        if(ThemeSchema != jstore.appStyle.colorScheme){
+            setThemeSchema(jstore.appStyle.colorScheme);
         }
 
         if (appStyle != jstore.appStyle) {

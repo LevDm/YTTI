@@ -35,10 +35,11 @@ const Classical = ({
     appConfig,
 
     ThemeColorsAppIndex,
+    ThemeSchema,
     LanguageAppIndex,
 }) => {
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
     const tingDuration = 400

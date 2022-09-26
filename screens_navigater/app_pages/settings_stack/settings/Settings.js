@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { 
+import {
+    Appearance, 
     StyleSheet, 
     Text, 
     Pressable,
@@ -208,6 +209,10 @@ const Settings = (props) => {
             setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
         }
 
+        if(ThemeSchema != jstore.appStyle.colorScheme){
+            setThemeSchema(jstore.appStyle.colorScheme);
+        }
+
         if (appStyle != jstore.appStyle) {
             setAppStyle(jstore.appStyle);
         }
@@ -217,13 +222,21 @@ const Settings = (props) => {
         }
     })
 
+    
+
+    Appearance.addChangeListener(({colorScheme})=>{
+        if(appStyle.colorScheme == 'auto'){
+            setThemeSchema(colorScheme)
+        }
+    })
+
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
     const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen
+    
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
     const [previewAppStyle, setPreviewAppStyle] = useState(props.appStyle);
@@ -232,7 +245,9 @@ const Settings = (props) => {
     const flatCategorysListRef = useRef();
     const flatListRef = useAnimatedRef(); 
 
-   
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen
+
     const [accentParam, setAccentParam] = useState(0);
     //const [accentCategory, setAccentCategory] = useState(0);
     const accentCategory = useSharedValue(0);
@@ -787,7 +802,7 @@ const Settings = (props) => {
                         style={[
                             (previewFixed || appStyle.lists.shadow)? staticStyles.shadow : {}, 
                             {                 
-                                backgroundColor: 'white',
+                                backgroundColor: Thema.basics.grounds.primary,
                                 marginVertical: !previewFixed? appStyle.lists.proximity  : 0, 
                                 marginTop: category == 'style'? 0 : (!previewFixed? appStyle.lists.proximity : 0),
                                 //position: 'absolute',
@@ -809,6 +824,7 @@ const Settings = (props) => {
                             setPreviewFixed={setPreviewFixed}
 
                             ThemeColorsAppIndex={ThemeColorsAppIndex}
+                            ThemeSchema={ThemeSchema}
                             LanguageAppIndex={LanguageAppIndex}
                         />}
                         {category == 'system' && 
@@ -841,6 +857,7 @@ const Settings = (props) => {
                             appStyle.lists.shadow? staticStyles.shadow : {},
                             dynamicStyleListItems,
                             {
+                                backgroundColor: Thema.basics.grounds.primary,   
                                 justifyContent: 'flex-start',
                                 paddingVertical: 5,// + 10 * appStyle.borderRadius.basic/32,
 
@@ -882,6 +899,7 @@ const Settings = (props) => {
                             getNewAppConfigObject={getNewAppConfigObject}
 
                             ThemeColorsAppIndex={ThemeColorsAppIndex}
+                            ThemeSchema={ThemeSchema}
                             LanguageAppIndex={LanguageAppIndex}
                         />}
                         
@@ -1042,7 +1060,7 @@ const staticStyles = StyleSheet.create({
         shadowRadius: 4
     },
     SLArea: {
-        backgroundColor: 'white',
+        //backgroundColor: 'white',
         minHeight: 200, 
         paddingHorizontal: 10,
         justifyContent: 'space-around',

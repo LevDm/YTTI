@@ -25,6 +25,30 @@ const Drawer = createDrawerNavigator();
 
 
 function AppDrawer(props) {
+    store.subscribe(() => {
+        let jstore = store.getState();
+
+        if(LanguageAppIndex != languagesApp.indexOf(jstore.appConfig.languageApp)){
+            setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
+        }
+
+        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
+            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
+        }
+
+        if(ThemeSchema != jstore.appStyle.colorScheme){
+            setThemeSchema(jstore.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.colorScheme);
+        }
+
+        if (appStyle != jstore.appStyle) {
+            setAppStyle(jstore.appStyle);
+        }
+
+        if (appConfig != jstore.appConfig) {
+            setAppConfig(jstore.appConfig);
+        }
+    })
+
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
     const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
 
@@ -42,30 +66,7 @@ function AppDrawer(props) {
     const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
-    store.subscribe(() => {
-        let jstore = store.getState();
-
-        if(LanguageAppIndex != languagesApp.indexOf(jstore.appConfig.languageApp)){
-            setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
-        }
-
-        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
-            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
-        }
-
-        if(ThemeSchema != jstore.appStyle.colorScheme){
-            setThemeSchema(jstore.appStyle.colorScheme);
-        }
-
-        if (appStyle != jstore.appStyle) {
-            setAppStyle(jstore.appStyle);
-        }
-
-        if (appConfig != jstore.appConfig) {
-            setAppConfig(jstore.appConfig);
-        }
-    })
-
+    console.log('navidater', ThemeColorsAppIndex, ThemeSchema)
     return (
         <Drawer.Navigator 
             //useLegacyImplementation

@@ -210,7 +210,7 @@ const Settings = (props) => {
         }
 
         if(ThemeSchema != jstore.appStyle.colorScheme){
-            setThemeSchema(jstore.appStyle.colorScheme);
+            setThemeSchema(jstore.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.colorScheme);
         }
 
         if (appStyle != jstore.appStyle) {

@@ -31,13 +31,7 @@ export default ThemeRedacor = ({
     LanguageAppIndex  
 }) => {
     
-    const [schema, setSchema] = useState(appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : appStyle.colorScheme)
-
-    Appearance.addChangeListener(({colorScheme})=>{
-        if(appStyle.colorScheme == 'auto'){
-            setSchema(colorScheme)
-        }
-    })
+    const [schema, setSchema] = useState(appStyle.colorScheme)
 
     const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
@@ -117,13 +111,11 @@ export default ThemeRedacor = ({
         setPreviewAppStyle(newAppStyle)
     }
 
-    const [ lscheme, setLScheme ] = useState(appStyle.colorSheme)
-
+    
     const switching = ()=>{
         const schemes = ['light', 'auto', 'dark'] 
-        let index = schemes.indexOf(lscheme)
+        let index = schemes.indexOf(schema)
         index = (index+1) == schemes.length? 0 : index+1
-        setLScheme(schemes[index])
         setSchema(schemes[index])
         let newAppStyle = getNewAppStyleObject();
         newAppStyle.colorScheme = schemes[index]
@@ -133,7 +125,7 @@ export default ThemeRedacor = ({
     return (<>
         <Text>{schema} {Thema.theme}</Text>
         <ColorShemeSwitch
-            scheme = {lscheme}
+            scheme = {schema}
             sizeIcon = {30}
             switching = {switching}
         />

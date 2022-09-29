@@ -40,8 +40,8 @@ const Emerald = {
             quaternary: '#aee5ba',
         },
         neutrals: {
-            primary: '#fff', 
-            secondary: '#000', 
+            primary: '#000000', 
+            secondary: '#ffffff', 
             tertiary: '#808080',
         },
     },

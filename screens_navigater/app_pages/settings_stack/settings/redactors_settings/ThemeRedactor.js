@@ -127,6 +127,11 @@ export default ThemeRedacor = ({
         <ColorShemeSwitch
             scheme = {schema}
             sizeIcon = {30}
+            colorIcon = {Thema.icons.neutrals.secondary}
+            invertColorIcon = {Thema.icons.neutrals.primary}
+            textStyle = {{
+                color: Thema.texts.neutrals.secondary
+            }}
             switching = {switching}
         />
         <Animated.FlatList

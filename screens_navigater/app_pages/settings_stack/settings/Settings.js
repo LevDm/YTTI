@@ -198,6 +198,16 @@ const positionBobberButton =(buttonSize)=>({
 
 const Settings = (props) => {
     //console.log(props)
+
+    const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
+    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
+
+    const [appStyle, setAppStyle] = useState(props.appStyle);
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
+    const [appConfig, setAppConfig] = useState(props.appConfig);
+
+    const [previewAppStyle, setPreviewAppStyle] = useState(props.appStyle);
+    
     store.subscribe(() => {
         let jstore = store.getState();
 
@@ -221,25 +231,12 @@ const Settings = (props) => {
             setAppConfig(jstore.appConfig);
         }
     })
-
     
-
     Appearance.addChangeListener(({colorScheme})=>{
         if(appStyle.colorScheme == 'auto'){
             setThemeSchema(colorScheme)
         }
     })
-
-    const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
-    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
-
-    
-
-    const [appStyle, setAppStyle] = useState(props.appStyle);
-    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
-    const [appConfig, setAppConfig] = useState(props.appConfig);
-
-    const [previewAppStyle, setPreviewAppStyle] = useState(props.appStyle);
 
     const sectListRef = useRef();
     const flatCategorysListRef = useRef();
@@ -307,8 +304,9 @@ const Settings = (props) => {
     const splashStart = (themeIndex) => {
         //if(appStyle.theme != theme){
 
-            setSplashTheme(themeIndex);
-            setSplashVisible(true);    
+            //setSplashTheme(themeIndex);
+            //setSplashVisible(true);
+            splashOut()    
         //}
     }
 

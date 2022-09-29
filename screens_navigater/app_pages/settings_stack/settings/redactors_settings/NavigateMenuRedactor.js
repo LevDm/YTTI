@@ -216,8 +216,8 @@ export default NavigateMenuRedactor = ({
                     true: Thema.icons.accents.primary  
                 },
                 thumb: { 
-                    false: Thema.icons.neutrals.primary, 
-                    true: Thema.icons.neutrals.primary  
+                    false: Thema.icons.accents.quaternary, 
+                    true: Thema.icons.accents.primary,  
                 }
             }}
             primeValue={rippleEffect}
@@ -399,8 +399,8 @@ export default NavigateMenuRedactor = ({
                             true: Thema.icons.accents.primary  
                         },
                         thumb: { 
-                            false: Thema.icons.neutrals.primary, 
-                            true: Thema.icons.neutrals.primary  
+                            false: Thema.icons.accents.quaternary, 
+                            true: Thema.icons.accents.primary, 
                         }
                     }}
                     primeValue={signature}

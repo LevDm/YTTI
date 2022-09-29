@@ -10,12 +10,12 @@ const Emerald = {
             quaternary: '#aee5ba',
         },
         neutrals: {
-            primary: '#fff', 
-            secondary: '#000', 
+            primary: '#ffffff', 
+            secondary: '#000000', 
             tertiary: '#808080',
         },
         grounds: {
-            primary: '#fff', 
+            primary: '#ffffff', 
             secondary: '#f5f5f5', 
         },
     },
@@ -27,8 +27,8 @@ const Emerald = {
             quaternary: '#aee5ba',
         },
         neutrals: {
-            primary: '#fff', 
-            secondary: '#000', 
+            primary: '#ffffff', 
+            secondary: '#000000', 
             tertiary: '#808080',
         },
     },
@@ -46,9 +46,9 @@ const Emerald = {
         },
     },
     navigateBar: {
-        ground: '#fff',
-        icons: {active: '#000', notActive: '#000'},
-        text: {active: '#6b8e23', notActive: '#000'},
+        ground: '#ffffff',
+        icons: {active: '#50c878', notActive: '#000000'},
+        text: {active: '#50c878', notActive: '#000000'},
     },
     specials: {
         fire: {
@@ -73,12 +73,12 @@ const Olive = {
             quaternary: '#b6c590',
         },
         neutrals: {
-            primary: '#fff', 
-            secondary: '#000', 
+            primary: '#ffffff', 
+            secondary: '#000000', 
             tertiary: '#808080',
         },
         grounds: {
-            primary: '#fff', 
+            primary: '#ffffff', 
             secondary: '#f5f5f5', 
         },
     },
@@ -90,8 +90,8 @@ const Olive = {
             quaternary: '#b6c590',
         },
         neutrals: {
-            primary: '#fff', 
-            secondary: '#000', 
+            primary: '#ffffff', 
+            secondary: '#000000', 
             tertiary: '#808080',
         },
     },
@@ -103,15 +103,15 @@ const Olive = {
             quaternary: '#b6c590',
         },
         neutrals: {
-            primary: '#fff', 
-            secondary: '#000', 
+            primary: '#ffffff', 
+            secondary: '#000000', 
             tertiary: '#808080',
         },
     },
     navigateBar: {
-        ground: '#fff',
-        icons: {active: '#6b8e23', notActive: '#000'},
-        text: {active: '#6b8e23', notActive: '#000'},
+        ground: '#ffffff',
+        icons: {active: '#6b8e23', notActive: '#000000'},
+        text: {active: '#6b8e23', notActive: '#000000'},
     },
     specials: {
         fire: {

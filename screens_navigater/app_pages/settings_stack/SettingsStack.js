@@ -83,15 +83,6 @@ function SettingsStack(props) {
 
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
 
-    Appearance.addChangeListener(({colorScheme})=>{
-        if(appStyle.colorScheme == 'auto'){
-            setThemeSchema(colorScheme)
-        }
-    })
-
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex]
-
     store.subscribe(() => {
         let jstore = store.getState();
 
@@ -115,6 +106,15 @@ function SettingsStack(props) {
             setAppConfig(jstore.appConfig);
         }
     })
+
+    Appearance.addChangeListener(({colorScheme})=>{
+        if(appStyle.colorScheme == 'auto'){
+            setThemeSchema(colorScheme)
+        }
+    })
+    
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex]
 
     return (
         <Stack.Navigator

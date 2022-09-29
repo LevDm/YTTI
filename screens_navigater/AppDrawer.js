@@ -25,6 +25,15 @@ const Drawer = createDrawerNavigator();
 
 
 function AppDrawer(props) {
+
+    const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
+    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
+
+    const [appStyle, setAppStyle] = useState(props.appStyle);
+    const [appConfig, setAppConfig] = useState(props.appConfig);
+
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
+
     store.subscribe(() => {
         let jstore = store.getState();
 
@@ -48,15 +57,7 @@ function AppDrawer(props) {
             setAppConfig(jstore.appConfig);
         }
     })
-
-    const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
-    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
-
-    const [appStyle, setAppStyle] = useState(props.appStyle);
-    const [appConfig, setAppConfig] = useState(props.appConfig);
-
-    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
-
+    
     Appearance.addChangeListener(({colorScheme})=>{
         if(appStyle.colorScheme == 'auto'){
             setThemeSchema(colorScheme)
@@ -66,7 +67,6 @@ function AppDrawer(props) {
     const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
-    console.log('navidater', ThemeColorsAppIndex, ThemeSchema)
     return (
         <Drawer.Navigator 
             //useLegacyImplementation

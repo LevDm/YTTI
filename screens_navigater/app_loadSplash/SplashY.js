@@ -52,17 +52,8 @@ const SplashY = (props) => {
 
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
 
-    Appearance.addChangeListener(({colorScheme})=>{
-        if(appStyle.colorScheme == 'auto'){
-            setThemeSchema(colorScheme)
-        }
-    })
-
-    //const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
-    
-    //const [appConfig, setAppConfig] = useState(props.appConfig);
-
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    //const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]    
+    //const [appConfig, setAppConfig] = useState(props.appConfig);r
     //const Language = languagesAppList[LanguageAppIndex]
 
     store.subscribe(() => {
@@ -88,6 +79,14 @@ const SplashY = (props) => {
         //    setAppConfig(jstore.appConfig);
         //}
     })
+    
+    Appearance.addChangeListener(({colorScheme})=>{
+        if(appStyle.colorScheme == 'auto'){
+            setThemeSchema(colorScheme)
+        }
+    })
+
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
     //
     const [colorsApp, setColorsApp] = useState();

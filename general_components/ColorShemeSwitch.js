@@ -33,7 +33,8 @@ export default ColorSchemeSwitch = ({
     sizeIcon = 25,
     colorIcon = '#ffffff',
     invertColorIcon = '#000000',
-    textStyle,
+    textStyle = {},
+    pressableStyle = {},
     switching
 }) => {
 
@@ -67,11 +68,11 @@ export default ColorSchemeSwitch = ({
 
     return (
         <Pressable
-            style = {{
+            style = {[{
                 flexDirection: 'row',
                 alignItems: 'center',
-                padding: 10
-            }}
+                padding: 2
+            },pressableStyle]}
             onPress={switching}
         >
             <View

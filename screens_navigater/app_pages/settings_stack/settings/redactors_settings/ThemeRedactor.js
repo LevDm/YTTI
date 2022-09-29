@@ -123,21 +123,44 @@ export default ThemeRedacor = ({
     }
 
     return (<>
-        <Text>{schema} {Thema.theme}</Text>
-        <ColorShemeSwitch
-            scheme = {schema}
-            sizeIcon = {30}
-            colorIcon = {Thema.icons.neutrals.secondary}
-            invertColorIcon = {Thema.icons.neutrals.primary}
-            textStyle = {{
-                color: Thema.texts.neutrals.secondary
+        <View
+            style = {{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
             }}
-            switching = {switching}
-        />
+        >
+            <Text>Color schema used thema</Text>
+            <ColorShemeSwitch
+                scheme = {schema}
+                sizeIcon = {25}
+                colorIcon = {Thema.icons.neutrals.secondary}
+                invertColorIcon = {Thema.icons.neutrals.primary}
+                textStyle = {{
+                    color: Thema.texts.neutrals.secondary,
+                    fontSize: 12,
+                    fontWeight: '600',
+                    fontVariant: ['small-caps']
+                }}
+                pressableStyle = {{
+                    marginRight: 20,
+                    width: 90,
+                    paddingHorizontal: 10,
+                    borderWidth: 2,
+                    borderColor: Thema.icons.accents.primary,
+                    borderRadius: appStyle.borderRadius.additional
+                }}
+                switching = {switching}
+            />
+        </View>
+        
         <Animated.FlatList
             ref = {flatListRef}
             
-            style={{ width: 3*itemSize }}
+            style={{
+                marginTop: 15, 
+                width: 3*itemSize 
+            }}
             horizontal = {true}
             showsHorizontalScrollIndicator = {false}
             decelerationRate = {'fast'}

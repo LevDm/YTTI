@@ -100,6 +100,10 @@ const LanguageStoreRu = {
         ]
       },
       Redactors: {
+        themes: {
+          colorMode: "Цветовой режим",
+          colorsMods: {auto: 'системный', light: 'светлый', dark: 'темный'}
+        },
         fillets: {
           synhronous: "Синхронизация значений",
           synhronousState: {true: "включена", false: "выключена"},
@@ -271,6 +275,10 @@ const LanguageStoreEng = {
         ]
       },
       Redactors: {
+        themes: {
+          colorMode: "Color mode",
+          colorsMods: {auto: 'systemic', light: 'light', dark: 'dark'}
+        },
         fillets: {
           synhronous: "Value synchronization",
           synhronousState: {true: "on", false: "off"},

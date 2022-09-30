@@ -6,6 +6,8 @@ import { Appearance } from 'react-native';
 import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 import nightThemesColorsAppList, {nightThemesApp} from "../../../../../app_values/ThemesNight";
 
+import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
+
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
@@ -34,6 +36,7 @@ export default ThemeRedacor = ({
     const [schema, setSchema] = useState(appStyle.colorScheme)
 
     const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.themes
 
     const flatListRef = useRef()
     const scrollX = React.useRef(new Animated.Value(0)).current;
@@ -130,12 +133,17 @@ export default ThemeRedacor = ({
                 justifyContent: 'space-between',
             }}
         >
-            <Text>Color schema used thema</Text>
+            <Text
+                style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}
+            >
+                {Language.colorMode}
+            </Text>
             <ColorShemeSwitch
                 scheme = {schema}
                 sizeIcon = {25}
                 colorIcon = {Thema.icons.neutrals.secondary}
                 invertColorIcon = {Thema.icons.neutrals.primary}
+                text = {Language.colorsMods[schema]}
                 textStyle = {{
                     color: Thema.texts.neutrals.secondary,
                     fontSize: 12,
@@ -144,7 +152,7 @@ export default ThemeRedacor = ({
                 }}
                 pressableStyle = {{
                     marginRight: 20,
-                    width: 90,
+                    width: 125,
                     paddingHorizontal: 10,
                     borderWidth: 2,
                     borderColor: Thema.icons.accents.primary,
@@ -198,6 +206,12 @@ export default ThemeRedacor = ({
 }
 
 const staticStyles = StyleSheet.create({
+    text: {
+        fontSize: 16, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
     themeName: {
         fontSize: 14,
         fontWeight: 'bold',

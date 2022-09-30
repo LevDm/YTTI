@@ -34,6 +34,7 @@ export default ColorSchemeSwitch = ({
     colorIcon = '#ffffff',
     invertColorIcon = '#000000',
     textStyle = {},
+    text = false, //or string
     pressableStyle = {},
     switching
 }) => {
@@ -166,13 +167,15 @@ export default ColorSchemeSwitch = ({
                 </Svg>
                 </Animated.View>}
             </View>
+            {text && 
             <Text
                 style = {[{
                     marginLeft: 10
                 }, textStyle]}
             >
-            {scheme}
-            </Text>    
+                {text}
+            </Text>
+            }    
         </Pressable>
         
     )

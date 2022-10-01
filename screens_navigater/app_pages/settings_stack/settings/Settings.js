@@ -56,6 +56,7 @@ import LanguageRedactor from "./redactors_settings/LanguageRedactor";
 import ListsRedactor from "./redactors_settings/ListsRedactor";
 import FunctionButtonRedactor from "./redactors_settings/FunctionButtonRedactor";
 
+import WeatherRedactor from "./redactors_settings/WeatherRedactor";
 
 import Ohter from "./redactors_settings/ohterts";
 import StyleChangePreview from "./preview/StyleChangePreview";
@@ -133,7 +134,7 @@ const structure = [
             {
                 param:"weather",
                 icon:  "weather-cloudy-clock",
-                paramRedactorComponent: null
+                paramRedactorComponent: WeatherRedactor
             }, 
             {
                 param:"ohter",

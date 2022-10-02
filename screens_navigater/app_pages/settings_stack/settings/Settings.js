@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import {
     Appearance, 
     StyleSheet, 
-    Text, 
+    Text,
+    Button, 
     Pressable,
     TextInput, 
     FlatList, 
@@ -31,6 +32,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import Constants from "expo-constants";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import {
+    BottomSheetModal,
+    BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
 
 import themesColorsAppList, {themesApp} from "../../../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../../../app_values/Languages";
@@ -677,8 +683,23 @@ const Settings = (props) => {
         props.navigation.goBack()
     }
 
+
+    // ref
+    const bottomSheetModalRef = useRef(BottomSheetModal);
+
+    // variables
+    const snapPoints = useMemo(() => ['25%', '50%'], []);
+
+    // callbacks
+    const handlePresentModalPress = useCallback(() => {
+        bottomSheetModalRef.current?.present();
+    }, []);
+    const handleSheetChanges = useCallback((index) => {
+        console.log('handleSheetChanges', index);
+    }, []);
+
     return (
-    <>  
+    <BottomSheetModalProvider>  
         <View
             style={[
                 staticStyles.FlatListsArea,
@@ -919,6 +940,11 @@ const Settings = (props) => {
                         }}
                     >
                         <Text>till all</Text>
+                        <Button
+                        onPress={handlePresentModalPress}
+                        title="Present Modal"
+                        color="black"
+                        />
                     </View>
                 )
             }}
@@ -998,7 +1024,18 @@ const Settings = (props) => {
             setSplashVisible = {setSplashVisible} 
             splashOut = {splashOut}
         />
-    </>);  
+
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+        >
+          <View style={{}}>
+            <Text>Awesome 🎉</Text>
+          </View>
+        </BottomSheetModal>
+    </BottomSheetModalProvider>);  
 };
 export default connect(mapStateToProps('SETTINGS_SCREEN'), mapDispatchToProps('SETTINGS_SCREEN'))(Settings);
 

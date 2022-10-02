@@ -5,6 +5,8 @@ import { AppState, StyleSheet, SafeAreaView, View } from 'react-native';
 
 import Tabs from './screens/Navigater';
 
+import GestureHandlerRootView from 'react-native-gesture-handler';
+
 //"react-native":"https://github.com/expo/react-native/archive/sdk-43.0.0.tar.gz",
 
 import AppLoading from 'expo-app-loading';
@@ -29,7 +31,7 @@ import 'react-native-gesture-handler';
 import AppStack from './screens_navigater/AppStack'
 
 import AppDrawer from "./screens_navigater/AppDrawer"
-
+const start = new Date().getTime()
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -98,7 +100,7 @@ export default function App() {
     if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !appIsReady){
     //if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !ready){
       console.log('>APP_READY_AND_RUNNING')
-      
+      console.log( new Date().getTime() - start )
       if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
       //setReady(true);
       setAppIsReady(true)
@@ -145,7 +147,7 @@ export default function App() {
         animated={true}
       />
       {helloModalVisible && <SplashY setSplashOut={setHelloModalVisible}/>}
-    </View>  
+    </View>
     </Provider>
   );  
 }

@@ -9,6 +9,7 @@
   "dependencies": {
     "@fullcalendar/daygrid": "^5.9.0",
     "@fullcalendar/react": "^5.9.0",
+    "@gorhom/bottom-sheet": "^4.4.5",
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-native-community/blur": "^3.6.0",
     "@react-native-community/datetimepicker": "6.2.0",

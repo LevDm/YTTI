@@ -1,6 +1,34 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {
+    useState, 
+    useRef, 
+    useEffect,
+    useCallback, 
+    useMemo
+} from "react";
 
-import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
+import {
+    StyleSheet, 
+    Text, 
+    Pressable, 
+    ScrollView,
+    FlatList, 
+    Animated, 
+    SectionList, 
+    View,
+    Modal,
+    Button, 
+    Dimensions, 
+    Switch, 
+    ActivityIndicator
+} from 'react-native';
+
+import BottomSheet, {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+
+import GestureHandlerRootView from 'react-native-gesture-handler';
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 
 import * as Location from 'expo-location';
 import NetInfo from '@react-native-community/netinfo';
@@ -8,7 +36,7 @@ import NetInfo from '@react-native-community/netinfo';
 import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
 
-import { BasePressable } from "../../../../../general_components/base_components/BaseElements";
+import { BasePressable, BaseSwitch, BaseCheckBox } from "../../../../../general_components/base_components/BaseElements";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -48,10 +76,12 @@ export default WeatherRedactor = ({
             return;
         }
 
-        let location = await Location.getCurrentPositionAsync({});
+        let location = null
+        location = await Location.getCurrentPositionAsync({});
+        console.log('(')
         setLocation(location);
         setCoords({lat: location.coords.latitude, lon: location.coords.longitude})
-        console.log(location)
+        
     }
 
     let text = 'Waiting..';
@@ -113,6 +143,14 @@ export default WeatherRedactor = ({
         }
         
     }
+    const [ modalVisible, setModalVisible ] = useState(false)
+    const modalVis = () => {
+        setModalVisible(true)
+    }
+    
+    const outsideModalPress = () =>{
+        setModalVisible(false)
+    }
 
     return (<>
         <Text>
@@ -136,8 +174,142 @@ export default WeatherRedactor = ({
             text="get location ip"
             onPress={getLocationIp}
         />
+        <BasePressable
+            type="t"
+            text="modal"
+            onPress={modalVis}
+        />
+
+        
+        <BaseModal
+            animationType = {'slide'}
+            visible = {modalVisible}
+            transparent= {true}
+            outPress = {outsideModalPress}
+            modalStyle = {{
+                width: deviceWidth-10,
+                left: 5,
+
+            }}
+            style={{
+                backgroundColor: Thema.basics.accents.primary,
+                borderTopLeftRadius: appStyle.borderRadius.additional,
+                borderTopRightRadius: appStyle.borderRadius.additional,
+                padding: 10,
+                width: deviceWidth-10,
+                marginHorizontal: 0
+            }}
+        >
+            <Text>add</Text>
+        </BaseModal> 
     </>)
 }
+
+const BaseModal = (props) => {
+    const {
+        animationType,
+        visible,
+        transparent,
+        outPress,
+        style,
+        modalStyle
+    } = props
+    
+    // ref
+    const bottomSheetModalRef = useRef();
+    const bottomSheetRef = useRef(BottomSheet);
+    // variables
+    const snapPoints = useMemo(() => [300, 300], []);
+
+    // callbacks
+    const handlePresentModalPress = useCallback(() => {
+        bottomSheetModalRef.current?.present();
+    }, []);
+
+    const handleDismissModalPress = useCallback(() => {
+        bottomSheetModalRef.current?.dismiss();
+    }, []);
+
+    useEffect(()=>{
+        console.log(visible)
+        visible? handlePresentModalPress() : handleDismissModalPress()
+    },[visible])
+
+    const handleSheetChanges = useCallback((index) => {
+        console.log('handleSheetChanges', index);
+        index === -1? outPress() : null
+    }, []);
+
+    const BodyC = gestureHandlerRootHOC(()=>(
+        
+            
+                <BottomSheetModalProvider>
+                <BottomSheetModal
+                    ref={bottomSheetModalRef}
+                    index={1}
+                    snapPoints={snapPoints}
+                    onChange={handleSheetChanges}
+                    enablePanDownToClose={true}
+                    style={{
+                        backgroundColor: '#00ff0030'
+                    }}
+                    backgroundStyle={[{
+                        backgroundColor: '#ff000030'
+                    }, style]}
+                    handleStyle={{
+                        backgroundColor: '#0000ff30'
+                    }}
+                    handleIndicatorStyle={{
+                        backgroundColor: '#ffff00a0'
+                    }}
+                >
+                    <View style={{flex: 1,}}>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                        <Text>Awesome 🎉</Text>
+                    </View>
+                </BottomSheetModal>
+                </BottomSheetModalProvider>
+            
+    ))
+
+    return (     
+        <Modal
+            visible={visible}
+            animationType = {animationType}
+            transparent= {transparent}
+        >   
+             
+            <Pressable
+                flex = {1}
+                style={{backgroundColor: '#00000030'}}
+                onPress={outPress}
+            />
+            {/**/}
+            <View
+                style = {[{
+                    minHeight: 300,
+                    position: 'absolute',
+                    bottom: 0,
+                    width: deviceWidth,
+                }, modalStyle]}
+            >
+                <BodyC/>
+            </View>
+        </Modal>
+        
+    )
+} 
 
 const staticStyles = StyleSheet.create({
     text: {

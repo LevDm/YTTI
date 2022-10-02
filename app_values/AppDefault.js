@@ -21,6 +21,8 @@ export const sizeButton = {min: 46, max: 64, step: 2}
 //export const valuePosition = ['left','center','right']
 
 
+export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
+
 //APPERANCE
 export const defaultAppStyle = {
     theme: "emerald",
@@ -60,6 +62,19 @@ export const defaultAppConfig = {
         task: true,
 
         weather: true,
+    },
+    weather: {
+        use: false,
+        locationInfo: [
+            //{
+            //    coords: null, {lat: num, lon: num}
+            //    city: ''
+            //}
+        ],
+        data: [
+            //{requestTime: num, answer: {}}
+        ], 
+        
     } 
 
 }

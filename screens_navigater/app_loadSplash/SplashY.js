@@ -103,10 +103,11 @@ const SplashY = (props) => {
     const inputRange = [0, .001, .5, .501, 1]
 
     
-    
-    
+    //general anim duration
     const globalDuration = 1000 * 1
     
+
+
     useEffect(()=>{
         setTimeout(()=>{
 
@@ -201,10 +202,16 @@ const SplashY = (props) => {
         
         const animations = {
             width: withTiming(widthLogo/2, { duration: circleDuration, easing: Easing.bezier(.71,0,.32,1.5)}),
+            //transform: [
+            //    {translateX: withTiming(-0.5*(widthLogo-sizeY), { duration: circleDuration, easing: Easing.bezier(.71,0,.32,1.5)})}
+            //]
         };
         const initialValues = {
           width: sizeY/2,
           height: sizeY,
+          //transform: [
+          //  {translateX: 0}
+          //]
         };
         return {
           initialValues,
@@ -398,41 +405,44 @@ const SplashY = (props) => {
             />
 
 
-            
+            <Animated.View
+                entering = {enteringYRight}  
+                style = {[  
+                    {
+                    left: widthScreen/2-0,
+                    position: 'absolute',
+                    width: sizeY/2,
+                    height: sizeY,
+                    borderRadius: sizeY/2,
+                    borderBottomLeftRadius: 0,
+                    borderTopLeftRadius: 0,
+                    borderBottomStartRadius: 0,
+                    borderWidth: borderWidth,
+                    borderLeftWidth: 0,
+                    borderColor: 'white',
+                    //opacity: 0.8
+                }]}
+            />
 
             <Animated.View
                 entering = {enteringYLeft}  
                 style = {[  
                     {
-                    right: widthScreen/2-0.5,
+                    right: widthScreen/2-0.18180509,
                     position: 'absolute',
                     width: sizeY/2,
                     height: sizeY,
-                    borderRadius: sizeY,
+                    borderRadius: sizeY/2,
                     borderBottomRightRadius: 0,
                     borderTopRightRadius: 0,
                     borderWidth: borderWidth,
                     borderRightWidth: 0,
                     borderColor: 'white',
+                    //opacity: 0.8
                 }]}
             />
             
-            <Animated.View
-                entering = {enteringYRight}  
-                style = {[  
-                    {
-                    left: widthScreen/2-0.5,
-                    position: 'absolute',
-                    width: sizeY/2,
-                    height: sizeY,
-                    borderRadius: sizeY,
-                    borderBottomLeftRadius: 0,
-                    borderTopLeftRadius: 0,
-                    borderWidth: borderWidth,
-                    borderLeftWidth: 0,
-                    borderColor: 'white'
-                }]}
-            />
+            
 
             {true &&
             <Animated.View

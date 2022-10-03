@@ -100,7 +100,7 @@ export default ListsRedactor = ({
             value = {sliderValue}
             onSlidingComplete = {(value)=>{settingSizeButton(value, true)}}
             onValueChange = {(value)=>{settingSizeButton(value, false)}}
-            minimumTrackTintColor = {Thema.icons.accents.primary}
+            minimumTrackTintColor = {Thema.icons.accents.tertiary}
             maximumTrackTintColor = {Thema.icons.accents.quaternary}
             thumbTintColor = {Thema.icons.accents.primary}
         />

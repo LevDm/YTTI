@@ -130,7 +130,7 @@ export default BorderRadiusRedactor = ({
                     value = {item === 'basic'? sliderValueBasic : sliderValueAdditional}
                     onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
                     onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
-                    minimumTrackTintColor = {Thema.icons.accents.primary}
+                    minimumTrackTintColor = {Thema.icons.accents.tertiary}
                     maximumTrackTintColor = {Thema.icons.accents.quaternary}
                     thumbTintColor = {Thema.icons.accents.primary}
                 />

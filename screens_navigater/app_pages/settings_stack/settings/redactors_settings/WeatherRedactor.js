@@ -189,15 +189,15 @@ export default WeatherRedactor = ({
             modalStyle = {{
                 width: deviceWidth-10,
                 left: 5,
-
+                //marginHorizontal: 5
             }}
             style={{
                 backgroundColor: Thema.basics.accents.primary,
                 borderTopLeftRadius: appStyle.borderRadius.additional,
                 borderTopRightRadius: appStyle.borderRadius.additional,
-                padding: 10,
+                //padding: 10,
                 width: deviceWidth-10,
-                marginHorizontal: 0
+                //marginHorizontal: 0
             }}
         >
             <Text>add</Text>
@@ -214,7 +214,7 @@ const BaseModal = (props) => {
         style,
         modalStyle
     } = props
-    
+    //console.log(props)
     // ref
     const bottomSheetModalRef = useRef();
     const bottomSheetRef = useRef(BottomSheet);
@@ -235,52 +235,43 @@ const BaseModal = (props) => {
         visible? handlePresentModalPress() : handleDismissModalPress()
     },[visible])
 
+    //const [sheetState, setSheetState] = useState(0)
+
     const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
+        //setSheetState(index)
         index === -1? outPress() : null
     }, []);
 
-    const BodyC = gestureHandlerRootHOC(()=>(
-        
-            
-                <BottomSheetModalProvider>
-                <BottomSheetModal
-                    ref={bottomSheetModalRef}
-                    index={1}
-                    snapPoints={snapPoints}
-                    onChange={handleSheetChanges}
-                    enablePanDownToClose={true}
-                    style={{
-                        backgroundColor: '#00ff0030'
-                    }}
-                    backgroundStyle={[{
-                        backgroundColor: '#ff000030'
-                    }, style]}
-                    handleStyle={{
-                        backgroundColor: '#0000ff30'
-                    }}
-                    handleIndicatorStyle={{
-                        backgroundColor: '#ffff00a0'
-                    }}
-                >
-                    <View style={{flex: 1,}}>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                        <Text>Awesome 🎉</Text>
-                    </View>
-                </BottomSheetModal>
-                </BottomSheetModalProvider>
-            
+    const GestureModal = gestureHandlerRootHOC(()=>(
+        <BottomSheetModalProvider>
+        <BottomSheetModal
+            ref={bottomSheetModalRef}
+            index={1}
+            snapPoints={snapPoints}
+            onChange={handleSheetChanges}
+            enablePanDownToClose={true}
+            //enableHandlePanningGesture={false}
+            overDragResistanceFactor={0}
+            style={{
+                backgroundColor: '#00ff0030',
+                //paddingHorizontal: 10
+            }}
+            backgroundStyle={[{
+                backgroundColor: '#ff000030'
+            }, style]}
+            handleStyle={{
+                backgroundColor: '#0000ff30'
+            }}
+            handleIndicatorStyle={{
+                backgroundColor: '#ffff00a0'
+            }}
+        >
+            <View style={{flex: 1,}}>
+                {props.children}
+            </View>
+        </BottomSheetModal>
+        </BottomSheetModalProvider>
     ))
 
     return (     
@@ -289,10 +280,9 @@ const BaseModal = (props) => {
             animationType = {animationType}
             transparent= {transparent}
         >   
-             
             <Pressable
                 flex = {1}
-                style={{backgroundColor: '#00000030'}}
+                //style={{backgroundColor: '#00000030'}}
                 onPress={outPress}
             />
             {/**/}
@@ -304,10 +294,9 @@ const BaseModal = (props) => {
                     width: deviceWidth,
                 }, modalStyle]}
             >
-                <BodyC/>
+                <GestureModal/>
             </View>
         </Modal>
-        
     )
 } 
 

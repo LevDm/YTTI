@@ -693,13 +693,17 @@ const Settings = (props) => {
     // callbacks
     const handlePresentModalPress = useCallback(() => {
         bottomSheetModalRef.current?.present();
+        props.r_setPreviewOpen(true)
     }, []);
     const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
+        if(index === -1){
+            props.r_setPreviewOpen(false)
+        }
     }, []);
 
     return (
-    <BottomSheetModalProvider>  
+    <>  
         <View
             style={[
                 staticStyles.FlatListsArea,
@@ -1024,7 +1028,7 @@ const Settings = (props) => {
             setSplashVisible = {setSplashVisible} 
             splashOut = {splashOut}
         />
-
+        <BottomSheetModalProvider>
         <BottomSheetModal
           ref={bottomSheetModalRef}
           index={1}
@@ -1035,7 +1039,8 @@ const Settings = (props) => {
             <Text>Awesome 🎉</Text>
           </View>
         </BottomSheetModal>
-    </BottomSheetModalProvider>);  
+        </BottomSheetModalProvider>
+    </>);  
 };
 export default connect(mapStateToProps('SETTINGS_SCREEN'), mapDispatchToProps('SETTINGS_SCREEN'))(Settings);
 

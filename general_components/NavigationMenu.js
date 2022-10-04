@@ -27,6 +27,8 @@ const NavigationMenu = ({
     navigation,
     state, 
     route,
+
+    previewOpen,
     
     appStyle,
     appConfig,
@@ -95,7 +97,7 @@ const NavigationMenu = ({
         }
     }
 
-    if(!keyboardVisible){
+    if(!keyboardVisible && !previewOpen){
     return (
         <View
             style = {[

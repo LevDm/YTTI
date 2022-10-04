@@ -16,7 +16,8 @@ function mapStateToProps(component) {
             return function(state) {
                 return {
                     appStyle: state.appStyle,
-                    appConfig: state.appConfig
+                    appConfig: state.appConfig,
+                    previewOpen: state.previewOpen
                 };
             }
         }
@@ -52,6 +53,7 @@ function mapStateToProps(component) {
                 return {
                     appStyle: state.appStyle,
                     appConfig: state.appConfig,
+                    previewOpen: state.previewOpen
                 };
             }
         }

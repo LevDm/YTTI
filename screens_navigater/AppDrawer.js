@@ -3,6 +3,11 @@ import { View, Text, Button, Dimensions, Appearance } from 'react-native';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
+import {
+    BottomSheetModal,
+    BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+
 import { connect } from 'react-redux';
 import store from "../redux_files/store";
 import mapStateToProps from "../redux_files/stateToProps";
@@ -31,6 +36,7 @@ function AppDrawer(props) {
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
     const [appConfig, setAppConfig] = useState(props.appConfig);
+    const [previewOpen, setPreviewOpen] = useState(props.previewOpen);
 
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
 
@@ -49,12 +55,16 @@ function AppDrawer(props) {
             setThemeSchema(jstore.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.colorScheme);
         }
 
-        if (appStyle != jstore.appStyle) {
+        if (appStyle != jstore.appStyle){
             setAppStyle(jstore.appStyle);
         }
 
-        if (appConfig != jstore.appConfig) {
+        if (appConfig != jstore.appConfig){
             setAppConfig(jstore.appConfig);
+        }
+
+        if(previewOpen != jstore.previewOpen){
+            setPreviewOpen(jstore.previewOpen)
         }
     })
     
@@ -68,6 +78,7 @@ function AppDrawer(props) {
     const Language = languagesAppList[LanguageAppIndex]
 
     return (
+        
         <Drawer.Navigator 
             //useLegacyImplementation
             animationTypeForReplace={"pop"}
@@ -84,6 +95,8 @@ function AppDrawer(props) {
                         state = {navigation.getState()}
                         route = {route}  
                         navigation = {navigation}
+
+                        previewOpen = {previewOpen}
                         
                         appStyle={appStyle}
                         appConfig={appConfig}

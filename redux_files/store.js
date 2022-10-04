@@ -64,6 +64,7 @@ const initialState = {
 
     languageApp: 'en',
     splash: false,
+    previewOpen: false
 }
 
 const reducer = (state=initialState, action) => {
@@ -86,6 +87,13 @@ const reducer = (state=initialState, action) => {
         case 'SET_CONFIG_APP': {
             console.log('>'+action.type)
             initialState.appConfig = Object.assign(initialState.appConfig, action.value)
+            return initialState
+        }
+
+        //variables
+        case 'SET_PREVIEW_OPEN': {
+            console.log('>'+action.type+'_'+(`${action.value}`).toUpperCase())
+            initialState.previewOpen = action.value
             return initialState
         }
 

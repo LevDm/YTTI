@@ -51,8 +51,9 @@ export const defaultAppStyle = {
         size: 60,
     },
     modals: {
-        horizontalProximity: 0,
-        
+        horizontalProximity: 5,
+        outline: true,
+        dimOut: true
     }
 }
 

@@ -25,9 +25,10 @@ import {
 import BottomSheet, {
   BottomSheetModal,
   BottomSheetModalProvider,
+  BottomSheetScrollView
 } from '@gorhom/bottom-sheet';
 
-import GestureHandlerRootView from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 
 import * as Location from 'expo-location';
@@ -37,6 +38,8 @@ import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
 
 import { BasePressable, BaseSwitch, BaseCheckBox } from "../../../../../general_components/base_components/BaseElements";
+
+import { WEATHER_API_KEY } from "../../../../../app_values/AppDefault"
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -61,34 +64,50 @@ export default WeatherRedactor = ({
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.themes
 
     //const [ location, setLocation ] = useState(null)
-    const [coords, setCoords] = useState(null);
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
+    //const [coords, setCoords] = useState(null);
+    const [deviceLocation, setDeviceLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState('not informations');
+
 
     const getLocationDevice = async () => {
-        
-        console.log('async loaded');
-    
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        console.log(status)
+        setErrorMsg('waiting premission')
+
+        const { status } = await Location.requestForegroundPermissionsAsync();
+
         if (status !== 'granted') {
             setErrorMsg('Permission to access location was denied');
             return;
         }
 
-        let location = null
-        location = await Location.getCurrentPositionAsync({});
-        console.log('(')
-        setLocation(location);
-        setCoords({lat: location.coords.latitude, lon: location.coords.longitude})
-        
+        setErrorMsg('waiting for geolocation or aswer')
+        const location = await Location.getCurrentPositionAsync({});
+
+        setErrorMsg('finded location')
+        const coords = {lat: location.coords.latitude, lon: location.coords.longitude}
+
+        cityDefinition(coords)
     }
 
-    let text = 'Waiting..';
-    if (errorMsg) {
-        text = errorMsg;
-    } else if (location) {
-        text = 'Finded'; 
+    const cityDefinition = async (coords) => {
+        const locationInfo = {
+            coords: coords,
+            //utc: undefined,
+            //country: undefined,
+            city: null
+        };
+        const lang = languagesAppList[LanguageAppIndex].language
+
+        setErrorMsg('Definition city')
+        const API_CITY_URL = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&lang=${lang}&appid=${WEATHER_API_KEY}`);
+        const dataCity = await API_CITY_URL.json();
+
+        //console.log(dataCity)
+
+        locationInfo.city = (dataCity.name).replace(/\u0301/g, ""); // replace removes the accent of a letter
+        //locationInfo.country = dataCity.sys.country;
+        //locationInfo.utc = dataCity.timezone/3600;
+        setErrorMsg('all information received')
+        setDeviceLocation(locationInfo)
     }
     
     const [ipLocation, setIpLocation] = useState(null);
@@ -111,6 +130,14 @@ export default WeatherRedactor = ({
             city: undefined,
             coordinats: undefined
         };
+        const locationInfo = {
+            coords: null,
+            //utc: undefined,
+            //country: undefined,
+            city: null
+        };
+
+        const lang = languagesAppList[LanguageAppIndex].language
 
         const API_LOCATION_URL = await fetch('http://api.sypexgeo.net/json/');
         const dataLocation = await API_LOCATION_URL.json();
@@ -131,7 +158,15 @@ export default WeatherRedactor = ({
             lat: dataLocation.city.lat,
             lon: dataLocation.city.lon
         };
-        setIpLocation(locationIP)
+
+
+        locationInfo.coords = {
+            lat: dataLocation.city.lat,
+            lon: dataLocation.city.lon
+        }
+        locationInfo.city = dataLocation.city[`name_${lang}`] 
+
+        setIpLocation(locationInfo)
     }
 
     const getLocationIp = async () => {
@@ -147,16 +182,26 @@ export default WeatherRedactor = ({
     const modalVis = () => {
         setModalVisible(true)
     }
+    const onShow = () => {
+        console.log('modal show')
+        //const connected = getNetConnectInfo()
+        //if(connected && !ipLocation){
+        //    ipLocationRequire()
+        //}
+    }
     
     const outsideModalPress = () =>{
         setModalVisible(false)
     }
 
+    const [ clicks, setClicks] = useState(0)
+
     return (<>
         <Text>
-            location state: {text} {'\n'}
-            lat: {coords? coords.lat : 'none'} {'\n'}
-            lon: {coords? coords.lon : 'none'}
+            location state: {errorMsg} {'\n'}
+            city: {deviceLocation? deviceLocation.city : 'none' } {'\n'}
+            lat: {deviceLocation? deviceLocation.coords.lat : 'none'} {'\n'}
+            lon: {deviceLocation? deviceLocation.coords.lon : 'none'}
         </Text>
         <BasePressable
             type="t"
@@ -165,9 +210,9 @@ export default WeatherRedactor = ({
         />
         <Text>
             net state: {`${netConnectInfo}`} {'\n'}
-            city: {ipLocation? ipLocation.city[0] : 'none' } {'\n'}
-            lat: {ipLocation? ipLocation.coordinats.lat : 'none'} {'\n'}
-            lon: {ipLocation? ipLocation.coordinats.lon : 'none'}
+            city: {ipLocation? ipLocation.city : 'none' } {'\n'}
+            lat: {ipLocation? ipLocation.coords.lat : 'none'} {'\n'}
+            lon: {ipLocation? ipLocation.coords.lon : 'none'}
         </Text>
         <BasePressable
             type="t"
@@ -182,44 +227,100 @@ export default WeatherRedactor = ({
 
         
         <BaseModal
-            animationType = {'slide'}
+            animationType = {'fade'}
             visible = {modalVisible}
-            transparent= {true}
+            dimOut = {appStyle.modals.dimOut}
             outPress = {outsideModalPress}
+            onShow = {onShow}
             modalStyle = {{
-                width: deviceWidth-10,
-                left: 5,
-                //marginHorizontal: 5
+                width: deviceWidth-2*appStyle.modals.horizontalProximity,
+                left: appStyle.modals.horizontalProximity,
+
             }}
             style={{
-                backgroundColor: Thema.basics.accents.primary,
+                backgroundColor: Thema.modals.ground,
                 borderTopLeftRadius: appStyle.borderRadius.additional,
                 borderTopRightRadius: appStyle.borderRadius.additional,
-                //padding: 10,
-                width: deviceWidth-10,
-                //marginHorizontal: 0
+                borderWidth: appStyle.modals.outline? 1 : 0,
+                borderColor: Thema.modals.thumb,
+                flex: 1,
+                //width: deviceWidth-2*appStyle.modals.horizontalProximity,
             }}
+            thumbStyle = {{
+                backgroundColor: Thema.modals.thumb,
+                width: 50
+            }}
+            snapHeights = {[300, 300]}
         >
-            <Text>add</Text>
+           <View
+                style = {{
+                    flex: 1,
+                    paddingHorizontal: 10
+                }}
+            >
+                <Text>
+                    net state: {`${netConnectInfo}`}
+                </Text>
+                <Text>
+                    network locations {'\n'}
+                    city: {ipLocation? ipLocation.city : 'none' } {'\n'}
+                    lat: {ipLocation? ipLocation.coords.lat : 'none'} {'\n'}
+                    lon: {ipLocation? ipLocation.coords.lon : 'none'}
+                </Text>
+                <BasePressable
+                    type="t"
+                    text="get location ip"
+                    onPress={getLocationIp}
+                />
+                <BasePressable
+                    type="t"
+                    text={`clicks ${clicks}`}
+                    onPress={()=>{
+                        console.log('click from modal')
+                        setClicks(clicks+1)
+                    }}
+                />
+            </View>
         </BaseModal> 
     </>)
 }
 
-const BaseModal = (props) => {
+const BaseModal = ({
+    animationType,
+    visible,
+    transparent,
+    onShow,
+    
+    outPress,
+
+    style,
+    modalStyle,
+    thumbStyle,
+    snapHeights,
+    dimOut,
+
+    children
+}) => {
+    /*
     const {
         animationType,
         visible,
         transparent,
         outPress,
+        onShow,
         style,
-        modalStyle
+        modalStyle,
+        thumbStyle,
+        snapHeights,
+        dimOut,
     } = props
+    */
     //console.log(props)
     // ref
     const bottomSheetModalRef = useRef();
     const bottomSheetRef = useRef(BottomSheet);
     // variables
-    const snapPoints = useMemo(() => [300, 300], []);
+    const snapPoints = useMemo(() => snapHeights? snapHeights : [300, 300], []);
 
     // callbacks
     const handlePresentModalPress = useCallback(() => {
@@ -231,59 +332,38 @@ const BaseModal = (props) => {
     }, []);
 
     useEffect(()=>{
-        console.log(visible)
+        //console.log(visible)
         visible? handlePresentModalPress() : handleDismissModalPress()
     },[visible])
 
     //const [sheetState, setSheetState] = useState(0)
 
     const handleSheetChanges = useCallback((index) => {
-        console.log('handleSheetChanges', index);
+        //console.log('handleSheetChanges', index);
         //setSheetState(index)
         index === -1? outPress() : null
     }, []);
-
-    const GestureModal = gestureHandlerRootHOC(()=>(
-        <BottomSheetModalProvider>
-        <BottomSheetModal
-            ref={bottomSheetModalRef}
-            index={1}
-            snapPoints={snapPoints}
-            onChange={handleSheetChanges}
-            enablePanDownToClose={true}
-            //enableHandlePanningGesture={false}
-            overDragResistanceFactor={0}
-            style={{
-                backgroundColor: '#00ff0030',
-                //paddingHorizontal: 10
-            }}
-            backgroundStyle={[{
-                backgroundColor: '#ff000030'
-            }, style]}
-            handleStyle={{
-                backgroundColor: '#0000ff30'
-            }}
-            handleIndicatorStyle={{
-                backgroundColor: '#ffff00a0'
-            }}
-        >
-            <View style={{flex: 1,}}>
-                {props.children}
-            </View>
-        </BottomSheetModal>
-        </BottomSheetModalProvider>
-    ))
+    
+    
+    const outsidePress = () => {
+        handleDismissModalPress()
+        //outPress()
+    }
 
     return (     
         <Modal
             visible={visible}
             animationType = {animationType}
-            transparent= {transparent}
+            transparent= {true}
+            statusBarTranslucent = {true}
+            onShow={onShow}
         >   
             <Pressable
                 flex = {1}
-                //style={{backgroundColor: '#00000030'}}
-                onPress={outPress}
+                style={{
+                    backgroundColor: dimOut? '#00000025' : 'transparent'
+                }}
+                onPress={outsidePress}
             />
             {/**/}
             <View
@@ -293,8 +373,35 @@ const BaseModal = (props) => {
                     bottom: 0,
                     width: deviceWidth,
                 }, modalStyle]}
-            >
-                <GestureModal/>
+            >   
+                <GestureHandlerRootView style={{flex:1}}>
+                <BottomSheetModalProvider>
+                <BottomSheetModal
+                    ref={bottomSheetModalRef}
+                    index={1}
+                    snapPoints={snapPoints}
+                    onChange={handleSheetChanges}
+                    enablePanDownToClose={true}
+                    overDragResistanceFactor={0}
+                    style={{
+                        //backgroundColor: '#00ff0030',
+                    }}
+                    backgroundStyle={[{
+                        //backgroundColor: '#ff000030'
+                    }, style]}
+                    handleStyle={{
+                        //backgroundColor: '#0000ff30'
+                    }}
+                    handleIndicatorStyle={[{
+                        //backgroundColor: '#ffff00a0'
+                    }, thumbStyle]}
+                >
+                    <BottomSheetScrollView style={{flex: 1,}}>
+                        {children}
+                    </BottomSheetScrollView>
+                </BottomSheetModal>
+                </BottomSheetModalProvider>
+                </GestureHandlerRootView>
             </View>
         </Modal>
     )

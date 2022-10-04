@@ -53,6 +53,7 @@ const Emerald = {
     },
     modals: {
         thumb: '#50c878',
+        outline: '#50c878',
         ground: '#333333', 
     },
     specials: {
@@ -121,6 +122,7 @@ const Olive = {
     },
     modals: {
         thumb: '#6b8e23',
+        outline: '#6b8e23',
         ground: '#333333', 
     },
     specials: {
@@ -189,6 +191,7 @@ const Gold = {
     },
     modals: {
         thumb: '#6b8e23',
+        outline: '#6b8e23',
         ground: '#333333', 
     },
     specials: {

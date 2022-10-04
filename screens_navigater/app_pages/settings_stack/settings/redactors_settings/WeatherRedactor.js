@@ -22,6 +22,29 @@ import {
     ActivityIndicator
 } from 'react-native';
 
+import {default as Reanimated} from 'react-native-reanimated';
+import {
+    useSharedValue, 
+    useAnimatedStyle, 
+    withTiming,
+    withDelay,
+    withSequence, 
+    useAnimatedScrollHandler,
+    useAnimatedProps, 
+    cancelAnimation,
+    useAnimatedRef,
+    useDerivedValue,
+    scrollTo,
+    runOnJS,
+    interpolateColor,
+    interpolate,
+    Extrapolate,
+    runOnUI,
+    Easing 
+} from 'react-native-reanimated';
+
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import BottomSheet, {
   BottomSheetModal,
   BottomSheetModalProvider,
@@ -66,25 +89,24 @@ export default WeatherRedactor = ({
     //const [ location, setLocation ] = useState(null)
     //const [coords, setCoords] = useState(null);
     const [deviceLocation, setDeviceLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState('not informations');
+
+    const [deviceLocationMsg, setDeviceLocationMsg] = useState({code: 0, msg: 'press for get informations'});
 
 
     const getLocationDevice = async () => {
-        setErrorMsg('waiting premission')
 
+        setDeviceLocationMsg({code: 0.1, msg:'waiting premission'})
         const { status } = await Location.requestForegroundPermissionsAsync();
-
         if (status !== 'granted') {
-            setErrorMsg('Permission to access location was denied');
+            setDeviceLocationMsg({code: 0.2, msg: 'Permission to access location was denied'});
             return;
         }
 
-        setErrorMsg('waiting for geolocation or aswer')
+        setDeviceLocationMsg({code: 0.3, msg: 'waiting for geolocation or aswer'})
         const location = await Location.getCurrentPositionAsync({});
 
-        setErrorMsg('finded location')
+        setDeviceLocationMsg({code: 0.4, msg: 'finded location'})
         const coords = {lat: location.coords.latitude, lon: location.coords.longitude}
-
         cityDefinition(coords)
     }
 
@@ -97,7 +119,7 @@ export default WeatherRedactor = ({
         };
         const lang = languagesAppList[LanguageAppIndex].language
 
-        setErrorMsg('Definition city')
+        setDeviceLocationMsg({code: 0.5, msg: 'request definition city'})
         const API_CITY_URL = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&lang=${lang}&appid=${WEATHER_API_KEY}`);
         const dataCity = await API_CITY_URL.json();
 
@@ -106,17 +128,19 @@ export default WeatherRedactor = ({
         locationInfo.city = (dataCity.name).replace(/\u0301/g, ""); // replace removes the accent of a letter
         //locationInfo.country = dataCity.sys.country;
         //locationInfo.utc = dataCity.timezone/3600;
-        setErrorMsg('all information received')
+        setDeviceLocationMsg({code: 1, msg:'all information received'})
         setDeviceLocation(locationInfo)
     }
     
     const [ipLocation, setIpLocation] = useState(null);
+    const [ipLocationMsg, setIpLocationMsg] = useState({code: 0, msg: 'not informations'});
+
     const [netConnectInfo, setNetConnectInfo] = useState(null)
 
     const getNetConnectInfo = async () => {
         await NetInfo.fetch().then(state => {
-            console.log('Connection type', state.type);
-            console.log('Is connected?', state.isConnected);
+            //console.log('Connection type', state.type);
+            //console.log('Is connected?', state.isConnected);
             setNetConnectInfo(state.isConnected)
             return state.isConnected
         });
@@ -139,6 +163,7 @@ export default WeatherRedactor = ({
 
         const lang = languagesAppList[LanguageAppIndex].language
 
+        setIpLocationMsg({code: 0.1, msg: 'request city define'})
         const API_LOCATION_URL = await fetch('http://api.sypexgeo.net/json/');
         const dataLocation = await API_LOCATION_URL.json();
 
@@ -165,7 +190,7 @@ export default WeatherRedactor = ({
             lon: dataLocation.city.lon
         }
         locationInfo.city = dataLocation.city[`name_${lang}`] 
-
+        setIpLocationMsg({code: 1, msg: 'all information received'})
         setIpLocation(locationInfo)
     }
 
@@ -184,21 +209,30 @@ export default WeatherRedactor = ({
     }
     const onShow = () => {
         console.log('modal show')
-        //const connected = getNetConnectInfo()
-        //if(connected && !ipLocation){
-        //    ipLocationRequire()
-        //}
+        const connected = getNetConnectInfo()
+        if(connected && !ipLocation){
+            ipLocationRequire()
+        }
     }
     
     const outsideModalPress = () =>{
         setModalVisible(false)
     }
 
-    const [ clicks, setClicks] = useState(0)
+    const ipSelected = () => {
+        console.log('select ip')
+    }
+
+    const deviceSelected = () => {
+        console.log('select device')
+        if(deviceLocation == null && deviceLocationMsg.code === 0){
+            getLocationDevice()
+        } 
+    }
 
     return (<>
         <Text>
-            location state: {errorMsg} {'\n'}
+            location state: {deviceLocationMsg.msg} {'\n'}
             city: {deviceLocation? deviceLocation.city : 'none' } {'\n'}
             lat: {deviceLocation? deviceLocation.coords.lat : 'none'} {'\n'}
             lon: {deviceLocation? deviceLocation.coords.lon : 'none'}
@@ -209,7 +243,10 @@ export default WeatherRedactor = ({
             onPress={getLocationDevice}
         />
         <Text>
-            net state: {`${netConnectInfo}`} {'\n'}
+            net state: {`${netConnectInfo}`}
+        </Text>
+        <Text>
+            state: {ipLocationMsg.msg} {'\n'}
             city: {ipLocation? ipLocation.city : 'none' } {'\n'}
             lat: {ipLocation? ipLocation.coords.lat : 'none'} {'\n'}
             lon: {ipLocation? ipLocation.coords.lon : 'none'}
@@ -235,7 +272,7 @@ export default WeatherRedactor = ({
             modalStyle = {{
                 width: deviceWidth-2*appStyle.modals.horizontalProximity,
                 left: appStyle.modals.horizontalProximity,
-
+                height: 250
             }}
             style={{
                 backgroundColor: Thema.modals.ground,
@@ -250,36 +287,134 @@ export default WeatherRedactor = ({
                 backgroundColor: Thema.modals.thumb,
                 width: 50
             }}
-            snapHeights = {[300, 300]}
+            snapHeights = {[250, 250]}
         >
            <View
                 style = {{
                     flex: 1,
-                    paddingHorizontal: 10
+                    paddingHorizontal: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center'
                 }}
             >
                 <Text>
-                    net state: {`${netConnectInfo}`}
+                    Adding a location
                 </Text>
-                <Text>
-                    network locations {'\n'}
-                    city: {ipLocation? ipLocation.city : 'none' } {'\n'}
-                    lat: {ipLocation? ipLocation.coords.lat : 'none'} {'\n'}
-                    lon: {ipLocation? ipLocation.coords.lon : 'none'}
-                </Text>
-                <BasePressable
-                    type="t"
-                    text="get location ip"
-                    onPress={getLocationIp}
-                />
-                <BasePressable
-                    type="t"
-                    text={`clicks ${clicks}`}
-                    onPress={()=>{
-                        console.log('click from modal')
-                        setClicks(clicks+1)
+                
+                <View
+                    style = {{
+                        flex: 1,
+                        width: '100%',
+                        flexDirection: 'row',
+                        justifyContent: 'space-around'
                     }}
-                />
+                >
+                    <Pressable
+                        style = {{
+                            width: '40%',
+                            height: 150,
+                            borderRadius: 20,
+                            backgroundColor: 'red',
+                            //justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                        onPress={ipSelected}
+                    >
+                        <Text>
+                            network location
+                        </Text>
+                        <Text
+                            style = {{
+                                marginTop: 20
+                            }}
+                        >
+                            city: {ipLocation? ipLocation.city : 'none' } {'\n'}
+                            lat: {ipLocation? ipLocation.coords.lat : 'none'} {'\n'}
+                            lon: {ipLocation? ipLocation.coords.lon : 'none'}
+                        </Text>
+
+                        {ipLocationMsg.code != 1 &&
+                        <Reanimated.View
+                            style = {{
+                                position: 'absolute',
+                                bottom: 0,
+                                width: '100%',
+                                height: '80%',
+                                borderRadius: 20,
+                                backgroundColor: 'blue',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}
+                        >
+                            {!netConnectInfo &&
+                            <MaterialCommunityIcons name="wifi-remove" size={40} color="black" />
+                            }
+                            {netConnectInfo &&
+                            <Text
+                                style={{
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {`${ipLocationMsg.msg}`}
+                            </Text>
+                            }
+                        </Reanimated.View>
+                        }
+                    </Pressable>
+                    <Pressable
+                        style = {{
+                            width: '40%',
+                            height: 150,
+                            borderRadius: 20,
+                            backgroundColor: 'red',
+                            //justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                        onPress={deviceSelected}
+                    >
+                        <Text>
+                            device location
+                        </Text>
+                        <Text
+                            style = {{
+                                marginTop: 20
+                            }}
+                        >
+                            city: {deviceLocation? deviceLocation.city : 'none' } {'\n'}
+                            lat: {deviceLocation? deviceLocation.coords.lat : 'none'} {'\n'}
+                            lon: {deviceLocation? deviceLocation.coords.lon : 'none'}
+                        </Text>
+
+                        {deviceLocationMsg.code != 1 &&
+                        <Reanimated.View
+                            style = {{
+                                position: 'absolute',
+                                bottom: 0,
+                                width: '100%',
+                                height: '80%',
+                                borderRadius: 20,
+                                backgroundColor: 'blue',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}
+                        >
+                            {!netConnectInfo &&
+                            <MaterialCommunityIcons name="wifi-remove" size={40} color="black" />
+                            }
+                            {netConnectInfo &&
+                            <Text
+                                style={{
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {`${deviceLocationMsg.msg}`}
+                            </Text>
+                            }
+                        </Reanimated.View>
+                        }
+                    </Pressable>
+                </View>
+                
             </View>
         </BaseModal> 
     </>)
@@ -290,7 +425,7 @@ const BaseModal = ({
     visible,
     transparent,
     onShow,
-    
+
     outPress,
 
     style,
@@ -320,7 +455,7 @@ const BaseModal = ({
     const bottomSheetModalRef = useRef();
     const bottomSheetRef = useRef(BottomSheet);
     // variables
-    const snapPoints = useMemo(() => snapHeights? snapHeights : [300, 300], []);
+    const snapPoints = useMemo(() => snapHeights? snapHeights : [100, 100], []);
 
     // callbacks
     const handlePresentModalPress = useCallback(() => {
@@ -368,7 +503,7 @@ const BaseModal = ({
             {/**/}
             <View
                 style = {[{
-                    minHeight: 300,
+                    minHeight: 100,
                     position: 'absolute',
                     bottom: 0,
                     width: deviceWidth,

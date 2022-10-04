@@ -47,8 +47,13 @@ const Emerald = {
     },
     navigateBar: {
         ground: '#333333',
+        transparentGround: '#ffffff20',
         icons: {active: '#50c878', notActive: '#ffffff'},
         text: {active: '#50c878', notActive: '#ffffff'},
+    },
+    modals: {
+        thumb: '#50c878',
+        ground: '#333333', 
     },
     specials: {
         fire: {
@@ -110,8 +115,13 @@ const Olive = {
     },
     navigateBar: {
         ground: '#333333',
+        transparentGround: '#ffffff20',
         icons: {active: '#6b8e23', notActive: '#ffffff'},
         text: {active: '#6b8e23', notActive: '#ffffff'},
+    },
+    modals: {
+        thumb: '#6b8e23',
+        ground: '#333333', 
     },
     specials: {
         fire: {
@@ -173,8 +183,13 @@ const Gold = {
     },
     navigateBar: {
         ground: '#fff',
+        transparentGround: '#ffffff20',
         icons: {active: '#000', notActive: '#000'},
         text: {active: '#6b8e23', notActive: '#000'},
+    },
+    modals: {
+        thumb: '#6b8e23',
+        ground: '#333333', 
     },
     specials: {
         fire: {

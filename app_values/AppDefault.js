@@ -49,6 +49,10 @@ export const defaultAppStyle = {
     functionButton: {
         position: 'right',
         size: 60,
+    },
+    modals: {
+        horizontalProximity: 0,
+        
     }
 }
 

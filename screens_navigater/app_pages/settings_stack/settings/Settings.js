@@ -11,7 +11,9 @@ import {
     View, 
     Dimensions, 
 } from 'react-native';
-import Animated, {
+
+//import {default as Reanimated} from 'react-native-reanimated';
+import Reanimated, {
     useSharedValue, 
     useAnimatedStyle, 
     withTiming,
@@ -191,9 +193,9 @@ for (let el of structure){
     //}
 }
 
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
-const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+const AnimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
+const AnimatedSectionList = Reanimated.createAnimatedComponent(SectionList);
+const AnimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 
 //bober button heigt = 60
 const bottomBord = deviceWidth*0.04+60
@@ -758,7 +760,7 @@ const Settings = (props) => {
                         </Text>
                     </View>
                 </View>
-                <Animated.View
+                <Reanimated.View
                     style = {[staticStyles.SLtopBord, { 
                         alignItems: 'flex-start',
                         justifyContent: 'center',
@@ -769,10 +771,10 @@ const Settings = (props) => {
                         style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: Thema.texts.neutrals.primary}]}
                         animatedProps={categoryText}
                     />
-                </Animated.View>
+                </Reanimated.View>
             </View>
             <View style={[staticStyles.FlatListsArea]}>
-                <Animated.View 
+                <Reanimated.View 
                     style={[animStyleIndicatorLine, { 
                         backgroundColor: Thema.icons.accents.quaternary,
                         position: 'absolute',
@@ -821,7 +823,7 @@ const Settings = (props) => {
             keyExtractor={(item, index) => item.param + index}
             renderSectionHeader={({section: {category}})=>{
                 return(
-                    <Animated.View
+                    <Reanimated.View
                         key={String(category)} 
                         style={[
                             (previewFixed || appStyle.lists.shadow)? staticStyles.shadow : {}, 
@@ -863,7 +865,7 @@ const Settings = (props) => {
                                 </Text>
                             </View>
                         }
-                    </Animated.View>
+                    </Reanimated.View>
                 )
             }}
             renderItem={({item, index})=>{
@@ -874,7 +876,7 @@ const Settings = (props) => {
                     })
                 ]
                 return (
-                    <Animated.View
+                    <Reanimated.View
                         key={String(item.param+index)}  
                         style={[
                             staticStyles.SLArea, 
@@ -892,7 +894,7 @@ const Settings = (props) => {
                         ]}
                         onLayout={(event)=>{stacker(listHeights, setListHeights, event.nativeEvent.layout.height+2*appStyle.lists.proximity)}}
                     >   
-                        <Animated.View
+                        <Reanimated.View
                             style={[ 
                                 dynamicStyleListItemsHeaders, 
                                 { 
@@ -906,7 +908,7 @@ const Settings = (props) => {
                         >
                             <MaterialCommunityIcons name={item.icon} size={20} color={Thema.texts.neutrals.secondary} />
                             <Text style={[staticStyles.SLParamHeaderText, {color: Thema.texts.neutrals.secondary}]}>{redactorName}</Text>
-                        </Animated.View>
+                        </Reanimated.View>
                         {RedactorComponent != null && 
                         <RedactorComponent
                             appStyle={appStyle}
@@ -927,7 +929,7 @@ const Settings = (props) => {
                             LanguageAppIndex={LanguageAppIndex}
                         />}
                         
-                    </Animated.View>
+                    </Reanimated.View>
                 )
             }}
             ListFooterComponent = {()=>{
@@ -957,7 +959,7 @@ const Settings = (props) => {
         
 
         {/*BOBBER BUTTON*/}
-        <Animated.View 
+        <Reanimated.View 
             style = {[animStyleBobberButton, dynamicStyleBobberButton, {
                 position: 'absolute',
                 alignItems: 'flex-end',
@@ -986,7 +988,7 @@ const Settings = (props) => {
                         break;
                 }
                 return (
-                    <Animated.View
+                    <Reanimated.View
                         key={item+index}
                         
                         style = {[animStyle,{
@@ -1016,10 +1018,10 @@ const Settings = (props) => {
                             rippleColor={Thema.icons.neutrals.primary}
                             onPress={pressFunction}
                         />
-                    </Animated.View>
+                    </Reanimated.View>
                 )
             })}
-        </Animated.View>
+        </Reanimated.View>
 
         {/*STYLE UPDATE*/}
         <ColorSplash

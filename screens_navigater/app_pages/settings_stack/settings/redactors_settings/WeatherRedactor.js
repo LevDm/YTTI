@@ -22,8 +22,8 @@ import {
     ActivityIndicator
 } from 'react-native';
 
-import {default as Reanimated} from 'react-native-reanimated';
-import {
+//import {default as Reanimated} from 'react-native-reanimated';
+import Reanimated, {
     useSharedValue, 
     useAnimatedStyle, 
     withTiming,

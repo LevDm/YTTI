@@ -66,15 +66,21 @@ export const defaultAppConfig = {
         analitic: true,
         task: true,
 
-        weather: true,
+        //weather: true,
     },
     weather: {
-        use: false,
+        used: false,
         locationInfo: [
             //{
-            //    coords: null, {lat: num, lon: num}
-            //    city: ''
-            //}
+            //    used: bool
+            //    coords: {lat: num, lon: num}
+            //    city: str
+            //},
+            //{
+            //    used: true,
+            //    coords: {lat: 59, lon: 60},
+            //    city: 'city 1',
+            //},
         ],
         data: [
             //{requestTime: num, answer: {}}

@@ -60,6 +60,8 @@ import NetInfo from '@react-native-community/netinfo';
 import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
 
+import dataRedactor from "../../../../../async_data_manager/data_redactor";
+
 import { BasePressable, BaseSwitch, BaseCheckBox } from "../../../../../general_components/base_components/BaseElements";
 
 import { WEATHER_API_KEY } from "../../../../../app_values/AppDefault"
@@ -107,11 +109,25 @@ export default WeatherRedactor = ({
 
         setDeviceLocationMsg({code: 0.4, msg: 'finded location'})
         const coords = {lat: location.coords.latitude, lon: location.coords.longitude}
-        cityDefinition(coords)
+
+        const control = await controlDeviceLocations(coords)
+        if(control){
+            cityDefinition(coords)
+        } else {
+            const locationInfo = {
+                used: false,
+                coords: coords,
+                //utc: undefined,
+                //country: undefined,
+                city: 'not definition'
+            };
+            setDeviceLocation(locationInfo)
+        }
     }
 
     const cityDefinition = async (coords) => {
         const locationInfo = {
+            used: false,
             coords: coords,
             //utc: undefined,
             //country: undefined,
@@ -128,6 +144,14 @@ export default WeatherRedactor = ({
         locationInfo.city = (dataCity.name).replace(/\u0301/g, ""); // replace removes the accent of a letter
         //locationInfo.country = dataCity.sys.country;
         //locationInfo.utc = dataCity.timezone/3600;
+
+        console.log('device location ok -> auto add')
+        if(modalType.type === 'replace'){
+            //replaceNewLocation(deviceLocation)
+        } else if(modalType.type === 'add'){
+            //addNewLocation(deviceLocation)
+        }
+         
         setDeviceLocationMsg({code: 1, msg:'all information received'})
         setDeviceLocation(locationInfo)
     }
@@ -155,6 +179,7 @@ export default WeatherRedactor = ({
             coordinats: undefined
         };
         const locationInfo = {
+            used: false,
             coords: null,
             //utc: undefined,
             //country: undefined,
@@ -189,8 +214,12 @@ export default WeatherRedactor = ({
             lat: dataLocation.city.lat,
             lon: dataLocation.city.lon
         }
-        locationInfo.city = dataLocation.city[`name_${lang}`] 
-        setIpLocationMsg({code: 1, msg: 'all information received'})
+        locationInfo.city = dataLocation.city[`name_${lang}`]
+        
+        const control = await controlIpLocations(locationInfo.coords)
+        if(control){
+            setIpLocationMsg({code: 1, msg: 'all information received'})  
+        }
         setIpLocation(locationInfo)
     }
 
@@ -219,15 +248,143 @@ export default WeatherRedactor = ({
         setModalVisible(false)
     }
 
+    const addNewLocation = (location) => {
+
+        let newAppConfig = getNewAppConfigObject();
+        newAppConfig.weather.locationInfo.push(location);
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+
+        setCheckGroup(getGroup(updateConfig = true))
+    }
+
+    const replaceNewLocation = (location) => {
+
+        let newAppConfig = getNewAppConfigObject();
+        newAppConfig.weather.locationInfo[modalType.callindex] = location;
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+
+        setCheckGroup(getGroup(updateConfig = true))
+    }
+
     const ipSelected = () => {
         console.log('select ip')
+        if(ipLocationMsg.code === 1){
+            console.log('location ip ok')
+            if(modalType.type === 'replace'){
+                replaceNewLocation(ipLocation)
+            } else if(modalType.type === 'add'){
+                addNewLocation(ipLocation)
+            }
+        }
+
     }
 
     const deviceSelected = () => {
         console.log('select device')
         if(deviceLocation == null && deviceLocationMsg.code === 0){
             getLocationDevice()
+        }
+        if(deviceLocationMsg.code === 1){
+            console.log('location device ok')
+            if(modalType.type === 'replace'){
+                replaceNewLocation(deviceLocation)
+            } else if(modalType.type === 'add'){
+                addNewLocation(deviceLocation)
+            }
         } 
+    }
+
+    
+
+    const getGroup = (changeIndex = -1, updateConfig = false) => {
+        let group = []
+        if(checkGroup && !updateConfig){
+            checkGroup.map((item, index)=>{
+                if(changeIndex != -1){
+                    group.push(changeIndex == index? !item : item)
+                } else {
+                    group.push(item)
+                }
+            })
+        } else {
+            appConfig.weather.locationInfo.map((item, index)=>{
+                if(changeIndex != -1){
+                    group.push(changeIndex == index? !item.used : item.used)
+                } else {
+                    group.push(item.used)
+                }
+            })
+        }
+        return group
+    };
+    
+    const [checkGroup, setCheckGroup] = useState(getGroup())
+    const [modalType, setModalType] = useState({callindex: -1, type: ''})
+
+    const settingLocaion = (index) => {
+        console.log('setting for', index, !checkGroup[index])
+        //const group = []
+        //]for(let i = 0; i < checkGroup.length; i++){ 
+        //    group.push( i == index? !checkGroup[index] : checkGroup[i])
+        //}
+        const newGroup = getGroup(index)
+
+        let newAppConfig = getNewAppConfigObject();
+        for(let i = 0; i < checkGroup.length; i++){
+            newAppConfig.weather.locationInfo[i].used = newGroup[i];
+        }
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+
+        setCheckGroup(newGroup)
+    }
+
+    const replaceLocation = (index) => {
+        console.log('replace', index)
+        setModalType({callindex: index, type: 'replace'})
+        setModalVisible(true)
+    }
+
+    const addLocation = (index) => {
+        console.log('add', index)
+        setModalType({callindex: index, type: 'add'})
+        setModalVisible(true)
+    }
+
+    const controlIpLocations = async (ipCoords) => {
+        let ipCoordsError = false
+        appConfig.weather.locationInfo.map((item, index)=>{
+            if(Math.abs(item.coords.lat - ipCoords.lat) < 0.05 ){
+                ipCoordsError = true
+            }
+            if(Math.abs(item.coords.lon - ipCoords.lon) < 0.05 ){
+                ipCoordsError = true
+            } 
+        })
+        if(ipCoordsError){
+            setIpLocationMsg({code: 0.12, msg: 'this location matches one of yours'})
+            return false
+        }
+        return true
+    }
+
+    const controlDeviceLocations = async (dvcCoords) => {
+        let dvcCoordsError = false
+        appConfig.weather.locationInfo.map((item, index)=>{
+            if(Math.abs(item.coords.lat - dvcCoords.lat) < 0.05 ){
+                dvcCoordsError = true
+            }
+            if(Math.abs(item.coords.lon - dvcCoords.lon) < 0.05 ){
+                dvcCoordsError = true
+            }
+        })
+        if(dvcCoordsError){
+            setDeviceLocationMsg({code: 0.12, msg: 'this location matches one of yours'})
+            return false
+        }
+        return true
     }
 
     return (<>
@@ -262,6 +419,115 @@ export default WeatherRedactor = ({
             onPress={modalVis}
         />
 
+        <Text>
+            Locations
+        </Text>
+        <View
+            style = {{
+                flex: 1,
+                height: 130,
+                justifyContent: 'space-between',
+                backgroundColor: 'green',
+
+            }}
+        >
+            {[1,2].map((item, index)=>{
+
+                let location = true
+                let addNewLocation = false
+                const usersLocations = appConfig.weather.locationInfo//['',]
+                //console.log(appConfig.weather)
+                //console.log('usersLocations', usersLocations, usersLocations.length)
+
+                if(usersLocations.length == 0){
+                    if(index === 0){
+                        addNewLocation = true
+                        location = false
+                    } else if(index === 1){
+                        addNewLocation = false
+                        location = false
+                    }
+                } 
+
+                if(usersLocations.length == 1){
+                    if(index === 0){
+                        addNewLocation = false
+                        location = true
+                    } else if(index === 1){
+                        addNewLocation = true
+                        location = false
+                    }
+                }
+                
+                return (
+                    <View
+                        key = {`user_location_${index}`}
+                        style = {{
+                            //flex: 1, 
+                            flexDirection: 'row',
+                            height: 60,
+                            width: '100%',
+                            backgroundColor: 'red'
+                        }}
+                    >   
+                        {(location && !addNewLocation) &&
+                        <BaseCheckBox
+                            isRadioBox={true}
+                            //key = {`user_location_checkbox_${index}`}
+                            style = {{
+                                borderRadius: appStyle.borderRadius.additional,
+                                //width: '70%',
+                                //height: '100%',
+                                flex: 3,
+                                backgroundColor: 'yellow'
+                                //marginVertical: 5
+                            }}
+                            //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+                            Item = {
+                                <Text 
+                                    style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}
+                                >
+                                    {usersLocations[index].city}
+                                </Text>
+                            }
+                            Check = {checkGroup[index]}
+                            onPress = {()=>{settingLocaion(index)}}
+                            BoxBorderRadius = {appStyle.borderRadius.additional}
+                            ColorsChange = {{
+                                true: Thema.icons.accents.primary, 
+                                false: `${Thema.icons.accents.quaternary}00`
+                            }}
+                        />}
+                        {(location && !addNewLocation) && 
+                        <BasePressable
+                            type="i"
+                            icon={{name: "dots-horizontal", size: 25}}
+                            style = {{
+                                //width: '30%',
+                                //height: '100%',
+                                flex: 1,
+                                backgroundColor: 'pink'
+                            }}
+                            rippleColor={false}
+                            onPress={()=>{replaceLocation(index)}}
+                        />}
+                        {(!location && addNewLocation) && 
+                        <BasePressable
+                            type="i"
+                            icon={{name: "map-marker-plus-outline", size: 25}}
+                            style = {{
+                                //width: '30%',
+                                //height: '100%',
+                                flex: 1,
+                                backgroundColor: 'blue'
+                            }}
+                            rippleColor={false}
+                            onPress={()=>{addLocation(index)}}
+                        />}
+                    </View>
+                )
+            })}
+        </View>
         
         <BaseModal
             animationType = {'fade'}
@@ -298,7 +564,7 @@ export default WeatherRedactor = ({
                 }}
             >
                 <Text>
-                    Adding a location
+                    {modalType.type} location
                 </Text>
                 
                 <View

@@ -67,7 +67,7 @@ export default ListsRedactor = ({
             {Language.position}
         </Text>
         <View 
-            style = {[{marginLeft: 20}]}
+            style = {[{marginLeft: 20, width: '60%'}]}
         >
             {valuePosition.map((item, index)=>{
                 return(
@@ -75,9 +75,13 @@ export default ListsRedactor = ({
                         key = {item+index}
                         style = {{
                             borderRadius: appStyle.borderRadius.additional,
-                            //marginVertical: 5
+                            backgroundColor: 'transparent'
                         }}
-                        //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+                        android_ripple={{
+                            color: Thema.icons.accents.primary,
+                            borderless: true,
+                            foreground: false
+                        }}
                         Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.positions[index]}</Text>}
                         Check = {checkGroup[index]}
                         onPress = {()=>{positionButtonSetting(item, index)}}

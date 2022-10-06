@@ -75,7 +75,7 @@ export default LanguageRedactor = ({
     <View 
         style = {[{
             marginLeft: 20,
-            
+            width: "80%"
         }]}
     >
         {languagesApp.map((item, index)=>{
@@ -83,12 +83,15 @@ export default LanguageRedactor = ({
                 <BaseBox
                     key = {item+index}
                     style = {{
+                        height: 40,
                         borderRadius: appStyle.borderRadius.additional,
-                        //backgroundColor: 'red',
-                        //marginVertical: 5,
-                        height: 40
+                        backgroundColor: 'transparent'
                     }}
-                    //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+                    android_ripple={{
+                        color: Thema.icons.accents.primary,
+                        borderless: true,
+                        foreground: false
+                    }}
                     Item = {
                         <Text 
                             style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}

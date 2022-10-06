@@ -167,13 +167,22 @@ export default NavigateMenuRedactor = ({
     <View 
         style = {[{
             marginTop: 5,
-            marginLeft: 20
+            marginLeft: 20,
+            width: '60%'
         }]}
     >
         {menuTypes.map((item, index)=>(
         <BaseBox
             key = {item+index}
-            //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+            style = {{
+                borderRadius: appStyle.borderRadius.additional,
+                backgroundColor: 'transparent'
+            }}
+            android_ripple={{
+                color: Thema.icons.accents.primary,
+                borderless: true,
+                foreground: false
+            }}
             Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.types[index]}</Text>}
             Check = {checkGroup[index]}
             onPress = {()=>{checkBoxPress(item)}}
@@ -257,7 +266,16 @@ export default NavigateMenuRedactor = ({
                 {drawerPositions.map((item, index)=>(
                 <BaseBox
                     key = {item+index}
-                    //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+                    style = {{
+                        width: '30%',
+                        borderRadius: appStyle.borderRadius.additional,
+                        backgroundColor: 'transparent'
+                    }}
+                    android_ripple={{
+                        color: Thema.icons.accents.primary,
+                        borderless: true,
+                        foreground: false
+                    }}
                     Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositionsDrawer[index]}</Text>}
                     Check = {drawerPosition[index]}
                     onPress = {()=>{drawerPositionSetting(item, index)}}
@@ -323,7 +341,16 @@ export default NavigateMenuRedactor = ({
                 {valuePosition.map((item, index)=>(
                 <BaseBox
                     key = {item+index}
-                    //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+                    style = {{
+                        width: '30%',
+                        borderRadius: appStyle.borderRadius.additional,
+                        backgroundColor: 'transparent'
+                    }}
+                    android_ripple={{
+                        color: Thema.icons.accents.primary,
+                        borderless: true,
+                        foreground: false
+                    }}
                     Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositions[index]}</Text>}
                     Check = {checkGroupHorPos[index]}
                     onPress = {()=>{horizontalPositionSetting(item, index)}}
@@ -421,6 +448,7 @@ const staticStyles = StyleSheet.create({
         letterSpacing: 0.5
     },
     listText: {
+        //paddingLeft: 10,
         marginLeft: 5,
         fontSize: 14, 
         //fontVariant: ['small-caps'], 

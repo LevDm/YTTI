@@ -7,7 +7,7 @@ import themesColorsAppList, {themesApp} from "../../../../../app_values//Themes"
 
 import { 
     BasePressable,
-    BaseCheckBox,
+    BaseBox,
     BaseSlider,
     BaseSwitch 
 } from "../../../../../general_components/base_components/BaseElements";
@@ -67,11 +67,11 @@ export default ListsRedactor = ({
             {Language.position}
         </Text>
         <View 
-            style = {[{}]}
+            style = {[{marginLeft: 20}]}
         >
             {valuePosition.map((item, index)=>{
                 return(
-                    <BaseCheckBox
+                    <BaseBox
                         key = {item+index}
                         style = {{
                             borderRadius: appStyle.borderRadius.additional,

@@ -16,7 +16,7 @@ import dataRedactor from "../../../../../async_data_manager/data_redactor";
 
 import { 
     BasePressable,
-    BaseCheckBox,
+    BaseBox,
     BaseSwitch 
 } from "../../../../../general_components/base_components/BaseElements";
 

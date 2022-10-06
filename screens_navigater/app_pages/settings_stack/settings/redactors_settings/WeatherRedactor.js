@@ -65,7 +65,7 @@ import dataRedactor from "../../../../../async_data_manager/data_redactor";
 import { 
     BasePressable, 
     BaseSwitch, 
-    BaseCheckBox 
+    BaseBox 
 } from "../../../../../general_components/base_components/BaseElements";
 
 import { weatherTypes } from "../../../../../app_values/AppDefault";
@@ -466,7 +466,7 @@ export default WeatherRedactor = ({
         >
             {weatherTypes.map((item, index)=>{
                 return(
-                    <BaseCheckBox
+                    <BaseBox
                         key = {item+index}
                         style = {{
                             borderRadius: appStyle.borderRadius.additional,
@@ -535,7 +535,7 @@ export default WeatherRedactor = ({
                         }}
                     >   
                         {(location && !addNewLocation) &&
-                        <BaseCheckBox
+                        <BaseBox
                             isRadioBox={true}
                             //key = {`user_location_checkbox_${index}`}
                             style = {{

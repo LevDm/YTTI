@@ -7,7 +7,7 @@ import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 
 import { 
     BasePressable,
-    BaseCheckBox,
+    BaseBox,
     BaseSlider,
     BaseSwitch 
 } from "../../../../../general_components/base_components/BaseElements";

@@ -214,8 +214,8 @@ export const BaseSlider = ({
     )
 }
 
-export const BaseCheckBox = ({
-    isRadioBox = false,
+export const BaseBox = ({
+    isCheckBox = false,
     Item = <Text>Text</Text>,
     BoxBorderRadius = 12,
     style = {},
@@ -229,7 +229,7 @@ export const BaseCheckBox = ({
     const dynamicStylePrimaryBox = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            borderWidth: withTiming(isRadioBox? 2 :(Check? 2 : 0), {duration: duration}),
+            borderWidth: withTiming(isCheckBox? 2 :(Check? 2 : 0), {duration: duration}),
             borderRadius: withTiming(BoxBorderRadius, {duration: duration}),
             borderColor: withTiming(ColorsChange.true, {duration: duration}),
         }
@@ -238,7 +238,7 @@ export const BaseCheckBox = ({
     const dynamicStyleSecondaryBox = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            margin: withTiming(isRadioBox? 2 : (Check? 2 : 4), {duration: duration}),
+            margin: withTiming(isCheckBox? 2 : (Check? 2 : 4), {duration: duration}),
             borderRadius: withTiming((BoxBorderRadius-4), {duration: duration}),
             backgroundColor: withTiming((Check? ColorsChange.true : ColorsChange.false) , {duration: duration})
         }

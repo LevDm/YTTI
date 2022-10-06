@@ -15,7 +15,7 @@ import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 
 import { 
     BasePressable,
-    BaseCheckBox,
+    BaseBox,
     BaseSlider,
     BaseSwitch 
 } from "../../../../../general_components/base_components/BaseElements";
@@ -166,11 +166,12 @@ export default NavigateMenuRedactor = ({
     </Text>
     <View 
         style = {[{
-            marginTop: 5
+            marginTop: 5,
+            marginLeft: 20
         }]}
     >
         {menuTypes.map((item, index)=>(
-        <BaseCheckBox
+        <BaseBox
             key = {item+index}
             //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
             Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.types[index]}</Text>}
@@ -254,7 +255,7 @@ export default NavigateMenuRedactor = ({
                 }}
             >
                 {drawerPositions.map((item, index)=>(
-                <BaseCheckBox
+                <BaseBox
                     key = {item+index}
                     //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
                     Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositionsDrawer[index]}</Text>}
@@ -320,7 +321,7 @@ export default NavigateMenuRedactor = ({
                 }}
             >
                 {valuePosition.map((item, index)=>(
-                <BaseCheckBox
+                <BaseBox
                     key = {item+index}
                     //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
                     Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositions[index]}</Text>}

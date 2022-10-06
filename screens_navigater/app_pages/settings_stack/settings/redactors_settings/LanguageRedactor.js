@@ -16,7 +16,7 @@ import dataRedactor from "../../../../../async_data_manager/data_redactor";
 
 import { 
     BasePressable,
-    BaseCheckBox,
+    BaseBox,
     BaseSwitch 
 } from "../../../../../general_components/base_components/BaseElements";
 
@@ -70,7 +70,7 @@ export default LanguageRedactor = ({
     >
         {languagesApp.map((item, index)=>{
             return(
-                <BaseCheckBox
+                <BaseBox
                     key = {item+index}
                     style = {{
                         borderRadius: appStyle.borderRadius.additional,

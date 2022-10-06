@@ -62,7 +62,13 @@ import languagesAppList, { languagesApp } from "../../../../../app_values/Langua
 
 import dataRedactor from "../../../../../async_data_manager/data_redactor";
 
-import { BasePressable, BaseSwitch, BaseCheckBox } from "../../../../../general_components/base_components/BaseElements";
+import { 
+    BasePressable, 
+    BaseSwitch, 
+    BaseCheckBox 
+} from "../../../../../general_components/base_components/BaseElements";
+
+import { weatherTypes } from "../../../../../app_values/AppDefault";
 
 import { WEATHER_API_KEY } from "../../../../../app_values/AppDefault"
 
@@ -387,39 +393,97 @@ export default WeatherRedactor = ({
         return true
     }
 
-    return (<>
-        <Text>
-            location state: {deviceLocationMsg.msg} {'\n'}
-            city: {deviceLocation? deviceLocation.city : 'none' } {'\n'}
-            lat: {deviceLocation? deviceLocation.coords.lat : 'none'} {'\n'}
-            lon: {deviceLocation? deviceLocation.coords.lon : 'none'}
-        </Text>
-        <BasePressable
-            type="t"
-            text="get location device"
-            onPress={getLocationDevice}
-        />
-        <Text>
-            net state: {`${netConnectInfo}`}
-        </Text>
-        <Text>
-            state: {ipLocationMsg.msg} {'\n'}
-            city: {ipLocation? ipLocation.city : 'none' } {'\n'}
-            lat: {ipLocation? ipLocation.coords.lat : 'none'} {'\n'}
-            lon: {ipLocation? ipLocation.coords.lon : 'none'}
-        </Text>
-        <BasePressable
-            type="t"
-            text="get location ip"
-            onPress={getLocationIp}
-        />
-        <BasePressable
-            type="t"
-            text="modal"
-            onPress={modalVis}
-        />
+    const [weatherUsed, setWeatherUsed] = useState(appConfig.weather.used)
 
-        <Text>
+    const weatherUsedSetting = () => {
+
+    }
+
+    const getCheckBoxGroup = (type) => {
+        let group = []
+        for (let i of weatherTypes){
+            let check = false
+            if(type === i){check = true}
+            group.push(check)
+        }
+        return group
+    };
+
+    const [checkBoxGroup, setCheckBoxGroup] = useState(getCheckBoxGroup(appConfig.weather.type));
+
+    const typeSetting = (item, index) => {
+
+    }
+
+    return (<>
+        <View
+            style = {{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                height: 60
+            }}
+        >
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+                used {`${weatherUsed}`}
+            </Text>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <BaseSwitch
+                size={24}
+                style = {{
+                    right: 20
+                }}
+                trackStyle={{
+                    borderRadius: appStyle.borderRadius.additional
+                }}
+                thumbStyle = {{
+                    borderRadius: appStyle.borderRadius.additional,
+                    borderWidth: 3,
+                    borderColor: Thema.icons.accents[weatherUsed?"primary" : "quaternary"],
+                }}
+                colors={{
+                    track: { 
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary  
+                    },
+                    thumb: { 
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary, 
+                    }
+                }}
+                primeValue={weatherUsed}
+                onChange={weatherUsedSetting}
+            />
+        </View>
+        
+        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+            type
+        </Text>
+        <View 
+            style = {[{
+                marginLeft: 20
+            }]}
+        >
+            {weatherTypes.map((item, index)=>{
+                return(
+                    <BaseCheckBox
+                        key = {item+index}
+                        style = {{
+                            borderRadius: appStyle.borderRadius.additional,
+                            //marginVertical: 5
+                        }}
+                        //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+                        Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{item}</Text>}
+                        Check = {checkBoxGroup[index]}
+                        onPress = {()=>{typeSetting(item, index)}}
+                        BoxBorderRadius = {appStyle.borderRadius.additional}
+                        ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
+                    />
+                )
+            })}
+        </View>
+
+        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
             Locations
         </Text>
         <View
@@ -808,6 +872,7 @@ const BaseModal = ({
     )
 } 
 
+
 const staticStyles = StyleSheet.create({
     text: {
         fontSize: 16, 
@@ -815,4 +880,25 @@ const staticStyles = StyleSheet.create({
         fontWeight: '400', 
         letterSpacing: 0.5
     },
+    signaturesText: {
+        //fontVariant: ['small-caps'],
+        fontWeight: '400',
+        fontSize: 12,
+    },
+    listText: {
+        marginLeft: 5,
+        fontSize: 14, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    switchText: {
+        textAlign: 'justify', 
+        width: '70%',
+    },
+    verticalLine: {
+        height: 45,
+        width: 1.5,
+        marginRight: 10
+    }
 });

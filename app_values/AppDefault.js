@@ -20,6 +20,7 @@ export const listsProximity = {min: 1, max: 5, step: 1}
 export const sizeButton = {min: 46, max: 64, step: 2}
 //export const valuePosition = ['left','center','right']
 
+export const weatherTypes = ['lists', 'panel', 'widget']
 
 export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 
@@ -70,6 +71,7 @@ export const defaultAppConfig = {
     },
     weather: {
         used: false,
+        type: weatherTypes[0],
         locationInfo: [
             //{
             //    used: bool

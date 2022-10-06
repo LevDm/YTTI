@@ -60,7 +60,7 @@ const Emerald = {
             ground: {
                 primary: '#eeeeee',
                 secondary: '#ffffff',
-                tertiary: '#00000040'
+                tertiary: '#50c878',
             }
         },
         texts: {
@@ -149,7 +149,7 @@ const Olive = {
             ground: {
                 primary: '#eeeeee',
                 secondary: '#ffffff',
-                tertiary: '#00000040'
+                tertiary: '#6b8e23',
             }
         },
         texts: {
@@ -236,7 +236,7 @@ const Gold = {
             ground: {
                 primary: '#eeeeee',
                 secondary: '#ffffff',
-                tertiary: '#00000040'
+                tertiary: '#6b8e23',
             }
         },
         texts: {

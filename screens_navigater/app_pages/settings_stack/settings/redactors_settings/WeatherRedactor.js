@@ -229,21 +229,10 @@ export default WeatherRedactor = ({
         setIpLocation(locationInfo)
     }
 
-    const getLocationIp = async () => {
-        const connected = getNetConnectInfo()
-        //console.log(connected)
-        //setNetConnectInfo(connected)
-        if(connected){
-            ipLocationRequire()
-        }
-        
-    }
     const [ modalVisible, setModalVisible ] = useState(false)
-    const modalVis = () => {
-        setModalVisible(true)
-    }
+
     const onShow = () => {
-        console.log('modal show')
+        //console.log('modal show')
         const connected = getNetConnectInfo()
         if(connected && !ipLocation){
             ipLocationRequire()
@@ -255,23 +244,21 @@ export default WeatherRedactor = ({
     }
 
     const addNewLocation = (location) => {
-
         let newAppConfig = getNewAppConfigObject();
         newAppConfig.weather.locationInfo.push(location);
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
 
-        setCheckGroup(getGroup(updateConfig = true))
+        setCheckGroup(getGroup(-1, true))
     }
 
     const replaceNewLocation = (location) => {
-
         let newAppConfig = getNewAppConfigObject();
         newAppConfig.weather.locationInfo[modalType.callindex] = location;
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
 
-        setCheckGroup(getGroup(updateConfig = true))
+        setCheckGroup(getGroup(-1, true))
     }
 
     const ipSelected = () => {
@@ -330,13 +317,8 @@ export default WeatherRedactor = ({
     const [modalType, setModalType] = useState({callindex: -1, type: ''})
 
     const settingLocaion = (index) => {
-        console.log('setting for', index, !checkGroup[index])
-        //const group = []
-        //]for(let i = 0; i < checkGroup.length; i++){ 
-        //    group.push( i == index? !checkGroup[index] : checkGroup[i])
-        //}
+        //console.log('setting for', index, !checkGroup[index])
         const newGroup = getGroup(index)
-
         let newAppConfig = getNewAppConfigObject();
         for(let i = 0; i < checkGroup.length; i++){
             newAppConfig.weather.locationInfo[i].used = newGroup[i];
@@ -396,7 +378,7 @@ export default WeatherRedactor = ({
     const [weatherUsed, setWeatherUsed] = useState(appConfig.weather.used)
 
     const weatherUsedSetting = () => {
-
+        console.log('switch use weather')
     }
 
     const getCheckBoxGroup = (type) => {
@@ -412,7 +394,7 @@ export default WeatherRedactor = ({
     const [checkBoxGroup, setCheckBoxGroup] = useState(getCheckBoxGroup(appConfig.weather.type));
 
     const typeSetting = (item, index) => {
-
+        console.log('type setting', item)
     }
 
     return (<>
@@ -461,7 +443,8 @@ export default WeatherRedactor = ({
         </Text>
         <View 
             style = {[{
-                marginLeft: 20
+                marginLeft: 20,
+                width: '60%'
             }]}
         >
             {weatherTypes.map((item, index)=>{
@@ -470,9 +453,13 @@ export default WeatherRedactor = ({
                         key = {item+index}
                         style = {{
                             borderRadius: appStyle.borderRadius.additional,
-                            //marginVertical: 5
+                            backgroundColor: 'transparent'
                         }}
-                        //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+                        android_ripple={{
+                            color: Thema.icons.accents.primary,
+                            borderless: true,
+                            foreground: false
+                        }}
                         Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.types[item]}</Text>}
                         Check = {checkBoxGroup[index]}
                         onPress = {()=>{typeSetting(item, index)}}
@@ -489,7 +476,9 @@ export default WeatherRedactor = ({
         <View
             style = {{
                 flex: 1,
-                height: 125,
+                height: 75,
+                marginLeft: 20,
+                width: '60%',
                 justifyContent: 'space-between',
                 //backgroundColor: 'green',
 
@@ -522,6 +511,8 @@ export default WeatherRedactor = ({
                         location = false
                     }
                 }
+
+                console.log(checkGroup)
                 
                 return (
                     <View
@@ -529,25 +520,29 @@ export default WeatherRedactor = ({
                         style = {[{
                             //flex: 1, 
                             flexDirection: 'row',
-                            height: 60,
+                            marginTop: 7,
+                            height: 30,
                             width: '100%',
-                            backgroundColor: Thema.basics.neutrals.primary,
-                            borderRadius: appStyle.borderRadius.additional
+                            //paddingHorizontal: 10,
+                            //backgroundColor: Thema.basics.neutrals.primary,
+                            //borderRadius: appStyle.borderRadius.additional
                         }, staticStyles.shadow]}
                     >   
                         {(location && !addNewLocation) &&
                         <BaseBox
-                            isRadioBox={true}
-                            //key = {`user_location_checkbox_${index}`}
+                            isCheckBox={true}
                             style = {{
-                                borderRadius: appStyle.borderRadius.additional,
-                                //width: '70%',
-                                //height: '100%',
                                 flex: 3,
-                                //backgroundColor: 'yellow'
-                                //marginVertical: 5
+                                backgroundColor: 'transparent',
+                                borderRadius: appStyle.borderRadius.additional,
+                                //borderTopRightRadius: 0,
+                                //borderBottomRightRadius: 0,
                             }}
-                            //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
+                            android_ripple={{
+                                color: Thema.icons.accents.primary,
+                                borderless: true,
+                                foreground: false
+                            }}
                             Item = {
                                 <Text 
                                     style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}
@@ -560,20 +555,30 @@ export default WeatherRedactor = ({
                             BoxBorderRadius = {appStyle.borderRadius.additional}
                             ColorsChange = {{
                                 true: Thema.icons.accents.primary, 
-                                false: `${Thema.icons.accents.quaternary}00`
+                                false: `${Thema.icons.accents.quaternary}10`
                             }}
                         />}
                         {(location && !addNewLocation) && 
                         <BasePressable
                             type="i"
-                            icon={{name: "dots-horizontal", size: 25}}
-                            style = {{
-                                //width: '30%',
-                                //height: '100%',
-                                flex: 1,
-                                //backgroundColor: 'pink'
+                            icon={{
+                                name: "dots-horizontal", 
+                                size: 25, 
+                                color: Thema.icons.accents.primary
                             }}
-                            rippleColor={false}
+                            style = {{
+                                flex: 1,
+                                backgroundColor: 'transparent',
+                                borderRadius: appStyle.borderRadius.additional,
+                                //borderTopLeftRadius: 0,
+                                //borderBottomLeftRadius: 0,
+                            }}
+                            android_ripple={{
+                                color: Thema.icons.accents.primary,
+                                borderless: true,
+                                foreground: false,
+                                //radius: 15
+                            }}
                             onPress={()=>{replaceLocation(index)}}
                         />}
                         {(!location && addNewLocation) && 
@@ -582,15 +587,18 @@ export default WeatherRedactor = ({
                             icon={{
                                 name: "map-marker-plus-outline", 
                                 size: 25, 
-                                color: Thema.icons.accents.primary
+                                color: Thema.icons.neutrals.primary
                             }}
                             style = {{
-                                //width: '30%',
-                                //height: '100%',
                                 flex: 1,
-                                //backgroundColor: 'blue'
+                                backgroundColor: Thema.icons.accents.primary,
+                                borderRadius: appStyle.borderRadius.additional
                             }}
-                            rippleColor={false}
+                            android_ripple={{
+                                color: Thema.icons.neutrals.primary,
+                                borderless: false,
+                                foreground: true
+                            }}
                             onPress={()=>{addLocation(index)}}
                         />}
                     </View>
@@ -638,6 +646,7 @@ export default WeatherRedactor = ({
                 
                 <View
                     style = {{
+                        marginTop: 15,
                         flex: 1,
                         width: '100%',
                         height: 160,
@@ -650,22 +659,25 @@ export default WeatherRedactor = ({
                         let name
                         let location
                         let messages
+                        let select
 
                         switch(index){
                             case 0:
                                 name = Language.network
                                 location = ipLocation
                                 messages = ipLocationMsg
+                                select = ipSelected
                                 break;
                             case 1:
                                 name = Language.device
                                 location = deviceLocation
                                 messages = deviceLocationMsg
+                                select = deviceSelected
                                 break;
                         }
 
                         return (
-                        <Pressable
+                        <View
                             key={`location_area_modal_${item}`}
                             style = {[{
                                 width: '45%',
@@ -675,7 +687,19 @@ export default WeatherRedactor = ({
                                 //justifyContent: 'center',
                                 alignItems: 'center'
                             }, staticStyles.shadow]}
-                            onPress={ipSelected}
+                        >
+                        <Pressable
+                            style = {{
+                                width: '100%',
+                                height: '100%',
+                                alignItems: 'center',
+                            }}
+                            onPress={select}
+                            android_ripple={{
+                                color: Thema.icons.accents.primary,
+                                borderless: true,
+                                foreground: false
+                            }}
                         >
                             <Text>
                                 {name}
@@ -696,7 +720,7 @@ export default WeatherRedactor = ({
                                     position: 'absolute',
                                     bottom: 0,
                                     width: '100%',
-                                    height: '80%',
+                                    height: '70%',
                                     borderRadius: 20,
                                     backgroundColor: Thema.modals.basics.ground.tertiary,
                                     justifyContent: 'center',
@@ -718,6 +742,7 @@ export default WeatherRedactor = ({
                             </Reanimated.View>
                             }
                         </Pressable>
+                        </View>
                         )
                     })}
                 </View>

@@ -46,7 +46,8 @@ export const BasePressable = ({
     onPress,
     onLongPress,
     direction = "row", //column || row ?&&(-reverse)
-    rippleColor = '#00000030',
+    rippleColor = false,
+    android_ripple
     }) => {
 
     for (let stylesObject of [textStyle, style, styleItemContainer]) {
@@ -106,12 +107,7 @@ export const BasePressable = ({
                         //borderRadius: appStyle.borderRadius.additional
                     }
                 ]}
-                android_ripple = {rippleColor? {
-                    color: rippleColor,
-                    borderless: true,
-                    radius: rippleRadius,
-                    foreground: true
-                } : {}}
+                android_ripple = {android_ripple? android_ripple : {}}
                 unstable_pressDelay = {300}
                 onLongPress = {onLongPress}
                 onPress = {onPress}
@@ -224,6 +220,7 @@ export const BaseBox = ({
     Check = false,
     onLongPress,
     onPress,
+    android_ripple
 }, props) => {
 
     const dynamicStylePrimaryBox = useAnimatedStyle(()=>{
@@ -263,6 +260,7 @@ export const BaseBox = ({
                     alignItems: 'center',
                     justifyContent: 'flex-start',
                 }}
+                android_ripple = {android_ripple? android_ripple : {}}
                 //android_ripple = {{
                 //    color: rippleColor,
                 //    borderless: true,

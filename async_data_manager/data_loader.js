@@ -47,7 +47,7 @@ const dataLoader = ()  => {
   
 
   AsyncStorage.getItem("storedAppConfig").then(data =>{
-    //data = String(null) //hard-reset
+    data = String(null) //hard-reset
     if (data !== String(null) && data !== null){
       console.log('>>LOAD_CONFIG')
       let configData = JSON.parse(data)

@@ -84,7 +84,7 @@ const Classical = ({
                     backgroundColor: Thema.navigateBar.ground,
                     flexDirection: 'row',
                     borderTopWidth: 1,
-                    borderColor: '#00000010'
+                    borderColor: Thema.navigateBar.transparentGround
                 }
             ]}
         >

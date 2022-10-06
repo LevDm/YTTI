@@ -119,7 +119,7 @@ const Hidden = ({
                     
                     //width: size,
                     
-                    backgroundColor: '#00000020',
+                    backgroundColor: Thema.navigateBar.transparentGround,
                     borderRadius: appStyle.borderRadius.additional,
                     flexDirection: appStyle.navigationMenu.position.horizontal == 'center'?'row':'column',
                 }

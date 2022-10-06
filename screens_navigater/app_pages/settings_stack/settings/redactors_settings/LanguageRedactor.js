@@ -10,9 +10,12 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import LanguagesAppList, {languagesApp} from "../../../../../language/language";
-import ThemesColorsAppList, {themesApp} from "../../../../../styles/ColorsApp";
+//import LanguagesAppList, {languagesApp} from "../../../../../language/language";
+//import ThemesColorsAppList, {themesApp} from "../../../../../styles/ColorsApp";
 import dataRedactor from "../../../../../async_data_manager/data_redactor";
+
+import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
+import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
 
 import { 
     BasePressable,
@@ -36,6 +39,10 @@ export default LanguageRedactor = ({
     ThemeSchema,
     LanguageAppIndex  
 }) => {
+
+    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.languages
+
     const getGroup = (type) => {
         let group = []
         for (let i of languagesApp){
@@ -45,7 +52,7 @@ export default LanguageRedactor = ({
         }
         return group
     };
-    const [checkGroup, setCheckGroup] = useState(getGroup(LanguagesAppList[LanguageAppIndex].language));
+    const [checkGroup, setCheckGroup] = useState(getGroup(appConfig.languageApp));
 
     const languageSetting = (languageAbriviature) => {
         setCheckGroup(getGroup(languageAbriviature));
@@ -66,7 +73,10 @@ export default LanguageRedactor = ({
     
     return (<>
     <View 
-        style = {[{}]}
+        style = {[{
+            marginLeft: 20,
+            
+        }]}
     >
         {languagesApp.map((item, index)=>{
             return(
@@ -74,14 +84,23 @@ export default LanguageRedactor = ({
                     key = {item+index}
                     style = {{
                         borderRadius: appStyle.borderRadius.additional,
-                        marginVertical: 5
+                        //backgroundColor: 'red',
+                        //marginVertical: 5,
+                        height: 40
                     }}
                     //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
-                    Item = {<Text>{item.toUpperCase()}</Text>}
+                    Item = {
+                        <Text 
+                            style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}
+                            numberOfLines={2}
+                        >
+                            {languagesAppList[index].SettingsScreen.Redactors.languages.thisLanguage}
+                        </Text>
+                    }
                     Check = {checkGroup[index]}
                     onPress = {()=>{languageSetting(item)}}
                     BoxBorderRadius = {appStyle.borderRadius.additional}
-                    ColorsChange = {{true: ThemesColorsAppList[ThemeColorsAppIndex].sky, false: ThemesColorsAppList[ThemeColorsAppIndex].skyUpUpUp}}
+                    ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
                 />
             )
         })}
@@ -94,5 +113,14 @@ const staticStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems : 'center',
         
+    },
+    listText: {
+        marginLeft: 5,
+        fontSize: 14, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5,
+        //textAlign: 'justify',
+        width: '85%'
     },
 });

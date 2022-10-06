@@ -148,6 +148,28 @@ const LanguageStoreRu = {
           positions: ["Слева","По центру","Справа"],
           size: "Размер кнопки",
           slider: {min: "меньше", max: "больше"},
+        },
+        languages: {
+          thisLanguage: 'Приложение будет использовать русский язык'
+        },
+        weather: {
+          used: 'Определять и использовать погоду',
+          usedState: {true: "включено", false: "выключено"},
+          type: 'Тип отображеня погоды',
+          types: {
+            lists: 'В списках', 
+            widget: 'Виджет', 
+            panel: 'В панеле'
+          },
+          locations: 'Используемые местоположения',
+          add: 'Добавление нового местоположения',
+          replace: 'Замена выбранного местоположения',
+          //location: 'местоположение',
+          network: 'Определено сетью',
+          device: 'Определено устройством',
+          errorsDevice: {
+            '0': 'Нет запроса',  
+          }
         }
       }
     },
@@ -323,6 +345,28 @@ const LanguageStoreEng = {
           positions: ["Left","Center","Right"],
           size: "Button size",
           slider: {min: "less", max: "more"},
+        },
+        languages: {
+          thisLanguage: 'The application will use English'
+        },
+        weather: {
+          used: 'Detect and use weather',
+          usedState: {true: "on", false: "of"},
+          type: 'Weather display type',
+          types: {
+            lists: 'In lists', 
+            widget: 'Widget', 
+            panel: 'In panel'
+          },
+          locations: 'Used Locations',
+          add: 'Adding a new location',
+          replace: 'Replace the selected location',
+          //location: 'location',
+          network: 'Defined by network',
+          device: 'Determined by device',
+          errorsDevice: {
+            '0': 'No request',  
+          }
         }
       }
     },

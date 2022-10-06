@@ -54,7 +54,27 @@ const Emerald = {
     modals: {
         thumb: '#50c878',
         outline: '#50c878',
-        ground: '#ffffff', 
+        ground: '#ffffff',
+
+        basics: {
+            ground: {
+                primary: '#eeeeee',
+                secondary: '#ffffff',
+                tertiary: '#00000040'
+            }
+        },
+        texts: {
+            primary: '#000000',
+            secondary: '#ffffff',
+            tertiary: '#808080',
+        },
+        icons: {
+            primary: '#000000',
+            secondary: '#ffffff',
+            tertiary: '#808080',
+        }
+
+
     },
     specials: {
         fire: {
@@ -124,6 +144,24 @@ const Olive = {
         thumb: '#6b8e23',
         outline: '#6b8e23',
         ground: '#ffffff', 
+
+        basics: {
+            ground: {
+                primary: '#eeeeee',
+                secondary: '#ffffff',
+                tertiary: '#00000040'
+            }
+        },
+        texts: {
+            primary: '#000000',
+            secondary: '#ffffff',
+            tertiary: '#808080',
+        },
+        icons: {
+            primary: '#000000',
+            secondary: '#ffffff',
+            tertiary: '#808080',
+        }
     },
     specials: {
         fire: {
@@ -192,7 +230,25 @@ const Gold = {
     modals: {
         thumb: '#6b8e23',
         outline: '#6b8e23',
-        ground: '#ffffff', 
+        ground: '#ffffff',
+        
+        basics: {
+            ground: {
+                primary: '#eeeeee',
+                secondary: '#ffffff',
+                tertiary: '#00000040'
+            }
+        },
+        texts: {
+            primary: '#000000',
+            secondary: '#ffffff',
+            tertiary: '#808080',
+        },
+        icons: {
+            primary: '#000000',
+            secondary: '#ffffff',
+            tertiary: '#808080',
+        }
     },
     specials: {
         fire: {

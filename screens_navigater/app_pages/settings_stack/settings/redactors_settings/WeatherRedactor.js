@@ -92,7 +92,7 @@ export default WeatherRedactor = ({
 }) => {
     
     const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.themes
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.weather
 
     //const [ location, setLocation ] = useState(null)
     //const [coords, setCoords] = useState(null);
@@ -425,7 +425,7 @@ export default WeatherRedactor = ({
             }}
         >
             <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
-                used {`${weatherUsed}`}
+                {Language.used} {Language.usedState[`${weatherUsed}`]}
             </Text>
             <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
             <BaseSwitch
@@ -457,7 +457,7 @@ export default WeatherRedactor = ({
         </View>
         
         <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
-            type
+            {Language.type}
         </Text>
         <View 
             style = {[{
@@ -473,7 +473,7 @@ export default WeatherRedactor = ({
                             //marginVertical: 5
                         }}
                         //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
-                        Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{item}</Text>}
+                        Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.types[item]}</Text>}
                         Check = {checkBoxGroup[index]}
                         onPress = {()=>{typeSetting(item, index)}}
                         BoxBorderRadius = {appStyle.borderRadius.additional}
@@ -484,14 +484,14 @@ export default WeatherRedactor = ({
         </View>
 
         <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
-            Locations
+            {Language.locations}
         </Text>
         <View
             style = {{
                 flex: 1,
-                height: 130,
+                height: 125,
                 justifyContent: 'space-between',
-                backgroundColor: 'green',
+                //backgroundColor: 'green',
 
             }}
         >
@@ -526,13 +526,14 @@ export default WeatherRedactor = ({
                 return (
                     <View
                         key = {`user_location_${index}`}
-                        style = {{
+                        style = {[{
                             //flex: 1, 
                             flexDirection: 'row',
                             height: 60,
                             width: '100%',
-                            backgroundColor: 'red'
-                        }}
+                            backgroundColor: Thema.basics.neutrals.primary,
+                            borderRadius: appStyle.borderRadius.additional
+                        }, staticStyles.shadow]}
                     >   
                         {(location && !addNewLocation) &&
                         <BaseBox
@@ -543,7 +544,7 @@ export default WeatherRedactor = ({
                                 //width: '70%',
                                 //height: '100%',
                                 flex: 3,
-                                backgroundColor: 'yellow'
+                                //backgroundColor: 'yellow'
                                 //marginVertical: 5
                             }}
                             //rippleColor = {ThemesColorsAppList[ThemeColorsAppIndex].shadowWhite0}
@@ -570,7 +571,7 @@ export default WeatherRedactor = ({
                                 //width: '30%',
                                 //height: '100%',
                                 flex: 1,
-                                backgroundColor: 'pink'
+                                //backgroundColor: 'pink'
                             }}
                             rippleColor={false}
                             onPress={()=>{replaceLocation(index)}}
@@ -578,12 +579,16 @@ export default WeatherRedactor = ({
                         {(!location && addNewLocation) && 
                         <BasePressable
                             type="i"
-                            icon={{name: "map-marker-plus-outline", size: 25}}
+                            icon={{
+                                name: "map-marker-plus-outline", 
+                                size: 25, 
+                                color: Thema.icons.accents.primary
+                            }}
                             style = {{
                                 //width: '30%',
                                 //height: '100%',
                                 flex: 1,
-                                backgroundColor: 'blue'
+                                //backgroundColor: 'blue'
                             }}
                             rippleColor={false}
                             onPress={()=>{addLocation(index)}}
@@ -605,11 +610,11 @@ export default WeatherRedactor = ({
                 height: 250
             }}
             style={{
-                backgroundColor: Thema.modals.ground,
+                backgroundColor: Thema.modals.basics.ground.primary,
                 borderTopLeftRadius: appStyle.borderRadius.additional,
                 borderTopRightRadius: appStyle.borderRadius.additional,
                 borderWidth: appStyle.modals.outline? 1 : 0,
-                borderColor: Thema.modals.thumb,
+                borderColor: Thema.modals.outline,
                 flex: 1,
                 //width: deviceWidth-2*appStyle.modals.horizontalProximity,
             }}
@@ -627,124 +632,95 @@ export default WeatherRedactor = ({
                     alignItems: 'center'
                 }}
             >
-                <Text>
-                    {modalType.type} location
+                <Text style = {[staticStyles.text, {color: Thema.modals.texts.primary}]}>
+                    {Language[modalType.type]}
                 </Text>
                 
                 <View
                     style = {{
                         flex: 1,
                         width: '100%',
+                        height: 160,
                         flexDirection: 'row',
                         justifyContent: 'space-around'
                     }}
-                >
-                    <Pressable
-                        style = {{
-                            width: '40%',
-                            height: 150,
-                            borderRadius: 20,
-                            backgroundColor: 'red',
-                            //justifyContent: 'center',
-                            alignItems: 'center'
-                        }}
-                        onPress={ipSelected}
-                    >
-                        <Text>
-                            network location
-                        </Text>
-                        <Text
-                            style = {{
-                                marginTop: 20
-                            }}
-                        >
-                            city: {ipLocation? ipLocation.city : 'none' } {'\n'}
-                            lat: {ipLocation? ipLocation.coords.lat : 'none'} {'\n'}
-                            lon: {ipLocation? ipLocation.coords.lon : 'none'}
-                        </Text>
+                >   
+                    {['network','device'].map((item, index)=>{
 
-                        {ipLocationMsg.code != 1 &&
-                        <Reanimated.View
-                            style = {{
-                                position: 'absolute',
-                                bottom: 0,
-                                width: '100%',
-                                height: '80%',
+                        let name
+                        let location
+                        let messages
+
+                        switch(index){
+                            case 0:
+                                name = Language.network
+                                location = ipLocation
+                                messages = ipLocationMsg
+                                break;
+                            case 1:
+                                name = Language.device
+                                location = deviceLocation
+                                messages = deviceLocationMsg
+                                break;
+                        }
+
+                        return (
+                        <Pressable
+                            key={`location_area_modal_${item}`}
+                            style = {[{
+                                width: '45%',
+                                height: 150,
                                 borderRadius: 20,
-                                backgroundColor: 'blue',
-                                justifyContent: 'center',
+                                backgroundColor: Thema.modals.basics.ground.secondary,
+                                //justifyContent: 'center',
                                 alignItems: 'center'
-                            }}
+                            }, staticStyles.shadow]}
+                            onPress={ipSelected}
                         >
-                            {!netConnectInfo &&
-                            <MaterialCommunityIcons name="wifi-remove" size={40} color="black" />
-                            }
-                            {netConnectInfo &&
+                            <Text>
+                                {name}
+                            </Text>
                             <Text
-                                style={{
-                                    textAlign: 'center'
+                                style = {{
+                                    marginTop: 20
                                 }}
                             >
-                                {`${ipLocationMsg.msg}`}
+                                city: {location? location.city : 'none' } {'\n'}
+                                lat: {location? location.coords.lat : 'none'} {'\n'}
+                                lon: {location? location.coords.lon : 'none'}
                             </Text>
-                            }
-                        </Reanimated.View>
-                        }
-                    </Pressable>
-                    <Pressable
-                        style = {{
-                            width: '40%',
-                            height: 150,
-                            borderRadius: 20,
-                            backgroundColor: 'red',
-                            //justifyContent: 'center',
-                            alignItems: 'center'
-                        }}
-                        onPress={deviceSelected}
-                    >
-                        <Text>
-                            device location
-                        </Text>
-                        <Text
-                            style = {{
-                                marginTop: 20
-                            }}
-                        >
-                            city: {deviceLocation? deviceLocation.city : 'none' } {'\n'}
-                            lat: {deviceLocation? deviceLocation.coords.lat : 'none'} {'\n'}
-                            lon: {deviceLocation? deviceLocation.coords.lon : 'none'}
-                        </Text>
 
-                        {deviceLocationMsg.code != 1 &&
-                        <Reanimated.View
-                            style = {{
-                                position: 'absolute',
-                                bottom: 0,
-                                width: '100%',
-                                height: '80%',
-                                borderRadius: 20,
-                                backgroundColor: 'blue',
-                                justifyContent: 'center',
-                                alignItems: 'center'
-                            }}
-                        >
-                            {!netConnectInfo &&
-                            <MaterialCommunityIcons name="wifi-remove" size={40} color="black" />
-                            }
-                            {netConnectInfo &&
-                            <Text
-                                style={{
-                                    textAlign: 'center'
+                            {messages.code != 1 &&
+                            <Reanimated.View
+                                style = {{
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    width: '100%',
+                                    height: '80%',
+                                    borderRadius: 20,
+                                    backgroundColor: Thema.modals.basics.ground.tertiary,
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
                                 }}
                             >
-                                {`${deviceLocationMsg.msg}`}
-                            </Text>
+                                {!netConnectInfo &&
+                                <MaterialCommunityIcons name="wifi-remove" size={40} color="black" />
+                                }
+                                {netConnectInfo &&
+                                <Text
+                                    style={{
+                                        textAlign: 'center'
+                                    }}
+                                >
+                                    {`${messages.msg}`}
+                                </Text>
+                                }
+                            </Reanimated.View>
                             }
-                        </Reanimated.View>
-                        }
-                    </Pressable>
+                        </Pressable>
+                        )
+                    })}
                 </View>
-                
             </View>
         </BaseModal> 
     </>)
@@ -900,5 +876,15 @@ const staticStyles = StyleSheet.create({
         height: 45,
         width: 1.5,
         marginRight: 10
-    }
+    },
+    shadow: {
+        elevation: 1,
+        shadowColor: "#000",
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4
+    },
 });

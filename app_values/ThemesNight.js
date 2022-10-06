@@ -46,7 +46,7 @@ const Emerald = {
         },
     },
     navigateBar: {
-        ground: '#333333',
+        ground: '#222222',
         transparentGround: '#ffffff20',
         icons: {active: '#50c878', notActive: '#ffffff'},
         text: {active: '#50c878', notActive: '#ffffff'},
@@ -54,7 +54,25 @@ const Emerald = {
     modals: {
         thumb: '#50c878',
         outline: '#50c878',
-        ground: '#333333', 
+        ground: '#222222', 
+
+        basics: {
+            ground: {
+                primary: '#222222',
+                secondary: '#333333',
+                tertiary: '#ffffff40'
+            }
+        },
+        texts: {
+            primary: '#ffffff',
+            secondary: '#000000',
+            tertiary: '#808080',
+        },
+        icons: {
+            primary: '#ffffff',
+            secondary: '#000000',
+            tertiary: '#808080',
+        }
     },
     specials: {
         fire: {
@@ -115,7 +133,7 @@ const Olive = {
         },
     },
     navigateBar: {
-        ground: '#333333',
+        ground: '#222222',
         transparentGround: '#ffffff20',
         icons: {active: '#6b8e23', notActive: '#ffffff'},
         text: {active: '#6b8e23', notActive: '#ffffff'},
@@ -123,7 +141,25 @@ const Olive = {
     modals: {
         thumb: '#6b8e23',
         outline: '#6b8e23',
-        ground: '#333333', 
+        ground: '#222222', 
+
+        basics: {
+            ground: {
+                primary: '#222222',
+                secondary: '#333333',
+                tertiary: '#ffffff40'
+            }
+        },
+        texts: {
+            primary: '#ffffff',
+            secondary: '#000000',
+            tertiary: '#808080',
+        },
+        icons: {
+            primary: '#ffffff',
+            secondary: '#000000',
+            tertiary: '#808080',
+        }
     },
     specials: {
         fire: {
@@ -184,7 +220,7 @@ const Gold = {
         },
     },
     navigateBar: {
-        ground: '#fff',
+        ground: '#222222',
         transparentGround: '#ffffff20',
         icons: {active: '#000', notActive: '#000'},
         text: {active: '#6b8e23', notActive: '#000'},
@@ -192,7 +228,25 @@ const Gold = {
     modals: {
         thumb: '#6b8e23',
         outline: '#6b8e23',
-        ground: '#333333', 
+        ground: '#222222', 
+
+        basics: {
+            ground: {
+                primary: '#222222',
+                secondary: '#333333',
+                tertiary: '#ffffff40'
+            }
+        },
+        texts: {
+            primary: '#ffffff',
+            secondary: '#000000',
+            tertiary: '#808080',
+        },
+        icons: {
+            primary: '#ffffff',
+            secondary: '#000000',
+            tertiary: '#808080',
+        }
     },
     specials: {
         fire: {

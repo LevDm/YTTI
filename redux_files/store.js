@@ -81,12 +81,12 @@ const reducer = (state=initialState, action) => {
         }
         case 'SET_STYLE_APP': {
             console.log('>'+action.type)
-            initialState.appStyle = Object.assign(initialState.appStyle, action.value)
+            initialState.appStyle =  initialState.loadStatusStyle? action.value : Object.assign(initialState.appStyle, action.value)
             return initialState
         }
         case 'SET_CONFIG_APP': {
             console.log('>'+action.type)
-            initialState.appConfig = Object.assign(initialState.appConfig, action.value)
+            initialState.appConfig = initialState.loadStatusConfig? action.value : Object.assign(initialState.appConfig, action.value)
             return initialState
         }
 

@@ -193,9 +193,9 @@ for (let el of structure){
     //}
 }
 
-const AnimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
-const AnimatedSectionList = Reanimated.createAnimatedComponent(SectionList);
-const AnimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
+const ReanimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
+const ReanimatedSectionList = Reanimated.createAnimatedComponent(SectionList);
+const ReanimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 
 //bober button heigt = 60
 const bottomBord = deviceWidth*0.04+60
@@ -233,6 +233,7 @@ const Settings = (props) => {
         }
 
         if (appStyle != jstore.appStyle) {
+            //console.log('style update')
             setAppStyle(jstore.appStyle);
         }
 
@@ -321,7 +322,7 @@ const Settings = (props) => {
 
     const splashOut = ()=>{
         let newAppStyle = previewAppStyle
-
+        //console.log('fine ',newAppStyle)
         setAppStyle(newAppStyle)
         dataRedactor("storedAppStyle",newAppStyle);
         props.r_setAppStyle(newAppStyle);
@@ -420,7 +421,7 @@ const Settings = (props) => {
             limits: limList
         }
     }
-    useEffect(()=>{countDerivedValues()},[previewFixed, appStyle])
+    useEffect(()=>{countDerivedValues()},[previewFixed])//appStyle.lists.proximity
 
 
 
@@ -565,9 +566,9 @@ const Settings = (props) => {
         }
 
         if(
-            (((animValueListHeights.value).length != listHeights.length || animValueListHeights.value != listHeights.length) && listHeights.length == allStructurParams.length) ||
-            (((animValueListWidths.value).length != listWidths.length || animValueListWidths.value != listWidths.length) && listWidths.length == allStructurParams.length)
+            listHeights.length == listWidths.length && listHeights.length == allStructurParams.length
         ){
+            //console.log('new full renders')
             countDerivedValues()
         }
     };
@@ -766,7 +767,7 @@ const Settings = (props) => {
                         justifyContent: 'center',
                     }]}
                 >
-                    <AnimatedTextInput     
+                    <ReanimatedTextInput     
                         editable = {false}
                         style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: Thema.texts.neutrals.primary}]}
                         animatedProps={categoryText}
@@ -785,7 +786,7 @@ const Settings = (props) => {
                         borderBottomLeftRadius: 0,
                     }]}  
                 />
-                <AnimatedFlatList
+                <ReanimatedFlatList
                     ref={flatListRef}
                     style={staticStyles.frontFL}
                     horizontal={true}
@@ -814,7 +815,7 @@ const Settings = (props) => {
                 />
             </View>
         </View>
-        <AnimatedSectionList
+        <ReanimatedSectionList
             ref={sectListRef}
             stickySectionHeadersEnabled={previewFixed}
             showsVerticalScrollIndicator={false}
@@ -1015,7 +1016,11 @@ const Settings = (props) => {
                                 shadowRadius: 4,
                                 elevation: 4,
                             }}
-                            rippleColor={Thema.icons.neutrals.primary}
+                            android_ripple={{
+                                color: Thema.icons.accents.quaternary,
+                                borderless: true,
+                                foreground: false
+                            }}
                             onPress={pressFunction}
                         />
                     </Reanimated.View>

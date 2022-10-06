@@ -512,7 +512,7 @@ export default WeatherRedactor = ({
                     }
                 }
 
-                console.log(checkGroup)
+                //console.log(checkGroup)
                 
                 return (
                     <View
@@ -596,8 +596,8 @@ export default WeatherRedactor = ({
                             }}
                             android_ripple={{
                                 color: Thema.icons.neutrals.primary,
-                                borderless: false,
-                                foreground: true
+                                borderless: true,
+                                foreground: false
                             }}
                             onPress={()=>{addLocation(index)}}
                         />}

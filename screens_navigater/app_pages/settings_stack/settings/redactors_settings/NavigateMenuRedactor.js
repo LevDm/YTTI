@@ -77,9 +77,13 @@ export default NavigateMenuRedactor = ({
         let newAppStyle = getNewAppStyleObject();
         if(type == "hidden" || type =="not"){
             newAppStyle.navigationMenu.height = 0
+        } else {
+            console.log('new select class')
+            newAppStyle.navigationMenu.height = 50
+            setSliderValueMenuHeight(50)
         }
         newAppStyle.navigationMenu.type = type
-        console.log('newAppStyle',newAppStyle)
+        //console.log('newAppStyle',newAppStyle)
         setPreviewAppStyle(newAppStyle);
         setCheckGroup(newGroup);
     };

@@ -268,7 +268,9 @@ export const BaseBox = ({
                 //}}
                 unstable_pressDelay = {300}
                 onLongPress = {onLongPress}
-                onPress = {onPress}
+                //onPress = {()=>{ setTimeout(onPress, 150)}}
+                //onPressOut={()=>{ setTimeout(onPress, 0)}}
+                onPressOut={onPress}
             >
                 <Animated.View
                     style = {[dynamicStylePrimaryBox, {

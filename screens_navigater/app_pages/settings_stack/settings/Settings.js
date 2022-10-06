@@ -233,7 +233,6 @@ const Settings = (props) => {
         }
 
         if (appStyle != jstore.appStyle) {
-            //console.log('style update')
             setAppStyle(jstore.appStyle);
         }
 
@@ -421,7 +420,7 @@ const Settings = (props) => {
             limits: limList
         }
     }
-    useEffect(()=>{countDerivedValues()},[previewFixed])//appStyle.lists.proximity
+    useEffect(()=>{countDerivedValues()},[previewFixed, LanguageAppIndex])//appStyle.lists.proximity
 
 
 
@@ -564,9 +563,10 @@ const Settings = (props) => {
             list.push(newValue);
             setList(list); 
         }
-
+        //console.log('r')
         if(
-            listHeights.length == listWidths.length && listHeights.length == allStructurParams.length
+            (listHeights.length == listWidths.length && listHeights.length == allStructurParams.length) 
+            || (derivedValues.value.listHeights != listHeights || derivedValues.value.listWidths != listWidths)
         ){
             //console.log('new full renders')
             countDerivedValues()

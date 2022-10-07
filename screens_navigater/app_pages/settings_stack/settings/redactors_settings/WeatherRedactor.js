@@ -379,6 +379,12 @@ export default WeatherRedactor = ({
 
     const weatherUsedSetting = () => {
         console.log('switch use weather')
+        let newAppConfig = getNewAppConfigObject();
+        newAppConfig.weather.used = !weatherUsed
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+
+        setWeatherUsed(!weatherUsed)
     }
 
     const getCheckBoxGroup = (type) => {
@@ -395,6 +401,12 @@ export default WeatherRedactor = ({
 
     const typeSetting = (item, index) => {
         console.log('type setting', item)
+        let newAppConfig = getNewAppConfigObject();
+        newAppConfig.weather.type = item
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+
+        setCheckBoxGroup(getCheckBoxGroup(item))
     }
 
     return (<>
@@ -555,7 +567,7 @@ export default WeatherRedactor = ({
                             BoxBorderRadius = {appStyle.borderRadius.additional}
                             ColorsChange = {{
                                 true: Thema.icons.accents.primary, 
-                                false: `${Thema.icons.accents.quaternary}10`
+                                false: `${Thema.icons.accents.quaternary}00`
                             }}
                         />}
                         {(location && !addNewLocation) && 
@@ -640,7 +652,7 @@ export default WeatherRedactor = ({
                     alignItems: 'center'
                 }}
             >
-                <Text style = {[staticStyles.text, {color: Thema.modals.texts.primary}]}>
+                <Text style = {[staticStyles.boldText, {color: Thema.modals.texts.primary}]}>
                     {Language[modalType.type]}
                 </Text>
                 
@@ -693,34 +705,36 @@ export default WeatherRedactor = ({
                                 width: '100%',
                                 height: '100%',
                                 alignItems: 'center',
+                                padding: 5
                             }}
                             onPress={select}
                             android_ripple={{
-                                color: Thema.icons.accents.primary,
+                                color: Thema.modals.basics.ground.tertiary,
                                 borderless: true,
                                 foreground: false
                             }}
                         >
-                            <Text>
+                            <Text style = {[staticStyles.text, {color: Thema.modals.texts.primary, textAlign: 'center'}]}>
                                 {name}
                             </Text>
                             <Text
-                                style = {{
-                                    marginTop: 20
-                                }}
+                                style = {[staticStyles.boldText, 
+                                    {
+                                        color: Thema.modals.texts.primary,
+                                        marginTop: 20
+                                    }
+                                ]}
                             >
-                                city: {location? location.city : 'none' } {'\n'}
-                                lat: {location? location.coords.lat : 'none'} {'\n'}
-                                lon: {location? location.coords.lon : 'none'}
+                                {location? location.city : 'none'}
                             </Text>
 
                             {messages.code != 1 &&
                             <Reanimated.View
                                 style = {{
                                     position: 'absolute',
-                                    bottom: 0,
+                                    bottom: 5,
                                     width: '100%',
-                                    height: '70%',
+                                    height: '65%',
                                     borderRadius: 20,
                                     backgroundColor: Thema.modals.basics.ground.tertiary,
                                     justifyContent: 'center',
@@ -728,13 +742,16 @@ export default WeatherRedactor = ({
                                 }}
                             >
                                 {!netConnectInfo &&
-                                <MaterialCommunityIcons name="wifi-remove" size={40} color="black" />
+                                <MaterialCommunityIcons name="wifi-remove" size={40} color={Thema.modals.icons.primary}/>
                                 }
                                 {netConnectInfo &&
                                 <Text
-                                    style={{
-                                        textAlign: 'center'
-                                    }}
+                                    style = {[staticStyles.text, 
+                                        {
+                                            color: Thema.modals.texts.secondary,
+                                            textAlign: 'center'
+                                        }
+                                    ]}
                                 >
                                     {`${messages.msg}`}
                                 </Text>
@@ -879,6 +896,12 @@ const staticStyles = StyleSheet.create({
         fontSize: 16, 
         //fontVariant: ['small-caps'], 
         fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    boldText: {
+        fontSize: 16, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: 'bold', 
         letterSpacing: 0.5
     },
     signaturesText: {

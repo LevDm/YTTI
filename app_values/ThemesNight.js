@@ -1,7 +1,7 @@
 const Emerald = { 
     theme: "emerald",
     scheme: 'dark',
-    statusBar: 'light',//'auto','inverted' ,'light' ,'dark'
+    statusBar: 'dark',//'auto','inverted' ,'light' ,'dark'
     basics: {
         accents: {
             primary: '#50c878',
@@ -60,7 +60,7 @@ const Emerald = {
             ground: {
                 primary: '#222222',
                 secondary: '#333333',
-                tertiary: '#ffffff40'
+                tertiary: '#50c878',
             }
         },
         texts: {
@@ -88,7 +88,7 @@ const Emerald = {
 const Olive = {
     theme: "olive",
     scheme: 'dark',
-    statusBar: 'light',//'auto','inverted' ,'light' ,'dark'
+    statusBar: 'dark',//'auto','inverted' ,'light' ,'dark'
     basics: {
         accents: {
             primary: '#6b8e23',
@@ -147,7 +147,7 @@ const Olive = {
             ground: {
                 primary: '#222222',
                 secondary: '#333333',
-                tertiary: '#ffffff40'
+                tertiary: '#6b8e23',
             }
         },
         texts: {
@@ -234,7 +234,7 @@ const Gold = {
             ground: {
                 primary: '#222222',
                 secondary: '#333333',
-                tertiary: '#ffffff40'
+                tertiary: '#6b8e23',
             }
         },
         texts: {

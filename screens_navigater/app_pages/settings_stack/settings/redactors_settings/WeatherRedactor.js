@@ -220,12 +220,20 @@ export default WeatherRedactor = ({
             lat: dataLocation.city.lat,
             lon: dataLocation.city.lon
         }
-        locationInfo.city = dataLocation.city[`name_${lang}`]
         
-        const control = await controlIpLocations(locationInfo.coords)
-        if(control){
-            setIpLocationMsg({code: 1, msg: 'all information received'})  
+        locationInfo.city = dataLocation.city[`name_${lang}`]
+        //console.log('wtf', locationInfo.city,(locationInfo.city).length == 0)
+        if((locationInfo.city).length == 0){
+            //locationInfo.city = 'city not find'
+            //console.log('err ip', locationInfo)
+            setIpLocationMsg({code: 0.7, msg: 'city not find - api error'})
+        } else {
+            const control = await controlIpLocations(locationInfo.coords)
+            if(control){
+                setIpLocationMsg({code: 1, msg: 'all information received'})  
+            }
         }
+        
         setIpLocation(locationInfo)
     }
 
@@ -687,6 +695,8 @@ export default WeatherRedactor = ({
                                 select = deviceSelected
                                 break;
                         }
+
+                        console.log('modal loc', location)
 
                         return (
                         <View

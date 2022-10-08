@@ -84,22 +84,22 @@ const structure = [
         category: "style",
         data: [
             {
-                param: "theme",
+                param: "thema",
                 icon:  "palette",
                 paramRedactorComponent: ThemeRedacor
             },
             {
-                param: "angle",
+                param: "borderRadius",
                 icon:  "vector-rectangle",
                 paramRedactorComponent: BorderRadiusRedactor
             },
             {
-                param: "navigate menu",
+                param: "navigationMenu",
                 icon:  "menu",
                 paramRedactorComponent: NavigateMenuRedactor
             },
             {
-                param: "load splash",
+                param: "loadAnimation",
                 icon:  "animation-play",
                 paramRedactorComponent: LoadSplashRedactor
             },
@@ -109,10 +109,15 @@ const structure = [
                 paramRedactorComponent: ListsRedactor
             },
             {
-                param: "function button",
+                param: "bobberButton",
                 icon:  "balloon",
                 paramRedactorComponent: FunctionButtonRedactor
-            }, 
+            },
+            {
+                param: "modals",
+                icon:  "window-restore",
+                paramRedactorComponent: null
+            },  
         ]
     },
     {   
@@ -123,17 +128,7 @@ const structure = [
                 param: "language",
                 icon:  "earth",
                 paramRedactorComponent: LanguageRedactor
-            }, 
-            //{
-            //    param:"location",
-            //    icon:  "balloon",
-            //    paramRedactorComponent: null
-            //}, 
-            {
-                param:"screens",
-                icon:  "store",
-                paramRedactorComponent: null
-            }, 
+            },
             {
                 param:"accost",
                 icon:  "account",
@@ -144,8 +139,19 @@ const structure = [
                 icon:  "weather-cloudy-clock",
                 paramRedactorComponent: WeatherRedactor
             }, 
+            //{
+            //    param:"location",
+            //    icon:  "balloon",
+            //    paramRedactorComponent: null
+            //}, 
             {
-                param:"ohter",
+                param:"appFunctions",
+                icon:  "store",
+                paramRedactorComponent: null
+            }, 
+             
+            {
+                param:"ohters",
                 icon:  "qrcode-scan",
                 paramRedactorComponent: null
             },
@@ -273,7 +279,7 @@ const Settings = (props) => {
     const [previewFixed, setPreviewFixed] = useState(false);
 
     const animValueWidthLine = useSharedValue(
-        (((Language.StructureScreen.params[0]).length) * (staticStyles.frontFLText.fontSize * 0.75) + 10)
+        (((Language.StructureScreen.params[allStructurParams[0].param]).length) * (staticStyles.frontFLText.fontSize * 0.75) + 10)
     );
     const animValueMarginLeft = useSharedValue(0);
     const animValueTranslateX = useSharedValue(0);
@@ -512,7 +518,7 @@ const Settings = (props) => {
 
             let width = Math.round(aListWidths[countAccent]-10);
             if(isNaN(width) || width  === undefined){
-                const numberPrimelSymbols = (Language.StructureScreen.params[0]).length;
+                const numberPrimelSymbols = (Language.StructureScreen.params[allStructurParams[0].param]).length;
                 const widthSymbol = staticStyles.frontFLText.fontSize * 0.75;
                 width = numberPrimelSymbols * widthSymbol + 10;
             }
@@ -804,7 +810,7 @@ const Settings = (props) => {
                             <BasePressable
                                 type={'t'}
                                 style={staticStyles.frontFLPressable}
-                                text={Language.StructureScreen.params[index]}
+                                text={Language.StructureScreen.params[item.param]}
                                 textStyle={[staticStyles.frontFLText, {color: Thema.texts.neutrals.primary}]}
                                 rippleColor={false}
                                 onPress={()=>{selectParametr(item, index)}}
@@ -872,9 +878,10 @@ const Settings = (props) => {
             renderItem={({item, index})=>{
                 const RedactorComponent = item.paramRedactorComponent;
                 const redactorName = Language.StructureScreen.params[
-                    allStructurParams.findIndex((element, index)=>{
-                        if(item.param == element.param){return index+1}
-                    })
+                    //allStructurParams.findIndex((element, index)=>{
+                    //    if(item.param == element.param){return index+1}
+                    //})
+                    item.param
                 ]
                 return (
                     <Reanimated.View

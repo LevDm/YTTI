@@ -83,21 +83,21 @@ const LanguageStoreRu = {
           "внешнего вида",
           "системы"
         ],
-        params: [
-          "тема", 
-          "скругления", 
-          "навигационное меню", 
-          "загрузочная анимация",
-          "списки",
-          "кнопка поплавок",
-  
-          "язык",
-          //"местоположение",
-          "функции", 
-          "обращение",
-          "погода", 
-          "другое"
-        ]
+        params: {
+          thema: "тема", 
+          borderRadius: "скругления", 
+          navigationMenu: "навигационное меню", 
+          loadAnimation: "загрузочная анимация",
+          lists: "списки",
+          bobberButton:"кнопка поплавок",
+          modals: 'вспрывающие окна',
+          language: "язык",
+          //"location", 
+          appFunctions:"функции",
+          accost: "обращение",
+          weather: "погода",
+          ohters: "другое"
+        }
       },
       Redactors: {
         themes: {
@@ -280,21 +280,21 @@ const LanguageStoreEng = {
           "appearance", 
           "systems"
         ],
-        params: [ 
-          "theme", 
-          "fillets", 
-          "navigation menu", 
-          "loading animation",
-          "lists",
-          "bobber button",
-  
-          "language",
+        params: { 
+          thema: "theme", 
+          borderRadius: "fillets", 
+          navigationMenu: "navigation menu", 
+          loadAnimation: "loading animation",
+          lists: "lists",
+          bobberButton:"bobber button",
+          modals: 'popup windows',
+          language: "language",
           //"location", 
-          "functions",
-          "accost",
-          "weather", 
-          "others"
-        ]
+          appFunctions: "functions",
+          accost: "accost",
+          weather: "weather", 
+          ohters: "others"
+        }
       },
       Redactors: {
         themes: {

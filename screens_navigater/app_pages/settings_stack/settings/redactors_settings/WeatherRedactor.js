@@ -417,6 +417,19 @@ export default WeatherRedactor = ({
         setCheckBoxGroup(getCheckBoxGroup(item))
     }
 
+    const deleteLocation = (location, delIndex)=>{
+        let newLocations = []
+        appConfig.weather.locationInfo.map((item, index)=>{
+           index != delIndex? newLocations.push(item) : null
+        })
+        let newAppConfig = getNewAppConfigObject();
+        newAppConfig.weather.locationInfo= newLocations;
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+
+        setCheckGroup(getGroup(-1, true))
+    }
+
     return (<>
         <View
             style = {{
@@ -621,9 +634,30 @@ export default WeatherRedactor = ({
                             }}
                             onPress={()=>{addLocation(index)}}
                         />}
-                    </View>
-                )
-            })}
+
+                        {((location && !addNewLocation) && true) && 
+                        <BasePressable
+                            type="t"
+                            text="del"
+                            style = {{
+                                flex: 1,
+                                backgroundColor: 'transparent',
+                                borderRadius: appStyle.borderRadius.additional,
+                                //borderTopLeftRadius: 0,
+                                //borderBottomLeftRadius: 0,
+                            }}
+                            android_ripple={{
+                                color: Thema.icons.accents.primary,
+                                borderless: true,
+                                foreground: false,
+                                //radius: 15
+                            }}
+                            onPress={()=>{deleteLocation(item, index)}}
+                        />}
+
+                        </View>
+                        )
+                    })}
         </View>
         
         <BaseModal

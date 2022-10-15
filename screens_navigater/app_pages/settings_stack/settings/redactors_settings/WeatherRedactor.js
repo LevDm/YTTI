@@ -226,7 +226,7 @@ export default WeatherRedactor = ({
         if((locationInfo.city).length == 0){
             //locationInfo.city = 'city not find'
             //console.log('err ip', locationInfo)
-            setIpLocationMsg({code: 0.7, msg: 'city not find - api error'})
+            setIpLocationMsg({code: 0.7, msg: 'city not find - api error (accesless network)'})
         } else {
             const control = await controlIpLocations(locationInfo.coords)
             if(control){
@@ -234,7 +234,7 @@ export default WeatherRedactor = ({
             }
         }
         
-        setIpLocation(locationInfo)
+        ipLocationMsg.code == 1? setIpLocation(locationInfo) : null
     }
 
     const [ modalVisible, setModalVisible ] = useState(false)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Dimensions, Appearance } from 'react-native';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -68,10 +68,18 @@ function AppDrawer(props) {
         }
     })
     
-    Appearance.addChangeListener(({colorScheme})=>{
-        if(appStyle.colorScheme == 'auto'){
-            setThemeSchema(colorScheme)
+    const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
+    useEffect(()=>{
+        if(listenerColorSheme){
+            if(appStyle.colorScheme == 'auto'){
+                console.log('drawer accept new color sheme', listenerColorSheme, 'used shema', appStyle.colorScheme)
+                setThemeSchema(listenerColorSheme)
+            }
         }
+    },[listenerColorSheme])
+    
+    Appearance.addChangeListener(({colorScheme})=>{
+        setListinerColorScheme(colorScheme)
     })
 
     const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]

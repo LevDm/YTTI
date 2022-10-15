@@ -246,11 +246,19 @@ const Settings = (props) => {
             setAppConfig(jstore.appConfig);
         }
     })
+
+    const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
+    useEffect(()=>{
+        if(listenerColorSheme){
+            if(appStyle.colorScheme == 'auto'){
+                console.log('settings accept new color sheme', listenerColorSheme, 'used shema', appStyle.colorScheme)
+                setThemeSchema(listenerColorSheme)
+            }
+        }
+    },[listenerColorSheme])
     
     Appearance.addChangeListener(({colorScheme})=>{
-        if(appStyle.colorScheme == 'auto'){
-            setThemeSchema(colorScheme)
-        }
+        setListinerColorScheme(colorScheme)
     })
 
     const sectListRef = useRef();

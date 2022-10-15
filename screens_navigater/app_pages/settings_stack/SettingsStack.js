@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Appearance } from 'react-native';
 
 import { createStackNavigator } from '@react-navigation/stack';
@@ -107,10 +107,18 @@ function SettingsStack(props) {
         }
     })
 
-    Appearance.addChangeListener(({colorScheme})=>{
-        if(appStyle.colorScheme == 'auto'){
-            setThemeSchema(colorScheme)
+    const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
+    useEffect(()=>{
+        if(listenerColorSheme){
+            if(appStyle.colorScheme == 'auto'){
+                console.log('settings stack accept new color sheme', listenerColorSheme, 'used shema', appStyle.colorScheme)
+                setThemeSchema(listenerColorSheme)
+            }
         }
+    },[listenerColorSheme])
+    
+    Appearance.addChangeListener(({colorScheme})=>{
+        setListinerColorScheme(colorScheme)
     })
     
     const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]

@@ -89,6 +89,7 @@ function AppDrawer(props) {
         
         <Drawer.Navigator 
             //useLegacyImplementation
+            //detachInactiveScreens={false}
             animationTypeForReplace={"pop"}
             screenOptions = {{
                 swipeEnabled: true,

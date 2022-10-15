@@ -417,13 +417,15 @@ const Settings = (props) => {
             shifts.push(resOffset)
         } 
 
+        const lessCooef = 0.2
+        const moreCooef = 1 - 0.4 //default 1-lessCooef
      
         const limList = []//[{less: 30, more: 70}, ...]
         for(let param = 0; param < allStructurParams.length; param++){
             const interval = listHeights.reduce(((countValue, currentValue, index)=>(index < param? (countValue+currentValue) : countValue)), 0)
             limList.push({
-                less: 0.3*listHeights[param]+interval, 
-                more: 0.7*listHeights[param]+interval
+                less: lessCooef*listHeights[param]+interval, 
+                more: moreCooef*listHeights[param]+interval
             })
         }
 

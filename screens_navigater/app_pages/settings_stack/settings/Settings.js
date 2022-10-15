@@ -63,6 +63,7 @@ import LoadSplashRedactor  from "./redactors_settings/LoadSplashRedactor";
 import LanguageRedactor from "./redactors_settings/LanguageRedactor";
 import ListsRedactor from "./redactors_settings/ListsRedactor";
 import FunctionButtonRedactor from "./redactors_settings/FunctionButtonRedactor";
+import ModalsRedactor from "./redactors_settings/ModalsRedactor";
 
 import WeatherRedactor from "./redactors_settings/WeatherRedactor";
 
@@ -116,7 +117,7 @@ const structure = [
             {
                 param: "modals",
                 icon:  "window-restore",
-                paramRedactorComponent: null
+                paramRedactorComponent: ModalsRedactor
             },  
         ]
     },

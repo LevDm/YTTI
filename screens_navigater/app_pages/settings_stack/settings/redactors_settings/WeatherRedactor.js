@@ -230,11 +230,12 @@ export default WeatherRedactor = ({
         } else {
             const control = await controlIpLocations(locationInfo.coords)
             if(control){
-                setIpLocationMsg({code: 1, msg: 'all information received'})  
+                setIpLocationMsg({code: 1, msg: 'all information received'}) 
+                setIpLocation(locationInfo) 
             }
         }
         
-        ipLocationMsg.code == 1? setIpLocation(locationInfo) : null
+        //ipLocationMsg.code == 1? setIpLocation(locationInfo) : null
     }
 
     const [ modalVisible, setModalVisible ] = useState(false)
@@ -635,7 +636,7 @@ export default WeatherRedactor = ({
                             onPress={()=>{addLocation(index)}}
                         />}
 
-                        {((location && !addNewLocation) && true) && 
+                        {((location && !addNewLocation) && false) && 
                         <BasePressable
                             type="t"
                             text="del"

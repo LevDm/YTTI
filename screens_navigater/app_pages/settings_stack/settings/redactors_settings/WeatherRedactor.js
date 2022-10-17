@@ -719,6 +719,7 @@ export default WeatherRedactor = ({
                         let location
                         let messages
                         let select
+                        let iconName
 
                         switch(index){
                             case 0:
@@ -726,12 +727,14 @@ export default WeatherRedactor = ({
                                 location = ipLocation
                                 messages = ipLocationMsg
                                 select = ipSelected
+                                iconName = "ip-outline"
                                 break;
                             case 1:
                                 name = Language.device
                                 location = deviceLocation
                                 messages = deviceLocationMsg
                                 select = deviceSelected
+                                iconName = "cellphone-marker"
                                 break;
                         }
 
@@ -754,7 +757,7 @@ export default WeatherRedactor = ({
                                 width: '100%',
                                 height: '100%',
                                 alignItems: 'center',
-                                padding: 5
+                                //padding: 5
                             }}
                             onPress={select}
                             android_ripple={{
@@ -762,15 +765,34 @@ export default WeatherRedactor = ({
                                 borderless: true,
                                 foreground: false
                             }}
-                        >
-                            <Text style = {[staticStyles.text, {color: Thema.modals.texts.primary, textAlign: 'center'}]}>
-                                {name}
-                            </Text>
+                        >   
+                            <View
+                                style = {{
+                                    padding: 5,
+                                    width: '100%',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-around',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                <MaterialCommunityIcons name={iconName} size={30} color={Thema.modals.icons.primary} />
+                                <Text 
+                                    style = {[staticStyles.boldText, {
+                                        color: Thema.modals.texts.primary, 
+                                        textAlign: 'center',
+                                    }]}
+                                >
+                                    {name}
+                                </Text>
+                            </View>
+
+
                             <Text
                                 style = {[staticStyles.boldText, 
                                     {
                                         color: Thema.modals.texts.primary,
-                                        marginTop: 20
+                                        marginTop: 20,
+                                        padding: 5
                                     }
                                 ]}
                             >
@@ -781,7 +803,7 @@ export default WeatherRedactor = ({
                             <Reanimated.View
                                 style = {{
                                     position: 'absolute',
-                                    bottom: 5,
+                                    bottom: 0,
                                     width: '100%',
                                     height: '65%',
                                     borderRadius: 20,

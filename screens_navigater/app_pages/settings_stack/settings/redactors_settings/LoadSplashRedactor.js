@@ -36,7 +36,7 @@ export default LoadSplashRedactor = ({
     const [loadSplash, setLoadSplash] = useState(appStyle.splachLoadShow);
     
     const loadSplashShowSetting = () =>{
-        let newAppStyle = getNewAppStyleObject();
+        let newAppStyle = getNewAppStyleObject('currentStyle');
         newAppStyle.splachLoadShow = (!loadSplash)
         setAppStyle(newAppStyle)
         dataRedactor("storedAppStyle",newAppStyle);

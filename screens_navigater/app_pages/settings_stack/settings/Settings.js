@@ -644,7 +644,11 @@ const Settings = (props) => {
         return copyObject(appConfig)
     }
 
-    const getNewAppStyleObject =()=>{
+    const getNewAppStyleObject =(flag = 'previewStyle')=>{
+
+        if(flag == 'currentStyle'){
+            return copyObject(appStyle)
+        }
         return copyObject(previewAppStyle)
     }
   

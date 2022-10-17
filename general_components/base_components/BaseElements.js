@@ -1,6 +1,9 @@
 import React, {
     useState,  
-    useEffect
+    useEffect,
+    useRef,
+    useMemo,
+    useCallback
 } from "react";
 
 import { 
@@ -8,6 +11,7 @@ import {
     Text, 
     Pressable, 
     View,
+    Modal
 } from 'react-native';
 
 import Slider from "@react-native-community/slider";
@@ -368,6 +372,121 @@ export const BaseSwitch = ({
         </Pressable>
     );
 };
+
+
+import BottomSheet, {
+    BottomSheetModal,
+    BottomSheetModalProvider,
+    BottomSheetScrollView
+  } from '@gorhom/bottom-sheet';
+  
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+export const BaseModal = ({
+    animationType,
+    visible,
+    transparent,
+    onShow,
+
+    outPress,
+
+    style,
+    modalStyle,
+    thumbStyle,
+    snapHeights,
+    dimOut,
+
+    children
+}) => {
+    // ref
+    const bottomSheetModalRef = useRef();
+    // variables
+    const snapPoints = useMemo(() => snapHeights? snapHeights : [100, 100], []);
+
+    // callbacks
+    const handlePresentModalPress = useCallback(() => {
+        bottomSheetModalRef.current?.present();
+    }, []);
+
+    const handleDismissModalPress = useCallback(() => {
+        bottomSheetModalRef.current?.dismiss();
+    }, []);
+
+    useEffect(()=>{
+        //console.log(visible)
+        visible? handlePresentModalPress() : handleDismissModalPress()
+    },[visible])
+
+    //const [sheetState, setSheetState] = useState(0)
+
+    const handleSheetChanges = useCallback((index) => {
+        //console.log('handleSheetChanges', index);
+        //setSheetState(index)
+        index === -1? outPress() : null
+    }, []);
+    
+    
+    const outsidePress = () => {
+        handleDismissModalPress()
+        //outPress()
+    }
+
+    return (     
+        <Modal
+            visible={visible}
+            animationType = {animationType}
+            transparent= {true}
+            statusBarTranslucent = {true}
+            onShow={onShow}
+        >   
+            <Pressable
+                flex = {1}
+                style={{
+                    backgroundColor: dimOut? '#00000025' : 'transparent'
+                }}
+                onPress={outsidePress}
+            />
+            {/**/}
+            <View
+                style = {[{
+                    minHeight: 100,
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%',
+                }, modalStyle]}
+            >   
+                <GestureHandlerRootView style={{flex:1}}>
+                <BottomSheetModalProvider>
+                <BottomSheetModal
+                    ref={bottomSheetModalRef}
+                    index={1}
+                    snapPoints={snapPoints}
+                    onChange={handleSheetChanges}
+                    enablePanDownToClose={true}
+                    overDragResistanceFactor={0}
+                    style={{
+                        //backgroundColor: '#00ff0030',
+                    }}
+                    backgroundStyle={[{
+                        //backgroundColor: '#ff000030'
+                    }, style]}
+                    handleStyle={{
+                        //backgroundColor: '#0000ff30'
+                    }}
+                    handleIndicatorStyle={[{
+                        //backgroundColor: '#ffff00a0'
+                    }, thumbStyle]}
+                >
+                    <BottomSheetScrollView style={{flex: 1,}}>
+                        {children}
+                    </BottomSheetScrollView>
+                </BottomSheetModal>
+                </BottomSheetModalProvider>
+                </GestureHandlerRootView>
+            </View>
+        </Modal>
+    )
+}
 
 
 

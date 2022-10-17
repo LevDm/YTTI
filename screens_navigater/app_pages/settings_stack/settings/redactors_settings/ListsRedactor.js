@@ -134,7 +134,8 @@ export default ListsRedactor = ({
             <BaseSwitch
                 size={24}
                 style = {{
-                    right: 20
+                    right: 20,
+                    height: '100%'
                 }}
                 trackStyle={{
                     borderRadius: appStyle.borderRadius.additional,
@@ -175,7 +176,8 @@ export default ListsRedactor = ({
         <BaseSwitch
             size={24}
             style = {{
-                right: 20
+                right: 20,
+                height: '100%'
             }}
             trackStyle={{
                 borderRadius: appStyle.borderRadius.additional,

@@ -330,26 +330,31 @@ export const BaseSwitch = ({
     },[switchValue, colors])
 
     return (
-        <View
+        <Pressable
+            props = {props}
             style = {[{
-                height: size,
-                width: size*2.2,
+                minHeight: size,
+                minWidth: size*2.2,
+                //flex: 1,
                 //backgroundColor: 'red',
                 justifyContent: 'center',
                 alignItems: 'center',
             }, style]}
+            onPress = {()=>{
+                setSwitchValue(!switchValue)
+                if(onChange != undefined){onChange()};
+            }}
         >
-        <AnimatedPressable
-            props = {props}
+        <Animated.View
             style = {[{
                 height: size*0.75,
                 width: size*1.1,
                 justifyContent: 'center',
             }, trackStyle, dynamicStyleTrack]}
-            onPress = {()=>{
-                setSwitchValue(!switchValue)
-                if(onChange != undefined){onChange()};
-            }}
+            //onPress = {()=>{
+            //    setSwitchValue(!switchValue)
+            //    if(onChange != undefined){onChange()};
+            //}}
         >
             <Animated.View
                 style = {[{
@@ -359,8 +364,8 @@ export const BaseSwitch = ({
                     position: 'absolute' 
                 }, thumbStyle, dynamicStyleTrumb]}
             />
-        </AnimatedPressable>
-        </View>
+        </Animated.View>
+        </Pressable>
     );
 };
 

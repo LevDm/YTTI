@@ -125,7 +125,12 @@ export default ThemeRedacor = ({
         setPreviewAppStyle(newAppStyle)
     }
 
-    return (<>
+    return (
+    <View
+        style={{
+            //marginBottom: 30,
+        }}
+    >
         <View
             style = {{
                 flexDirection: 'row',
@@ -202,7 +207,7 @@ export default ThemeRedacor = ({
             }}
             renderItem={renderItem}
         />
-    </>)
+    </View>)
 }
 
 const staticStyles = StyleSheet.create({

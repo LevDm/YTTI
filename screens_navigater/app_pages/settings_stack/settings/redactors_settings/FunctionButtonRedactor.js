@@ -62,7 +62,12 @@ export default ListsRedactor = ({
         setPreviewAppStyle(newAppStyle);
     }
 
-    return (<>
+    return (
+    <View 
+        style = {{
+            //marginBottom: 30,
+        }}
+    >
         <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
             {Language.position}
         </Text>
@@ -108,7 +113,7 @@ export default ListsRedactor = ({
             maximumTrackTintColor = {Thema.icons.accents.quaternary}
             thumbTintColor = {Thema.icons.accents.primary}
         />
-    </>)
+    </View>)
 }
 
 const staticStyles = StyleSheet.create({

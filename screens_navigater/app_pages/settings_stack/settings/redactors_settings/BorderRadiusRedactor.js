@@ -64,7 +64,7 @@ export default BorderRadiusRedactor = ({
     return (
         <View
             style = {{
-
+                //marginBottom: 30,
             }}
         >
         <View

@@ -905,7 +905,7 @@ const Settings = (props) => {
                                 backgroundColor: Thema.basics.grounds.primary,   
                                 justifyContent: 'flex-start',
                                 paddingVertical: 5,// + 10 * appStyle.borderRadius.basic/32,
-
+                                paddingBottom: 30
                                 //borderRadius: appStyle.borderRadius.basic,
                                 //marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
                                 //marginVertical: appStyle.lists.proximity,
@@ -946,8 +946,7 @@ const Settings = (props) => {
                             ThemeColorsAppIndex={ThemeColorsAppIndex}
                             ThemeSchema={ThemeSchema}
                             LanguageAppIndex={LanguageAppIndex}
-                        />}
-                        
+                        />}         
                     </Reanimated.View>
                 )
             }}

@@ -512,6 +512,7 @@ export default WeatherRedactor = ({
                 flex: 1,
                 height: 75,
                 marginLeft: 20,
+                //marginBottom: 30,
                 width: '60%',
                 justifyContent: 'space-between',
                 //backgroundColor: 'green',
@@ -621,15 +622,17 @@ export default WeatherRedactor = ({
                             icon={{
                                 name: "map-marker-plus-outline", 
                                 size: 25, 
-                                color: Thema.icons.neutrals.primary
+                                color: Thema.icons.neutrals.secondary
                             }}
                             style = {{
                                 flex: 1,
-                                backgroundColor: Thema.icons.accents.primary,
+                                backgroundColor: 'transparent',
+                                borderColor: Thema.icons.accents.primary,
+                                borderWidth: 2,
                                 borderRadius: appStyle.borderRadius.additional
                             }}
                             android_ripple={{
-                                color: Thema.icons.neutrals.primary,
+                                color: Thema.icons.accents.primary,
                                 borderless: true,
                                 foreground: false
                             }}

@@ -76,7 +76,7 @@ export default ModalsRedactor = ({
     return (
         <View
             style = {{
-
+                //marginBottom: 30,
             }}
         >   
             {Object.keys(appStyle.modals).map((item, index)=>{

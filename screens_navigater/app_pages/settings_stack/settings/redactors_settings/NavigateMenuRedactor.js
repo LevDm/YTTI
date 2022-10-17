@@ -164,7 +164,12 @@ export default NavigateMenuRedactor = ({
         };
     };
 
-    return (<>
+    return (
+    <View 
+        style ={{
+            marginBottom: 30, 
+        }}
+    >
     <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
         {Language.type}
     </Text>
@@ -441,7 +446,7 @@ export default NavigateMenuRedactor = ({
             </View>
         </Animated.View>}
     </View>
-    </>)
+    </View>)
 }
 
 const staticStyles = StyleSheet.create({

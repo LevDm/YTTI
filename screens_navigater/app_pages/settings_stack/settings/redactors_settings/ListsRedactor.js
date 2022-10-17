@@ -71,7 +71,12 @@ export default ListsRedactor = ({
     }
 
 
-    return (<>
+    return (
+    <View 
+        style={{
+            marginBottom: 30,
+        }}
+    >
         <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>{Language.textSize}</Text>
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
@@ -194,7 +199,7 @@ export default ListsRedactor = ({
             onChange={shadowChange}
         />
         </View>
-    </>)
+    </View>)
 }
 
 const staticStyles = StyleSheet.create({

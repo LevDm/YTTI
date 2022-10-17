@@ -110,7 +110,7 @@ export default ModalsRedactor = ({
                         }}
                     >
                         <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
-                            {item}
+                            {Language[item]} {Language[`${item}State`][`${primaryValue}`]}
                         </Text>
                         <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
                         <BaseSwitch

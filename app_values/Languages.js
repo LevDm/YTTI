@@ -149,6 +149,14 @@ const LanguageStoreRu = {
           size: "Размер кнопки",
           slider: {min: "меньше", max: "больше"},
         },
+        modals: {
+          horizontalProximity: 'Окно занимает всю ширину экрана',
+          horizontalProximityState: {true: "включено", false: "выключено"},
+          outline: 'Контур окна',
+          outlineState: {true: "включен", false: "выключен"},
+          dimOut: 'Затемнение вне окна при открытие',
+          dimOutState: {true: "включено", false: "выключено"},
+        },
         languages: {
           thisLanguage: 'Приложение будет использовать русский язык'
         },
@@ -345,6 +353,14 @@ const LanguageStoreEng = {
           positions: ["Left","Center","Right"],
           size: "Button size",
           slider: {min: "less", max: "more"},
+        },
+        modals: {
+          horizontalProximity: 'Window takes up the full width of the screen',
+          horizontalProximityState: {true: "enabled", false: "disabled"},
+          outline: 'Window outline',
+          outlineState: {true: "on", false: "off"},
+          dimOut: 'Dimout outside window when opened',
+          dimOutState: {true: "enabled", false: "disabled"},
         },
         languages: {
           thisLanguage: 'The application will use English'

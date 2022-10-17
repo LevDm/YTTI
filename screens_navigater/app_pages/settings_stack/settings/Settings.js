@@ -692,13 +692,13 @@ const Settings = (props) => {
         const duration = 300
         const position =(buttonSize)=>({
             center: (deviceWidth*0.5-(buttonSize/2)),
-            left: (deviceWidth-5-buttonSize),
-            right: (5)
+            left: ((deviceWidth-12)-buttonSize),
+            right: (12)
         })
         return {
             height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
             width:  withTiming(appStyle.functionButton.size, {duration: duration}),
-            bottom:  withTiming((appStyle.navigationMenu.height + 5), {duration: duration}),
+            bottom:  withTiming((appStyle.navigationMenu.height + 12), {duration: duration}),
             right: withTiming( (position(appStyle.functionButton.size)[appStyle.functionButton.position]), {duration: duration}),
         }
     })

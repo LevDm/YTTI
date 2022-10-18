@@ -167,7 +167,7 @@ export default NavigateMenuRedactor = ({
     return (
     <View 
         style ={{
-            marginBottom: 30, 
+            //marginBottom: 30, 
         }}
     >
     <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
@@ -203,108 +203,108 @@ export default NavigateMenuRedactor = ({
     <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary, marginTop: 15,}]}>
         {Language.menuParams}
     </Text>
-    <View
-        style ={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            //marginTop: 15,
-            height: 60
-        }}
-    >
-        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
-            {Language.rippleEffect} {Language.rippleEffectState[rippleEffect]}
-        </Text>
-        <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
-        <BaseSwitch
-            size={24}
-            style = {{
-                right: 20,
-                height: '100%'
-            }}
-            trackStyle={{
-                borderRadius: appStyle.borderRadius.additional,
-            }}
-            thumbStyle = {{
-                borderRadius: appStyle.borderRadius.additional,
-                borderWidth: 3,
-                borderColor: Thema.icons.accents[rippleEffect? "primary" : "quaternary"],
-            }}
-            colors={{
-                track: { 
-                    false: Thema.icons.accents.quaternary, 
-                    true: Thema.icons.accents.primary  
-                },
-                thumb: { 
-                    false: Thema.icons.accents.quaternary, 
-                    true: Thema.icons.accents.primary,  
-                }
-            }}
-            primeValue={rippleEffect}
-            onChange={rippleEffectChange}
-        />
-    </View>
+    
+    
 
     <View
         style = {[{
-
+            height: 210,
+            justifyContent: 'space-around'
         }]}
     >   
+
+        <View
+            style ={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                //marginTop: 15,
+                maxHeight: 60
+            }}
+        >
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+                {Language.rippleEffect} {Language.rippleEffectState[rippleEffect]}
+            </Text>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <BaseSwitch
+                size={24}
+                style = {{
+                    right: 20,
+                    height: '100%'
+                }}
+                trackStyle={{
+                    borderRadius: appStyle.borderRadius.additional,
+                }}
+                thumbStyle = {{
+                    borderRadius: appStyle.borderRadius.additional,
+                    borderWidth: 3,
+                    borderColor: Thema.icons.accents[rippleEffect? "primary" : "quaternary"],
+                }}
+                colors={{
+                    track: { 
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary  
+                    },
+                    thumb: { 
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary,  
+                    }
+                }}
+                primeValue={rippleEffect}
+                onChange={rippleEffectChange}
+            />
+        </View>
+
         {checkGroup[2] && 
         <Animated.View 
             exiting={exiting} 
             entering={entering}
         >
-        <View
-            style = {{
-                height: 120,
-                marginTop: 15
-            }}
-        >
-            <Text
-                style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}
-            >
-                {Language.horizontalPositionDrawer}
-            </Text>
             <View
                 style = {{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
+                    maxHeight: 120,
                 }}
             >
-                {drawerPositions.map((item, index)=>(
-                <BaseBox
-                    key = {item+index}
+                <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+                    {Language.horizontalPositionDrawer}
+                </Text>
+                <View
                     style = {{
-                        width: '30%',
-                        borderRadius: appStyle.borderRadius.additional,
-                        backgroundColor: 'transparent'
+                        marginLeft: 20,
+                        width: '60%'
                     }}
-                    android_ripple={{
-                        color: Thema.icons.accents.primary,
-                        borderless: true,
-                        foreground: false
-                    }}
-                    Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositionsDrawer[index]}</Text>}
-                    Check = {drawerPosition[index]}
-                    onPress = {()=>{drawerPositionSetting(item, index)}}
-                    BoxBorderRadius = {appStyle.borderRadius.additional}
-                    ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
-                />
-                ))}
+                >
+                    {drawerPositions.map((item, index)=>(
+                    <BaseBox
+                        key = {item+index}
+                        style = {{
+                            width: '30%',
+                            borderRadius: appStyle.borderRadius.additional,
+                            backgroundColor: 'transparent'
+                        }}
+                        android_ripple={{
+                            color: Thema.icons.accents.primary,
+                            borderless: true,
+                            foreground: false
+                        }}
+                        Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositionsDrawer[index]}</Text>}
+                        Check = {drawerPosition[index]}
+                        onPress = {()=>{drawerPositionSetting(item, index)}}
+                        BoxBorderRadius = {appStyle.borderRadius.additional}
+                        ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
+                    />
+                    ))}
+                </View>
             </View>
-        </View>
         </Animated.View>}
+
         {checkGroup[1] && 
         <Animated.View 
             exiting={exiting} 
             entering={entering}
-        >
-        <View
             style = {{
-                height: 60,
-                //marginTop: 15
+                maxHeight: 60,
+                minHeight: 55
             }}
         >
             <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
@@ -329,30 +329,30 @@ export default NavigateMenuRedactor = ({
                 maximumTrackTintColor = {Thema.icons.accents.quaternary}
                 thumbTintColor = {Thema.icons.accents.primary}
             />
-        </View>
-        <View
+        </Animated.View>}
+
+        {checkGroup[1] && 
+        <Animated.View 
+            exiting={exiting} 
+            entering={entering}
             style = {{
-                height: 60,
-                marginTop: 15
+                maxHeight: 120,
+                //marginTop: 15
             }}
         >
-            <Text
-                style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}
-            >
+            <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
                 {Language.horizontalPosition}
             </Text>
             <View
                 style = {{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
+                    marginLeft: 20,
+                    width: '60%'
                 }}
             >
                 {valuePosition.map((item, index)=>(
                 <BaseBox
                     key = {item+index}
                     style = {{
-                        width: '30%',
                         borderRadius: appStyle.borderRadius.additional,
                         backgroundColor: 'transparent'
                     }}
@@ -369,19 +369,18 @@ export default NavigateMenuRedactor = ({
                 />
                 ))}
             </View>
-        </View>
         </Animated.View>}
+
         {checkGroup[0] && 
         <Animated.View 
             exiting={exiting} 
             entering={entering}
+            style = {{
+                maxHeight: 60,
+                minHeight: 50
+                //marginTop: 15
+            }}
         >
-            <View
-                style = {{
-                    height: 60,
-                    //marginTop: 15
-                }}
-            >
             <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
                 {Language.height}
             </Text>
@@ -404,48 +403,51 @@ export default NavigateMenuRedactor = ({
                 maximumTrackTintColor = {Thema.icons.accents.quaternary}
                 thumbTintColor = {Thema.icons.accents.primary}
             />
-            </View>
-            <View
-                style ={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginTop: 15,
-                    height: 60
+        </Animated.View>}
+
+        {checkGroup[0] && 
+        <Animated.View 
+            exiting={exiting} 
+            entering={entering}
+            style ={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                //marginTop: 15,
+                maxHeight: 60
+            }}
+        >
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+                {Language.signature} {Language.signatureState[signature]}
+            </Text>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <BaseSwitch
+                size={24}
+                style = {{
+                    right: 20,
+                    height: '100%'
                 }}
-            >
-                <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
-                    {Language.signature} {Language.signatureState[signature]}
-                </Text>
-                <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
-                <BaseSwitch
-                    size={24}
-                    style = {{
-                        right: 20,
-                        height: '100%'
-                    }}
-                    trackStyle={{
-                        borderRadius: appStyle.borderRadius.additional,
-                    }}
-                    thumbStyle = {{
-                        borderRadius: appStyle.borderRadius.additional,
-                        borderWidth: 3,
-                        borderColor: Thema.icons.accents[signature? "primary" : "quaternary"]  ,
-                    }}
-                    colors={{
-                        track: { 
-                            false: Thema.icons.accents.quaternary, 
-                            true: Thema.icons.accents.primary  
-                        },
-                        thumb: { 
-                            false: Thema.icons.accents.quaternary, 
-                            true: Thema.icons.accents.primary, 
-                        }
-                    }}
-                    primeValue={signature}
-                    onChange={signatureChange}
-                />
-            </View>
+                trackStyle={{
+                    borderRadius: appStyle.borderRadius.additional,
+                }}
+                thumbStyle = {{
+                    borderRadius: appStyle.borderRadius.additional,
+                    borderWidth: 3,
+                    borderColor: Thema.icons.accents[signature? "primary" : "quaternary"]  ,
+                }}
+                colors={{
+                    track: { 
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary  
+                    },
+                    thumb: { 
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary, 
+                    }
+                }}
+                primeValue={signature}
+                onChange={signatureChange}
+            />
         </Animated.View>}
     </View>
     </View>)

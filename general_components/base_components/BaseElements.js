@@ -489,7 +489,7 @@ export const BaseModal = ({
                             style={style}
                         >
                             <LinearGradient
-                                colors={[gradient? gradient : 'red', 'transparent']}
+                                colors={[gradient? gradient : 'transparent', 'transparent']}
                                 style={{
                                     position: 'absolute',
                                     //top: -25,

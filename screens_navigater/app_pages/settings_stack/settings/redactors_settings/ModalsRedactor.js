@@ -73,82 +73,141 @@ export default ModalsRedactor = ({
         setDimOut(!dimOut)
     }
 
-    return (
+    
+
+    const getGroup = (changeIndex = -1) => {
+        let group = []
+        if(checkGroup){
+            checkGroup.map((item, index)=>{
+                if(changeIndex != -1){
+                    group.push(changeIndex == index? !item : item)
+                } else {
+                    group.push(item)
+                }
+            })
+        } else {
+            Object.keys(appStyle.modals.highlightMethods).map((item, index)=>{
+                let value = appStyle.modals.highlightMethods[item]
+                if(changeIndex != -1){
+                    group.push(changeIndex == index? !value : value)
+                } else {
+                    group.push(value)
+                }
+            })
+        }
+        return group
+    };
+
+    const [checkGroup, setCheckGroup] = useState(getGroup())
+
+    const settingMethods = (index) => {
+        const newGroup = getGroup(index)
+        const newAppStyle = getNewAppStyleObject();
+        Object.keys(newAppStyle.modals.highlightMethods).map((item, index)=>{
+            newAppStyle.modals.highlightMethods[item] = newGroup[index]
+        })
+        setPreviewAppStyle(newAppStyle);
+
+
+        setCheckGroup(newGroup)
+    }
+
+    return (<>
         <View
             style = {{
-                //marginBottom: 30,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                //marginTop: 15,
+                maxHeight: 60
             }}
         >   
-            {Object.keys(appStyle.modals).map((item, index)=>{
-                
-                let primaryValue
-                let changer
-                switch(item){
-                    case 'horizontalProximity':
-                        primaryValue = horizontalProximity
-                        changer = changeHorizontalProximity
-                        break;
-                    case 'outline':
-                        primaryValue = outLine
-                        changer = changeOutLine
-                        break;
-                    case 'dimOut':
-                        primaryValue = dimOut
-                        changer = changeDimOut
-                        break;
-                } 
-
-
-                return (
-                    <View
-                        key={`switchs_${index}_${item}`}
-                        style = {{
-                            marginTop: index > 0 ? 5 : 0,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
-                            {Language[item]} {Language[`${item}State`][`${primaryValue}`]}
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+                {Language[`horizontalProximity`]} {Language[`horizontalProximityState`][`${horizontalProximity}`]}
+            </Text>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <BaseSwitch
+                size={24}
+                style = {{
+                    right: 20,
+                    height: '100%'
+                }}
+                trackStyle={{
+                    borderRadius: appStyle.borderRadius.additional,
+                }}
+                thumbStyle = {{
+                    borderRadius: appStyle.borderRadius.additional,
+                    borderWidth: 3,
+                    borderColor:  Thema.icons.accents[horizontalProximity?"primary":"quaternary"]
+                }}
+                colors={{
+                    track: { 
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary
+                    },
+                    thumb: { 
+                        false: Thema.icons.accents.quaternary, 
+                        true: Thema.icons.accents.primary, 
+                    }
+                }}
+                primeValue={horizontalProximity}
+                onChange={changeHorizontalProximity}
+            />
+        </View>    
+        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary, marginTop: 15}]}>
+            {Language.highlightMethods}
+        </Text>
+        <View
+            style = {{
+                //flex: 1,
+                height: 94,
+                marginLeft: 20,
+                width: '70%',
+                justifyContent: 'space-between',
+            }}
+        >
+            {Object.keys(appStyle.modals.highlightMethods).map((item, index)=>(
+                <BaseBox
+                    key = {`highlightMethods_${item}`}
+                    isCheckBox={true}
+                    style = {{
+                        //flex: 4,
+                        backgroundColor: 'transparent',
+                        borderRadius: appStyle.borderRadius.additional,
+                    }}
+                    android_ripple={{
+                        color: Thema.icons.accents.primary,
+                        borderless: true,
+                        foreground: false
+                    }}
+                    Item = {
+                        <Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>
+                            {Language[item]}
                         </Text>
-                        <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
-                        <BaseSwitch
-                            size={24}
-                            style = {{
-                                right: 20,
-                                height: '100%'
-                            }}
-                            trackStyle={{
-                                borderRadius: appStyle.borderRadius.additional,
-                            }}
-                            thumbStyle = {{
-                                borderRadius: appStyle.borderRadius.additional,
-                                borderWidth: 3,
-                                borderColor:  Thema.icons.accents[primaryValue?"primary":"quaternary"]
-                            }}
-                            colors={{
-                                track: { 
-                                    false: Thema.icons.accents.quaternary, 
-                                    true: Thema.icons.accents.primary
-                                },
-                                thumb: { 
-                                    false: Thema.icons.accents.quaternary, 
-                                    true: Thema.icons.accents.primary, 
-                                }
-                            }}
-                            primeValue={primaryValue}
-                            onChange={changer}
-                        />
-                    </View>
-                )
-            })}
-    </View>)
+                    }
+                    Check = {checkGroup[index]}
+                    onPress = {()=>{settingMethods(index)}}
+                    BoxBorderRadius = {appStyle.borderRadius.additional}
+                    ColorsChange = {{
+                        true: Thema.icons.accents.primary, 
+                        false: `${Thema.icons.accents.quaternary}00`
+                    }}
+                />))}
+        </View>
+    </>)
 }
 
 const staticStyles = StyleSheet.create({
     text: {
         fontSize: 16, 
+        //fontVariant: ['small-caps'], 
+        fontWeight: '400', 
+        letterSpacing: 0.5
+    },
+    listText: {
+        //paddingLeft: 10,
+        marginLeft: 5,
+        fontSize: 14, 
         //fontVariant: ['small-caps'], 
         fontWeight: '400', 
         letterSpacing: 0.5

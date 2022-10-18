@@ -381,6 +381,7 @@ import BottomSheet, {
   } from '@gorhom/bottom-sheet';
   
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { LinearGradient } from "expo-linear-gradient";
 
 export const BaseModal = ({
     animationType,
@@ -394,8 +395,8 @@ export const BaseModal = ({
     modalStyle,
     thumbStyle,
     snapHeights,
-    dimOut,
-
+    dimOut, //color
+    gradient,
     children
 }) => {
     // ref
@@ -442,7 +443,7 @@ export const BaseModal = ({
             <Pressable
                 flex = {1}
                 style={{
-                    backgroundColor: dimOut? '#00000025' : 'transparent'
+                    backgroundColor: dimOut? dimOut : 'transparent'
                 }}
                 onPress={outsidePress}
             />
@@ -476,8 +477,36 @@ export const BaseModal = ({
                     handleIndicatorStyle={[{
                         //backgroundColor: '#ffff00a0'
                     }, thumbStyle]}
-                >
-                    <BottomSheetScrollView style={{flex: 1,}}>
+
+                    handleHeight = {25}
+                    backgroundComponent = {({
+                        style,
+                        animatedIndex,
+                    })=>{
+                        //console.log(style)
+                        return (
+                        <View         
+                            style={style}
+                        >
+                            <LinearGradient
+                                colors={[gradient? gradient : 'red', 'transparent']}
+                                style={{
+                                    position: 'absolute',
+                                    //top: -25,
+                                    top: 0,
+                                    opacity: .25,
+                                    height: 100,
+                                    width: '100%',
+                                    borderTopLeftRadius: style.borderTopLeftRadius - (gradient? 1 : 0),
+                                    borderTopRightRadius: style.borderTopRightRadius - (gradient? 1 : 0),
+                                }}
+                            />  
+                        </View>
+                        )
+                    }}
+                >   
+                    
+                    <BottomSheetScrollView style={{flex: 1,}}>                  
                         {children}
                     </BottomSheetScrollView>
                 </BottomSheetModal>

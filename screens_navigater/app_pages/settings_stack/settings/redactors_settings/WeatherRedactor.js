@@ -481,6 +481,9 @@ export default WeatherRedactor = ({
                             height: 30,
                             width: '100%',
                             justifyContent: 'space-between',
+                            //borderTopStartRadius
+                            //borderStartWidth
+                            //borderEndWidth
                         }, staticStyles.shadow]}
                     >   
                         {(location && !addNewLocation) &&
@@ -580,11 +583,12 @@ export default WeatherRedactor = ({
         <BaseModal
             animationType = {'fade'}
             visible = {modalVisible}
-            dimOut = {appStyle.modals.dimOut}
+            dimOut = {appStyle.modals.highlightMethods.dimOutDark? '#00000025' : false} //appStyle.modals.highlightMethods.dimOutLight? '#ffffff25' : 
+            gradient = {appStyle.modals.highlightMethods.gradient? Thema.modals.basics.ground.tertiary : false}
             outPress = {outsideModalPress}
             onShow = {onShow}
             modalStyle = {{
-                width: deviceWidth-2*appStyle.modals.horizontalProximity,
+                width: deviceWidth - 2*appStyle.modals.horizontalProximity,
                 left: appStyle.modals.horizontalProximity,
                 height: 250
             }}
@@ -592,7 +596,13 @@ export default WeatherRedactor = ({
                 backgroundColor: Thema.modals.basics.ground.primary,
                 borderTopLeftRadius: appStyle.borderRadius.additional,
                 borderTopRightRadius: appStyle.borderRadius.additional,
-                borderWidth: appStyle.modals.outline? 1 : 0,
+                borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
+                //borderStartWidth: 1,
+                //borderEndWidth: 1,
+                //borderLeftWidth: 0,
+                //borderRightWidth: 0,
+                //borderLeftWidth: appStyle.modals.highlightMethods.outline? (appStyle.modals.horizontalProximity? 1 : 0) : 0,
+                //borderRightWidth: appStyle.modals.highlightMethods.outline? (appStyle.modals.horizontalProximity? 1 : 0) : 0,
                 borderColor: Thema.modals.outline,
                 flex: 1,
                 //width: deviceWidth-2*appStyle.modals.horizontalProximity,

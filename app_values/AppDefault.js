@@ -53,8 +53,14 @@ export const defaultAppStyle = {
     },
     modals: {
         horizontalProximity: 5,
-        outline: true,
-        dimOut: true
+        //outline: true,
+        //dimOut: true,
+        highlightMethods: {
+            outline: false,
+            dimOutDark: false,
+            //dimOutLight: false,
+            gradient: false,
+        }
     }
 }
 

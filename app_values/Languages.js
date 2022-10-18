@@ -153,10 +153,15 @@ const LanguageStoreRu = {
         modals: {
           horizontalProximity: 'Окно занимает всю ширину экрана',
           horizontalProximityState: {true: "включено", false: "выключено"},
-          outline: 'Контур окна',
+          outline: 'Контур',
           outlineState: {true: "включен", false: "выключен"},
           dimOut: 'Затемнение вне окна при открытие',
           dimOutState: {true: "включено", false: "выключено"},
+          highlightMethods: 'Способ выделения окна',
+          //outline: 'Window outline',
+          dimOutDark: 'Затемнение',
+          //dimOutLight: 'Засветление',
+          gradient: 'Градиент границы',
         },
         languages: {
           thisLanguage: 'Приложение будет использовать русский язык'
@@ -361,10 +366,15 @@ const LanguageStoreEng = {
         modals: {
           horizontalProximity: 'Window takes up the full width of the screen',
           horizontalProximityState: {true: "enabled", false: "disabled"},
-          outline: 'Window outline',
+          outline: 'Оutline',
           outlineState: {true: "on", false: "off"},
           dimOut: 'Dimout outside window when opened',
           dimOutState: {true: "enabled", false: "disabled"},
+          highlightMethods: 'Window highlight method',
+          //outline: 'Window outline',
+          dimOutDark: 'Dark Dimout',
+          //dimOutLight: 'Light Dimout',
+          gradient: 'Gradient bord',
         },
         languages: {
           thisLanguage: 'The application will use English'

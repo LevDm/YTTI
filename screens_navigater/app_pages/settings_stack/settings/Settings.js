@@ -9,7 +9,8 @@ import {
     FlatList, 
     SectionList, 
     View, 
-    Dimensions, 
+    Dimensions,
+    Keyboard 
 } from 'react-native';
 
 //import {default as Reanimated} from 'react-native-reanimated';
@@ -64,7 +65,7 @@ import LanguageRedactor from "./redactors_settings/LanguageRedactor";
 import ListsRedactor from "./redactors_settings/ListsRedactor";
 import FunctionButtonRedactor from "./redactors_settings/FunctionButtonRedactor";
 import ModalsRedactor from "./redactors_settings/ModalsRedactor";
-
+import UserRedactor from "./redactors_settings/UserRedactor";
 import WeatherRedactor from "./redactors_settings/WeatherRedactor";
 
 import Ohter from "./redactors_settings/ohterts";
@@ -131,9 +132,9 @@ const structure = [
                 paramRedactorComponent: LanguageRedactor
             },
             {
-                param:"accost",
+                param:"user",
                 icon:  "account",
-                paramRedactorComponent: null
+                paramRedactorComponent: UserRedactor
             },
             {
                 param:"weather",
@@ -261,6 +262,17 @@ const Settings = (props) => {
     Appearance.addChangeListener(({colorScheme})=>{
         setListinerColorScheme(colorScheme)
     })
+
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
+    useEffect(() => {
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {setKeyboardVisible(true);});
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {setKeyboardVisible(false);});
+
+        return () => {
+            showSubscription.remove();
+            hideSubscription.remove();
+        };
+    }, []);
 
     const sectListRef = useRef();
     const flatCategorysListRef = useRef();
@@ -981,6 +993,7 @@ const Settings = (props) => {
         
 
         {/*BOBBER BUTTON*/}
+        {!keyboardVisible && 
         <Reanimated.View 
             style = {[animStyleBobberButton, dynamicStyleBobberButton, {
                 position: 'absolute',
@@ -1047,7 +1060,7 @@ const Settings = (props) => {
                     </Reanimated.View>
                 )
             })}
-        </Reanimated.View>
+        </Reanimated.View>}
 
         {/*STYLE UPDATE*/}
         <ColorSplash

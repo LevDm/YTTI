@@ -94,7 +94,8 @@ const LanguageStoreRu = {
           language: "язык",
           //"location", 
           appFunctions:"функции",
-          accost: "обращение",
+          user: "пользователь",
+          
           weather: "погода",
           ohters: "другое"
         }
@@ -178,6 +179,9 @@ const LanguageStoreRu = {
           errorsDevice: {
             '0': 'Нет запроса',  
           }
+        },
+        user: {
+          accost: "обращение",
         }
       }
     },
@@ -299,7 +303,7 @@ const LanguageStoreEng = {
           language: "language",
           //"location", 
           appFunctions: "functions",
-          accost: "accost",
+          user: "user",
           weather: "weather", 
           ohters: "others"
         }
@@ -383,6 +387,9 @@ const LanguageStoreEng = {
           errorsDevice: {
             '0': 'No request',  
           }
+        },
+        user: {
+          accost: "accost",
         }
       }
     },

@@ -376,8 +376,8 @@ export default NavigateMenuRedactor = ({
             exiting={exiting} 
             entering={entering}
             style = {{
-                maxHeight: 60,
-                minHeight: 50
+                height: 60,
+                //minHeight: 50
                 //marginTop: 15
             }}
         >

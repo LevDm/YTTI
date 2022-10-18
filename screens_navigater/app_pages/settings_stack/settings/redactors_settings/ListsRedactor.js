@@ -74,7 +74,7 @@ export default ListsRedactor = ({
     return (
     <View 
         style={{
-            marginBottom: 30,
+            //marginBottom: 30,
         }}
     >
         <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>{Language.textSize}</Text>

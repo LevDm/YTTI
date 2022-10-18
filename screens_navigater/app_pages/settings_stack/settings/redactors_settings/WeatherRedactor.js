@@ -655,7 +655,7 @@ export default WeatherRedactor = ({
                             style = {[{
                                 width: '45%',
                                 height: 150,
-                                borderRadius: 20,
+                                borderRadius: appStyle.borderRadius.additional,
                                 backgroundColor: Thema.modals.basics.ground.secondary,
                                 //justifyContent: 'center',
                                 alignItems: 'center'
@@ -712,7 +712,7 @@ export default WeatherRedactor = ({
                                         bottom: 0,
                                         width: '100%',
                                         height: '65%',
-                                        borderRadius: 20,
+                                        borderRadius: appStyle.borderRadius.additional,
                                         backgroundColor: Thema.modals.basics.ground.tertiary,
                                         justifyContent: 'center',
                                         alignItems: 'center'

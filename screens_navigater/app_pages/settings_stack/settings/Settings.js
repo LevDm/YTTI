@@ -205,8 +205,8 @@ const ReanimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
 const ReanimatedSectionList = Reanimated.createAnimatedComponent(SectionList);
 const ReanimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 
-//bober button heigt = 60
-const bottomBord = deviceWidth*0.04+60
+//bober button heigt = 60 const bottomBord = buttonSize + 12 + menuHeight 
+const bottomBord = deviceWidth+60
 const positionBobberButton =(buttonSize)=>({
     center: (deviceWidth*0.5-(buttonSize/2)),
     left: (deviceWidth-5-buttonSize),
@@ -224,6 +224,8 @@ const Settings = (props) => {
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
     const [previewAppStyle, setPreviewAppStyle] = useState(props.appStyle);
+
+    const [ bottomBord, setBottomBord ] = useState(props.appStyle.functionButton.size + 12 + props.appStyle.navigationMenu.height) 
     
     store.subscribe(() => {
         let jstore = store.getState();
@@ -242,6 +244,7 @@ const Settings = (props) => {
 
         if (appStyle != jstore.appStyle) {
             setAppStyle(jstore.appStyle);
+            setBottomBord(jstore.appStyle.functionButton.size + 12 + jstore.appStyle.navigationMenu.height);
         }
 
         if (appConfig != jstore.appConfig) {
@@ -265,7 +268,11 @@ const Settings = (props) => {
 
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     useEffect(() => {
-        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {setKeyboardVisible(true);});
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+            console.log('keyboard Will Show')
+            setKeyboardVisible(true);
+            animValueBobberButtonVisible.value = bottomBord
+        });
         const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {setKeyboardVisible(false);});
 
         return () => {
@@ -710,7 +717,7 @@ const Settings = (props) => {
         return {
             height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
             width:  withTiming(appStyle.functionButton.size, {duration: duration}),
-            bottom:  withTiming((appStyle.navigationMenu.height + 12), {duration: duration}),
+            bottom:  withTiming((appStyle.navigationMenu.height+12), {duration: duration}),
             right: withTiming( (position(appStyle.functionButton.size)[appStyle.functionButton.position]), {duration: duration}),
         }
     })
@@ -993,7 +1000,7 @@ const Settings = (props) => {
         
 
         {/*BOBBER BUTTON*/}
-        {!keyboardVisible && 
+        {true && 
         <Reanimated.View 
             style = {[animStyleBobberButton, dynamicStyleBobberButton, {
                 position: 'absolute',

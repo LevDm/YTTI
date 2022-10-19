@@ -44,6 +44,7 @@ export const BasePressable = ({
     type = "ti",
     icon = {name: "border-none-variant", size: 25, color: Thema.icons.neutrals.primary },
     text = "Text",
+    textProps = null,
     textStyle = {},
     style = {},
     styleItemContainer = {},  
@@ -96,19 +97,30 @@ export const BasePressable = ({
     return (
         <Animated.View 
             style = {[
-                staticStyles.area, 
                 style,
                 dynamicStyle, 
-                {
-                    //borderRadius: appStyle.borderRadius.additional
+                {        
+                    //flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: 30,
+                    minWidth: 30,
+                    //alignContent: 'center',
+                    //borderRadius: 12,
+                    //backgroundColor: 'blue',
                 }
             ]}
         >
             <Pressable
-                style = {[
-                    staticStyles.button, 
-                    {
-                        //borderRadius: appStyle.borderRadius.additional
+                style = {[{
+                    flex: 1,
+                    //justifyContent: 'center',
+                    //alignItems: 'center',
+                    //alignContent: 'center', 
+                    //borderRadius: 12,
+                    height: '100%',
+                    width: '100%',
+                    //backgroundColor: 'grey',
                     }
                 ]}
                 android_ripple = {android_ripple? android_ripple : {}}
@@ -130,7 +142,7 @@ export const BasePressable = ({
                     ]}
                 >
                     {(type == "t" || type == "ti") && 
-                    <Text style = {[staticStyles.text, textStyle]}> {text} </Text>
+                    <Text {...textProps} style = {[staticStyles.text, textStyle]}> {text} </Text>
                     }
 
                     {(type == "i" || type == "ti") && 

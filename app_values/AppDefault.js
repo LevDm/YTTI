@@ -67,8 +67,11 @@ export const defaultAppStyle = {
 //CONFIGURATION
 export const defaultAppConfig = {
     languageApp: 'en',
-    userName: '',
-    location: {},
+    //userName: '',
+    user: {
+        name: ''
+    },
+    //location: {},
     appFunctions: {
         analitic: true,
         task: true,
@@ -90,9 +93,9 @@ export const defaultAppConfig = {
             //    city: 'city 1',
             //},
         ],
-        data: [
+        //data: [
             //{requestTime: num, answer: {}}
-        ], 
+        //], 
         
     } 
 

@@ -90,6 +90,7 @@ function AppDrawer(props) {
         <Drawer.Navigator 
             //useLegacyImplementation
             //detachInactiveScreens={false}
+            initialRouteName={"SettingsStack"}
             animationTypeForReplace={"pop"}
             screenOptions = {{
                 swipeEnabled: true,

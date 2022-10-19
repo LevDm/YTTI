@@ -62,6 +62,7 @@ function mapStateToProps(component) {
             return function(state) {
                 return {
                     appStyle: state.appStyle,
+                    appConfig: state.appConfig,
                 };
             };
         };

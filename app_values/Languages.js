@@ -186,7 +186,8 @@ const LanguageStoreRu = {
           }
         },
         user: {
-          accost: "обращение",
+          name: "Имя",
+          accost: "Как к тебе обращаться?",
         }
       }
     },
@@ -399,7 +400,8 @@ const LanguageStoreEng = {
           }
         },
         user: {
-          accost: "accost",
+          name: "Name",
+          accost: "How to contact you?",
         }
       }
     },

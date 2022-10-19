@@ -56,10 +56,109 @@ export default LanguageRedactor = ({
 }) => {
 
     const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.user
 
-    const [focusTI, setFocusTI] = useState(false)
+    
+    const [textInputValue, setTextInputValue] = useState(appConfig.user.name? appConfig.user.name : null)
 
+    const exit = ()=>{
+        console.log(textInputValue)
+
+        let newAppConfig = getNewAppConfigObject();
+        //console.log('this',newAppConfig)
+        newAppConfig.user.name = textInputValue;
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+    }
+
+    return (
+    <View 
+        style = {[{
+            //marginLeft: 20,
+            //width: "80%"
+            
+        }]}
+    >
+        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+            {Language.accost}
+        </Text>
+        <BaseTextInput 
+            textValue={textInputValue}
+            setTextValue={setTextInputValue}
+            exit={exit}
+            paneleStyle={{
+                borderColor: Thema.basics.accents.primary,
+                backgroundColor: Thema.basics.grounds.primary,
+            }}
+            textInputProps={{
+                style: {
+                    color: Thema.texts.neutrals.secondary,
+                    fontSize: 16
+                },
+                
+                placeholder: Language.name,
+                placeholderTextColor: Thema.texts.neutrals.tertiary,
+                maxLength: 70,
+
+                selectionColor: Thema.texts.accents.primary,
+
+                //android
+                autoComplete: ('username', 'username-new', 'name'),
+                cursorColor: Thema.texts.accents.primary
+            }}
+            basePressableProps={{
+                style: {
+                    height: 50,
+                    marginLeft: 5,
+                    //paddingLeft: 10,
+                    borderRadius: appStyle.borderRadius.additional
+                    //backgroundColor: 'red',                  
+                },
+                styleItemContainer: {
+                    justifyContent: 'flex-end',
+                    paddingRight: 15,
+                    flexDirection: 'row-reverse'
+                    //alignItems: 'center'
+                },
+                textStyle: [{
+                    color: textInputValue? Thema.texts.neutrals.secondary : Thema.texts.neutrals.tertiary,
+                }, staticStyles.text],
+                textProps: {
+                    numberOfLines: 2,
+                },
+                android_ripple: {
+                    color: Thema.icons.accents.primary,
+                    borderless: true,
+                    foreground: false
+                },
+                type: 'ti', 
+                icon: {
+                    name: textInputValue? "account-box-outline" : "pencil-outline", 
+                    size: 25, 
+                    color: textInputValue? Thema.icons.accents.primary : Thema.texts.neutrals.tertiary
+                }
+            }}
+        />
+    </View>)
+}
+
+const BaseTextInput = ({
+    //generals
+    textValue,
+    setTextValue,
+
+    exit,
+    enter,
+    focus,
+
+    //panele
+    paneleStyle,
+    //text input
+    textInputProps,
+    //pressable
+    basePressableProps,
+}) => {
+    const [openState, setOpenState] = useState(false)
     const [textInputValue, setTextInputValue] = useState(null)
     
     const texInputref = useRef()
@@ -76,88 +175,95 @@ export default LanguageRedactor = ({
     }, []);
 
     useEffect(()=>{
-        if(focusTI){
-            //console.log(texInputref.current)
+        if(openState){
             setTimeout(()=>{
                 texInputref.current.focus()
             }, 100) 
         }
-    },[focusTI])
+    },[openState])
 
     useEffect(()=>{
         if(!keyboardVisible){
-            setFocusTI(false)
+            openState ? onExit() : null
         }
     },[keyboardVisible])
+
+    const onFocus = () => {
+        setOpenState(true)
+        focus? focus() : null
+    }
     
-    const onFocus = ()=>{
-        console.log('focus')
-        setFocusTI(true)  
-    }
-
-    const onEnd = ()=>{
-        console.log('end')
+    const onEnter =()=> {
         
-        setFocusTI(false)
+        enter? enter() : null
     }
 
+    const onExit =()=> {
 
-    return (<>
-    <View 
-        style = {[{
-            marginLeft: 20,
-            width: "80%"
-        }]}
-    >
-       
+        setOpenState(false)
+        exit? exit() : null
+    }
+
+    return (
+        <>
         <Modal
-            visible={focusTI}
+            visible={openState}
             transparent = {true}
         >
             <View
-                style={{
+                style={[{
                     position: 'absolute',
-                    //backgroundColor: 'green',
                     height: 50,
                     width: '100%',
-                    bottom: 0
-                }}
+                    bottom: 0,
+                    borderTopWidth: 1,
+                    borderColor: 'grey',
+                    backgroundColor: 'white',
+                    paddingHorizontal: 20
+                }, paneleStyle]}
             >
                 <TextInput
                     ref={texInputref}
+
+                    //all props
+                    {...textInputProps}
+
                     style={[{
                         flex: 1,
-                        backgroundColor: 'white',
-                        paddingHorizontal: 10
-                    }]}
-                    autoCorrect={false}
-                    autoFocus={false}
-                    //onFocus={onFocus}
-                    onSubmitEditing={onEnd}
-                    onEndEditing={onEnd}
-                    placeholder={'Name'}
-                    maxLength={70}
-                    defaultValue={textInputValue}
+                        color: 'black',
+                        fontSize: 16
+                    }, textInputProps.style]}
+
+                    onSubmitEditing={onEnter}
+                    onEndEditing={onExit}
+                    placeholder={textInputProps.placeholder}
+                    placeholderTextColor = {textInputProps.placeholderTextColor}
+                    maxLength={textInputProps.maxLength}
+                    defaultValue={textValue}
                     selectTextOnFocus={true}
                     onChangeText={(text)=>{
-                        setTextInputValue(text)
-                        console.log(text)
+                        setTextValue(text)
                     }}
                     
-                    selectionColor={'blue'}
+                    selectionColor = {textInputProps.selectionColor}
+                    
                     //android
-                    //autoComplete={'username'}
-                    cursorColor={'black'}
+                    autoComplete={textInputProps.autoComplete}
+                    cursorColor={textInputProps.cursorColor}            
                 />
             </View>
         </Modal>
         <BasePressable
             type="t"
-            text={textInputValue? textInputValue : 'your name'}
+
+            //all props
+            {...basePressableProps}
+
+            text={textValue? textValue : textInputProps.placeholder}
             onPress={onFocus}
         />
-    </View>
-    </>)
+        </>
+    )
 }
 
 const staticStyles = StyleSheet.create({
@@ -165,6 +271,11 @@ const staticStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems : 'center',
         
+    },
+    text: {
+        fontSize: 16, 
+        fontWeight: '400', 
+        letterSpacing: 0.5,
     },
     listText: {
         marginLeft: 5,

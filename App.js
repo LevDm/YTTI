@@ -35,8 +35,6 @@ const start = new Date().getTime()
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const [ready, setReady] = useState(false);
-
   const [loadStatusTasks, setLoadStatusTasks] = useState(false);
   const [loadStatusLanguage, setLoadStatusLanguage] = useState(false);
   const [loadStatusStyle, setLoadStatusStyle] = useState(false);
@@ -46,11 +44,7 @@ export default function App() {
 
   const [appConfig, setAppConfig] = useState(store.getState().appConfig);
 
-  const [helloModalVisible, setHelloModalVisible] = useState(false);
-
-  const [appTheme, setAppTheme] = useState(store.getState().appStyle.theme);
-
-  const [statusBar, setStatusBar] = useState(store.getState().appStyle.statusBar);//useState({hidden:false})
+  const [splashStart, setSplashStart] = useState(false);
   
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -99,9 +93,8 @@ export default function App() {
   useEffect(() => {
     if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !appIsReady){
     //if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !ready){
-      console.log('>APP_READY_AND_RUNNING')
-      console.log( new Date().getTime() - start )
-      if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
+      console.log('>APP_ALL_DATA_LOADED', new Date().getTime() - start )
+      //if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
       //setReady(true);
       setAppIsReady(true)
     }
@@ -123,18 +116,40 @@ export default function App() {
     prepare();
   }, []);
 
+  const styleStatusBar = ThemesColorsAppList[themesApp.indexOf(appStyle.theme)].statusBar
+
+  const [splashVisible, setSplashVisible] = useState(true)
+
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
-      await SplashScreen.hideAsync();
+      
+      const startApp = await SplashScreen.hideAsync();
+      if(startApp){ 
+        setSplashStart(true) 
+        console.log('>APP_READY_AND_RUNNING', new Date().getTime() - start )
+      };
     }
   }, [appIsReady]);
+
+  useEffect(() => {
+    if(!splashVisible){
+      console.log('>splash out', new Date().getTime() - start )
+    }
+  },[splashVisible])
+
+  useEffect(() => {
+    if(splashStart){
+      console.log('>splash open', new Date().getTime() - start )
+    }
+  },[splashStart])
+  
+  const splashOut = () => {
+    setSplashVisible(false)
+  } 
 
   if (!appIsReady) {
     return null;
   }
-
-  const styleStatusBar = ThemesColorsAppList[themesApp.indexOf(appStyle.theme)].statusBar
-
   return (
     <Provider store = {store}>
     <View style = {staticStyles.AppContainer} onLayout={onLayoutRootView}>
@@ -142,11 +157,11 @@ export default function App() {
         <AppDrawer/>
       </NavigationContainer>
       <StatusBar 
-        style={styleStatusBar? styleStatusBar : 'auto'} 
+        style={styleStatusBar? styleStatusBar : 'auto'}
         hidden = {false}
         animated={true}
       />
-      {helloModalVisible && <SplashY setSplashOut={setHelloModalVisible}/>}
+      {(appStyle.splachLoadShow && splashVisible) && <SplashY splashStart={splashStart} splashOut={splashOut}/>}
     </View>
     </Provider>
   );  

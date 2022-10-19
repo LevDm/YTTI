@@ -1,5 +1,5 @@
 import React, {useRef, useState, useEffect} from "react";
-import { StyleSheet, View, Pressable, Dimensions, Appearance } from "react-native";
+import { StyleSheet, View, Pressable, Dimensions, Appearance, Text } from "react-native";
 import Constants from "expo-constants";
 
 import Animated, {
@@ -52,16 +52,16 @@ const SplashY = (props) => {
 
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
 
-    //const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]    
-    //const [appConfig, setAppConfig] = useState(props.appConfig);r
-    //const Language = languagesAppList[LanguageAppIndex]
+    const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]    
+    const [appConfig, setAppConfig] = useState(props.appConfig);
+    const Language = languagesAppList[LanguageAppIndex]
 
     store.subscribe(() => {
         let jstore = store.getState();
 
-        //if(LanguageAppIndex != languagesApp.indexOf(jstore.appConfig.languageApp)){
-        //    setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
-        //}
+        if(LanguageAppIndex != languagesApp.indexOf(jstore.appConfig.languageApp)){
+           setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
+        }
 
         if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
             setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
@@ -75,9 +75,9 @@ const SplashY = (props) => {
             setAppStyle(jstore.appStyle);
         }
 
-        //if (appConfig != jstore.appConfig) {
-        //    setAppConfig(jstore.appConfig);
-        //}
+        if (appConfig != jstore.appConfig) {
+            setAppConfig(jstore.appConfig);
+        }
     })
     
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
@@ -117,18 +117,13 @@ const SplashY = (props) => {
 
 
     useEffect(()=>{
-        setTimeout(()=>{
+        //setTimeout(()=>{
 
-            props.setSplashOut(false)
+            //props.setSplashOut(false)
 
-        },globalDuration)
+        //},globalDuration)
     },[])
 
-    const area = useAnimatedStyle(()=>{
-        return {
-            
-        }
-    })
     
     const circleDuration = globalDuration*0.43
     const vibeDelay = circleDuration*0.58
@@ -138,7 +133,7 @@ const SplashY = (props) => {
     const animDuration = globalDuration*0.181
     const durationTransform = (blindDuration+blindDelay)
 
-    console.log(durationTransform+animDuration)
+    //console.log(durationTransform+animDuration)
 
     const enteringAnimation = (targetValues) => {
         'worklet';
@@ -155,6 +150,8 @@ const SplashY = (props) => {
         };
     };
 
+    
+
     const enteringLogo= (targetValues) => {
         'worklet';
         const animations = {
@@ -168,6 +165,8 @@ const SplashY = (props) => {
           animations,
         };
     };
+
+    
 
     const enteringY = (targetValues) => {
         'worklet';
@@ -226,6 +225,7 @@ const SplashY = (props) => {
           animations,
         };
     };
+
     
 
     const enteringVibeRight = (targetValues) => {
@@ -294,6 +294,7 @@ const SplashY = (props) => {
     };
 
     
+
     const enteringBlindRight = (targetValues) => {
         'worklet';
         const animations = {
@@ -350,19 +351,88 @@ const SplashY = (props) => {
         };
     };
 
+
+    const state = useSharedValue(0)
+    const body = useAnimatedStyle(()=>({
+        opacity: withDelay(durationTransform, withTiming(state.value? 0 : 1, { duration: animDuration})),
+    }))
+    const logo = useAnimatedStyle(()=>({
+        opacity: withDelay(circleDuration, withTiming(state.value? 1 : 0, { duration: circleDuration/3})),
+    }))
+    const iconY = useAnimatedStyle(()=>({
+        opacity: withDelay(circleDuration/4, withTiming(state.value? 0 : 1, { duration: circleDuration/2})),
+    }))
+    const iconYLeft = useAnimatedStyle(()=>({
+        width: withTiming( state.value? (widthLogo/2) : (sizeY/2), { duration: circleDuration, easing: Easing.bezier(.71,0,.32,1.5)}),
+        transform: [
+            {translateX: withTiming( state.value? 0: 0, { duration: circleDuration, easing: Easing.bezier(.71,0,.32,1.5)})}
+        ],
+        //height: sizeY,
+    }))
+    const iconYRight = useAnimatedStyle(()=>({
+        width: withTiming(state.value? (widthLogo/2) : (sizeY/2), { duration: circleDuration, easing: Easing.bezier(.71,0,.32,1.5)}),
+        //height: sizeY,
+    }))
+    const vibeRight = useAnimatedStyle(()=>({
+        opacity: withDelay(vibeDelay, withTiming( state.value? 1 : 0, { duration: vibeDuration})),
+        height:  withDelay(vibeDelay, withTiming( state.value? heightScreen/2 : sizeY, { duration: vibeDuration})),
+        borderTopRightRadius :  withDelay(vibeDelay, withTiming( state.value? 0 : 200, { duration: vibeDuration })),
+        borderBottomRightRadius :  withDelay(vibeDelay, withTiming(state.value? 0 : 200, { duration: vibeDuration })),
+        borderRightWidth: withDelay(vibeDelay, withTiming(state.value? borderWidth*2 : 5, { duration: vibeDuration, easing: Easing.bezier(0.68, -0.6, 0.32, 1.6)  })),
+        transform: [
+            {translateX: withDelay(vibeDelay, withTiming(state.value? 0 : (-0.5*(widthScreen-widthLogo)), { duration: vibeDuration, easing: Easing.bezier(0.68, -0.6, 0.32, 1.6) }))},
+            //{translateY: withDelay(vibeDelay, withTiming(state.value? (-0.5*(heightScreen/2-sizeY)) : 0, { duration: vibeDuration }))}
+        ]
+    }))
+    const vibeLeft = useAnimatedStyle(()=>({
+        opacity: withDelay(vibeDelay, withTiming( state.value?1 :0, { duration: vibeDuration})),
+        height:  withDelay(vibeDelay, withTiming(state.value? heightScreen/2 :sizeY, { duration: vibeDuration})),
+        borderTopLeftRadius :  withDelay(vibeDelay, withTiming(state.value? 0 :200, { duration: vibeDuration })),
+        borderBottomLeftRadius :  withDelay(vibeDelay, withTiming(state.value? 0 :200, { duration: vibeDuration })),
+        borderLeftWidth: withDelay(vibeDelay, withTiming(state.value? borderWidth*2 :5, { duration: vibeDuration, easing: Easing.bezier(0.68, -0.6, 0.32, 1.6)  })),
+        transform: [
+            {translateX: withDelay(vibeDelay, withTiming(state.value? 0 :(0.5*(widthScreen-widthLogo)), { duration: vibeDuration, easing: Easing.bezier(0.68, -0.6, 0.32, 1.6) }))},
+            //{translateY: withDelay(vibeDelay, withTiming(state.value? (-0.5*(heightScreen/2-sizeY)) : 0, { duration: vibeDuration }))}
+        ]
+    }))
+    const blindRight = useAnimatedStyle(()=>({
+        borderTopLeftRadius: withDelay(blindDelay, withTiming(state.value? 0 : heightScreen, { duration: blindDuration})),
+        borderBottomLeftRadius: withDelay(blindDelay, withTiming(state.value? 0 : heightScreen, { duration: blindDuration})),
+        transform: [
+            {translateX:  withDelay(blindDelay, withTiming(state.value? 0 : widthScreen, { duration: blindDuration, easing: Easing.bezier(0.25, 1, 0.5, 1)}))}
+        ],
+    }))
+    const blindLeft = useAnimatedStyle(()=>({
+        borderTopRightRadius: withDelay(blindDelay, withTiming(state.value? 0 : heightScreen, { duration: blindDuration})),
+        borderBottomRightRadius: withDelay(blindDelay, withTiming(state.value? 0 : heightScreen, { duration: blindDuration})),
+        transform: [
+            {translateX:  withDelay(blindDelay, withTiming(state.value? 0 : -widthScreen, { duration: blindDuration, easing: Easing.bezier(0.25, 1, 0.5, 1)}))}
+        ],
+    }))
+    useEffect(()=>{
+        if(props.splashStart){
+            state.value = 1
+            setTimeout(()=>{
+                props.splashOut()
+            },globalDuration)
+        }
+    },[props.splashStart])
+
+    useEffect(()=>{
+        console.log('splash screen render')
+    },[])
+
     return (
-        
+        <Animated.View
+            //entering={enteringAnimation}
+            style = {[StyleSheet.absoluteFill,{
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'black'
+            },body]}
+        >      
             <Animated.View
-                entering={enteringAnimation}
-                style = {[StyleSheet.absoluteFill,{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: 'black'
-                }]}
-            >
-               
-            <Animated.View
-                entering = {enteringBlindRight} 
+                //entering = {enteringBlindRight} 
                 style = {[
                     //area, 
                     {
@@ -372,10 +442,10 @@ const SplashY = (props) => {
                     height: heightScreen,
                     
                     backgroundColor: Thema.basics.accents.primary
-                }]}
+                },blindRight]}
             />
             <Animated.View
-                entering = {enteringBlindLeft} 
+                //entering = {enteringBlindLeft} 
                 style = {[
                     //area, 
                     {
@@ -385,10 +455,10 @@ const SplashY = (props) => {
                     height: heightScreen,
                     
                     backgroundColor: Thema.basics.accents.primary
-                }]}
+                },blindLeft]}
             />
             <Animated.View
-                entering = {enteringVibeRight} 
+                //entering = {enteringVibeRight} 
                 style = {[
                     //area, 
                     {
@@ -397,10 +467,10 @@ const SplashY = (props) => {
                     width: sizeY,
                     height: sizeY,
                     borderColor: Thema.basics.accents.primary
-                }]}
+                },vibeRight]}
             />
             <Animated.View
-                entering = {enteringVibeLeft} 
+                //entering = {enteringVibeLeft} 
                 style = {[
                     //area, 
                     {
@@ -409,12 +479,12 @@ const SplashY = (props) => {
                     width: sizeY,
                     height: sizeY,
                     borderColor: Thema.basics.accents.primary
-                }]}
+                },vibeLeft]}
             />
 
 
             <Animated.View
-                entering = {enteringYRight}  
+                //entering = {enteringYRight}  
                 style = {[  
                     {
                     left: widthScreen/2-0,
@@ -429,11 +499,11 @@ const SplashY = (props) => {
                     borderLeftWidth: 0,
                     borderColor: 'white',
                     //opacity: 0.8
-                }]}
+                },iconYRight]}
             />
 
             <Animated.View
-                entering = {enteringYLeft}  
+                //entering = {enteringYLeft}  
                 style = {[  
                     {
                     right: widthScreen/2-0.18180509,
@@ -447,18 +517,18 @@ const SplashY = (props) => {
                     borderRightWidth: 0,
                     borderColor: 'white',
                     //opacity: 0.8
-                }]}
+                },iconYLeft]}
             />
             
             
 
             {true &&
             <Animated.View
-                entering={enteringY}
+                //entering={enteringY}
                 style = {[  
                     {
                     position: 'absolute',
-                }]}
+                }, iconY]}
             >                
                 <Svg width={290/screen.scale} height={345/screen.scale} viewBox="0 -55 290 345" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <Circle cx="30" cy="30" r="30" fill="white"/>
@@ -474,11 +544,11 @@ const SplashY = (props) => {
 
             {true &&
             <Animated.View
-                entering={enteringLogo}
+                //entering={enteringLogo}
                 style = {[  
                     {
                     position: 'absolute',
-                }]}
+                }, logo]}
             >
             <Svg width={980/screen.scale} height={445/screen.scale} viewBox='0 -2 980 445'  fill="none" xmlns="http://www.w3.org/2000/Svg">
                 <Circle cx="105" cy="135" r="30" fill="white"/>
@@ -506,10 +576,21 @@ const SplashY = (props) => {
                 <Rect x="380.31" y="208.621" width="48.6207" height="186.755" transform="rotate(-90 380.31 208.621)" fill="white"/>
                 <Rect x="449.19" y="203.759" width="48.6207" height="166.931" fill="white"/>
             </Svg>
-            </Animated.View>
-            } 
-            </Animated.View>
+            </Animated.View>}
 
+            
+            {appConfig.user.name &&
+            <Text
+                style = {{
+                    position: 'absolute',
+                    bottom: 200,
+                    color: 'white',
+                    fontSize: 30,
+                }}
+            >
+                Hello, {appConfig.user.name}!
+            </Text>} 
+        </Animated.View>
     )
 }
 

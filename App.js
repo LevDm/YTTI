@@ -125,7 +125,7 @@ export default function App() {
       
       const startApp = await SplashScreen.hideAsync();
       if(startApp){ 
-        setSplashStart(true) 
+        appStyle.splachLoadShow? setSplashStart(true) : null
         console.log('>APP_READY_AND_RUNNING', new Date().getTime() - start )
       };
     }

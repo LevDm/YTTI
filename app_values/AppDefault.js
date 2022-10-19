@@ -69,7 +69,8 @@ export const defaultAppConfig = {
     languageApp: 'en',
     //userName: '',
     user: {
-        name: ''
+        name: '',
+        welcome: true
     },
     //location: {},
     appFunctions: {

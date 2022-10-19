@@ -578,8 +578,8 @@ const SplashY = (props) => {
             </Svg>
             </Animated.View>}
 
-            
-            {appConfig.user.name &&
+
+            {(appConfig.user.name && appConfig.user.welcome) &&
             <Text
                 style = {{
                     position: 'absolute',

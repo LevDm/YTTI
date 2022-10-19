@@ -188,6 +188,8 @@ const LanguageStoreRu = {
         user: {
           name: "Имя",
           accost: "Как к тебе обращаться?",
+          welcome: 'Приветствие на экране загрузки',
+          welcomeState: {true: "включено", false: "выключено"},
         }
       }
     },
@@ -402,6 +404,8 @@ const LanguageStoreEng = {
         user: {
           name: "Name",
           accost: "How to contact you?",
+          welcome: 'Loading screen welcome',
+          welcomeState: {true: "on", false: "of"},
         }
       }
     },

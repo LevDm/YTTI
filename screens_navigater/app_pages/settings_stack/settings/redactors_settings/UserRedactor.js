@@ -71,7 +71,19 @@ export default LanguageRedactor = ({
         dataRedactor("storedAppConfig", newAppConfig);
     }
 
-    return (
+    const [welcomeUsed, setWelcomeUsed] = useState(appConfig.user.welcome)
+
+    const welcomeUsedSetting = () => {
+        let newAppConfig = getNewAppConfigObject();
+        newAppConfig.user.welcome = !welcomeUsed
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+
+        setWelcomeUsed(!welcomeUsed)
+    }
+
+
+    return (<>
     <View 
         style = {[{
             //marginLeft: 20,
@@ -139,7 +151,59 @@ export default LanguageRedactor = ({
                 }
             }}
         />
-    </View>)
+    </View>
+    <View
+        style = {{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: 60,
+            paddingLeft: !appStyle.splachLoadShow? 10 : 0
+        }}
+    >      
+        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+            {Language.welcome} {Language.welcomeState[`${welcomeUsed}`]}
+        </Text>
+        <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+        <BaseSwitch
+            size={24}
+            style = {{
+                right: 20,
+                height: '100%'
+            }}
+            trackStyle={{
+                borderRadius: appStyle.borderRadius.additional
+            }}
+            thumbStyle = {{
+                borderRadius: appStyle.borderRadius.additional,
+                borderWidth: 3,
+                borderColor: Thema.icons.accents[welcomeUsed?"primary" : "quaternary"],
+            }}
+            colors={{
+                track: { 
+                    false: Thema.icons.accents.quaternary, 
+                    true: Thema.icons.accents.primary  
+                },
+                thumb: { 
+                    false: Thema.icons.accents.quaternary, 
+                    true: Thema.icons.accents.primary, 
+                }
+            }}
+            primeValue={welcomeUsed}
+            onChange={welcomeUsedSetting}
+        />
+        {!appStyle.splachLoadShow && 
+        <View
+            style = {{
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                backgroundColor: '#00000025',
+                borderRadius: appStyle.borderRadius.additional
+            }}
+        />}
+    </View>
+    </>)
 }
 
 const BaseTextInput = ({
@@ -271,6 +335,15 @@ const staticStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems : 'center',
         
+    },
+    verticalLine: {
+        height: 45,
+        width: 1.5,
+        marginRight: 10
+    },
+    switchText: {
+        textAlign: 'justify', 
+        width: '70%',
     },
     text: {
         fontSize: 16, 

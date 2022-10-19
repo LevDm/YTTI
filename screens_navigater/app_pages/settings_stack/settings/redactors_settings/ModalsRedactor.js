@@ -162,7 +162,7 @@ export default ModalsRedactor = ({
                 //flex: 1,
                 height: 94,
                 marginLeft: 20,
-                width: '70%',
+                width: '60%',
                 justifyContent: 'space-between',
             }}
         >

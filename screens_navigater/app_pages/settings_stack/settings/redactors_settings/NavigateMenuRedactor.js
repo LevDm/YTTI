@@ -278,7 +278,7 @@ export default NavigateMenuRedactor = ({
                     <BaseBox
                         key = {item+index}
                         style = {{
-                            width: '30%',
+                            //width: '100%',
                             borderRadius: appStyle.borderRadius.additional,
                             backgroundColor: 'transparent'
                         }}

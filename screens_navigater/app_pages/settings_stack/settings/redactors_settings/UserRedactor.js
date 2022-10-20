@@ -38,7 +38,7 @@ import {
     BaseSwitch 
 } from "../../../../../general_components/base_components/BaseElements";
 
-export default LanguageRedactor = ({
+export default UserRedactor = ({
     appStyle,
     setAppStyle,
 

@@ -67,6 +67,7 @@ import FunctionButtonRedactor from "./redactors_settings/FunctionButtonRedactor"
 import ModalsRedactor from "./redactors_settings/ModalsRedactor";
 import UserRedactor from "./redactors_settings/UserRedactor";
 import WeatherRedactor from "./redactors_settings/WeatherRedactor";
+import AppFunctionsRedactor from "./redactors_settings/AppFunctionsRedactor";
 
 import Ohter from "./redactors_settings/ohterts";
 import StyleChangePreview from "./preview/StyleChangePreview";
@@ -149,7 +150,7 @@ const structure = [
             {
                 param:"appFunctions",
                 icon:  "store",
-                paramRedactorComponent: null
+                paramRedactorComponent: AppFunctionsRedactor
             }, 
              
             {

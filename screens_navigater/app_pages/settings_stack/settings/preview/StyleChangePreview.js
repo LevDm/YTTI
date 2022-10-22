@@ -8,6 +8,14 @@ import ThemesColorsAppList, {themesApp} from "../../../../../styles/ColorsApp";
 import dataRedactor from "../../../../../async_data_manager/data_redactor";
 import ColorSplash from "../../../../../componets/StyleColorSplash";
 
+import {
+    BottomSheetModal,
+    BottomSheetView,
+    BottomSheetScrollView,
+    BottomSheetVirtualizedList,
+    BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+
 //import BasePressable from "../componets/base/BasePressable";
 import { 
     BasePressable,
@@ -198,7 +206,8 @@ export default StyleChangePreview = ({
         <>
         <View
             style = {{
-                flex: 1,
+                //flex: 1,
+                width: deviceWidth,
                 justifyContent :'center',
                 alignItems: 'center',
                 backgroundColor: 'white',
@@ -224,6 +233,9 @@ export default StyleChangePreview = ({
             
             <Animated.FlatList
                 ref = {flatListRef}
+                style={{
+                    width: deviceWidth
+                }}
                 contentContainerStyle = {{
                     paddingHorizontal: (deviceWidth-widthPreview)/2,
                 }}
@@ -254,7 +266,7 @@ export default StyleChangePreview = ({
                     height: 48,
                     //borderRadius: 20,
                     flexDirection: 'row',
-                    //backgroundColor: 'grey'
+                    backgroundColor: 'red'
                 }}
             >
                 <BasePressable

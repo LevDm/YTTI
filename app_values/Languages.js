@@ -81,7 +81,8 @@ const LanguageStoreRu = {
       StructureScreen: {
         categorys: [
           "внешнего вида",
-          "системы"
+          "системы",
+          "спец"
         ],
         params: {
           thema: "тема", 
@@ -298,7 +299,8 @@ const LanguageStoreEng = {
       StructureScreen: {
         categorys: [
           "appearance", 
-          "systems"
+          "systems",
+          "spezial"
         ],
         params: { 
           thema: "theme", 

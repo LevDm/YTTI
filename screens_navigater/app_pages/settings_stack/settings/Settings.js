@@ -38,6 +38,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import {
     BottomSheetModal,
+    BottomSheetView,
+    BottomSheetScrollView,
+    BottomSheetVirtualizedList,
     BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 
@@ -153,6 +156,33 @@ const structure = [
                 paramRedactorComponent: AppFunctionsRedactor
             }, 
              
+            
+        ]
+    },
+    {   
+        indexSection: 2,
+        category: "spezial",
+        data: [
+            {
+                param:"ohters",
+                icon:  "qrcode-scan",
+                paramRedactorComponent: null
+            },
+            {
+                param:"ohters",
+                icon:  "qrcode-scan",
+                paramRedactorComponent: null
+            },
+            {
+                param:"ohters",
+                icon:  "qrcode-scan",
+                paramRedactorComponent: null
+            },
+            {
+                param:"ohters",
+                icon:  "qrcode-scan",
+                paramRedactorComponent: null
+            },
             {
                 param:"ohters",
                 icon:  "qrcode-scan",
@@ -367,8 +397,19 @@ const Settings = (props) => {
             index: allStructurParams[accent].indexSection
         })
     }
-
     
+
+    const headerStickysHeight = 40
+    const selectorLineHeight = 35
+    const headerStickysFullHeight = headerStickysHeight +(!previewFixed? 2*appStyle.lists.proximity : 0)
+    const headHeight = 500
+    const headFullHeight = selectorLineHeight + headHeight//((3*deviceHeight)/4)
+    
+    const previewHeight = (50+deviceHeight/2)+(!previewFixed? appStyle.lists.proximity : 0)
+    const settingsInfoHeight = (deviceHeight/4)+2*(!previewFixed? appStyle.lists.proximity : 0)
+
+
+    const animSelectorLine = useSharedValue(headHeight)
 
     const scrollSectionsList = useAnimatedScrollHandler({
         onScroll: (event, ctx) => {
@@ -382,19 +423,22 @@ const Settings = (props) => {
             }
 
             isEnd = (event.layoutMeasurement.height + event.contentOffset.y) >= (event.contentSize.height - 5);
-            isStart = event.contentOffset.y > (deviceHeight/2+50); //scroll>preview
+            isStart = event.contentOffset.y > (headFullHeight); //scroll>preview
             let visibleBobber = ((isUpScroll || isEnd) && isStart) && !previewFixed
 
             cancelAnimation(animValueBobberButtonVisible);
             animValueBobberButtonVisible.value = visibleBobber? 0 : bottomBord
 
             let useScroll = event.contentOffset.y
-            animValueScrollY.value = -(useScroll < 0? 0 : useScroll)
+            useScroll = -(useScroll < 0? 0 : useScroll)
+            animValueScrollY.value = useScroll
+
+            let selectLine = headHeight + useScroll
+            selectLine = selectLine < 0? 0 : selectLine
+            animSelectorLine.value = selectLine
         },
     })
-
-    const previewHeight = (50+deviceHeight/2)+(!previewFixed? appStyle.lists.proximity : 0)
-    const settingsInfoHeight = (deviceHeight/4)+2*(!previewFixed? appStyle.lists.proximity : 0)
+    
 
     const countDerivedValues = () =>{
 
@@ -403,13 +447,13 @@ const Settings = (props) => {
             let right = -1;
             let left = -1;
             if(!previewFixed){
-                right += (previewHeight)
+                right += (headFullHeight+headerStickysFullHeight)
             }
-            if(allStructurParams[i].indexSection == 1){
+            if(allStructurParams[i].indexSection != 0){
                 if(!previewFixed){
-                    right += (settingsInfoHeight)
+                    right += allStructurParams[i].indexSection*(headerStickysFullHeight)
                 } else {
-                    right += (previewHeight)
+                    right += (headFullHeight)
                 }
             }
 
@@ -430,7 +474,7 @@ const Settings = (props) => {
             const shift = listWidths.reduce(((countValue, currentValue, index)=>(index < param? (countValue+currentValue) : countValue)), 0)
             //shifts for position in center
             if(1 <= param && param <= maxAccepIndex-1){ 
-                centrallFront = -Math.round((deviceWidth-listWidths[param])/2) 
+                centrallFront = -((deviceWidth-listWidths[param])/2) //-Math.round((deviceWidth-listWidths[param])/2) 
             }
             let resOffset = centrallFront+shift
             if(resOffset < 0){resOffset = 0}
@@ -490,17 +534,17 @@ const Settings = (props) => {
         ))
 
 
-        let accentBarXScroll = (yScroll- (!previewFixed? previewHeight : 0) )
+        let accentBarXScroll = (yScroll- (!previewFixed? (headerStickysFullHeight+headFullHeight) : 0) )
         if(accentBarXScroll<0){accentBarXScroll = 0}
 
         let compens = 0
         const over = aListHeights.reduce(((countValue, currentValue, index)=>(index <= (countAccent-1)? (countValue+currentValue) : countValue)), 0)
-        if(allStructurParams[countAccent].indexSection == 1){
+        if(allStructurParams[countAccent].indexSection != 0){
             if(over < accentBarXScroll){
                 compens =  accentBarXScroll-over
-                let ignoreHeight = settingsInfoHeight
+                let ignoreHeight = headerStickysFullHeight//+2*appStyle.lists.proximity
                 if(previewFixed){
-                    ignoreHeight = previewHeight
+                    ignoreHeight += headFullHeight
                 } 
                 if(compens > ignoreHeight){compens = ignoreHeight}
                 accentBarXScroll -= compens
@@ -543,24 +587,25 @@ const Settings = (props) => {
             action = oldDistance - getAction(accentBarXScroll, (countAccent>=1? countAccent-1 : 0))
             action *= (-1)
         }
-
+        //runOnJS(logg)(`lim l ${limList[countAccent].less} res ${accentBarXScroll} lim r ${limList[countAccent].more}`)
         accentBarXScroll = current + action
+        //runOnJS(logg)(`cur act ${current} ${action}`)
+       
 
+        let width = aListWidths[countAccent]-10//Math.round(aListWidths[countAccent]-10);
+        if(isNaN(width) || width  === undefined){
+            const numberPrimelSymbols = (Language.StructureScreen.params[allStructurParams[0].param]).length;
+            const widthSymbol = staticStyles.frontFLText.fontSize * 0.75;
+            width = numberPrimelSymbols * widthSymbol + 10;
+        }
+        const left = aListWidths.reduce(((countValue, currentValue, index)=>(index < countAccent? (countValue+currentValue) : countValue)), 0);
 
-            let width = Math.round(aListWidths[countAccent]-10);
-            if(isNaN(width) || width  === undefined){
-                const numberPrimelSymbols = (Language.StructureScreen.params[allStructurParams[0].param]).length;
-                const widthSymbol = staticStyles.frontFLText.fontSize * 0.75;
-                width = numberPrimelSymbols * widthSymbol + 10;
-            }
-            const left = aListWidths.reduce(((countValue, currentValue, index)=>(index < countAccent? (countValue+currentValue) : countValue)), 0);
+        cancelAnimation(animValueWidthLine);
+        cancelAnimation(animValueMarginLeft);
+        animValueWidthLine.value = width;
+        animValueMarginLeft.value = left;
 
-            cancelAnimation(animValueWidthLine);
-            cancelAnimation(animValueMarginLeft);
-            animValueWidthLine.value = width;
-            animValueMarginLeft.value = left;
-
-            accentCategory.value = allStructurParams[countAccent].indexSection
+        accentCategory.value = allStructurParams[countAccent].indexSection
 
 
         scrollTo(
@@ -593,7 +638,7 @@ const Settings = (props) => {
     }
 
     const stacker = (list, setList, newValue) => {
-        newValue = Math.round(newValue);
+        //newValue = Math.round(newValue);
         if (list.length >= allStructurParams.length){
             setList([newValue]);
         } else {
@@ -727,12 +772,26 @@ const Settings = (props) => {
         props.navigation.goBack()
     }
 
+    
+    const selectorLine = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            backgroundColor: interpolateColor(
+                animSelectorLine.value, 
+                [headHeight, 0],
+                ['#ff0000ff', '#ff000010']  
+            ),
+            transform: [
+                {translateY: animSelectorLine.value}
+            ]
+        }
+    })
 
     // ref
     const bottomSheetModalRef = useRef(BottomSheetModal);
 
     // variables
-    const snapPoints = useMemo(() => ['25%', '50%'], []);
+    const snapPoints = useMemo(() => [previewHeight/3+30, previewHeight+30], []);
 
     // callbacks
     const handlePresentModalPress = useCallback(() => {
@@ -856,6 +915,21 @@ const Settings = (props) => {
                 />
             </View>
         </View>
+        <Reanimated.View
+            style = {[selectorLine, {
+                height: selectorLineHeight,
+                width: '100%',
+                backgroundColor: 'red',
+                position: 'absolute',
+                top: (Constants.statusBarHeight+1)+itemCategoryHeight,
+                zIndex: 1,
+                //transform: [
+                //    {translateY: headHeight}
+                //]
+            }]}
+        >
+
+        </Reanimated.View>
         <ReanimatedSectionList
             ref={sectListRef}
             stickySectionHeadersEnabled={previewFixed}
@@ -863,7 +937,35 @@ const Settings = (props) => {
             onScroll={scrollSectionsList}
             sections={structure}
             keyExtractor={(item, index) => item.param + index}
-            renderSectionHeader={({section: {category}})=>{
+            ListHeaderComponent={()=>{
+                return (
+                    <View
+                        style={{
+                            height: headHeight,
+                            width: '100%',
+                            backgroundColor: 'grey'
+                        }}
+                    >
+
+                    </View>
+                )
+            }}
+
+            renderSectionHeader={({section: {category, indexSection: index}})=>{
+                return (
+                <View
+                    style={{
+                        height: headerStickysHeight,
+                        width: '100%',
+                        backgroundColor: 'yellow',
+                        marginVertical: !previewFixed? appStyle.lists.proximity  : 0, 
+                        //marginTop: index == 0? 0 : (!previewFixed? appStyle.lists.proximity : 0),
+                    }}
+                >
+                    <Text>{category} {index}</Text>
+                </View> 
+                )
+
                 return(
                     <Reanimated.View
                         key={String(category)} 
@@ -878,7 +980,7 @@ const Settings = (props) => {
                             }
                         ]}
                     >
-                        {category == 'style' &&                  
+                        {category == 'style0' &&                  
                         <StyleChangePreview
                             appStyle={appStyle}
                             setAppStyle={setAppStyle}
@@ -1083,10 +1185,32 @@ const Settings = (props) => {
           index={1}
           snapPoints={snapPoints}
           onChange={handleSheetChanges}
-        >
-          <View style={{}}>
-            <Text>Awesome 🎉</Text>
-          </View>
+        >          
+            <BottomSheetScrollView
+                horizontal={true}
+                style={{
+                    height: previewHeight,
+                    width: deviceWidth
+                    //flexDirection: 'row'
+                }}
+            >  
+            <StyleChangePreview
+                appStyle={appStyle}
+                setAppStyle={setAppStyle}
+                r_setAppStyle={props.r_setAppStyle}
+
+                previewAppStyle={previewAppStyle}
+
+                splashStart = {splashStart}
+
+                previewFixed={previewFixed}
+                setPreviewFixed={setPreviewFixed}
+
+                ThemeColorsAppIndex={ThemeColorsAppIndex}
+                ThemeSchema={ThemeSchema}
+                LanguageAppIndex={LanguageAppIndex}
+            />
+            </BottomSheetScrollView>
         </BottomSheetModal>
         </BottomSheetModalProvider>
     </>);  

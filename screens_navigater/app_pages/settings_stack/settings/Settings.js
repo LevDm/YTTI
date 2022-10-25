@@ -859,11 +859,6 @@ const Settings = (props) => {
     const category = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            //backgroundColor: interpolateColor(
-            //    animSelectorLine.value, 
-            //    [headFullHeight, 0],
-            //    ['#00ff00ff', '#00ff0010']  
-            //),
             width: interpolate(
                 animSelectorLine.value, 
                 [headFullHeight, 0],
@@ -872,7 +867,7 @@ const Settings = (props) => {
             paddingLeft: interpolate(
                 animSelectorLine.value,
                 [headFullHeight, 0], 
-                [deviceWidth/4, 0]
+                [deviceWidth/2-((Language.StructureScreen.typesSettings.appearance.type).length * 0.375 * staticStyles.AnimatedHeaderText.fontSize), 0]
             ),
             opacity: interpolate(
                 animSelectorLine.value, 

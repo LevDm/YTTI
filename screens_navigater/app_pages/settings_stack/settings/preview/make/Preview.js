@@ -143,13 +143,18 @@ export default Preview = (props, {
     const duration = 400
     const scale = 2
 
-    const [PreviewThemeColorsAppIndex, setPreviewThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme))
+    const PreviewThemeColorsAppIndex = themesApp.indexOf(props.previewAppStyle.value.theme)
+    console.log('prew',PreviewThemeColorsAppIndex)
+    /*
+    const [PreviewThemeColorsAppIndex, setPreviewThemeColorAppIndex] = useState(themesApp.indexOf(props.previewAppStyle.theme))
+     */
     useEffect(()=>{
-        let newThemeIndex = themesApp.indexOf(props.previewAppStyle.theme)
-        if(newThemeIndex != PreviewThemeColorsAppIndex){setPreviewThemeColorAppIndex(newThemeIndex)}
-        //console.log('preview theme', props.previewAppStyle.theme)
-    },[props.previewAppStyle])
-
+        //let newThemeIndex = themesApp.indexOf(props.previewAppStyle.theme)
+        //if(newThemeIndex != PreviewThemeColorsAppIndex){setPreviewThemeColorAppIndex(newThemeIndex)}
+        //console.log('preview style update')
+        
+    },[props.upd])
+   
     const animStyleBody = useAnimatedStyle(()=>{
  
         const heightValueReal = deviceHeight/scale - ((Constants.statusBarHeight+1)+30+35)-30
@@ -468,7 +473,7 @@ export default Preview = (props, {
                                     style = {[ {
                                         height: itemHeight,
                                         //zIndex: 0,
-                                        borderRadius: props.previewAppStyle.borderRadius.basic,
+                                        borderRadius: props.previewAppStyle.value.borderRadius.basic,
                                         margin: 5,
                                         padding: 10,
                                         backgroundColor: 'white',

@@ -13,6 +13,8 @@ import {
     Keyboard 
 } from 'react-native';
 
+import Svg, { Circle, Rect, Ellipse, Line } from "react-native-svg";
+
 //import {default as Reanimated} from 'react-native-reanimated';
 import Reanimated, {
     useSharedValue, 
@@ -87,7 +89,7 @@ const deviceWidth = Dimensions.get('window').width
 const structure = [
     {
         indexSection: 0,
-        category: "style",
+        category: "appearance",
         data: [
             {
                 param: "thema",
@@ -161,28 +163,8 @@ const structure = [
     },
     {   
         indexSection: 2,
-        category: "spezial",
+        category: "additional",
         data: [
-            {
-                param:"ohters",
-                icon:  "qrcode-scan",
-                paramRedactorComponent: null
-            },
-            {
-                param:"ohters",
-                icon:  "qrcode-scan",
-                paramRedactorComponent: null
-            },
-            {
-                param:"ohters",
-                icon:  "qrcode-scan",
-                paramRedactorComponent: null
-            },
-            {
-                param:"ohters",
-                icon:  "qrcode-scan",
-                paramRedactorComponent: null
-            },
             {
                 param:"ohters",
                 icon:  "qrcode-scan",
@@ -255,6 +237,14 @@ const Settings = (props) => {
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
     const [previewAppStyle, setPreviewAppStyle] = useState(props.appStyle);
+    const [upd, setUpd] = useState(false);
+    const previewAppStyleA = useSharedValue(props.appStyle)
+    const setPreviewAppStyleA = (newValue) => {
+        //console.log('set prew new', newValue.theme)
+        previewAppStyleA.value = newValue
+        //setUpd(!upd)
+        //handlePresentModalPress()
+    }
 
     const [ bottomBord, setBottomBord ] = useState(props.appStyle.functionButton.size + 12 + props.appStyle.navigationMenu.height) 
     
@@ -313,7 +303,7 @@ const Settings = (props) => {
     }, []);
 
     const sectListRef = useRef();
-    const flatCategorysListRef = useRef();
+    const flatCategorysListRef = useAnimatedRef(); 
     const flatListRef = useAnimatedRef(); 
 
     const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
@@ -332,7 +322,8 @@ const Settings = (props) => {
         listWidths: [],
         shifts: [],
         intervals: [],
-        limits: []
+        limits: [],
+        categorys: []
     })
     
     const [previewFixed, setPreviewFixed] = useState(false);
@@ -342,8 +333,8 @@ const Settings = (props) => {
     );
     const animValueMarginLeft = useSharedValue(0);
     const animValueTranslateX = useSharedValue(0);
-
-    
+    const animValueScrollXCategorys = useSharedValue(0);
+    const animValueCategorysScrolling = useSharedValue(false);
 
     const [splashTheme, setSplashTheme] = useState(0)
     const [splashVisible, setSplashVisible] = useState(false);
@@ -353,14 +344,69 @@ const Settings = (props) => {
 
     const animValueScrollY = useSharedValue(0)
 
-    const itemCategoryHeight = 30
+    const logg = (info) =>{
+        console.log(info)
+    }
 
-    const scrollHandler = useAnimatedScrollHandler({
+    const scrollHandlerFlatListParams = useAnimatedScrollHandler({
         onScroll: (e, ctx) => {
-            animValueTranslateX.value = -(e.contentOffset.x)
+            animValueTranslateX.value = -(e.contentOffset.x)            
         }
     })
+    useDerivedValue(() => {
+        const scroll = Math.abs(animValueTranslateX.value)
+        if(!animValueCategorysScrolling.value){
+            const categoryIntervals = derivedValues.value.categorys
+            //runOnJS(logg)(` ${(scroll)} bords ${categoryIntervals} ${indexs}`)
+            let to = 0
+            for(let i = 0; i<categoryIntervals.length ; i++){   
+                if(scroll >= categoryIntervals[i]){
+                    to = i
+                }
+            }
+            scrollTo(
+                flatCategorysListRef, //ref
+                to*(deviceWidth/2), //x offset
+                0, //y offset
+                true //animate
+            )
+        } 
+        
+    })
 
+    const scrollHandlerFlatListCategorys = useAnimatedScrollHandler({
+        onBeginDrag: (e) => {
+            animValueCategorysScrolling.value = true;
+        },
+        onEndDrag: (e) => {
+            animValueCategorysScrolling.value = false;
+        },
+        onScroll: (e, ctx) => {
+            //animValueCategorysScrolling.value = true;
+            animValueScrollXCategorys.value = -(e.contentOffset.x)
+        }
+    })
+    useDerivedValue(() => {
+        const scroll = Math.abs(animValueScrollXCategorys.value)
+        if(animValueCategorysScrolling.value){
+            const categoryIntervals = derivedValues.value.categorys
+
+            let to = Math.round((scroll/(deviceWidth/2))-0.2)
+            runOnJS(logg)(` ${(to)} ${categoryIntervals[to]} ${categoryIntervals}`)
+            scrollTo(
+                flatListRef, //ref
+                categoryIntervals[to], //x offset
+                0, //y offset
+                true //animate
+            )
+        }
+        
+    })
+    const newCategoryOnAccent = (accent)=>{
+        flatCategorysListRef.current.scrollToIndex({
+            index: allStructurParams[accent].indexSection
+        })
+    }
     
     const animStyleIndicatorLine = useAnimatedStyle(() => {
         const duration = 450;
@@ -385,31 +431,31 @@ const Settings = (props) => {
     }
 
     const splashOut = ()=>{
-        let newAppStyle = previewAppStyle
+        let newAppStyle = previewAppStyleA.value
         //console.log('fine ',newAppStyle)
         setAppStyle(newAppStyle)
         dataRedactor("storedAppStyle",newAppStyle);
         props.r_setAppStyle(newAppStyle);
     }
 
-    const newCategoryOnAccent = (accent)=>{
-        flatCategorysListRef.current.scrollToIndex({
-            index: allStructurParams[accent].indexSection
-        })
-    }
     
 
     const headerStickysHeight = 40
     const selectorLineHeight = 35
+    const itemCategoryHeight = 45
     const headerStickysFullHeight = headerStickysHeight +(!previewFixed? 2*appStyle.lists.proximity : 0)
-    const headHeight = 500
-    const headFullHeight = selectorLineHeight + headHeight//((3*deviceHeight)/4)
+    const selectorLineHeightFull = selectorLineHeight + itemCategoryHeight
+    const headHeight = -itemCategoryHeight
+    const headFullHeight = headHeight + selectorLineHeightFull //((3*deviceHeight)/4)
     
     const previewHeight = (50+deviceHeight/2)+(!previewFixed? appStyle.lists.proximity : 0)
     const settingsInfoHeight = (deviceHeight/4)+2*(!previewFixed? appStyle.lists.proximity : 0)
 
 
-    const animSelectorLine = useSharedValue(headHeight)
+    const animSelectorLine = useSharedValue(headFullHeight)
+
+
+    
 
     const scrollSectionsList = useAnimatedScrollHandler({
         onScroll: (event, ctx) => {
@@ -433,9 +479,11 @@ const Settings = (props) => {
             useScroll = -(useScroll < 0? 0 : useScroll)
             animValueScrollY.value = useScroll
 
-            let selectLine = headHeight + useScroll
+            let selectLine = headFullHeight + useScroll
+            //runOnJS(logg)(`${selectLine}`)
             selectLine = selectLine < 0? 0 : selectLine
             animSelectorLine.value = selectLine
+            
         },
     })
     
@@ -447,7 +495,7 @@ const Settings = (props) => {
             let right = -1;
             let left = -1;
             if(!previewFixed){
-                right += (headFullHeight+headerStickysFullHeight)
+                right += headFullHeight//+headerStickysFullHeight
             }
             if(allStructurParams[i].indexSection != 0){
                 if(!previewFixed){
@@ -493,21 +541,32 @@ const Settings = (props) => {
             })
         }
 
+        const indexs = []
+        for(let i=0; i<structure.length; i++){
+            indexs[i] = 0 + i>0? (indexs[i-1]+structure[i-1].data.length) : 0
+        }
+        const categoryIntervals = []
+        for(let i = 0; i<indexs.length ; i++){
+            let value = (listWidths).reduce(((countValue, currentValue, index)=>(index < indexs[i]? (countValue+currentValue) : countValue)), 0)
+            let center = deviceWidth/2 - (listWidths)[indexs[i]]/2
+            center = (center >  value? 0 : center)
+            categoryIntervals.push(value-center)      
+        }
+
         derivedValues.value = {
             listHeights: listHeights,
             listWidths: listWidths,
             shifts: shifts,
             intervals: intervals,
-            limits: limList
+            limits: limList,
+            categorys: categoryIntervals
         }
     }
     useEffect(()=>{countDerivedValues()},[previewFixed, LanguageAppIndex])//appStyle.lists.proximity
 
 
 
-    const logg = (info) =>{
-        console.log(info)
-    }
+    
     
     useDerivedValue(() => {
         const aListHeights = derivedValues.value.listHeights
@@ -534,7 +593,7 @@ const Settings = (props) => {
         ))
 
 
-        let accentBarXScroll = (yScroll- (!previewFixed? (headerStickysFullHeight+headFullHeight) : 0) )
+        let accentBarXScroll = (yScroll- (!previewFixed? (/*headerStickysFullHeight+*/headFullHeight) : 0) )
         if(accentBarXScroll<0){accentBarXScroll = 0}
 
         let compens = 0
@@ -542,7 +601,7 @@ const Settings = (props) => {
         if(allStructurParams[countAccent].indexSection != 0){
             if(over < accentBarXScroll){
                 compens =  accentBarXScroll-over
-                let ignoreHeight = headerStickysFullHeight//+2*appStyle.lists.proximity
+                let ignoreHeight = headerStickysFullHeight//-headerStickysFullHeight//+2*appStyle.lists.proximity
                 if(previewFixed){
                     ignoreHeight += headFullHeight
                 } 
@@ -714,7 +773,7 @@ const Settings = (props) => {
         if(flag == 'currentStyle'){
             return copyObject(appStyle)
         }
-        return copyObject(previewAppStyle)
+        return copyObject(previewAppStyleA.value)
     }
   
     const applyPress =()=>{
@@ -733,7 +792,7 @@ const Settings = (props) => {
     })
     const categoryText = useAnimatedProps(()=>{
         return {
-            text: Language.StructureScreen.categorys[accentCategory.value],
+            text: Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type,
         }
     },[Language])
 
@@ -776,14 +835,71 @@ const Settings = (props) => {
     const selectorLine = useAnimatedStyle(()=>{
         const duration = 300
         return {
+            
+            //top: ((Constants.statusBarHeight+1)+itemCategoryHeight) +  animSelectorLine.value
+            transform: [
+               //{translateY: withTiming(animSelectorLine.value, {duration: 0})}
+               {translateY: animSelectorLine.value-0.25}
+            ]
+        }
+    })
+
+    const params = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
             backgroundColor: interpolateColor(
                 animSelectorLine.value, 
-                [headHeight, 0],
-                ['#ff0000ff', '#ff000010']  
+                [0.01, 0],
+                [Thema.basics.accents.primary, '#00000000']  
             ),
-            transform: [
-                {translateY: animSelectorLine.value}
-            ]
+        }
+    })
+
+    const category = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            //backgroundColor: interpolateColor(
+            //    animSelectorLine.value, 
+            //    [headFullHeight, 0],
+            //    ['#00ff00ff', '#00ff0010']  
+            //),
+            width: interpolate(
+                animSelectorLine.value, 
+                [headFullHeight, 0],
+                [deviceWidth, deviceWidth/2]  
+            ),
+            paddingLeft: interpolate(
+                animSelectorLine.value,
+                [headFullHeight, 0], 
+                [deviceWidth/4, 0]
+            ),
+            opacity: interpolate(
+                animSelectorLine.value, 
+                [0.01, 0],
+                [1, 0]  
+            ),
+        }
+    })
+
+    const type = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            opacity: interpolate(
+                animSelectorLine.value, 
+                [0.01, 0],
+                [0, 1]  
+            ),
+        }
+    })
+
+    const appStick = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            opacity: interpolate(
+                animSelectorLine.value, 
+                [headFullHeight, 0],
+                [1, -0.5]  
+            ),
         }
     })
 
@@ -813,68 +929,193 @@ const Settings = (props) => {
                 {
                     backgroundColor: Thema.basics.accents.primary,
                     //height: (Constants.statusBarHeight+1)+ 30 + 35,
-                    paddingTop: (Constants.statusBarHeight+1)
+                    paddingTop: (Constants.statusBarHeight+1),
+                    height: (Constants.statusBarHeight+1)+itemCategoryHeight+selectorLineHeight
                 }
             ]}
         >   
+        </View>    
+        <View 
+            style = {[staticStyles.SLtopBord,{ 
+                alignItems: 'center',
+                //backgroundColor: 'red',
+                //zIndex: 5
+                //flex: 1,
+                marginTop: (Constants.statusBarHeight+1),
+                position: 'absolute',
+                height: itemCategoryHeight,
+                right: 0,
+                zIndex: 4,
+                //backgroundColor :'black',
+                justifyContent: 'center',
+                
+            }]}
+        >
+            <Reanimated.View
+                style = {[staticStyles.SLtopBord, type, { 
+                    //alignItems: 'flex-start',
+                    //justifyContent: 'center',
+                    //right: 0
+                    //marginLeft: deviceWidth/2
+                }]}
+            >
+                <ReanimatedTextInput     
+                    editable = {false}
+                    style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: Thema.texts.neutrals.primary}]}
+                    animatedProps={categoryText}
+                />
+            </Reanimated.View>
+            <Reanimated.View
+                style = {[staticStyles.SLtopBord, appStick, { 
+                    alignItems: 'flex-start',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    height: '100%',
+                    right: 0
+                }]}
+            >
+                <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
+                    {Language.app}
+                </Text>
+            </Reanimated.View>
+        </View>
+        <View 
+            style = {[staticStyles.SLtopBord,{ 
+                //alignItems: 'flex-end',
+                //backgroundColor: 'red',
+                //zIndex: 5
+                //flex: 1,
+                marginTop: (Constants.statusBarHeight+1),
+                position: 'absolute',
+                height: itemCategoryHeight,
+                left: 0,
+                zIndex: 4
+                //backgroundColor :'black'
+                //justifyContent: 'space-between',
+                
+            }]}
+        >
             <View
-                style={{
+                style = {{
+                    //height: 50,
+                    //flex: 1,
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                     flexDirection: 'row',
-                    height: itemCategoryHeight
+                    
                 }}
             >
-                <View 
-                    style = {[staticStyles.SLtopBord,{ 
-                        //alignItems: 'flex-end',
-                        //backgroundColor: 'red',
-                        //zIndex: 5
-                        flex: 1,
-                        //justifyContent: 'space-between',
+                {appStyle.navigationMenu.type == 'not' &&
+                <BasePressable 
+                    type="i"
+                    icon={{name: "backburger", size: 30, color: Thema.texts.neutrals.primary}}
+                    style={{
+                        height: 45, 
+                        width: 45, 
+                        marginLeft: 15,
+                        paddingTop: 3,
+                        borderRadius: appStyle.borderRadius.additional
+                    }}
+                    onPress={back}
+                    android_ripple={{
+                        color: Thema.texts.neutrals.primary,
+                        borderless: true,
+                        foreground: false
+
+                    }}
+                />
+                }
+                {appStyle.navigationMenu.type != 'not' && <View style={{height: 45, width: 45, marginLeft: 15,}}/>}
+                <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
+                    {Language.HeaderTitle}
+                </Text>
+            </View>
+        </View>
+        <Reanimated.View
+            style = {[selectorLine, {
+                height: selectorLineHeightFull,
+                width: '100%',
+                //backgroundColor: 'red',
+                //alignItems: 'flex-end',
+                //alignContent: 'flex-end',
+                justifyContent: 'flex-end',
+                //paddingTop: selectorLineHeight-35-5,
+                position: 'absolute',
+                top: ((Constants.statusBarHeight+1)),
+                zIndex: 1,
+                //transform: [
+                //    {translateY: headHeight}
+                //]
+            }]}
+        >
+            <View
+                style={{
+                    height: itemCategoryHeight,
+                    
+                    //backgroundColor: 'blue'
+                    //justifyContent: 'center',
+                    alignItems: 'flex-end'
+
+                }}
+            >
+                <Reanimated.View
+                    style={[category, {
+                        height: itemCategoryHeight,
+                        //backgroundColor: 'blue',
+                        justifyContent: 'center',
+                        //paddingHorizontal: 3,
+                        alignItems: 'flex-start',
                         
                     }]}
                 >
-                    <View
-                        style = {{
-                            height: 30,
-                            flex: 1,
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            flexDirection: 'row'
+                    <ReanimatedFlatList
+                        ref={flatCategorysListRef}
+                        onScroll={scrollHandlerFlatListCategorys}
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                        style={{flex: 1 ,width: deviceWidth/2,}}
+                        snapToInterval={deviceWidth/2}
+                        getItemLayout={(data, index) => (
+                            {length: deviceWidth/2, offset: deviceWidth/2 * index, index: index}
+                        )}
+                        data={structure}
+                        keyExtractor={item => item.category}
+                        renderItem={({item, index})=> {
+                            return (
+                            <BasePressable
+                                key={String(item.category+index)}
+                                type={'t'}
+                                style={[{
+                                    //marginHorizontal: 5, 
+                                    //marginRight: 5, 
+                                    width: deviceWidth/2,
+                                    //backgroundColor: 'red',
+                                    //padding: 0
+                                    
+                                }]}
+                                styleItemContainer = {{
+                                    alignItems: 'center',
+                                    //backgroundColor: 'pink',
+                                    justifyContent: 'flex-start',
+                                    //padding: 0
+                                }}
+                                text={Language.StructureScreen.typesSettings[item.category].category}
+                                textStyle={[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary,}]}
+                                rippleColor={false}
+                                onPress={()=>{selectParametr(item, index)}}
+                            />
+                            )
                         }}
-                    >
-                        {appStyle.navigationMenu.type == 'not' &&
-                        <BasePressable 
-                            type="i"
-                            icon={{name: "backburger", size: 25, color: Thema.texts.neutrals.primary}}
-                            style={{
-                                height: 30, 
-                                width: 30, 
-                                marginLeft: 15,
-                            }}
-                            onPress={back}
-                            rippleColor={Thema.texts.neutrals.primary}
-                        />
-                        }
-                        {appStyle.navigationMenu.type != 'not' && <View style={{height: 30, width: 30}}/>}
-                        <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
-                            {Language.HeaderTitle}
-                        </Text>
-                    </View>
-                </View>
-                <Reanimated.View
-                    style = {[staticStyles.SLtopBord, { 
-                        alignItems: 'flex-start',
-                        justifyContent: 'center',
-                    }]}
-                >
-                    <ReanimatedTextInput     
-                        editable = {false}
-                        style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: Thema.texts.neutrals.primary}]}
-                        animatedProps={categoryText}
                     />
-                </Reanimated.View>
+                </Reanimated.View> 
             </View>
-            <View style={[staticStyles.FlatListsArea]}>
+            <Reanimated.View
+                style={[params, {
+                    height: selectorLineHeight,
+                    //marginBottom: 0.5,
+                    //backgroundColor: 'orange'
+                }]}
+            >
                 <Reanimated.View 
                     style={[animStyleIndicatorLine, { 
                         backgroundColor: Thema.icons.accents.quaternary,
@@ -891,14 +1132,22 @@ const Settings = (props) => {
                     style={staticStyles.frontFL}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    onScroll={scrollHandler}
+                    onScroll={scrollHandlerFlatListParams}
                     data={allStructurParams}
                     keyExtractor={item => item.param}
+                    contentContainerStyle={{// 100//
+                        paddingRight: (deviceWidth/2) - (
+                            (derivedValues.value.listWidths).length == allStructurParams.length? 
+                                (derivedValues.value.listWidths[allStructurParams.length-1])/2 
+                            :
+                                ((Language.StructureScreen.params[allStructurParams[allStructurParams.length-1].param]).length*0.75*staticStyles.frontFLText.fontSize)/2
+                        )
+                    }}
                     renderItem={({item, index})=> {
                         return (
                         <View
                             key={String(item.param+index)}  
-                            style={staticStyles.frontFLArea}
+                            style={[staticStyles.frontFLArea]}
                             onLayout={(event)=>{stacker(listWidths, setListWidths, (event.nativeEvent.layout.width+2*staticStyles.frontFLArea.marginHorizontal))}}
                         >
                             <BasePressable
@@ -913,22 +1162,8 @@ const Settings = (props) => {
                         )
                     }}
                 />
-            </View>
-        </View>
-        <Reanimated.View
-            style = {[selectorLine, {
-                height: selectorLineHeight,
-                width: '100%',
-                backgroundColor: 'red',
-                position: 'absolute',
-                top: (Constants.statusBarHeight+1)+itemCategoryHeight,
-                zIndex: 1,
-                //transform: [
-                //    {translateY: headHeight}
-                //]
-            }]}
-        >
-
+            </Reanimated.View>
+            
         </Reanimated.View>
         <ReanimatedSectionList
             ref={sectListRef}
@@ -937,79 +1172,48 @@ const Settings = (props) => {
             onScroll={scrollSectionsList}
             sections={structure}
             keyExtractor={(item, index) => item.param + index}
-            ListHeaderComponent={()=>{
-                return (
-                    <View
-                        style={{
-                            height: headHeight,
-                            width: '100%',
-                            backgroundColor: 'grey'
-                        }}
-                    >
-
-                    </View>
-                )
-            }}
-
+            ListHeaderComponent={()=>{return(
+                <View
+                    style={{
+                        height: headHeight,
+                        width: '100%',
+                        backgroundColor: 'grey',
+                        //flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        alignItems: 'center',
+                        marginBottom: selectorLineHeight
+                    }}
+                >
+                    
+                </View> 
+            )}}
             renderSectionHeader={({section: {category, indexSection: index}})=>{
+                if(index==0){return null}
                 return (
                 <View
+                    key={String(category)} 
                     style={{
                         height: headerStickysHeight,
                         width: '100%',
-                        backgroundColor: 'yellow',
+                        //backgroundColor: 'yellow',
+                        justifyContent: 'center',
+                        alignItems: 'center',
                         marginVertical: !previewFixed? appStyle.lists.proximity  : 0, 
                         //marginTop: index == 0? 0 : (!previewFixed? appStyle.lists.proximity : 0),
                     }}
                 >
-                    <Text>{category} {index}</Text>
-                </View> 
-                )
-
-                return(
-                    <Reanimated.View
-                        key={String(category)} 
-                        style={[
-                            (previewFixed || appStyle.lists.shadow)? staticStyles.shadow : {}, 
-                            {                 
-                                backgroundColor: Thema.basics.grounds.primary,
-                                marginVertical: !previewFixed? appStyle.lists.proximity  : 0, 
-                                marginTop: category == 'style'? 0 : (!previewFixed? appStyle.lists.proximity : 0),
-                                //position: 'absolute',
-                                //zIndex: 999
-                            }
-                        ]}
+                    <Text 
+                        style = {[{
+                            color: Thema.texts.accents.primary,
+                            fontSize: 25,
+                            fontWeight: 'bold',
+                            letterSpacing: 2,
+                            fontVariant: ['small-caps'],
+                        }]}
                     >
-                        {category == 'style0' &&                  
-                        <StyleChangePreview
-                            appStyle={appStyle}
-                            setAppStyle={setAppStyle}
-                            r_setAppStyle={props.r_setAppStyle}
-
-                            previewAppStyle={previewAppStyle}
-
-                            splashStart = {splashStart}
-
-                            previewFixed={previewFixed}
-                            setPreviewFixed={setPreviewFixed}
-
-                            ThemeColorsAppIndex={ThemeColorsAppIndex}
-                            ThemeSchema={ThemeSchema}
-                            LanguageAppIndex={LanguageAppIndex}
-                        />}
-                        {category == 'system' && 
-                            <View
-                                style={{
-                                    height: deviceHeight/4,
-                                    //zIndex: 999
-                                }}
-                            >
-                                <Text>
-                                    Hello ...info
-                                </Text>
-                            </View>
-                        }
-                    </Reanimated.View>
+                        {Language.StructureScreen.typesSettings[`${category}`].category}
+                    </Text>
+                </View> 
                 )
             }}
             renderItem={({item, index})=>{
@@ -1060,10 +1264,10 @@ const Settings = (props) => {
                             setAppStyle={setAppStyle}
                             r_setAppStyle={props.r_setAppStyle}
 
-                            previewAppStyle={previewAppStyle}
+                            previewAppStyle={previewAppStyleA.value}
 
                             getNewAppStyleObject={getNewAppStyleObject}
-                            setPreviewAppStyle={setPreviewAppStyle}
+                            setPreviewAppStyle={setPreviewAppStyleA}
 
                             appConfig={appConfig}
                             r_setAppConfig={props.r_setAppConfig}
@@ -1185,21 +1389,13 @@ const Settings = (props) => {
           index={1}
           snapPoints={snapPoints}
           onChange={handleSheetChanges}
-        >          
-            <BottomSheetScrollView
-                horizontal={true}
-                style={{
-                    height: previewHeight,
-                    width: deviceWidth
-                    //flexDirection: 'row'
-                }}
-            >  
+        >           
             <StyleChangePreview
                 appStyle={appStyle}
                 setAppStyle={setAppStyle}
                 r_setAppStyle={props.r_setAppStyle}
-
-                previewAppStyle={previewAppStyle}
+                upd={upd}
+                previewAppStyle={previewAppStyleA}
 
                 splashStart = {splashStart}
 
@@ -1210,7 +1406,6 @@ const Settings = (props) => {
                 ThemeSchema={ThemeSchema}
                 LanguageAppIndex={LanguageAppIndex}
             />
-            </BottomSheetScrollView>
         </BottomSheetModal>
         </BottomSheetModalProvider>
     </>);  

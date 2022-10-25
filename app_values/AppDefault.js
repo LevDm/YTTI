@@ -28,6 +28,11 @@ export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 export const defaultAppStyle = {
     theme: "emerald",
     colorScheme: 'auto',
+
+    palette: {
+        thema: "olive",
+        scheme: 'auto'
+    },
     borderRadius: {
         basic: 12, 
         additional: 12
@@ -72,6 +77,7 @@ export const defaultAppConfig = {
         name: '',
         welcome: true
     },
+    splachScreenShow: true,
     //location: {},
     appFunctions: {
         analitic: true,

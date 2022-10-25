@@ -74,11 +74,26 @@ const LanguageStoreRu = {
     },
     SettingsScreen: {
       HeaderTitle: 'настройки',
+      app: 'приложения',
       LanguageSettings: {    
         selector: 'Выберете язык',
         engRu: ['Английский', 'Русский']
       },
       StructureScreen: {
+        typesSettings: {
+          appearance: {
+            type: 'интерфейса',
+            category: 'интерфейс'
+          },
+          system: {
+            type: 'системы',
+            category: 'система'
+          },
+          additional: {
+            type: 'остального',
+            category: 'остальное'
+          },
+        },
         categorys: [
           "внешнего вида",
           "системы",
@@ -291,12 +306,27 @@ const LanguageStoreEng = {
       from: 'From'
     },
     SettingsScreen: {
-      HeaderTitle: 'settings',
+      HeaderTitle: 'settings for',
+      app: 'app',
       LanguageSettings: {
         selector: 'Select language',
         engRu: ['English', 'Russian']
       },
       StructureScreen: {
+        typesSettings: {
+          appearance: {
+            type: 'interface',
+            category: 'interface'
+          },
+          system: {
+            type: 'systems',
+            category: 'system'
+          },
+          additional: {
+            type: 'rest of it',
+            category: 'rest of it'
+          },
+        },
         categorys: [
           "appearance", 
           "systems",

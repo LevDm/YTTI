@@ -36,7 +36,7 @@ export default StyleChangePreview = ({
     appStyle,
     setAppStyle,
     r_setAppStyle,
-
+    upd,
     previewAppStyle,
 
     previewFixed,
@@ -186,6 +186,7 @@ export default StyleChangePreview = ({
                             onPress = {()=>{pressPreview(index)}}
 
                             appStyle = {appStyle}
+                            upd={upd}
                             previewAppStyle = {previewAppStyle}
                         />
                     }
@@ -273,7 +274,7 @@ export default StyleChangePreview = ({
                     text="apply"
                     icon = {{name: 'check-outline'}}
                     style={{flex: 1}}
-                    onPress={()=>{splashStart(themesApp.indexOf(previewAppStyle.theme))}}
+                    onPress={()=>{splashStart(themesApp.indexOf(previewAppStyle.value.theme))}}
                 />
                 <BasePressable
                     text={previewFixed? "unfixed" : "fixed"}

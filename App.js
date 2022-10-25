@@ -116,7 +116,7 @@ export default function App() {
     prepare();
   }, []);
 
-  const styleStatusBar = ThemesColorsAppList[themesApp.indexOf(appStyle.theme)].statusBar
+  const styleStatusBar = ThemesColorsAppList[themesApp.indexOf(appStyle.palette.theme)].statusBar
 
   const [splashVisible, setSplashVisible] = useState(true)
 
@@ -125,7 +125,7 @@ export default function App() {
       
       const startApp = await SplashScreen.hideAsync();
       if(startApp){ 
-        appStyle.splachLoadShow? setSplashStart(true) : null
+        appConfig.splachScreenShow? setSplashStart(true) : null
         console.log('>APP_READY_AND_RUNNING', new Date().getTime() - start )
       };
     }
@@ -161,7 +161,7 @@ export default function App() {
         hidden = {false}
         animated={true}
       />
-      {(appStyle.splachLoadShow && splashVisible) && <SplashY splashStart={splashStart} splashOut={splashOut}/>}
+      {(appConfig.splachScreenShow && splashVisible) && <SplashY splashStart={splashStart} splashOut={splashOut}/>}
     </View>
     </Provider>
   );  

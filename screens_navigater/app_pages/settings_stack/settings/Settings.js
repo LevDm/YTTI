@@ -106,11 +106,7 @@ const structure = [
                 icon:  "menu",
                 paramRedactorComponent: NavigateMenuRedactor
             },
-            {
-                param: "loadAnimation",
-                icon:  "animation-play",
-                paramRedactorComponent: LoadSplashRedactor
-            },
+            
             {
                 param: "lists",
                 icon:  "view-list",
@@ -141,6 +137,11 @@ const structure = [
                 param:"user",
                 icon:  "account",
                 paramRedactorComponent: UserRedactor
+            },
+            {
+                param: "loadAnimation",
+                icon:  "animation-play",
+                paramRedactorComponent: LoadSplashRedactor
             },
             {
                 param:"weather",
@@ -230,10 +231,10 @@ const Settings = (props) => {
     //console.log(props)
 
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
-    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
+    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
-    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
     const [previewAppStyle, setPreviewAppStyle] = useState(props.appStyle);
@@ -255,12 +256,12 @@ const Settings = (props) => {
             setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
         }
 
-        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
-            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
+        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
+            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
         }
 
-        if(ThemeSchema != jstore.appStyle.colorScheme){
-            setThemeSchema(jstore.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.colorScheme);
+        if(ThemeSchema != jstore.appStyle.palette.scheme){
+            setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
         }
 
         if (appStyle != jstore.appStyle) {
@@ -276,8 +277,8 @@ const Settings = (props) => {
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
         if(listenerColorSheme){
-            if(appStyle.colorScheme == 'auto'){
-                console.log('settings accept new color sheme', listenerColorSheme, 'used shema', appStyle.colorScheme)
+            if(appStyle.palette.scheme == 'auto'){
+                console.log('splashY accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
                 setThemeSchema(listenerColorSheme)
             }
         }
@@ -306,7 +307,7 @@ const Settings = (props) => {
     const flatCategorysListRef = useAnimatedRef(); 
     const flatListRef = useAnimatedRef(); 
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen
 
     const [accentParam, setAccentParam] = useState(0);
@@ -850,7 +851,7 @@ const Settings = (props) => {
             backgroundColor: interpolateColor(
                 animSelectorLine.value, 
                 [0.01, 0],
-                [Thema.basics.accents.primary, '#00000000']  
+                [Theme.basics.accents.primary, '#00000000']  
             ),
         }
     })
@@ -927,7 +928,7 @@ const Settings = (props) => {
             style={[
                 staticStyles.FlatListsArea,
                 {
-                    backgroundColor: Thema.basics.accents.primary,
+                    backgroundColor: Theme.basics.accents.primary,
                     //height: (Constants.statusBarHeight+1)+ 30 + 35,
                     paddingTop: (Constants.statusBarHeight+1),
                     height: (Constants.statusBarHeight+1)+itemCategoryHeight+selectorLineHeight
@@ -961,7 +962,7 @@ const Settings = (props) => {
             >
                 <ReanimatedTextInput     
                     editable = {false}
-                    style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: Thema.texts.neutrals.primary}]}
+                    style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: Theme.texts.neutrals.primary}]}
                     animatedProps={categoryText}
                 />
             </Reanimated.View>
@@ -974,7 +975,7 @@ const Settings = (props) => {
                     right: 0
                 }]}
             >
-                <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
+                <Text style = {[staticStyles.AnimatedHeaderText, {color: Theme.texts.neutrals.primary}]}>
                     {Language.app}
                 </Text>
             </Reanimated.View>
@@ -1008,7 +1009,7 @@ const Settings = (props) => {
                 {appStyle.navigationMenu.type == 'not' &&
                 <BasePressable 
                     type="i"
-                    icon={{name: "backburger", size: 30, color: Thema.texts.neutrals.primary}}
+                    icon={{name: "backburger", size: 30, color: Theme.texts.neutrals.primary}}
                     style={{
                         height: 45, 
                         width: 45, 
@@ -1018,7 +1019,7 @@ const Settings = (props) => {
                     }}
                     onPress={back}
                     android_ripple={{
-                        color: Thema.texts.neutrals.primary,
+                        color: Theme.texts.neutrals.primary,
                         borderless: true,
                         foreground: false
 
@@ -1026,7 +1027,7 @@ const Settings = (props) => {
                 />
                 }
                 {appStyle.navigationMenu.type != 'not' && <View style={{height: 45, width: 45, marginLeft: 15,}}/>}
-                <Text style = {[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary}]}>
+                <Text style = {[staticStyles.AnimatedHeaderText, {color: Theme.texts.neutrals.primary}]}>
                     {Language.HeaderTitle}
                 </Text>
             </View>
@@ -1100,7 +1101,7 @@ const Settings = (props) => {
                                     //padding: 0
                                 }}
                                 text={Language.StructureScreen.typesSettings[item.category].category}
-                                textStyle={[staticStyles.AnimatedHeaderText, {color: Thema.texts.neutrals.primary,}]}
+                                textStyle={[staticStyles.AnimatedHeaderText, {color: Theme.texts.neutrals.primary,}]}
                                 rippleColor={false}
                                 onPress={()=>{selectParametr(item, index)}}
                             />
@@ -1118,7 +1119,7 @@ const Settings = (props) => {
             >
                 <Reanimated.View 
                     style={[animStyleIndicatorLine, { 
-                        backgroundColor: Thema.icons.accents.quaternary,
+                        backgroundColor: Theme.icons.accents.quaternary,
                         position: 'absolute',
                         bottom: 0,
                         height: 4,
@@ -1154,7 +1155,7 @@ const Settings = (props) => {
                                 type={'t'}
                                 style={staticStyles.frontFLPressable}
                                 text={Language.StructureScreen.params[item.param]}
-                                textStyle={[staticStyles.frontFLText, {color: Thema.texts.neutrals.primary}]}
+                                textStyle={[staticStyles.frontFLText, {color: Theme.texts.neutrals.primary}]}
                                 rippleColor={false}
                                 onPress={()=>{selectParametr(item, index)}}
                             />
@@ -1204,7 +1205,7 @@ const Settings = (props) => {
                 >
                     <Text 
                         style = {[{
-                            color: Thema.texts.accents.primary,
+                            color: Theme.texts.accents.primary,
                             fontSize: 25,
                             fontWeight: 'bold',
                             letterSpacing: 2,
@@ -1232,7 +1233,7 @@ const Settings = (props) => {
                             appStyle.lists.shadow? staticStyles.shadow : {},
                             dynamicStyleListItems,
                             {
-                                backgroundColor: Thema.basics.grounds.primary,   
+                                backgroundColor: Theme.basics.grounds.primary,   
                                 justifyContent: 'flex-start',
                                 paddingVertical: 5,// + 10 * appStyle.borderRadius.basic/32,
                                 paddingBottom: 30
@@ -1255,8 +1256,8 @@ const Settings = (props) => {
                                 //paddingHorizontal: 5 * appStyle.borderRadius.basic/32 
                             }]}
                         >
-                            <MaterialCommunityIcons name={item.icon} size={20} color={Thema.texts.neutrals.secondary} />
-                            <Text style={[staticStyles.SLParamHeaderText, {color: Thema.texts.neutrals.secondary}]}>{redactorName}</Text>
+                            <MaterialCommunityIcons name={item.icon} size={20} color={Theme.texts.neutrals.secondary} />
+                            <Text style={[staticStyles.SLParamHeaderText, {color: Theme.texts.neutrals.secondary}]}>{redactorName}</Text>
                         </Reanimated.View>
                         {RedactorComponent != null && 
                         <RedactorComponent
@@ -1349,12 +1350,12 @@ const Settings = (props) => {
                     >
                         <BasePressable
                             type={"i"}
-                            icon={{name: iconName, size: 24, color: Thema.icons.neutrals.primary}}
+                            icon={{name: iconName, size: 24, color: Theme.icons.neutrals.primary}}
                             style={{
                                 height: appStyle.functionButton.size,
                                 width: appStyle.functionButton.size,
                                 borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: Thema.basics.accents.secondary,
+                                backgroundColor: Theme.basics.accents.secondary,
                                 shadowColor: "#000",
                                 shadowOffset: {
                                     width: 0,
@@ -1365,7 +1366,7 @@ const Settings = (props) => {
                                 elevation: 4,
                             }}
                             android_ripple={{
-                                color: Thema.icons.accents.quaternary,
+                                color: Theme.icons.accents.quaternary,
                                 borderless: true,
                                 foreground: false
                             }}

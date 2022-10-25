@@ -31,7 +31,7 @@ export default ListsRedactor = ({
     ThemeSchema,
     LanguageAppIndex  
 }) => {
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.bobberButton
 
     const [sliderValue, setSliderValue] = useState(appStyle.functionButton.size);
@@ -68,7 +68,7 @@ export default ListsRedactor = ({
             //marginBottom: 30,
         }}
     >
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
             {Language.position}
         </Text>
         <View 
@@ -83,25 +83,25 @@ export default ListsRedactor = ({
                             backgroundColor: 'transparent'
                         }}
                         android_ripple={{
-                            color: Thema.icons.accents.primary,
+                            color: Theme.icons.accents.primary,
                             borderless: true,
                             foreground: false
                         }}
-                        Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.positions[index]}</Text>}
+                        Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{Language.positions[index]}</Text>}
                         Check = {checkGroup[index]}
                         onPress = {()=>{positionButtonSetting(item, index)}}
                         BoxBorderRadius = {appStyle.borderRadius.additional}
-                        ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
+                        ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
                     />
                 )
             })}
         </View>
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary, marginTop: 15}]}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15}]}>
             {Language.size}
         </Text>
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
+            signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}
             areaStyle = {{marginHorizontal: 20}}
             minimumValue={sizeButton.min}
             maximumValue={sizeButton.max}
@@ -109,9 +109,9 @@ export default ListsRedactor = ({
             value = {sliderValue}
             onSlidingComplete = {(value)=>{settingSizeButton(value, true)}}
             onValueChange = {(value)=>{settingSizeButton(value, false)}}
-            minimumTrackTintColor = {Thema.icons.accents.tertiary}
-            maximumTrackTintColor = {Thema.icons.accents.quaternary}
-            thumbTintColor = {Thema.icons.accents.primary}
+            minimumTrackTintColor = {Theme.icons.accents.tertiary}
+            maximumTrackTintColor = {Theme.icons.accents.quaternary}
+            thumbTintColor = {Theme.icons.accents.primary}
         />
     </View>)
 }

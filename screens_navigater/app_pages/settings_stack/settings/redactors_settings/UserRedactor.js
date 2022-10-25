@@ -158,7 +158,7 @@ export default UserRedactor = ({
             justifyContent: 'space-between',
             alignItems: 'center',
             height: 60,
-            paddingLeft: !appStyle.splachLoadShow? 10 : 0
+            paddingLeft: !appConfig.splachScreenShow? 10 : 0
         }}
     >      
         <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
@@ -192,7 +192,7 @@ export default UserRedactor = ({
             primeValue={welcomeUsed}
             onChange={welcomeUsedSetting}
         />
-        {!appStyle.splachLoadShow && 
+        {!appConfig.splachScreenShow && 
         <View
             style = {{
                 width: '100%',

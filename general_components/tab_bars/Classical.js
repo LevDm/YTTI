@@ -39,7 +39,7 @@ const Classical = ({
     LanguageAppIndex,
 }) => {
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
     const tingDuration = 400
@@ -81,10 +81,10 @@ const Classical = ({
                     width: deviceWidth,
                     //position: 'absolute',
                     //bottom: 0, 
-                    backgroundColor: Thema.navigateBar.ground,
+                    backgroundColor: Theme.navigateBar.ground,
                     flexDirection: 'row',
                     borderTopWidth: 1,
-                    borderColor: Thema.navigateBar.transparentGround
+                    borderColor: Theme.navigateBar.transparentGround
                 }
             ]}
         >
@@ -138,7 +138,7 @@ const Classical = ({
                                 justifyContent: 'flex-start',
                             }
                         ]}
-                        android_ripple = {appStyle.navigationMenu.rippleEffect? {color: Thema.navigateBar.icons.active, borderless: true} : false}
+                        android_ripple = {appStyle.navigationMenu.rippleEffect? {color: Theme.navigateBar.icons.active, borderless: true} : false}
                     >
                         {isFocused && 
                             <Animated.View 
@@ -149,7 +149,7 @@ const Classical = ({
                                 }}
                                 entering={entering}
                             >
-                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Thema.navigateBar.icons.active}/>
+                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Theme.navigateBar.icons.active}/>
                                 {appStyle.navigationMenu.signatureIcons &&
                                 <Text
                                     style = {[
@@ -159,7 +159,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Thema.navigateBar.text.active
+                                            color: Theme.navigateBar.text.active
                                         }
                                     ]}
                                 >
@@ -176,7 +176,7 @@ const Classical = ({
                                     justifyContent: 'center',
                                 }}
                             >
-                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Thema.navigateBar.icons.notActive}/>
+                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.navigateBar.icons.notActive}/>
                                 {appStyle.navigationMenu.signatureIcons &&
                                 <Text
                                     style = {[
@@ -186,7 +186,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Thema.navigateBar.text.notActive
+                                            color: Theme.navigateBar.text.notActive
                                         }
                                     ]}
                                 >

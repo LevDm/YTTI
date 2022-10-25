@@ -53,7 +53,7 @@ export default LanguageRedactor = ({
     LanguageAppIndex  
 }) => {
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors
 
     const getGroup = (changeIndex = -1) => {
@@ -96,7 +96,7 @@ export default LanguageRedactor = ({
 
 
     return (<>
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
             Funcs
         </Text>
         <View
@@ -119,12 +119,12 @@ export default LanguageRedactor = ({
                     borderRadius: appStyle.borderRadius.additional,
                 }}
                 android_ripple={{
-                    color: Thema.icons.accents.primary,
+                    color: Theme.icons.accents.primary,
                     borderless: true,
                     foreground: false
                 }}
                 Item = {
-                    <Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>
+                    <Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>
                         {item}
                     </Text>
                 }
@@ -132,8 +132,8 @@ export default LanguageRedactor = ({
                 onPress = {()=>{settingFunctions(index)}}
                 BoxBorderRadius = {appStyle.borderRadius.additional}
                 ColorsChange = {{
-                    true: Thema.icons.accents.primary, 
-                    false: `${Thema.icons.accents.quaternary}00`
+                    true: Theme.icons.accents.primary, 
+                    false: `${Theme.icons.accents.quaternary}00`
                 }}
             />))}
         </View>

@@ -33,14 +33,14 @@ export default ThemeRedacor = ({
     LanguageAppIndex  
 }) => {
     
-    const [schema, setSchema] = useState(appStyle.colorScheme)
+    const [schema, setSchema] = useState(appStyle.palette.scheme)
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.themes
 
     const flatListRef = useRef()
     const scrollX = React.useRef(new Animated.Value(0)).current;
-    const [chosenThemeIndex, setChosenThemeIndex] = useState(themesApp.indexOf(appStyle.theme))
+    const [chosenThemeIndex, setChosenThemeIndex] = useState(themesApp.indexOf(appStyle.palette.theme))
 
     const itemSize = 120
 
@@ -84,8 +84,8 @@ export default ThemeRedacor = ({
                         width: itemSize,
                         position: 'absolute',
                         borderRadius: appStyle.borderRadius.additional,
-                        borderWidth: index === themesApp.indexOf(appStyle.theme)? 3 : 0,
-                        borderColor: themesColorsAppList[themesApp.indexOf(appStyle.theme)][schem].basics.accents.primary,
+                        borderWidth: index === themesApp.indexOf(appStyle.palette.theme)? 3 : 0,
+                        borderColor: themesColorsAppList[themesApp.indexOf(appStyle.palette.theme)][schem].basics.accents.primary,
                         justifyContent: 'center',
                         alignItems: 'center',
                         transform: [
@@ -110,7 +110,7 @@ export default ThemeRedacor = ({
 
     const changeThema = (themeIndex)=>{
         let newAppStyle = getNewAppStyleObject();
-        newAppStyle.theme = themesApp[themeIndex]
+        newAppStyle.palette.theme = themesApp[themeIndex]
         setPreviewAppStyle(newAppStyle)
     }
 
@@ -121,7 +121,7 @@ export default ThemeRedacor = ({
         index = (index+1) == schemes.length? 0 : index+1
         setSchema(schemes[index])
         let newAppStyle = getNewAppStyleObject();
-        newAppStyle.colorScheme = schemes[index]
+        newAppStyle.palette.scheme = schemes[index]
         setPreviewAppStyle(newAppStyle)
     }
 
@@ -139,18 +139,18 @@ export default ThemeRedacor = ({
             }}
         >
             <Text
-                style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}
+                style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}
             >
                 {Language.colorMode}
             </Text>
             <ColorShemeSwitch
                 scheme = {schema}
                 sizeIcon = {25}
-                colorIcon = {Thema.icons.neutrals.secondary}
-                invertColorIcon = {Thema.icons.neutrals.primary}
+                colorIcon = {Theme.icons.neutrals.secondary}
+                invertColorIcon = {Theme.icons.neutrals.primary}
                 text = {Language.colorsMods[schema]}
                 textStyle = {{
-                    color: Thema.texts.neutrals.secondary,
+                    color: Theme.texts.neutrals.secondary,
                     fontSize: 12,
                     fontWeight: '600',
                     fontVariant: ['small-caps']
@@ -160,7 +160,7 @@ export default ThemeRedacor = ({
                     width: 125,
                     paddingHorizontal: 10,
                     borderWidth: 2,
-                    borderColor: Thema.icons.accents.primary,
+                    borderColor: Theme.icons.accents.primary,
                     borderRadius: appStyle.borderRadius.additional
                 }}
                 switching = {switching}

@@ -26,11 +26,8 @@ export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 
 //APPERANCE
 export const defaultAppStyle = {
-    theme: "emerald",
-    colorScheme: 'auto',
-
     palette: {
-        thema: "olive",
+        theme: "olive",
         scheme: 'auto'
     },
     borderRadius: {
@@ -45,12 +42,12 @@ export const defaultAppStyle = {
         rippleEffect: true,
         drawerPosition: 'right'
     },
-    splachLoadShow: true,
     lists: {
         textSize: 14,
         proximity: 5,
         shadow: true,
-        fullWidth: false
+        fullWidth: false,
+        //horizontalProximity: 5,
     },
     functionButton: {
         position: 'right',
@@ -58,12 +55,9 @@ export const defaultAppStyle = {
     },
     modals: {
         horizontalProximity: 5,
-        //outline: true,
-        //dimOut: true,
         highlightMethods: {
             outline: false,
             dimOutDark: false,
-            //dimOutLight: false,
             gradient: false,
         }
     }
@@ -72,13 +66,11 @@ export const defaultAppStyle = {
 //CONFIGURATION
 export const defaultAppConfig = {
     languageApp: 'en',
-    //userName: '',
     user: {
         name: '',
         welcome: true
     },
     splachScreenShow: true,
-    //location: {},
     appFunctions: {
         analitic: true,
         task: true,

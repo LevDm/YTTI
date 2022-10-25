@@ -40,7 +40,7 @@ export default LanguageRedactor = ({
     LanguageAppIndex  
 }) => {
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.languages
 
     const getGroup = (type) => {
@@ -88,13 +88,13 @@ export default LanguageRedactor = ({
                         backgroundColor: 'transparent'
                     }}
                     android_ripple={{
-                        color: Thema.icons.accents.primary,
+                        color: Theme.icons.accents.primary,
                         borderless: true,
                         foreground: false
                     }}
                     Item = {
                         <Text 
-                            style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}
+                            style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}
                             numberOfLines={2}
                         >
                             {languagesAppList[index].SettingsScreen.Redactors.languages.thisLanguage}
@@ -103,7 +103,7 @@ export default LanguageRedactor = ({
                     Check = {checkGroup[index]}
                     onPress = {()=>{languageSetting(item)}}
                     BoxBorderRadius = {appStyle.borderRadius.additional}
-                    ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
+                    ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
                 />
             )
         })}

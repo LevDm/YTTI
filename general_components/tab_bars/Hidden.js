@@ -41,7 +41,7 @@ const Hidden = ({
     LanguageAppIndex,
 }) => {
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
     const tingDuration = 200
@@ -119,7 +119,7 @@ const Hidden = ({
                     
                     //width: size,
                     
-                    backgroundColor: Thema.navigateBar.transparentGround,
+                    backgroundColor: Theme.navigateBar.transparentGround,
                     borderRadius: appStyle.borderRadius.additional,
                     flexDirection: appStyle.navigationMenu.position.horizontal == 'center'?'row':'column',
                 }
@@ -188,7 +188,7 @@ const Hidden = ({
                                 //width: h
                             }
                         ]}
-                        android_ripple = {appStyle.navigationMenu.rippleEffect? {color: Thema.navigateBar.icons.active, borderless: true} : false}
+                        android_ripple = {appStyle.navigationMenu.rippleEffect? {color: Theme.navigateBar.icons.active, borderless: true} : false}
                     >
                         {isFocused && 
                             <Animated.View 
@@ -199,7 +199,7 @@ const Hidden = ({
                                 }}
                                 entering={entering}
                             >
-                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Thema.navigateBar.icons.active}/>
+                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Theme.navigateBar.icons.active}/>
                             </Animated.View>        
                         }
                         {!isFocused && 
@@ -211,7 +211,7 @@ const Hidden = ({
                                     justifyContent: 'center',
                                 }}
                             >
-                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Thema.navigateBar.icons.notActive}/>
+                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.navigateBar.icons.notActive}/>
                             </Animated.View>        
                         }
                     </AnimatedPressable>    

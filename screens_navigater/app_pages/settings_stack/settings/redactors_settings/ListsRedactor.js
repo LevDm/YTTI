@@ -31,7 +31,7 @@ export default ListsRedactor = ({
     ThemeSchema,
     LanguageAppIndex  
 }) => {
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.lists
 
 
@@ -77,10 +77,10 @@ export default ListsRedactor = ({
             //marginBottom: 30,
         }}
     >
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>{Language.textSize}</Text>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>{Language.textSize}</Text>
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}        
+            signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}        
             areaStyle = {{marginHorizontal: 20}}
             minimumValue={listsTextSize.min}
             maximumValue={listsTextSize.max}
@@ -93,14 +93,14 @@ export default ListsRedactor = ({
             onValueChange = {(value)=>{              
                 setPrewTextSize(value);
             }}
-            minimumTrackTintColor = {Thema.icons.accents.tertiary}
-            maximumTrackTintColor = {Thema.icons.accents.quaternary}
-            thumbTintColor = {Thema.icons.accents.primary}
+            minimumTrackTintColor = {Theme.icons.accents.tertiary}
+            maximumTrackTintColor = {Theme.icons.accents.quaternary}
+            thumbTintColor = {Theme.icons.accents.primary}
         />
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary, marginTop: 15}]}>{Language.proximity}</Text>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15}]}>{Language.proximity}</Text>
         <BaseSlider
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]} 
+            signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]} 
             areaStyle = {{marginHorizontal: 20}}
             minimumValue={listsProximity.min}
             maximumValue={listsProximity.max}
@@ -113,9 +113,9 @@ export default ListsRedactor = ({
             onValueChange = {(value)=>{              
                 setPrewProximity(value);
             }}
-            minimumTrackTintColor = {Thema.icons.accents.tertiary}
-            maximumTrackTintColor = {Thema.icons.accents.quaternary}
-            thumbTintColor = {Thema.icons.accents.primary}
+            minimumTrackTintColor = {Theme.icons.accents.tertiary}
+            maximumTrackTintColor = {Theme.icons.accents.quaternary}
+            thumbTintColor = {Theme.icons.accents.primary}
         />
         <View
             style = {{
@@ -127,10 +127,10 @@ export default ListsRedactor = ({
                 marginTop: 15
             }}
         >
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
                 {Language.fullWidth} {Language.fullWidthState[`${fullWidth}`]}
             </Text>
-            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
             <BaseSwitch
                 size={24}
                 style = {{
@@ -143,16 +143,16 @@ export default ListsRedactor = ({
                 thumbStyle = {{
                     borderRadius: appStyle.borderRadius.additional,
                     borderWidth: 3,
-                    borderColor: Thema.icons.accents[fullWidth?"primary" : "quaternary"],
+                    borderColor: Theme.icons.accents[fullWidth?"primary" : "quaternary"],
                 }}
                 colors={{
                     track: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary  
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary  
                     },
                     thumb: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary,
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary,
                     }
                 }}
                 primeValue={fullWidth}
@@ -169,10 +169,10 @@ export default ListsRedactor = ({
                 marginTop: 15
             }}
         >
-        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
             {Language.shadows} {Language.shadowsState[`${shadowUse}`]}
         </Text>
-        <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+        <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
         <BaseSwitch
             size={24}
             style = {{
@@ -185,16 +185,16 @@ export default ListsRedactor = ({
             thumbStyle = {{
                 borderRadius: appStyle.borderRadius.additional,
                 borderWidth: 3,
-                borderColor: Thema.icons.accents[shadowUse?"primary" : "quaternary"],
+                borderColor: Theme.icons.accents[shadowUse?"primary" : "quaternary"],
             }}
             colors={{
                 track: { 
-                    false: Thema.icons.accents.quaternary, 
-                    true: Thema.icons.accents.primary  
+                    false: Theme.icons.accents.quaternary, 
+                    true: Theme.icons.accents.primary  
                 },
                 thumb: { 
-                    false: Thema.icons.accents.quaternary, 
-                    true: Thema.icons.accents.primary, 
+                    false: Theme.icons.accents.quaternary, 
+                    true: Theme.icons.accents.primary, 
                 }
             }}
             primeValue={shadowUse}

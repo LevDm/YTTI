@@ -80,7 +80,7 @@ export default WeatherRedactor = ({
     
 }) => {
     
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.weather
 
 
@@ -372,10 +372,10 @@ export default WeatherRedactor = ({
                 height: 60
             }}
         >
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
                 {Language.used} {Language.usedState[`${weatherUsed}`]}
             </Text>
-            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
             <BaseSwitch
                 size={24}
                 style = {{
@@ -388,16 +388,16 @@ export default WeatherRedactor = ({
                 thumbStyle = {{
                     borderRadius: appStyle.borderRadius.additional,
                     borderWidth: 3,
-                    borderColor: Thema.icons.accents[weatherUsed?"primary" : "quaternary"],
+                    borderColor: Theme.icons.accents[weatherUsed?"primary" : "quaternary"],
                 }}
                 colors={{
                     track: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary  
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary  
                     },
                     thumb: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary, 
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary, 
                     }
                 }}
                 primeValue={weatherUsed}
@@ -405,7 +405,7 @@ export default WeatherRedactor = ({
             />
         </View>
         
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
             {Language.type}
         </Text>
         <View 
@@ -422,19 +422,19 @@ export default WeatherRedactor = ({
                     backgroundColor: 'transparent'
                 }}
                 android_ripple={{
-                    color: Thema.icons.accents.primary,
+                    color: Theme.icons.accents.primary,
                     borderless: true,
                     foreground: false
                 }}
-                Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.types[item]}</Text>}
+                Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{Language.types[item]}</Text>}
                 Check = {checkBoxGroup[index]}
                 onPress = {()=>{typeSetting(item, index)}}
                 BoxBorderRadius = {appStyle.borderRadius.additional}
-                ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
+                ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
             />   
             ))}
         </View>
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
             {Language.locations}
         </Text>
         <View
@@ -495,13 +495,13 @@ export default WeatherRedactor = ({
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
                             android_ripple={{
-                                color: Thema.icons.accents.primary,
+                                color: Theme.icons.accents.primary,
                                 borderless: true,
                                 foreground: false
                             }}
                             Item = {
                                 <Text 
-                                    style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}
+                                    style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}
                                 >
                                     {usersLocations[index].city}
                                 </Text>
@@ -510,8 +510,8 @@ export default WeatherRedactor = ({
                             onPress = {()=>{settingLocaion(index)}}
                             BoxBorderRadius = {appStyle.borderRadius.additional}
                             ColorsChange = {{
-                                true: Thema.icons.accents.primary, 
-                                false: `${Thema.icons.accents.quaternary}00`
+                                true: Theme.icons.accents.primary, 
+                                false: `${Theme.icons.accents.quaternary}00`
                             }}
                         />}
                         {(location && !addNewLocation) && 
@@ -520,7 +520,7 @@ export default WeatherRedactor = ({
                             icon={{
                                 name: "dots-horizontal", 
                                 size: 25, 
-                                color: Thema.icons.accents.primary
+                                color: Theme.icons.accents.primary
                             }}
                             style = {{
                                 flex: 1,
@@ -528,7 +528,7 @@ export default WeatherRedactor = ({
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
                             android_ripple={{
-                                color: Thema.icons.accents.primary,
+                                color: Theme.icons.accents.primary,
                                 borderless: true,
                                 foreground: false,
                             }}
@@ -540,7 +540,7 @@ export default WeatherRedactor = ({
                             icon={{
                                 name: "delete", 
                                 size: 25, 
-                                color: Thema.icons.accents.primary
+                                color: Theme.icons.accents.primary
                             }}
                             style = {{
                                 flex: 1,
@@ -548,7 +548,7 @@ export default WeatherRedactor = ({
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
                             android_ripple={{
-                                color: Thema.icons.accents.primary,
+                                color: Theme.icons.accents.primary,
                                 borderless: true,
                                 foreground: false,
                             }}
@@ -560,17 +560,17 @@ export default WeatherRedactor = ({
                             icon={{
                                 name: "map-marker-plus-outline", 
                                 size: 25, 
-                                color: Thema.icons.neutrals.secondary
+                                color: Theme.icons.neutrals.secondary
                             }}
                             style = {{
                                 flex: 1,
                                 backgroundColor: 'transparent',
-                                borderColor: Thema.icons.accents.primary,
+                                borderColor: Theme.icons.accents.primary,
                                 borderWidth: 2,
                                 borderRadius: appStyle.borderRadius.additional
                             }}
                             android_ripple={{
-                                color: Thema.icons.accents.primary,
+                                color: Theme.icons.accents.primary,
                                 borderless: true,
                                 foreground: false
                             }}
@@ -584,7 +584,7 @@ export default WeatherRedactor = ({
             animationType = {'fade'}
             visible = {modalVisible}
             dimOut = {appStyle.modals.highlightMethods.dimOutDark? '#00000025' : false} //appStyle.modals.highlightMethods.dimOutLight? '#ffffff25' : 
-            gradient = {appStyle.modals.highlightMethods.gradient? Thema.modals.basics.ground.tertiary : false}
+            gradient = {appStyle.modals.highlightMethods.gradient? Theme.modals.basics.ground.tertiary : false}
             outPress = {outsideModalPress}
             onShow = {onShow}
             modalStyle = {{
@@ -593,7 +593,7 @@ export default WeatherRedactor = ({
                 height: 250
             }}
             style={{
-                backgroundColor: Thema.modals.basics.ground.primary,
+                backgroundColor: Theme.modals.basics.ground.primary,
                 borderTopLeftRadius: appStyle.borderRadius.additional,
                 borderTopRightRadius: appStyle.borderRadius.additional,
                 borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
@@ -603,12 +603,12 @@ export default WeatherRedactor = ({
                 //borderRightWidth: 0,
                 //borderLeftWidth: appStyle.modals.highlightMethods.outline? (appStyle.modals.horizontalProximity? 1 : 0) : 0,
                 //borderRightWidth: appStyle.modals.highlightMethods.outline? (appStyle.modals.horizontalProximity? 1 : 0) : 0,
-                borderColor: Thema.modals.outline,
+                borderColor: Theme.modals.outline,
                 flex: 1,
                 //width: deviceWidth-2*appStyle.modals.horizontalProximity,
             }}
             thumbStyle = {{
-                backgroundColor: Thema.modals.thumb,
+                backgroundColor: Theme.modals.thumb,
                 width: 50
             }}
             snapHeights = {[250, 250]}
@@ -621,7 +621,7 @@ export default WeatherRedactor = ({
                     alignItems: 'center'
                 }}
             >
-                <Text style = {[staticStyles.boldText, {color: Thema.modals.texts.primary}]}>
+                <Text style = {[staticStyles.boldText, {color: Theme.modals.texts.primary}]}>
                     {Language[openedModal.type]}
                 </Text>
                 <View
@@ -666,7 +666,7 @@ export default WeatherRedactor = ({
                                 width: '45%',
                                 height: 150,
                                 borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: Thema.modals.basics.ground.secondary,
+                                backgroundColor: Theme.modals.basics.ground.secondary,
                                 //justifyContent: 'center',
                                 alignItems: 'center'
                             }, staticStyles.shadow]}
@@ -680,7 +680,7 @@ export default WeatherRedactor = ({
                                 }}
                                 onPress={()=>{selected(item)}}
                                 android_ripple={{
-                                    color: Thema.modals.basics.ground.tertiary,
+                                    color: Theme.modals.basics.ground.tertiary,
                                     borderless: true,
                                     foreground: false
                                 }}
@@ -694,10 +694,10 @@ export default WeatherRedactor = ({
                                         alignItems: 'center'
                                     }}
                                 >
-                                    <MaterialCommunityIcons name={iconName} size={30} color={Thema.modals.icons.primary} />
+                                    <MaterialCommunityIcons name={iconName} size={30} color={Theme.modals.icons.primary} />
                                     <Text 
                                         style = {[staticStyles.boldText, {
-                                            color: Thema.modals.texts.primary, 
+                                            color: Theme.modals.texts.primary, 
                                             textAlign: 'center',
                                         }]}
                                     >
@@ -707,7 +707,7 @@ export default WeatherRedactor = ({
                                 <Text
                                     style = {[staticStyles.boldText, 
                                         {
-                                            color: Thema.modals.texts.primary,
+                                            color: Theme.modals.texts.primary,
                                             marginTop: 20,
                                             padding: 5
                                         }
@@ -723,19 +723,19 @@ export default WeatherRedactor = ({
                                         width: '100%',
                                         height: '65%',
                                         borderRadius: appStyle.borderRadius.additional,
-                                        backgroundColor: Thema.modals.basics.ground.tertiary,
+                                        backgroundColor: Theme.modals.basics.ground.tertiary,
                                         justifyContent: 'center',
                                         alignItems: 'center'
                                     }}
                                 >
                                     {!netConnectInfo &&
-                                    <MaterialCommunityIcons name="wifi-remove" size={40} color={Thema.modals.icons.primary}/>
+                                    <MaterialCommunityIcons name="wifi-remove" size={40} color={Theme.modals.icons.primary}/>
                                     }
                                     {netConnectInfo &&
                                     <Text
                                         style = {[staticStyles.text, 
                                             {
-                                                color: Thema.modals.texts.secondary,
+                                                color: Theme.modals.texts.secondary,
                                                 textAlign: 'center'
                                             }
                                         ]}

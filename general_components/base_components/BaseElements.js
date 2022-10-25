@@ -38,11 +38,11 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import languagesAppList, {languagesApp} from "../../app_values/Languages";
 import themesColorsAppList, {themesApp} from "../../app_values/Themes";
-const Thema = themesColorsAppList[0]['light']
+const Theme = themesColorsAppList[0]['light']
 
 export const BasePressable = ({
     type = "ti",
-    icon = {name: "border-none-variant", size: 25, color: Thema.icons.neutrals.primary },
+    icon = {name: "border-none-variant", size: 25, color: Theme.icons.neutrals.primary },
     text = "Text",
     textProps = null,
     textStyle = {},
@@ -149,7 +149,7 @@ export const BasePressable = ({
                     <MaterialCommunityIcons 
                         name = {icon.name == undefined? "border-none-variant" : icon.name} 
                         size = {icon.size == undefined? 25 : icon.size} 
-                        color = {icon.color == undefined? Thema.icons.neutrals.primary : icon.color}
+                        color = {icon.color == undefined? Theme.icons.neutrals.primary : icon.color}
                     />
                     }
                 </View>
@@ -232,7 +232,7 @@ export const BaseBox = ({
     BoxBorderRadius = 12,
     style = {},
     rippleColor = '#00000080',
-    ColorsChange = {true: Thema.icons.neutrals.primary, false: Thema.icons.neutrals.secondary},
+    ColorsChange = {true: Theme.icons.neutrals.primary, false: Theme.icons.neutrals.secondary},
     Check = false,
     onLongPress,
     onPress,

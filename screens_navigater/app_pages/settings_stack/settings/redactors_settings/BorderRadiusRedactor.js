@@ -40,7 +40,7 @@ export default BorderRadiusRedactor = ({
 
     const [synchronousSlider, setSynchronousSlider] = useState(appStyle.borderRadius.basic == appStyle.borderRadius.additional);
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.fillets
 
     const settingBorderRadius = (type, value, isComplete) =>{
@@ -74,10 +74,10 @@ export default BorderRadiusRedactor = ({
                 alignItems: 'center',
             }}
         >
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
                 {Language.synhronous} {Language.synhronousState[`${synchronousSlider}`]}
             </Text>
-            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
             <BaseSwitch
                 size={24}
                 style = {{
@@ -90,16 +90,16 @@ export default BorderRadiusRedactor = ({
                 thumbStyle = {{
                     borderRadius: appStyle.borderRadius.additional,
                     borderWidth: 3,
-                    borderColor:  Thema.icons.accents[synchronousSlider?"primary":"quaternary"]
+                    borderColor:  Theme.icons.accents[synchronousSlider?"primary":"quaternary"]
                 }}
                 colors={{
                     track: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary
                     },
                     thumb: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary, 
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary, 
                     }
                 }}
                 primeValue={synchronousSlider}
@@ -117,13 +117,13 @@ export default BorderRadiusRedactor = ({
                 style = {{marginTop: 15}}
             >
                 <Text
-                    style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}
+                    style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}
                 >
                     {Language.type[item]}
                 </Text>
                 <BaseSlider
                     signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                    signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
+                    signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}
                     areaStyle = {{marginHorizontal: 20}}
                     minimumValue={borderRadiusValues.min}
                     maximumValue={borderRadiusValues.max}
@@ -131,9 +131,9 @@ export default BorderRadiusRedactor = ({
                     value = {item === 'basic'? sliderValueBasic : sliderValueAdditional}
                     onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
                     onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
-                    minimumTrackTintColor = {Thema.icons.accents.tertiary}
-                    maximumTrackTintColor = {Thema.icons.accents.quaternary}
-                    thumbTintColor = {Thema.icons.accents.primary}
+                    minimumTrackTintColor = {Theme.icons.accents.tertiary}
+                    maximumTrackTintColor = {Theme.icons.accents.quaternary}
+                    thumbTintColor = {Theme.icons.accents.primary}
                 />
             </View>
             ))}

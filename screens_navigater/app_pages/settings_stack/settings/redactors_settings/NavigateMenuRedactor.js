@@ -38,7 +38,7 @@ export default NavigateMenuRedactor = ({
     ThemeSchema,
     LanguageAppIndex  
 }) => {
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.navigationMenu
 
     const getGroup = (type) => {
@@ -170,7 +170,7 @@ export default NavigateMenuRedactor = ({
             //marginBottom: 30, 
         }}
     >
-    <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+    <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
         {Language.type}
     </Text>
     <View 
@@ -188,19 +188,19 @@ export default NavigateMenuRedactor = ({
                 backgroundColor: 'transparent'
             }}
             android_ripple={{
-                color: Thema.icons.accents.primary,
+                color: Theme.icons.accents.primary,
                 borderless: true,
                 foreground: false
             }}
-            Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>{Language.types[index]}</Text>}
+            Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{Language.types[index]}</Text>}
             Check = {checkGroup[index]}
             onPress = {()=>{checkBoxPress(item)}}
             BoxBorderRadius = {appStyle.borderRadius.additional}
-            ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
+            ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
         />
         ))}
     </View>
-    <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary, marginTop: 15,}]}>
+    <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15,}]}>
         {Language.menuParams}
     </Text>
     
@@ -222,10 +222,10 @@ export default NavigateMenuRedactor = ({
                 maxHeight: 60
             }}
         >
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
                 {Language.rippleEffect} {Language.rippleEffectState[rippleEffect]}
             </Text>
-            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
             <BaseSwitch
                 size={24}
                 style = {{
@@ -238,16 +238,16 @@ export default NavigateMenuRedactor = ({
                 thumbStyle = {{
                     borderRadius: appStyle.borderRadius.additional,
                     borderWidth: 3,
-                    borderColor: Thema.icons.accents[rippleEffect? "primary" : "quaternary"],
+                    borderColor: Theme.icons.accents[rippleEffect? "primary" : "quaternary"],
                 }}
                 colors={{
                     track: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary  
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary  
                     },
                     thumb: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary,  
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary,  
                     }
                 }}
                 primeValue={rippleEffect}
@@ -265,7 +265,7 @@ export default NavigateMenuRedactor = ({
                     maxHeight: 120,
                 }}
             >
-                <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+                <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
                     {Language.horizontalPositionDrawer}
                 </Text>
                 <View
@@ -283,15 +283,15 @@ export default NavigateMenuRedactor = ({
                             backgroundColor: 'transparent'
                         }}
                         android_ripple={{
-                            color: Thema.icons.accents.primary,
+                            color: Theme.icons.accents.primary,
                             borderless: true,
                             foreground: false
                         }}
-                        Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositionsDrawer[index]}</Text>}
+                        Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]} >{Language.horizontalPositionsDrawer[index]}</Text>}
                         Check = {drawerPosition[index]}
                         onPress = {()=>{drawerPositionSetting(item, index)}}
                         BoxBorderRadius = {appStyle.borderRadius.additional}
-                        ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
+                        ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
                     />
                     ))}
                 </View>
@@ -307,12 +307,12 @@ export default NavigateMenuRedactor = ({
                 minHeight: 55
             }}
         >
-            <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
                 {Language.verticalPosition}
             </Text>
             <BaseSlider
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}
+                signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}
                 areaStyle = {{marginHorizontal: 20}}
                 minimumValue={positionNavigateMenu.min}
                 maximumValue={positionNavigateMenu.max}
@@ -325,9 +325,9 @@ export default NavigateMenuRedactor = ({
                 onValueChange = {(value)=>{              
                     setPrewBasicVertPos(value);
                 }}
-                minimumTrackTintColor = {Thema.icons.accents.tertiary}
-                maximumTrackTintColor = {Thema.icons.accents.quaternary}
-                thumbTintColor = {Thema.icons.accents.primary}
+                minimumTrackTintColor = {Theme.icons.accents.tertiary}
+                maximumTrackTintColor = {Theme.icons.accents.quaternary}
+                thumbTintColor = {Theme.icons.accents.primary}
             />
         </Animated.View>}
 
@@ -340,7 +340,7 @@ export default NavigateMenuRedactor = ({
                 //marginTop: 15
             }}
         >
-            <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
                 {Language.horizontalPosition}
             </Text>
             <View
@@ -357,15 +357,15 @@ export default NavigateMenuRedactor = ({
                         backgroundColor: 'transparent'
                     }}
                     android_ripple={{
-                        color: Thema.icons.accents.primary,
+                        color: Theme.icons.accents.primary,
                         borderless: true,
                         foreground: false
                     }}
-                    Item = {<Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]} >{Language.horizontalPositions[index]}</Text>}
+                    Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]} >{Language.horizontalPositions[index]}</Text>}
                     Check = {checkGroupHorPos[index]}
                     onPress = {()=>{horizontalPositionSetting(item, index)}}
                     BoxBorderRadius = {appStyle.borderRadius.additional}
-                    ColorsChange = {{true: Thema.icons.accents.primary, false: Thema.icons.accents.quaternary}}
+                    ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
                 />
                 ))}
             </View>
@@ -381,12 +381,12 @@ export default NavigateMenuRedactor = ({
                 //marginTop: 15
             }}
         >
-            <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
                 {Language.height}
             </Text>
             <BaseSlider
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                signaturesStyle = {[staticStyles.signaturesText, {color: Thema.texts.neutrals.tertiary}]}        
+                signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}        
                 areaStyle = {{marginHorizontal: 20}}
                 minimumValue={heightNavigateMenu.min}
                 maximumValue={heightNavigateMenu.max}
@@ -399,9 +399,9 @@ export default NavigateMenuRedactor = ({
                 onValueChange = {(value)=>{              
                     setPrewBasicMenuHeight(value);
                 }}
-                minimumTrackTintColor = {Thema.icons.accents.tertiary}
-                maximumTrackTintColor = {Thema.icons.accents.quaternary}
-                thumbTintColor = {Thema.icons.accents.primary}
+                minimumTrackTintColor = {Theme.icons.accents.tertiary}
+                maximumTrackTintColor = {Theme.icons.accents.quaternary}
+                thumbTintColor = {Theme.icons.accents.primary}
             />
         </Animated.View>}
 
@@ -417,10 +417,10 @@ export default NavigateMenuRedactor = ({
                 maxHeight: 60
             }}
         >
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
                 {Language.signature} {Language.signatureState[signature]}
             </Text>
-            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
             <BaseSwitch
                 size={24}
                 style = {{
@@ -433,16 +433,16 @@ export default NavigateMenuRedactor = ({
                 thumbStyle = {{
                     borderRadius: appStyle.borderRadius.additional,
                     borderWidth: 3,
-                    borderColor: Thema.icons.accents[signature? "primary" : "quaternary"]  ,
+                    borderColor: Theme.icons.accents[signature? "primary" : "quaternary"]  ,
                 }}
                 colors={{
                     track: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary  
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary  
                     },
                     thumb: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary, 
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary, 
                     }
                 }}
                 primeValue={signature}

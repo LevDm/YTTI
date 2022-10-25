@@ -32,13 +32,13 @@ const Drawer = createDrawerNavigator();
 function AppDrawer(props) {
 
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
-    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
+    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
     const [appConfig, setAppConfig] = useState(props.appConfig);
     const [previewOpen, setPreviewOpen] = useState(props.previewOpen);
 
-    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
 
     store.subscribe(() => {
         let jstore = store.getState();
@@ -47,12 +47,12 @@ function AppDrawer(props) {
             setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
         }
 
-        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
-            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
+        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
+            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
         }
 
-        if(ThemeSchema != jstore.appStyle.colorScheme){
-            setThemeSchema(jstore.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.colorScheme);
+        if(ThemeSchema != jstore.appStyle.palette.scheme){
+            setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
         }
 
         if (appStyle != jstore.appStyle){
@@ -71,8 +71,8 @@ function AppDrawer(props) {
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
         if(listenerColorSheme){
-            if(appStyle.colorScheme == 'auto'){
-                console.log('drawer accept new color sheme', listenerColorSheme, 'used shema', appStyle.colorScheme)
+            if(appStyle.palette.scheme == 'auto'){
+                console.log('splashY accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
                 setThemeSchema(listenerColorSheme)
             }
         }
@@ -82,7 +82,7 @@ function AppDrawer(props) {
         setListinerColorScheme(colorScheme)
     })
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
     return (
@@ -97,7 +97,7 @@ function AppDrawer(props) {
                 drawerPosition: appStyle.navigationMenu.drawerPosition === 'left'? 'left' : 'right',
                 swipeEdgeWidth: deviceWidth/2, //(lvl3.name =='SettingsStack'? deviceWidth/4 :) 
                 drawerStyle: {
-                    backgroundColor: Thema.basics.grounds.primary,
+                    backgroundColor: Theme.basics.grounds.primary,
                 },
                 header: ({ navigation, route }) => {
                   return (

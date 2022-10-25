@@ -46,12 +46,12 @@ import Svg, { Circle, Rect, Ellipse  } from "react-native-svg";
 const SplashY = (props) => {
     const size = 180;
     const duration = 1000;
-    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
+    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
 
-    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : props.appStyle.colorScheme)
-
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
+    
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]    
     const [appConfig, setAppConfig] = useState(props.appConfig);
     const Language = languagesAppList[LanguageAppIndex]
@@ -63,12 +63,12 @@ const SplashY = (props) => {
            setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
         }
 
-        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
-            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
+        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
+            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
         }
 
-        if(ThemeSchema != jstore.appStyle.colorScheme){
-            setThemeSchema(jstore.appStyle.colorScheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.colorScheme);
+        if(ThemeSchema != jstore.appStyle.palette.scheme){
+            setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
         }
 
         if (appStyle != jstore.appStyle) {
@@ -83,8 +83,8 @@ const SplashY = (props) => {
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
         if(listenerColorSheme){
-            if(appStyle.colorScheme == 'auto'){
-                console.log('splashY accept new color sheme', listenerColorSheme, 'used shema', appStyle.colorScheme)
+            if(appStyle.palette.scheme == 'auto'){
+                console.log('splashY accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
                 setThemeSchema(listenerColorSheme)
             }
         }
@@ -94,7 +94,7 @@ const SplashY = (props) => {
         setListinerColorScheme(colorScheme)
     })
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
     //
     const [colorsApp, setColorsApp] = useState();
@@ -441,7 +441,7 @@ const SplashY = (props) => {
                     width: widthScreen,
                     height: heightScreen,
                     
-                    backgroundColor: Thema.basics.accents.primary
+                    backgroundColor: Theme.basics.accents.primary
                 },blindRight]}
             />
             <Animated.View
@@ -454,7 +454,7 @@ const SplashY = (props) => {
                     width: widthScreen,
                     height: heightScreen,
                     
-                    backgroundColor: Thema.basics.accents.primary
+                    backgroundColor: Theme.basics.accents.primary
                 },blindLeft]}
             />
             <Animated.View
@@ -466,7 +466,7 @@ const SplashY = (props) => {
                     right: 0,
                     width: sizeY,
                     height: sizeY,
-                    borderColor: Thema.basics.accents.primary
+                    borderColor: Theme.basics.accents.primary
                 },vibeRight]}
             />
             <Animated.View
@@ -478,7 +478,7 @@ const SplashY = (props) => {
                     left: 0,
                     width: sizeY,
                     height: sizeY,
-                    borderColor: Thema.basics.accents.primary
+                    borderColor: Theme.basics.accents.primary
                 },vibeLeft]}
             />
 

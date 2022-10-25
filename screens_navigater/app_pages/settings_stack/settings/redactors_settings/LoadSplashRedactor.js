@@ -28,23 +28,32 @@ export default LoadSplashRedactor = ({
     setPreviewAppStyle,
     getNewAppStyleObject,
 
+    getNewAppConfigObject,
+    appConfig,
+    r_setAppConfig,
+
     ThemeColorsAppIndex,
     ThemeSchema,
     LanguageAppIndex  
 }) => {
 
-    const [loadSplash, setLoadSplash] = useState(appStyle.splachLoadShow);
+    const [loadSplash, setLoadSplash] = useState(appConfig.splachScreenShow);
     
     const loadSplashShowSetting = () =>{
-        let newAppStyle = getNewAppStyleObject('currentStyle');
-        newAppStyle.splachLoadShow = (!loadSplash)
-        setAppStyle(newAppStyle)
-        dataRedactor("storedAppStyle", newAppStyle);
-        r_setAppStyle(newAppStyle)
-        setLoadSplash(!loadSplash)
+        //let newAppStyle = getNewAppStyleObject('currentStyle');
+        //newAppStyle.splachLoadShow = (!loadSplash)
+        //setAppStyle(newAppStyle)
+        //dataRedactor("storedAppStyle", newAppStyle);
+        //r_setAppStyle(newAppStyle)
+        //setLoadSplash(!loadSplash)
+
+        let newAppConfig = getNewAppConfigObject();
+        newAppConfig.splachScreenShow = (!loadSplash);
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
     }
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.loadAnimation
 
     return (
@@ -56,10 +65,10 @@ export default LoadSplashRedactor = ({
             height: 60
         }}
     >
-        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
             {Language.show} {Language.showState[`${loadSplash}`]}
         </Text>
-        <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+        <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
         <BaseSwitch
             size={24}
             style = {{
@@ -72,16 +81,16 @@ export default LoadSplashRedactor = ({
             thumbStyle = {{
                 borderRadius: appStyle.borderRadius.additional,
                 borderWidth: 3,
-                borderColor: Thema.icons.accents[loadSplash?"primary" : "quaternary"],
+                borderColor: Theme.icons.accents[loadSplash?"primary" : "quaternary"],
             }}
             colors={{
                 track: { 
-                    false: Thema.icons.accents.quaternary, 
-                    true: Thema.icons.accents.primary  
+                    false: Theme.icons.accents.quaternary, 
+                    true: Theme.icons.accents.primary  
                 },
                 thumb: { 
-                    false: Thema.icons.accents.quaternary, 
-                    true: Thema.icons.accents.primary, 
+                    false: Theme.icons.accents.quaternary, 
+                    true: Theme.icons.accents.primary, 
                 }
             }}
             primeValue={loadSplash}

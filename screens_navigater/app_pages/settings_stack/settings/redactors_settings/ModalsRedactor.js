@@ -45,7 +45,7 @@ export default ModalsRedactor = ({
     //    dimOut: true
 
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.modals
 
     
@@ -122,10 +122,10 @@ export default ModalsRedactor = ({
                 maxHeight: 60
             }}
         >   
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
                 {Language[`horizontalProximity`]} {Language[`horizontalProximityState`][`${horizontalProximity}`]}
             </Text>
-            <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+            <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
             <BaseSwitch
                 size={24}
                 style = {{
@@ -138,23 +138,23 @@ export default ModalsRedactor = ({
                 thumbStyle = {{
                     borderRadius: appStyle.borderRadius.additional,
                     borderWidth: 3,
-                    borderColor:  Thema.icons.accents[horizontalProximity?"primary":"quaternary"]
+                    borderColor:  Theme.icons.accents[horizontalProximity?"primary":"quaternary"]
                 }}
                 colors={{
                     track: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary
                     },
                     thumb: { 
-                        false: Thema.icons.accents.quaternary, 
-                        true: Thema.icons.accents.primary, 
+                        false: Theme.icons.accents.quaternary, 
+                        true: Theme.icons.accents.primary, 
                     }
                 }}
                 primeValue={horizontalProximity}
                 onChange={changeHorizontalProximity}
             />
         </View>    
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary, marginTop: 15}]}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15}]}>
             {Language.highlightMethods}
         </Text>
         <View
@@ -176,12 +176,12 @@ export default ModalsRedactor = ({
                         borderRadius: appStyle.borderRadius.additional,
                     }}
                     android_ripple={{
-                        color: Thema.icons.accents.primary,
+                        color: Theme.icons.accents.primary,
                         borderless: true,
                         foreground: false
                     }}
                     Item = {
-                        <Text style = {[staticStyles.listText, {color: Thema.texts.neutrals.secondary}]}>
+                        <Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>
                             {Language[item]}
                         </Text>
                     }
@@ -189,8 +189,8 @@ export default ModalsRedactor = ({
                     onPress = {()=>{settingMethods(index)}}
                     BoxBorderRadius = {appStyle.borderRadius.additional}
                     ColorsChange = {{
-                        true: Thema.icons.accents.primary, 
-                        false: `${Thema.icons.accents.quaternary}00`
+                        true: Theme.icons.accents.primary, 
+                        false: `${Theme.icons.accents.quaternary}00`
                     }}
                 />))}
         </View>

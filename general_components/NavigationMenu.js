@@ -69,7 +69,8 @@ const NavigationMenu = ({
             }
         }
         if(appStyle.navigationMenu.type == 'hidden'){
-            let left = appStyle.navigationMenu.position.horizontal == 'left'? 10 : deviceWidth - size -10
+            const marginBord = 7
+            let left = appStyle.navigationMenu.position.horizontal == 'left'? marginBord : deviceWidth - size -marginBord
             
             let top = deviceHeight - 10 - h - (deviceHeight/2) - appStyle.navigationMenu.position.vertical
             if(appStyle.navigationMenu.position.horizontal == 'center'){

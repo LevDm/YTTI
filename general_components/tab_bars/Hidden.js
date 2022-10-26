@@ -51,7 +51,7 @@ const Hidden = ({
           opacity: withTiming(1, { duration: tingDuration }),
         };
         const initialValues = {
-          opacity: 0,
+          opacity: -0.5,
         };
         return {
           initialValues,
@@ -85,10 +85,10 @@ const Hidden = ({
         if(appStyle.navigationMenu.position.horizontal != 'center'){
             size = 40
             h = (state.routes).length  * (size+ 2*margin)
-        }
+        } 
         return {
             height: withTiming( (open? 1 : 0.5)*h, {duration: duration}),
-            width: withTiming( (open? 1 : 0.4)*size, {duration: duration}),
+            width: withTiming( (open? 1 : 0.5)*size, {duration: duration}),
             transform: [
                 //{scale: withTiming( (open? 1 : 0.5), {duration: 400})},
             ]

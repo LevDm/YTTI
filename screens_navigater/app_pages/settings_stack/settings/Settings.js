@@ -250,7 +250,16 @@ const Settings = (props) => {
         //handlePresentModalPress()
     }
 
-    const [ bottomBord, setBottomBord ] = useState(props.appStyle.functionButton.size + 12 + props.appStyle.navigationMenu.height) 
+    // position wherein bobber not visible
+    const [ bottomBord, setBottomBord ] = useState(
+        props.appStyle.functionButton.size 
+        + 12.5 
+        + props.appStyle.navigationMenu.height 
+        + ((props.appStyle.navigationMenu.type == 'hidden' && props.appStyle.navigationMenu.position.horizontal == 'center' && props.appStyle.functionButton.position == 'center')? 
+            20 + interpolate(props.appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30]) 
+            : 0
+        )
+        ) 
     
     store.subscribe(() => {
         let jstore = store.getState();
@@ -269,7 +278,15 @@ const Settings = (props) => {
 
         if (appStyle != jstore.appStyle) {
             setAppStyle(jstore.appStyle);
-            setBottomBord(jstore.appStyle.functionButton.size + 12 + jstore.appStyle.navigationMenu.height);
+            setBottomBord(
+                jstore.appStyle.functionButton.size 
+                + 12.5 
+                + jstore.appStyle.navigationMenu.height
+                + ((jstore.appStyle.navigationMenu.type == 'hidden' && jstore.appStyle.navigationMenu.position.horizontal == 'center')? 
+                    20 + interpolate(jstore.appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
+                    : 0
+                )
+            );
         }
 
         if (appConfig != jstore.appConfig) {
@@ -828,10 +845,12 @@ const Settings = (props) => {
             left: ((deviceWidth-12)-buttonSize),
             right: (12)
         })
+        const bottom = interpolate(appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
+        const addBottom = (appStyle.navigationMenu.type == 'hidden' && appStyle.navigationMenu.position.horizontal == 'center' && props.appStyle.functionButton.position == 'center')? (20+bottom) : 0
         return {
             height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
             width:  withTiming(appStyle.functionButton.size, {duration: duration}),
-            bottom:  withTiming((appStyle.navigationMenu.height+12), {duration: duration}),
+            bottom:  withTiming((appStyle.navigationMenu.height+12.5+addBottom), {duration: duration}),
             right: withTiming( (position(appStyle.functionButton.size)[appStyle.functionButton.position]), {duration: duration}),
         }
     })

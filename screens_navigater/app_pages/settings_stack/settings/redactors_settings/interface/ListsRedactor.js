@@ -21,6 +21,8 @@ const deviceWidth = Dimensions.get('window').width
 //const listsProximity = {min: 1, max: 5, step: 1}
 import { listsTextSize, listsProximity } from "../../../../../../app_values/AppDefault";
 
+import commonStaticStyles, { SwitchField } from "../CommonElements";
+
 export default ListsRedactor = ({
     appStyle,
     setPreviewAppStyle,
@@ -116,124 +118,34 @@ export default ListsRedactor = ({
             maximumTrackTintColor = {Theme.icons.accents.quaternary}
             thumbTintColor = {Theme.icons.accents.primary}
         />
-        <View
+        <SwitchField
+            text = {`${Language.fullWidth} ${Language.fullWidthState[`${fullWidth}`]}`}
+            primeValue={fullWidth}
+            onChange={fullWidthChange}
             style = {{
-                flexDirection: 'row',
-                //backgroundColor: 'red',
-                justifyContent: 'space-between',
-                alignItems: 'center',
                 height: 60,
                 marginTop: 15
             }}
-        >
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
-                {Language.fullWidth} {Language.fullWidthState[`${fullWidth}`]}
-            </Text>
-            <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
-            <BaseSwitch
-                size={24}
-                style = {{
-                    right: 20,
-                    height: '100%'
-                }}
-                trackStyle={{
-                    borderRadius: appStyle.borderRadius.additional,
-                }}
-                thumbStyle = {{
-                    borderRadius: appStyle.borderRadius.additional,
-                    borderWidth: 3,
-                    borderColor: Theme.icons.accents[fullWidth?"primary" : "quaternary"],
-                }}
-                colors={{
-                    track: { 
-                        false: Theme.icons.accents.quaternary, 
-                        true: Theme.icons.accents.primary  
-                    },
-                    thumb: { 
-                        false: Theme.icons.accents.quaternary, 
-                        true: Theme.icons.accents.primary,
-                    }
-                }}
-                primeValue={fullWidth}
-                onChange={fullWidthChange}
-            />
-        </View>
-        <View
-            style = {{
-                flexDirection: 'row',
-                //backgroundColor: 'red',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                height: 60,
-                marginTop: 15
-            }}
-        >
-        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
-            {Language.shadows} {Language.shadowsState[`${shadowUse}`]}
-        </Text>
-        <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
-        <BaseSwitch
-            size={24}
-            style = {{
-                right: 20,
-                height: '100%'
-            }}
-            trackStyle={{
-                borderRadius: appStyle.borderRadius.additional,
-            }}
-            thumbStyle = {{
-                borderRadius: appStyle.borderRadius.additional,
-                borderWidth: 3,
-                borderColor: Theme.icons.accents[shadowUse?"primary" : "quaternary"],
-            }}
-            colors={{
-                track: { 
-                    false: Theme.icons.accents.quaternary, 
-                    true: Theme.icons.accents.primary  
-                },
-                thumb: { 
-                    false: Theme.icons.accents.quaternary, 
-                    true: Theme.icons.accents.primary, 
-                }
-            }}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        <SwitchField
+            text = {`${Language.shadows} ${Language.shadowsState[`${shadowUse}`]}`}
             primeValue={shadowUse}
             onChange={shadowChange}
+            style = {{
+                height: 60,
+                marginTop: 15
+            }}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
         />
-        </View>
     </View>)
 }
 
 const staticStyles = StyleSheet.create({
-    themeName: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        fontVariant: ['small-caps']
-    },
-    text: {
-        fontSize: 16, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
-    listText: {
-        marginLeft: 5,
-        fontSize: 14, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
-    signaturesText: { 
-        //fontVariant: ['small-caps'],
-        fontWeight: '400',
-        fontSize: 12,
-    },
-    switchText: {
-        textAlign: 'justify', 
-        width: '70%',
-    },
-    verticalLine: {
-        height: 45,
-        width: 1.5,
-        marginRight: 10
-    }
+
+    ...commonStaticStyles
 });

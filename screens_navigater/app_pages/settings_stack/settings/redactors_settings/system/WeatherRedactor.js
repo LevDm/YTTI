@@ -60,6 +60,8 @@ import {
     BaseModal 
 } from "../../../../../../general_components/base_components/BaseElements";
 
+import commonStaticStyles, { SwitchField } from "../CommonElements";
+
 import { weatherTypes } from "../../../../../../app_values/AppDefault";
 
 import { WEATHER_API_KEY } from "../../../../../../app_values/AppDefault";
@@ -364,47 +366,17 @@ export default WeatherRedactor = ({
     
 
     return (<>
-        <View
-            style = {{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+        <SwitchField
+            text = {`${Language.used} ${Language.usedState[`${weatherUsed}`]}`}
+            primeValue={weatherUsed}
+            onChange={weatherUsedSetting}
+            style={{
                 height: 60
             }}
-        >
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
-                {Language.used} {Language.usedState[`${weatherUsed}`]}
-            </Text>
-            <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
-            <BaseSwitch
-                size={24}
-                style = {{
-                    right: 20,
-                    height: '100%'
-                }}
-                trackStyle={{
-                    borderRadius: appStyle.borderRadius.additional
-                }}
-                thumbStyle = {{
-                    borderRadius: appStyle.borderRadius.additional,
-                    borderWidth: 3,
-                    borderColor: Theme.icons.accents[weatherUsed?"primary" : "quaternary"],
-                }}
-                colors={{
-                    track: { 
-                        false: Theme.icons.accents.quaternary, 
-                        true: Theme.icons.accents.primary  
-                    },
-                    thumb: { 
-                        false: Theme.icons.accents.quaternary, 
-                        true: Theme.icons.accents.primary, 
-                    }
-                }}
-                primeValue={weatherUsed}
-                onChange={weatherUsedSetting}
-            />
-        </View>
-        
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
         <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
             {Language.type}
         </Text>
@@ -756,39 +728,14 @@ export default WeatherRedactor = ({
 
 
 const staticStyles = StyleSheet.create({
-    text: {
-        fontSize: 16, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
+
     boldText: {
         fontSize: 16, 
         //fontVariant: ['small-caps'], 
         fontWeight: 'bold', 
         letterSpacing: 0.5
     },
-    signaturesText: {
-        //fontVariant: ['small-caps'],
-        fontWeight: '400',
-        fontSize: 12,
-    },
-    listText: {
-        marginLeft: 5,
-        fontSize: 14, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
-    switchText: {
-        textAlign: 'justify', 
-        width: '70%',
-    },
-    verticalLine: {
-        height: 45,
-        width: 1.5,
-        marginRight: 10
-    },
+
     shadow: {
         elevation: 1,
         shadowColor: "#000",
@@ -799,4 +746,5 @@ const staticStyles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4
     },
+    ...commonStaticStyles,
 });

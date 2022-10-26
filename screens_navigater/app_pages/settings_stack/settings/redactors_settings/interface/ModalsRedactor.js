@@ -21,6 +21,8 @@ import {
     BaseSlider 
 } from "../../../../../../general_components/base_components/BaseElements";
 
+import commonStaticStyles, { SwitchField } from "../CommonElements";
+
 //const borderRadiusValues = {min: 0, max: 32, step: 1}
 //import { borderRadiusValues } from "../../../../../app_values/AppDefault";
 
@@ -112,47 +114,14 @@ export default ModalsRedactor = ({
     }
 
     return (<>
-        <View
-            style = {{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                //marginTop: 15,
-                maxHeight: 60
-            }}
-        >   
-            <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
-                {Language[`horizontalProximity`]} {Language[`horizontalProximityState`][`${horizontalProximity}`]}
-            </Text>
-            <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
-            <BaseSwitch
-                size={24}
-                style = {{
-                    right: 20,
-                    height: '100%'
-                }}
-                trackStyle={{
-                    borderRadius: appStyle.borderRadius.additional,
-                }}
-                thumbStyle = {{
-                    borderRadius: appStyle.borderRadius.additional,
-                    borderWidth: 3,
-                    borderColor:  Theme.icons.accents[horizontalProximity?"primary":"quaternary"]
-                }}
-                colors={{
-                    track: { 
-                        false: Theme.icons.accents.quaternary, 
-                        true: Theme.icons.accents.primary
-                    },
-                    thumb: { 
-                        false: Theme.icons.accents.quaternary, 
-                        true: Theme.icons.accents.primary, 
-                    }
-                }}
-                primeValue={horizontalProximity}
-                onChange={changeHorizontalProximity}
-            />
-        </View>    
+        <SwitchField
+            text = {`${Language[`horizontalProximity`]} ${Language[`horizontalProximityState`][`${horizontalProximity}`]}`}
+            primeValue={horizontalProximity}
+            onChange={changeHorizontalProximity}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
         <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15}]}>
             {Language.highlightMethods}
         </Text>
@@ -197,40 +166,6 @@ export default ModalsRedactor = ({
 }
 
 const staticStyles = StyleSheet.create({
-    text: {
-        fontSize: 16, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
-    listText: {
-        //paddingLeft: 10,
-        marginLeft: 5,
-        fontSize: 14, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
-    adaptiveText: {
-        fontSize: 16, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5,
-        textAlign: 'justify', 
-        width: '70%'
-    },
-    signaturesText: {
-        //fontVariant: ['small-caps'],
-        fontWeight: '400',
-        fontSize: 12,
-    },
-    switchText: {
-        textAlign: 'justify', 
-        width: '70%',
-    },
-    verticalLine: {
-        height: 45,
-        width: 1.5,
-        marginRight: 10
-    }
+
+    ...commonStaticStyles
 });

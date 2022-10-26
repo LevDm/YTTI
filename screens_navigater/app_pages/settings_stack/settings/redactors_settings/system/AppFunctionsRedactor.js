@@ -36,6 +36,9 @@ import {
     BaseSwitch 
 } from "../../../../../../general_components/base_components/BaseElements";
 
+
+import commonStaticStyles, { SwitchField } from "../CommonElements";
+
 export default LanguageRedactor = ({
     appStyle,
     setAppStyle,
@@ -141,32 +144,6 @@ export default LanguageRedactor = ({
 }
 
 const staticStyles = StyleSheet.create({
-    languageSelector: {
-        flexDirection: 'row',
-        alignItems : 'center',
-        
-    },
-    verticalLine: {
-        height: 45,
-        width: 1.5,
-        marginRight: 10
-    },
-    switchText: {
-        textAlign: 'justify', 
-        width: '70%',
-    },
-    text: {
-        fontSize: 16, 
-        fontWeight: '400', 
-        letterSpacing: 0.5,
-    },
-    listText: {
-        marginLeft: 5,
-        fontSize: 14, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5,
-        //textAlign: 'justify',
-        width: '85%'
-    },
+    
+    ...commonStaticStyles
 });

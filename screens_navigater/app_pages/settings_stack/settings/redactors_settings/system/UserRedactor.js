@@ -38,6 +38,8 @@ import {
     BaseSwitch 
 } from "../../../../../../general_components/base_components/BaseElements";
 
+import commonStaticStyles, { SwitchField } from "../CommonElements";
+
 export default UserRedactor = ({
     appStyle,
     setAppStyle,
@@ -161,36 +163,17 @@ export default UserRedactor = ({
             //paddingLeft: !appConfig.splachScreenShow? 10 : 0
         }}
     >      
-        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
-            {Language.welcome} {Language.welcomeState[`${welcomeUsed}`]}
-        </Text>
-        <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
-        <BaseSwitch
-            size={24}
-            style = {{
-                right: 20,
-                height: '100%'
-            }}
-            trackStyle={{
-                borderRadius: appStyle.borderRadius.additional
-            }}
-            thumbStyle = {{
-                borderRadius: appStyle.borderRadius.additional,
-                borderWidth: 3,
-                borderColor: Theme.icons.accents[welcomeUsed?"primary" : "quaternary"],
-            }}
-            colors={{
-                track: { 
-                    false: Theme.icons.accents.quaternary, 
-                    true: Theme.icons.accents.primary  
-                },
-                thumb: { 
-                    false: Theme.icons.accents.quaternary, 
-                    true: Theme.icons.accents.primary, 
-                }
-            }}
+        <SwitchField
+            text = {`${Language.welcome} ${Language.welcomeState[`${welcomeUsed}`]}`}
             primeValue={welcomeUsed}
             onChange={welcomeUsedSetting}
+            style={{
+                height: 60,
+                flex: 1
+            }}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
         />
         {!appConfig.splachScreenShow && 
         <View
@@ -332,32 +315,6 @@ const BaseTextInput = ({
 }
 
 const staticStyles = StyleSheet.create({
-    languageSelector: {
-        flexDirection: 'row',
-        alignItems : 'center',
-        
-    },
-    verticalLine: {
-        height: 45,
-        width: 1.5,
-        marginRight: 10
-    },
-    switchText: {
-        textAlign: 'justify', 
-        width: '70%',
-    },
-    text: {
-        fontSize: 16, 
-        fontWeight: '400', 
-        letterSpacing: 0.5,
-    },
-    listText: {
-        marginLeft: 5,
-        fontSize: 14, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5,
-        //textAlign: 'justify',
-        width: '85%'
-    },
+
+    ...commonStaticStyles
 });

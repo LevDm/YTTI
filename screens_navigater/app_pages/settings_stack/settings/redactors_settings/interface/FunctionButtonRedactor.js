@@ -21,6 +21,8 @@ const deviceWidth = Dimensions.get('window').width
 //const valuePosition = ['left','center','right']
 import { sizeButton, valuePosition } from "../../../../../../app_values/AppDefault";
 
+import commonStaticStyles, { SwitchField } from "../CommonElements";
+
 export default ListsRedactor = ({
     appStyle,
     setPreviewAppStyle,
@@ -116,22 +118,6 @@ export default ListsRedactor = ({
 }
 
 const staticStyles = StyleSheet.create({
-    text: {
-        fontSize: 16, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
-    listText: {
-        marginLeft: 5,
-        fontSize: 14, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
-    signaturesText: { 
-        //fontVariant: ['small-caps'],
-        fontWeight: '400',
-        fontSize: 12,
-    }
+    
+    ...commonStaticStyles
 });

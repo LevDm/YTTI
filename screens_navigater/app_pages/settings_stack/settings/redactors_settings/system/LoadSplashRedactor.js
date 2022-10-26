@@ -20,6 +20,8 @@ import {
     BaseSwitch 
 } from "../../../../../../general_components/base_components/BaseElements";
 
+import commonStaticStyles, { SwitchField } from "../CommonElements";
+
 export default LoadSplashRedactor = ({
     appStyle,
     setAppStyle,
@@ -58,68 +60,21 @@ export default LoadSplashRedactor = ({
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.loadAnimation
 
     return (
-    <View
-        style = {{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+    <SwitchField
+        text = {`${Language.show} ${Language.showState[`${loadSplash}`]}`}
+        primeValue={loadSplash}
+        onChange={loadSplashShowSetting}
+        style={{
             height: 60
         }}
-    >
-        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
-            {Language.show} {Language.showState[`${loadSplash}`]}
-        </Text>
-        <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
-        <BaseSwitch
-            size={24}
-            style = {{
-                right: 20,
-                height: '100%'
-            }}
-            trackStyle={{
-                borderRadius: appStyle.borderRadius.additional
-            }}
-            thumbStyle = {{
-                borderRadius: appStyle.borderRadius.additional,
-                borderWidth: 3,
-                borderColor: Theme.icons.accents[loadSplash?"primary" : "quaternary"],
-            }}
-            colors={{
-                track: { 
-                    false: Theme.icons.accents.quaternary, 
-                    true: Theme.icons.accents.primary  
-                },
-                thumb: { 
-                    false: Theme.icons.accents.quaternary, 
-                    true: Theme.icons.accents.primary, 
-                }
-            }}
-            primeValue={loadSplash}
-            onChange={loadSplashShowSetting}
-        />
-    </View>
+        appStyle = {appStyle}
+        ThemeColorsAppIndex = {ThemeColorsAppIndex}
+        ThemeSchema = {ThemeSchema}
+    />
     )
 }
 
 const staticStyles = StyleSheet.create({
-    text: {
-        fontSize: 16, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
-    signaturesText: {
-        //fontVariant: ['small-caps'],
-        fontWeight: '400',
-        fontSize: 12,
-    },
-    switchText: {
-        textAlign: 'justify', 
-        width: '70%',
-    },
-    verticalLine: {
-        height: 45,
-        width: 1.5,
-        marginRight: 10
-    }
+
+    ...commonStaticStyles
 });

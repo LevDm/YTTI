@@ -3,10 +3,10 @@ import React, {useState, useRef, useEffect} from "react";
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 import { Appearance } from 'react-native';
 
-import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
-import nightThemesColorsAppList, {nightThemesApp} from "../../../../../app_values/ThemesNight";
 
-import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
+import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
+import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
+import nightThemesColorsAppList, {nightThemesApp} from "./../../../../../../app_values/ThemesNight";
 
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
@@ -20,7 +20,7 @@ const deviceWidth = Dimensions.get('window').width
 //<MaterialCommunityIcons name="moon-waning-crescent" size={24} color="black" />
 //<MaterialCommunityIcons name="theme-light-dark" size={24} color="black" />
 
-import ColorShemeSwitch from "../../../../../general_components/ColorShemeSwitch";
+import ColorShemeSwitch from "../../../../../../general_components/ColorShemeSwitch";
 
 export default ThemeRedacor = ({
     appStyle,

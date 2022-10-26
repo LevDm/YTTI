@@ -25,16 +25,16 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import dataRedactor from "../../../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../../../../async_data_manager/data_redactor";
 
-import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
-import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
+import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
+import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 
 import { 
     BasePressable,
     BaseBox,
     BaseSwitch 
-} from "../../../../../general_components/base_components/BaseElements";
+} from "../../../../../../general_components/base_components/BaseElements";
 
 export default LanguageRedactor = ({
     appStyle,

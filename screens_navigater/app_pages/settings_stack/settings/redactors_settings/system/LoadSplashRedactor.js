@@ -10,15 +10,15 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, {languagesApp}  from "../../../../../app_values/Languages";
-import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
-import dataRedactor from "../../../../../async_data_manager/data_redactor";
+import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
+import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
+import dataRedactor from "../../../../../../async_data_manager/data_redactor";
 
 import { 
     BasePressable,
     BaseBox,
     BaseSwitch 
-} from "../../../../../general_components/base_components/BaseElements";
+} from "../../../../../../general_components/base_components/BaseElements";
 
 export default LoadSplashRedactor = ({
     appStyle,

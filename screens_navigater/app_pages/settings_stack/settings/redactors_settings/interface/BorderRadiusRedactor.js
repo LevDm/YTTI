@@ -12,18 +12,18 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../app_values/Themes";
+import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
+import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 
 import { 
     BasePressable,
     BaseBox,
     BaseSwitch,
     BaseSlider 
-} from "../../../../../general_components/base_components/BaseElements";
+} from "../../../../../../general_components/base_components/BaseElements";
 
 //const borderRadiusValues = {min: 0, max: 32, step: 1}
-import { borderRadiusValues } from "../../../../../app_values/AppDefault";
+import { borderRadiusValues } from "../../../../../../app_values/AppDefault";
 
 export default BorderRadiusRedactor = ({
     appStyle,

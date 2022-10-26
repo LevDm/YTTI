@@ -62,17 +62,17 @@ import {
     BaseSwitch 
 } from "../../../../general_components/base_components/BaseElements";
 
-import ThemeRedacor from "./redactors_settings/ThemeRedactor";
-import BorderRadiusRedactor from "./redactors_settings/BorderRadiusRedactor";
-import NavigateMenuRedactor from "./redactors_settings/NavigateMenuRedactor";
-import LoadSplashRedactor  from "./redactors_settings/LoadSplashRedactor";
-import LanguageRedactor from "./redactors_settings/LanguageRedactor";
-import ListsRedactor from "./redactors_settings/ListsRedactor";
-import FunctionButtonRedactor from "./redactors_settings/FunctionButtonRedactor";
-import ModalsRedactor from "./redactors_settings/ModalsRedactor";
-import UserRedactor from "./redactors_settings/UserRedactor";
-import WeatherRedactor from "./redactors_settings/WeatherRedactor";
-import AppFunctionsRedactor from "./redactors_settings/AppFunctionsRedactor";
+import ThemeRedacor from "./redactors_settings/interface/ThemeRedactor";
+import BorderRadiusRedactor from "./redactors_settings/interface/BorderRadiusRedactor";
+import NavigateMenuRedactor from "./redactors_settings/interface/NavigateMenuRedactor";
+import LoadSplashRedactor  from "./redactors_settings/system/LoadSplashRedactor";
+import LanguageRedactor from "./redactors_settings/system/LanguageRedactor";
+import ListsRedactor from "./redactors_settings/interface/ListsRedactor";
+import FunctionButtonRedactor from "./redactors_settings/interface/FunctionButtonRedactor";
+import ModalsRedactor from "./redactors_settings/interface/ModalsRedactor";
+import UserRedactor from "./redactors_settings/system/UserRedactor";
+import WeatherRedactor from "./redactors_settings/system/WeatherRedactor";
+import AppFunctionsRedactor from "./redactors_settings/system/AppFunctionsRedactor";
 
 import Ohter from "./redactors_settings/ohterts";
 import StyleChangePreview from "./preview/StyleChangePreview";

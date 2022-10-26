@@ -2,15 +2,14 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import languagesAppList, {languagesApp}  from "../../../../../app_values/Languages";
-import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
-
+import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
+import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 import { 
     BasePressable,
     BaseBox,
     BaseSlider,
     BaseSwitch 
-} from "../../../../../general_components/base_components/BaseElements";
+} from "../../../../../../general_components/base_components/BaseElements";
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
@@ -20,7 +19,7 @@ const deviceWidth = Dimensions.get('window').width
 
 //const listsTextSize = {min: 10, max: 20, step: 1}
 //const listsProximity = {min: 1, max: 5, step: 1}
-import { listsTextSize, listsProximity } from "../../../../../app_values/AppDefault";
+import { listsTextSize, listsProximity } from "../../../../../../app_values/AppDefault";
 
 export default ListsRedactor = ({
     appStyle,

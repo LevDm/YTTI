@@ -48,21 +48,21 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import NetInfo from '@react-native-community/netinfo';
 
-import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
-import languagesAppList, { languagesApp } from "../../../../../app_values/Languages";
+import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
+import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 
-import dataRedactor from "../../../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../../../../async_data_manager/data_redactor";
 
 import { 
     BasePressable, 
     BaseSwitch, 
     BaseBox,
     BaseModal 
-} from "../../../../../general_components/base_components/BaseElements";
+} from "../../../../../../general_components/base_components/BaseElements";
 
-import { weatherTypes } from "../../../../../app_values/AppDefault";
+import { weatherTypes } from "../../../../../../app_values/AppDefault";
 
-import { WEATHER_API_KEY } from "../../../../../app_values/AppDefault"
+import { WEATHER_API_KEY } from "../../../../../../app_values/AppDefault";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width

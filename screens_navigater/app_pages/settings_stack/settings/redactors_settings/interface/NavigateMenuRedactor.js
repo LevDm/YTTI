@@ -10,21 +10,20 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, {languagesApp}  from "../../../../../app_values/Languages";
-import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
-
+import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
+import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 import { 
     BasePressable,
     BaseBox,
     BaseSlider,
     BaseSwitch 
-} from "../../../../../general_components/base_components/BaseElements";
+} from "../../../../../../general_components/base_components/BaseElements";
 
 //const menuTypes = ['classical','classical_animated','hidden', 'not'];
 //const positionNavigateMenu = {min: 20, max: 80, step: 5}
 //const valuePosition = ['left','center','right']
 //const heightNavigateMenu = {min: 35, max: 65, step: 5}
-import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu, drawerPositions } from "../../../../../app_values/AppDefault";
+import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu, drawerPositions } from "../../../../../../app_values/AppDefault";
 
 export default NavigateMenuRedactor = ({
     appStyle,

@@ -129,21 +129,27 @@ export const Phone = (props) => {
     )
 }
 
-export default Preview = (props, {
-    previewAppStyle,
-    appStyle,
-    setAppStyle,
-    r_setAppStyle,
-    getNewAppStyleObject,
-    LanguageStore  
-    }) => {
+export default Preview = (props) => {
+    const {
+        upd,
+        previewAppStyle,
+        appStyle,
+        setAppStyle,
+        r_setAppStyle,
+        getNewAppStyleObject,
+        LanguageStore,
+        onPress,
+        animatedValue 
+    } = props
     //console.log('preview',appStyle, previewAppStyle)
     //console.log('preview props',props.appStyle, props.previewAppStyle)
     const animatedState = useSharedValue(false)
     const duration = 400
     const scale = 2
 
-    const PreviewThemeColorsAppIndex = themesApp.indexOf(props.previewAppStyle.value.theme)
+    //const previewAppStyle0 = useSharedValue(previewAppStyle.value)
+
+    const PreviewThemeColorsAppIndex = themesApp.indexOf(previewAppStyle.value.palette.theme)
     console.log('prew',PreviewThemeColorsAppIndex)
     /*
     const [PreviewThemeColorsAppIndex, setPreviewThemeColorAppIndex] = useState(themesApp.indexOf(props.previewAppStyle.theme))
@@ -153,7 +159,7 @@ export default Preview = (props, {
         //if(newThemeIndex != PreviewThemeColorsAppIndex){setPreviewThemeColorAppIndex(newThemeIndex)}
         //console.log('preview style update')
         
-    },[props.upd])
+    },[upd])
    
     const animStyleBody = useAnimatedStyle(()=>{
  
@@ -310,10 +316,10 @@ export default Preview = (props, {
 
     useEffect(()=>{
         //console.log(props.animatedValue)
-        if(props.animatedValue != undefined && props.animatedValue != animatedState.value){
-            newAnimatedState(props.animatedValue)
+        if(animatedValue != undefined && animatedValue != animatedState.value){
+            newAnimatedState(animatedValue)
         }
-    },[props.animatedValue])
+    },[animatedValue])
 
     
 
@@ -322,7 +328,7 @@ export default Preview = (props, {
             //key = {props.key}
             animatedValue = {phoneAnimatedState}
             onPress={()=>{
-                props.onPress != undefined? props.onPress() : NaN
+                onPress != undefined? onPress() : NaN
 
                 newAnimatedState(!animatedState.value)
             }}
@@ -473,7 +479,7 @@ export default Preview = (props, {
                                     style = {[ {
                                         height: itemHeight,
                                         //zIndex: 0,
-                                        borderRadius: props.previewAppStyle.value.borderRadius.basic,
+                                        borderRadius: previewAppStyle.value.borderRadius.basic,
                                         margin: 5,
                                         padding: 10,
                                         backgroundColor: 'white',

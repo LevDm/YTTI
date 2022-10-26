@@ -242,8 +242,11 @@ const Settings = (props) => {
     const previewAppStyleA = useSharedValue(props.appStyle)
     const setPreviewAppStyleA = (newValue) => {
         //console.log('set prew new', newValue.theme)
-        previewAppStyleA.value = newValue
-        //setUpd(!upd)
+        if(newValue != previewAppStyleA.value){
+            previewAppStyleA.value = newValue
+            setUpd(!upd)
+        }
+        
         //handlePresentModalPress()
     }
 
@@ -717,13 +720,15 @@ const Settings = (props) => {
 
     const jumpPress =()=>{
         console.log('pressj')
-
+        /*
         sectListRef.current.scrollToLocation({
             itemIndex: 0,
             sectionIndex: 0,
             viewPosition: 1,
             animated: false,
         })
+        */
+        handlePresentModalPress()
     }
 
    
@@ -1290,11 +1295,6 @@ const Settings = (props) => {
                         }}
                     >
                         <Text>till all</Text>
-                        <Button
-                        onPress={handlePresentModalPress}
-                        title="Present Modal"
-                        color="black"
-                        />
                     </View>
                 )
             }}

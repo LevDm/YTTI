@@ -74,6 +74,9 @@ export default StyleChangePreview = ({
         r_setAppStyle(newAppStyle);
     }
     */
+    useEffect(()=>{
+        console.log('update preview')
+    },[upd])
 
     const setNewAppStyle = () => {
 
@@ -274,7 +277,7 @@ export default StyleChangePreview = ({
                     text="apply"
                     icon = {{name: 'check-outline'}}
                     style={{flex: 1}}
-                    onPress={()=>{splashStart(themesApp.indexOf(previewAppStyle.value.theme))}}
+                    onPress={()=>{splashStart(themesApp.indexOf(previewAppStyle.value.palette.theme))}}
                 />
                 <BasePressable
                     text={previewFixed? "unfixed" : "fixed"}

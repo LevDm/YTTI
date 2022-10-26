@@ -187,7 +187,7 @@ export default ThemeRedacor = ({
                 //console.log(event.nativeEvent.contentOffset.x/itemSize)
                 if(thisIndex != themesApp.indexOf(previewAppStyle.theme)){
                     
-                    changeThema(thisIndex)
+                    //changeThema(thisIndex)
                 }
             }}
 

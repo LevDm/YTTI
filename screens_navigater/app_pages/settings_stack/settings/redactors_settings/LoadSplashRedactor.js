@@ -45,12 +45,13 @@ export default LoadSplashRedactor = ({
         //setAppStyle(newAppStyle)
         //dataRedactor("storedAppStyle", newAppStyle);
         //r_setAppStyle(newAppStyle)
-        //setLoadSplash(!loadSplash)
+        
 
         let newAppConfig = getNewAppConfigObject();
         newAppConfig.splachScreenShow = (!loadSplash);
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
+        setLoadSplash(!loadSplash)
     }
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]

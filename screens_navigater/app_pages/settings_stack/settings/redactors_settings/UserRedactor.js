@@ -158,7 +158,7 @@ export default UserRedactor = ({
             justifyContent: 'space-between',
             alignItems: 'center',
             height: 60,
-            paddingLeft: !appConfig.splachScreenShow? 10 : 0
+            //paddingLeft: !appConfig.splachScreenShow? 10 : 0
         }}
     >      
         <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
@@ -198,6 +198,7 @@ export default UserRedactor = ({
                 width: '100%',
                 height: '100%',
                 position: 'absolute',
+                left: -5,
                 backgroundColor: '#00000025',
                 borderRadius: appStyle.borderRadius.additional
             }}

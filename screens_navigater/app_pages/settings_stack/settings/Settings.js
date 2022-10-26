@@ -795,7 +795,7 @@ const Settings = (props) => {
         return {
             opacity: withSequence(withTiming(0*accentCategory.value, {duration: 0}), withTiming(1, {duration: duration})),
             transform: [
-                {scale: withSequence(withTiming(0.9*accentCategory.value, {duration: 0}), withTiming(1, {duration: duration})),}
+                {scale: withSequence(withTiming(0.9, {duration: 0}), withTiming(1, {duration: duration})),}
             ]
         }
     })

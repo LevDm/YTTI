@@ -342,7 +342,7 @@ export const BaseSwitch = ({
         return {
             backgroundColor: withTiming((!switchValue? colors.thumb.true : colors.thumb.false), {duration: duration}),
             transform: [
-                {translateX: withTiming((size*(!switchValue? -0.5 : 0.6)), {duration: duration})}
+                {translateX: withTiming((size*(!switchValue? -0.5 : 0.8)), {duration: duration})}
             ],
         }
     },[switchValue, colors])
@@ -352,7 +352,7 @@ export const BaseSwitch = ({
             props = {props}
             style = {[{
                 minHeight: size,
-                minWidth: size*2.2,
+                minWidth: size*2.4,
                 //flex: 1,
                 //backgroundColor: 'red',
                 justifyContent: 'center',
@@ -366,7 +366,7 @@ export const BaseSwitch = ({
         <Animated.View
             style = {[{
                 height: size*0.75,
-                width: size*1.1,
+                width: size*1.3,
                 justifyContent: 'center',
             }, trackStyle, dynamicStyleTrack]}
             //onPress = {()=>{

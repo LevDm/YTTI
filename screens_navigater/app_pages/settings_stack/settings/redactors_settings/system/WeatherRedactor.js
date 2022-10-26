@@ -583,7 +583,7 @@ export default WeatherRedactor = ({
         <BaseModal
             animationType = {'fade'}
             visible = {modalVisible}
-            dimOut = {appStyle.modals.highlightMethods.dimOutDark? '#00000025' : false} //appStyle.modals.highlightMethods.dimOutLight? '#ffffff25' : 
+            dimOut = {appStyle.modals.highlightMethods.dimOutDark? Theme.specials.transparents.dim : false} 
             gradient = {appStyle.modals.highlightMethods.gradient? Theme.modals.basics.ground.tertiary : false}
             outPress = {outsideModalPress}
             onShow = {onShow}

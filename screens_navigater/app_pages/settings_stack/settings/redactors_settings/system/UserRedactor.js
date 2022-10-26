@@ -55,7 +55,7 @@ export default UserRedactor = ({
     LanguageAppIndex  
 }) => {
 
-    const Thema = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.user
 
     
@@ -91,7 +91,7 @@ export default UserRedactor = ({
             
         }]}
     >
-        <Text style = {[staticStyles.text, {color: Thema.texts.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
             {Language.accost}
         </Text>
         <BaseTextInput 
@@ -99,24 +99,24 @@ export default UserRedactor = ({
             setTextValue={setTextInputValue}
             exit={exit}
             paneleStyle={{
-                borderColor: Thema.basics.accents.primary,
-                backgroundColor: Thema.basics.grounds.primary,
+                borderColor: Theme.basics.accents.primary,
+                backgroundColor: Theme.basics.grounds.primary,
             }}
             textInputProps={{
                 style: {
-                    color: Thema.texts.neutrals.secondary,
+                    color: Theme.texts.neutrals.secondary,
                     fontSize: 16
                 },
                 
                 placeholder: Language.name,
-                placeholderTextColor: Thema.texts.neutrals.tertiary,
+                placeholderTextColor: Theme.texts.neutrals.tertiary,
                 maxLength: 70,
 
-                selectionColor: Thema.texts.accents.primary,
+                selectionColor: Theme.texts.accents.primary,
 
                 //android
                 autoComplete: ('username', 'username-new', 'name'),
-                cursorColor: Thema.texts.accents.primary
+                cursorColor: Theme.texts.accents.primary
             }}
             basePressableProps={{
                 style: {
@@ -133,13 +133,13 @@ export default UserRedactor = ({
                     //alignItems: 'center'
                 },
                 textStyle: [{
-                    color: textInputValue? Thema.texts.neutrals.secondary : Thema.texts.neutrals.tertiary,
+                    color: textInputValue? Theme.texts.neutrals.secondary : Theme.texts.neutrals.tertiary,
                 }, staticStyles.text],
                 textProps: {
                     numberOfLines: 2,
                 },
                 android_ripple: {
-                    color: Thema.icons.accents.primary,
+                    color: Theme.icons.accents.primary,
                     borderless: true,
                     foreground: false
                 },
@@ -147,7 +147,7 @@ export default UserRedactor = ({
                 icon: {
                     name: textInputValue? "account-box-outline" : "pencil-outline", 
                     size: 25, 
-                    color: textInputValue? Thema.icons.accents.primary : Thema.texts.neutrals.tertiary
+                    color: textInputValue? Theme.icons.accents.primary : Theme.texts.neutrals.tertiary
                 }
             }}
         />
@@ -161,10 +161,10 @@ export default UserRedactor = ({
             //paddingLeft: !appConfig.splachScreenShow? 10 : 0
         }}
     >      
-        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Thema.texts.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, staticStyles.switchText, {color: Theme.texts.neutrals.secondary}]}>
             {Language.welcome} {Language.welcomeState[`${welcomeUsed}`]}
         </Text>
-        <View style={[staticStyles.verticalLine, {backgroundColor: Thema.icons.accents.tertiary}]}/>
+        <View style={[staticStyles.verticalLine, {backgroundColor: Theme.icons.accents.tertiary}]}/>
         <BaseSwitch
             size={24}
             style = {{
@@ -177,16 +177,16 @@ export default UserRedactor = ({
             thumbStyle = {{
                 borderRadius: appStyle.borderRadius.additional,
                 borderWidth: 3,
-                borderColor: Thema.icons.accents[welcomeUsed?"primary" : "quaternary"],
+                borderColor: Theme.icons.accents[welcomeUsed?"primary" : "quaternary"],
             }}
             colors={{
                 track: { 
-                    false: Thema.icons.accents.quaternary, 
-                    true: Thema.icons.accents.primary  
+                    false: Theme.icons.accents.quaternary, 
+                    true: Theme.icons.accents.primary  
                 },
                 thumb: { 
-                    false: Thema.icons.accents.quaternary, 
-                    true: Thema.icons.accents.primary, 
+                    false: Theme.icons.accents.quaternary, 
+                    true: Theme.icons.accents.primary, 
                 }
             }}
             primeValue={welcomeUsed}
@@ -199,7 +199,7 @@ export default UserRedactor = ({
                 height: '100%',
                 position: 'absolute',
                 left: -5,
-                backgroundColor: '#00000025',
+                backgroundColor: Theme.specials.transparents.dim,
                 borderRadius: appStyle.borderRadius.additional
             }}
         />}

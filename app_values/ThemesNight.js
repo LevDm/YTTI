@@ -78,11 +78,11 @@ const Emerald = {
         fire: {
             primary: '#f00',
             secondary: '#a5a5a5',
+        },
+        transparents: {
+            dim: '#00000045',
         }
     },
-    transparents: {
-        
-    }
 }
 
 const Olive = {
@@ -165,11 +165,11 @@ const Olive = {
         fire: {
             primary: '#f00',
             secondary: '#a5a5a5',
+        },
+        transparents: {
+            dim: '#00000045',
         }
     },
-    transparents: {
-        
-    }
 }
 
 const Gold = {
@@ -252,11 +252,11 @@ const Gold = {
         fire: {
             primary: '#f00',
             secondary: '#a5a5a5',
+        },
+        transparents: {
+            dim: '#00000045',
         }
     },
-    transparents: {
-        
-    }
 }
 
 const nightThemesColorsAppList = [Emerald, Olive, Gold]

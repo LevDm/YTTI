@@ -228,9 +228,11 @@ export const BaseSlider = ({
 
 export const BaseBox = ({
     isCheckBox = false,
+    outerRing = true,
     Item = <Text>Text</Text>,
     BoxBorderRadius = 12,
     style = {},
+    size = 30,
     rippleColor = '#00000080',
     ColorsChange = {true: Theme.icons.neutrals.primary, false: Theme.icons.neutrals.secondary},
     Check = false,
@@ -242,7 +244,7 @@ export const BaseBox = ({
     const dynamicStylePrimaryBox = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            borderWidth: withTiming(isCheckBox? 2 :(Check? 2 : 0), {duration: duration}),
+            borderWidth: withTiming((isCheckBox && outerRing)? 2 :((Check  && outerRing)? 2 : 0), {duration: duration}),
             borderRadius: withTiming(BoxBorderRadius, {duration: duration}),
             borderColor: withTiming(ColorsChange.true, {duration: duration}),
         }
@@ -251,7 +253,7 @@ export const BaseBox = ({
     const dynamicStyleSecondaryBox = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            margin: withTiming(isCheckBox? 2 : (Check? 2 : 4), {duration: duration}),
+            margin: withTiming((isCheckBox && outerRing)? 2 : (Check? 2 : 4), {duration: duration}),
             borderRadius: withTiming((BoxBorderRadius-4), {duration: duration}),
             backgroundColor: withTiming((Check? ColorsChange.true : ColorsChange.false) , {duration: duration})
         }
@@ -262,8 +264,8 @@ export const BaseBox = ({
             props = {props}
             style = {[
                 {
-                    minHeight: 30,
-                    minWidth: 30,
+                    minHeight: size,
+                    minWidth: size,
                     //backgroundColor: '#00ff000f'    
                 }, 
                 style
@@ -292,8 +294,8 @@ export const BaseBox = ({
                     style = {[dynamicStylePrimaryBox, {
                         //borderRadius: BoxBorderRadius,
                         //borderWidth: Check? 2 : 0,
-                        minHeight: 30,
-                        minWidth: 30,
+                        minHeight: size,
+                        minWidth: size,
                         //borderColor: ColorsChange.true,
                         justifyContent: "center",
                         alignContent: 'center'

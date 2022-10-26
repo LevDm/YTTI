@@ -22,6 +22,15 @@ const deviceWidth = Dimensions.get('window').width
 
 import ColorShemeSwitch from "../../../../../../general_components/ColorShemeSwitch";
 
+import { 
+    BasePressable,
+    BaseBox,
+    BaseSlider,
+    BaseSwitch 
+} from "../../../../../../general_components/base_components/BaseElements";
+
+import commonStaticStyles from "../CommonElements";
+
 export default ThemeRedacor = ({
     appStyle,
     previewAppStyle,
@@ -53,23 +62,28 @@ export default ThemeRedacor = ({
     const renderItem = ({ item,index }) => {
 
         const inputRange = [
-            (index-2) *itemSize,
+            //(index-2) *itemSize,
             (index-1) *itemSize,
             (index)*itemSize,
             (index+1)*itemSize,
-            (index+2)*itemSize,
+            //(index+2)*itemSize,
         ]
 
         const scale = scrollX.interpolate({
             inputRange,
-            outputRange: [0.8, 0.84, 1, 0.84, 0.8]
+            outputRange: [0.95, 1, 0.95]
         })
 
-        const schem = 'light'
-
+        const opacity = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.9, 1, 0.9]
+        })
+        const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
+        const schemaThisItem = 'light'
+        const ThemeThisItem = themesColorsAppList[index][schemaThisItem]
         return (
             <Pressable
-                key = {String(item+index)} 
+                key = {String(`theme_selector_${item+index}`)} 
                 style={{
                     height: itemSize,
                     width: itemSize,
@@ -83,18 +97,20 @@ export default ThemeRedacor = ({
                         height: itemSize,
                         width: itemSize,
                         position: 'absolute',
+                        //backgroundColor: 'red',
                         borderRadius: appStyle.borderRadius.additional,
-                        borderWidth: index === themesApp.indexOf(appStyle.palette.theme)? 3 : 0,
-                        borderColor: themesColorsAppList[themesApp.indexOf(appStyle.palette.theme)][schem].basics.accents.primary,
+                        borderWidth:  3,
+                        borderColor: index === ThemeColorsAppIndex? Theme.basics.accents.primary : 'transparent',
                         justifyContent: 'center',
                         alignItems: 'center',
+                        opacity: opacity,
                         transform: [
                             {scale: scale},
                         ]
                     }}
                 >   
                     <LinearGradient
-                        colors={[themesColorsAppList[index][schem].basics.accents.primary, themesColorsAppList[index][schem].basics.accents.quaternary]}
+                        colors={[ThemeThisItem.basics.accents.primary, ThemeThisItem.basics.accents.quaternary]}
                         style={{
                             position: 'absolute',
                             height: itemSize-10,
@@ -102,8 +118,30 @@ export default ThemeRedacor = ({
                             borderRadius: appStyle.borderRadius.additional -4,
                         }}
                     />
-                    <Text style={staticStyles.themeName}>{item}</Text>
+                    <Text style={[staticStyles.themeName, {color: Theme.texts.neutrals.primary}]}>{item}</Text>
+                    <BaseBox
+                        isCheckBox={true}
+                        outerRing={false}
+                        size={20}
+                        style = {{
+                            //flex: 4,
+                            position: 'absolute',
+                            right: 10,
+                            top: 10,
+                            backgroundColor: Theme.basics.grounds.secondary,
+                            borderRadius: appStyle.borderRadius.additional,
+                        }}
+                        Item={null}
+                        Check = {index === themesApp.indexOf(previewAppStyle.palette.theme)}
+                        onPress = {()=>{}}
+                        BoxBorderRadius = {appStyle.borderRadius.additional}
+                        ColorsChange = {{
+                            true: ThemeThisItem.icons.accents.primary, 
+                            false: `${ThemeThisItem.icons.accents.quaternary}00`
+                        }}
+                    />
                 </Animated.View>
+                
             </Pressable>
         );
     };
@@ -129,18 +167,20 @@ export default ThemeRedacor = ({
     <View
         style={{
             //marginBottom: 30,
+            flex: 1, 
+            justifyContent: 'center',
+            alignItems: "center"
         }}
     >
         <View
             style = {{
+                width: '100%',
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
             }}
         >
-            <Text
-                style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}
-            >
+            <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
                 {Language.colorMode}
             </Text>
             <ColorShemeSwitch
@@ -169,7 +209,6 @@ export default ThemeRedacor = ({
         
         <Animated.FlatList
             ref = {flatListRef}
-            
             style={{
                 marginTop: 15, 
                 width: 3*itemSize 
@@ -177,20 +216,10 @@ export default ThemeRedacor = ({
             horizontal = {true}
             showsHorizontalScrollIndicator = {false}
             decelerationRate = {'fast'}
-
             onScroll = {Animated.event(
                 [{nativeEvent: {contentOffset: {x: scrollX}}}],
                 {useNativeDriver: true},
             )}
-            onMomentumScrollEnd = {(event)=>{
-                const thisIndex = Math.floor(event.nativeEvent.contentOffset.x/itemSize)
-                //console.log(event.nativeEvent.contentOffset.x/itemSize)
-                if(thisIndex != themesApp.indexOf(previewAppStyle.theme)){
-                    
-                    //changeThema(thisIndex)
-                }
-            }}
-
             contentContainerStyle = {{
                 paddingHorizontal: itemSize,
             }}
@@ -198,9 +227,7 @@ export default ThemeRedacor = ({
             getItemLayout={(data, index) => (
                 {length: itemSize, offset: itemSize * index, index: index}
             )}
-
-            initialScrollIndex = {themesApp.indexOf(appStyle.theme)}
-            
+            initialScrollIndex = {ThemeColorsAppIndex}
             data = {themesApp}         
             keyExtractor={(item, index) => {
                 return item + index
@@ -211,15 +238,11 @@ export default ThemeRedacor = ({
 }
 
 const staticStyles = StyleSheet.create({
-    text: {
-        fontSize: 16, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
     themeName: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: 'bold',
-        fontVariant: ['small-caps']
+        fontVariant: ['small-caps'],
+        //marginBottom: 10
     },
+    ...commonStaticStyles
 });

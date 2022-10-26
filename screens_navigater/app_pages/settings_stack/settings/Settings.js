@@ -793,7 +793,10 @@ const Settings = (props) => {
     const categoryStyle = useAnimatedStyle(()=>{
         const duration = 250
         return {
-            opacity: withSequence(withTiming(0*accentCategory.value, {duration: 0}), withTiming(1, {duration: duration}))
+            opacity: withSequence(withTiming(0*accentCategory.value, {duration: 0}), withTiming(1, {duration: duration})),
+            transform: [
+                {scale: withSequence(withTiming(0.9*accentCategory.value, {duration: 0}), withTiming(1, {duration: duration})),}
+            ]
         }
     })
     const categoryText = useAnimatedProps(()=>{
@@ -1208,7 +1211,7 @@ const Settings = (props) => {
                             color: Theme.texts.accents.primary,
                             fontSize: 25,
                             fontWeight: 'bold',
-                            letterSpacing: 2,
+                            letterSpacing: 4,
                             fontVariant: ['small-caps'],
                         }]}
                     >

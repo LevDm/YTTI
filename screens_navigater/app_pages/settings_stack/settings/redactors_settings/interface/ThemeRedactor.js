@@ -56,7 +56,8 @@ export default ThemeRedacor = ({
     const pressItem = (index) => {
         //console.log(index)
         flatListRef.current.scrollToIndex({index: index})
-        changeThema(index)
+        setTimeout(()=>{changeThema(index)}, 41)
+        
     }
 
     const renderItem = ({ item,index }) => {
@@ -118,17 +119,17 @@ export default ThemeRedacor = ({
                             borderRadius: appStyle.borderRadius.additional -4,
                         }}
                     />
-                    <Text style={[staticStyles.themeName, {color: Theme.texts.neutrals.primary}]}>{item}</Text>
+                    <Text style={[staticStyles.themeName, {color: ThemeThisItem.texts.neutrals.primary}]}>{item}</Text>
                     <BaseBox
                         isCheckBox={true}
                         outerRing={false}
-                        size={20}
+                        size={18.95}
                         style = {{
                             //flex: 4,
                             position: 'absolute',
-                            right: 10,
+                            left: 10,
                             top: 10,
-                            backgroundColor: Theme.basics.grounds.secondary,
+                            backgroundColor: Theme.basics.grounds.primary,
                             borderRadius: appStyle.borderRadius.additional,
                         }}
                         Item={null}

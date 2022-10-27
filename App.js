@@ -114,7 +114,7 @@ export default function App() {
   useEffect(() => {
     if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !appIsReady){
     //if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !ready){
-      console.log('>APP_ALL_DATA_LOADED', new Date().getTime() - start )
+      console.log('>APP_ALL_DATA_LOADED_' + (new Date().getTime() - start) + 'ms' )
       //if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
       //setReady(true);
       setAppIsReady(true)
@@ -148,20 +148,20 @@ export default function App() {
       const startApp = await SplashScreen.hideAsync();
       if(startApp){ 
         appConfig.splachScreenShow? setSplashStart(true) : null
-        console.log('>APP_READY_AND_RUNNING', new Date().getTime() - start )
+        console.log('>APP_READY_AND_RUNNING_'+ (new Date().getTime() - start) + 'ms' )
       };
     }
   }, [appIsReady]);
 
   useEffect(() => {
     if(!splashVisible){
-      console.log('>splash out', new Date().getTime() - start )
+      console.log('>SPLASH_OUT_|_RUNNING_FULL_TIME_'+ (new Date().getTime() - start) + 'ms' )
     }
   },[splashVisible])
 
   useEffect(() => {
     if(splashStart){
-      console.log('>splash open', new Date().getTime() - start )
+      console.log('>SPLASH_OPEN_'+ (new Date().getTime() - start) + 'ms' )
     }
   },[splashStart])
   

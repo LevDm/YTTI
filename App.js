@@ -1,15 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
 import Constants from "expo-constants";
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { AppState, StyleSheet, SafeAreaView, View } from 'react-native';
+import { AppState, StyleSheet, SafeAreaView, View, Appearance } from 'react-native';
 
-import Tabs from './screens/Navigater';
+//import Tabs from './screens/Navigater';
 
-import GestureHandlerRootView from 'react-native-gesture-handler';
+//import GestureHandlerRootView from 'react-native-gesture-handler';
 
 //"react-native":"https://github.com/expo/react-native/archive/sdk-43.0.0.tar.gz",
 
-import AppLoading from 'expo-app-loading';
+//import AppLoading from 'expo-app-loading';
 import * as SplashScreen from 'expo-splash-screen';
 //import { StatusBar } from 'expo-status-bar';
 
@@ -21,14 +21,15 @@ import store from './redux_files/store';
 import dataLoader from './async_data_manager/data_loader';
 
 
-import ThemesColorsAppList, {themesApp} from './styles/ColorsApp';
+//import ThemesColorsAppList, {themesApp} from './styles/ColorsApp';
+import themesColorsAppList, {themesApp} from './app_values/Themes';
 
-import Splash from './screens_navigater/app_loadSplash/Splash';
+//import Splash from './screens_navigater/app_loadSplash/Splash';
 import SplashY from './screens_navigater/app_loadSplash/SplashY';
 
 import 'react-native-gesture-handler';
 
-import AppStack from './screens_navigater/AppStack'
+//import AppStack from './screens_navigater/AppStack'
 
 import AppDrawer from "./screens_navigater/AppDrawer"
 const start = new Date().getTime()
@@ -60,7 +61,12 @@ export default function App() {
     }  
 
     if (jstore.loadStatusStyle) {
-      if (!loadStatusStyle){setLoadStatusStyle(true)}
+      if (!loadStatusStyle){
+        setLoadStatusStyle(true);
+        //console.log(jstore.appStyle);
+        setAppStyle(jstore.appStyle);
+        setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme)
+      }
     }
 
     if (jstore.loadStatusConfig) {
@@ -69,10 +75,25 @@ export default function App() {
 
     if (appStyle != jstore.appStyle) {
       setAppStyle(jstore.appStyle);
+      setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme)
     }
   })
+
+  const [ThemeSchema, setThemeSchema] = useState(appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : appStyle.palette.scheme)
  
-  
+  const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
+    useEffect(()=>{
+        if(listenerColorSheme){
+            if(appStyle.palette.scheme == 'auto'){
+                console.log('app accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
+                setThemeSchema(listenerColorSheme)
+            }
+        }
+    },[listenerColorSheme])
+    
+    Appearance.addChangeListener(({colorScheme})=>{
+        setListinerColorScheme(colorScheme)
+    })
 
   const finish = () => {
     console.log('>WAIT_LOAD')
@@ -116,8 +137,9 @@ export default function App() {
     prepare();
   }, []);
 
-  const styleStatusBar = ThemesColorsAppList[themesApp.indexOf(appStyle.palette.theme)].statusBar
-
+  const styleStatusBar = (themesColorsAppList[themesApp.indexOf(appStyle.palette.theme)][ThemeSchema]).statusBar
+  //console.log('styleStatusBar', styleStatusBar)
+  
   const [splashVisible, setSplashVisible] = useState(true)
 
   const onLayoutRootView = useCallback(async () => {
@@ -146,7 +168,7 @@ export default function App() {
   const splashOut = () => {
     setSplashVisible(false)
   } 
-
+  
   if (!appIsReady) {
     return null;
   }
@@ -157,7 +179,7 @@ export default function App() {
         <AppDrawer/>
       </NavigationContainer>
       <StatusBar 
-        style={styleStatusBar? styleStatusBar : 'auto'}
+        style={styleStatusBar}
         hidden = {false}
         animated={true}
       />

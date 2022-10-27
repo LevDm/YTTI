@@ -84,7 +84,7 @@ export default function App() {
   const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
         if(listenerColorSheme){
-            if(appStyle.palette.scheme == 'auto'){
+            if(appStyle.palette.scheme == 'auto' && listenerColorSheme != ThemeSchema){
                 console.log('app accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
                 setThemeSchema(listenerColorSheme)
             }

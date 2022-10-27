@@ -71,8 +71,8 @@ function AppDrawer(props) {
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
         if(listenerColorSheme){
-            if(appStyle.palette.scheme == 'auto'){
-                console.log('splashY accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
+            if(appStyle.palette.scheme == 'auto' && listenerColorSheme != ThemeSchema){
+                console.log('drawer accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
                 setThemeSchema(listenerColorSheme)
             }
         }

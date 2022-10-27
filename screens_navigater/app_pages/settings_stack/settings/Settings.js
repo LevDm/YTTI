@@ -297,8 +297,8 @@ const Settings = (props) => {
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
         if(listenerColorSheme){
-            if(appStyle.palette.scheme == 'auto'){
-                console.log('splashY accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
+            if(appStyle.palette.scheme == 'auto' && listenerColorSheme != ThemeSchema){
+                console.log('settings accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
                 setThemeSchema(listenerColorSheme)
             }
         }

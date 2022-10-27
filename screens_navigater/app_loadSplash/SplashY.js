@@ -83,7 +83,7 @@ const SplashY = (props) => {
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
         if(listenerColorSheme){
-            if(appStyle.palette.scheme == 'auto'){
+            if(appStyle.palette.scheme == 'auto' && (listenerColorSheme != ThemeSchema)){
                 console.log('splashY accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
                 setThemeSchema(listenerColorSheme)
             }
@@ -419,9 +419,9 @@ const SplashY = (props) => {
         }
     },[props.splashStart])
 
-    useEffect(()=>{
-        console.log('splash screen render')
-    },[])
+    //useEffect(()=>{
+        //console.log('splash screen render')
+    //},[])
 
     return (
         <Animated.View

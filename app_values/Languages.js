@@ -209,6 +209,12 @@ const LanguageStoreRu = {
         }
       }
     },
+    SplachScreen: {
+      night: 'Доброй ночи',
+      morning: 'Доброе утро', 
+      day: 'Добрый день', 
+      evening: 'Добрый вечер'
+    },
     TasksScreen: {
       HeaderTitle: 'задачи',
     },
@@ -440,6 +446,12 @@ const LanguageStoreEng = {
           welcomeState: {true: "on", false: "of"},
         }
       }
+    },
+    SplachScreen: {
+      night: 'Good night',
+      morning: 'Good morning',
+      day: 'Good day', 
+      evening: 'Good evening',
     },
     TasksScreen: {
       HeaderTitle: 'tasks',

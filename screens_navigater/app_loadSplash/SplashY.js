@@ -54,7 +54,7 @@ const SplashY = (props) => {
     
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]    
     const [appConfig, setAppConfig] = useState(props.appConfig);
-    const Language = languagesAppList[LanguageAppIndex]
+    
 
     store.subscribe(() => {
         let jstore = store.getState();
@@ -95,7 +95,7 @@ const SplashY = (props) => {
     })
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-
+    const Language = languagesAppList[LanguageAppIndex].SplachScreen
     //
     const [colorsApp, setColorsApp] = useState();
     
@@ -114,6 +114,7 @@ const SplashY = (props) => {
     //general anim duration
     const globalDuration = 1000 * 1
     
+    const time = ['night','morning', 'day', 'evening'][Math.floor((new Date()).getHours()/6)]
 
 
     useEffect(()=>{
@@ -588,7 +589,7 @@ const SplashY = (props) => {
                     fontSize: 30,
                 }}
             >
-                Hello, {appConfig.user.name}!
+                {Language[time]}, {appConfig.user.name}!
             </Text>} 
         </Animated.View>
     )

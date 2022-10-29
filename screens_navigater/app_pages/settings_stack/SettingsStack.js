@@ -126,7 +126,7 @@ function SettingsStack(props) {
 
     return (
         <Stack.Navigator
-            initialRouteName = {"Settings"}
+            initialRouteName = {"settings"}
             
             
             //animationTypeForReplace={"pop"}
@@ -140,9 +140,9 @@ function SettingsStack(props) {
                 },
             }}
         >
-            <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="settings" component={Settings} />
             <Stack.Screen 
-                name="Pallete" 
+                name="pallete" 
                 component={Scr} 
                 options={{
                     cardStyle: {

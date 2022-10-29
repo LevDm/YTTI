@@ -72,9 +72,15 @@ export const defaultAppConfig = {
     },
     splachScreenShow: true,
     appFunctions: {
-        analitic: true,
-        task: true,
-
+        analytics: {
+            used: true
+        },
+        tasks: {
+            used: true
+        },
+        notes: {
+            used: true
+        },
         //weather: true,
     },
     weather: {

@@ -71,7 +71,7 @@ export default LanguageRedactor = ({
             })
         } else {
             Object.keys(appConfig.appFunctions).map((item, index)=>{
-                let value = appConfig.appFunctions[item]
+                let value = appConfig.appFunctions[item].used
                 if(changeIndex != -1){
                     group.push(changeIndex == index? !value : value)
                 } else {
@@ -88,7 +88,7 @@ export default LanguageRedactor = ({
         const newGroup = getGroup(index)
         const newAppConfig = getNewAppConfigObject();
         Object.keys(newAppConfig.appFunctions).map((item, index)=>{
-            newAppConfig.appFunctions[item] = newGroup[index]
+            newAppConfig.appFunctions[item].used = newGroup[index]
         })
 
         r_setAppConfig(newAppConfig);

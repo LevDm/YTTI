@@ -21,6 +21,7 @@ import SettingsStack from './app_pages/settings_stack/SettingsStack';
 
 import Home from './app_pages/home/Home';
 import Analytic from './app_pages/analytic/Analytic';
+import Notes from './app_pages/notes/Notes';
 
 import Classical from '../general_components/tab_bars/Classical';
 
@@ -90,7 +91,7 @@ function AppDrawer(props) {
         <Drawer.Navigator 
             //useLegacyImplementation
             //detachInactiveScreens={false}
-            initialRouteName={"SettingsStack"}
+            initialRouteName={"settingsStack"}
             animationTypeForReplace={"pop"}
             screenOptions = {{
                 swipeEnabled: true,
@@ -119,9 +120,10 @@ function AppDrawer(props) {
                 }
             }}
         >
-            <Drawer.Screen name="Home" component={Home} />
-            <Drawer.Screen name="SettingsStack" component={SettingsStack} options={{swipeEnabled: false}}/>
-            <Drawer.Screen name="Analytic" component={Analytic} />
+            <Drawer.Screen name="home" component={Home} />
+            <Drawer.Screen name="settingsStack" component={SettingsStack} options={{swipeEnabled: false}}/>
+            <Drawer.Screen name="analytics" component={Analytic} />
+            <Drawer.Screen name="notes" component={Notes} />
         </Drawer.Navigator>
     );
 }

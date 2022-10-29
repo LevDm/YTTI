@@ -25,9 +25,10 @@ const Hidden = ({
     state = {
         index: 0, 
         routes: [
-            {name: "Home"},
-            {name: "SettingsStack"},
-            {name: "Analytic"},
+            {name: "home"},
+            {name: "notes"},
+            {name: "settingsStack"},
+            {name: "analytics"},
         ]
     },  
     route,
@@ -137,6 +138,14 @@ const Hidden = ({
             />}
             {open && <>
             {state.routes.map((route, index) => {
+                const page = appConfig.appFunctions[route.name]
+                if(page && !page.used){
+                    console.log('hmenu page not used', route.name, page.used)
+                    return null
+                } else {
+                    console.log('hmenu page used',route.name, page, (page != undefined) && !page.used)
+                }
+
                 const isFocused = state.index === index;
                 let size = 30;
 
@@ -145,19 +154,19 @@ const Hidden = ({
                 let screenName = ''
 
                 switch(route.name){
-                    case "Home":
+                    case "home":
                         iconsNames.focus = 'home-edit';
                         iconsNames.notFocus = 'home-edit-outline';
                         screenName = Language.TasksScreen.HeaderTitle;
                         break;
 
-                    case "Analytic":
+                    case "analytics":
                         iconsNames.focus = 'circle-slice-1';
                         iconsNames.notFocus = 'circle-outline';
                         screenName = Language.AnalyticsScreen.HeaderTitle;
                         break;
 
-                    case "SettingsStack": 
+                    case "settingsStack": 
                         iconsNames.focus = 'cog'; 
                         iconsNames.notFocus = 'cog-outline';
                         screenName = Language.SettingsScreen.HeaderTitle;

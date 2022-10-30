@@ -846,7 +846,7 @@ const Settings = (props) => {
             right: (12)
         })
         const bottom = interpolate(appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
-        const addBottom = (appStyle.navigationMenu.type == 'hidden' && appStyle.navigationMenu.position.horizontal == 'center' && props.appStyle.functionButton.position == 'center')? (20+bottom) : 0
+        const addBottom = (appStyle.navigationMenu.type == 'hidden' && appStyle.navigationMenu.position.horizontal == 'center' && appStyle.functionButton.position == 'center')? (20+bottom) : 0
         return {
             height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
             width:  withTiming(appStyle.functionButton.size, {duration: duration}),

@@ -458,6 +458,7 @@ const SplashY = (props) => {
                     backgroundColor: Theme.basics.accents.primary
                 },blindLeft]}
             />
+            {false &&
             <Animated.View
                 //entering = {enteringVibeRight} 
                 style = {[
@@ -469,7 +470,8 @@ const SplashY = (props) => {
                     height: sizeY,
                     borderColor: Theme.basics.accents.primary
                 },vibeRight]}
-            />
+            />}
+            {false &&
             <Animated.View
                 //entering = {enteringVibeLeft} 
                 style = {[
@@ -481,7 +483,7 @@ const SplashY = (props) => {
                     height: sizeY,
                     borderColor: Theme.basics.accents.primary
                 },vibeLeft]}
-            />
+            />}
 
 
             <Animated.View
@@ -580,7 +582,7 @@ const SplashY = (props) => {
             </Animated.View>}
 
 
-            {(appConfig.user.name && appConfig.user.welcome) &&
+            {(appConfig.user.welcome) &&
             <Text
                 style = {{
                     position: 'absolute',
@@ -589,7 +591,7 @@ const SplashY = (props) => {
                     fontSize: 30,
                 }}
             >
-                {Language[time]}, {appConfig.user.name}!
+                {appConfig.user.name? `${Language[time]}, ${appConfig.user.name}!` : `${Language[time]}!`}
             </Text>} 
         </Animated.View>
     )

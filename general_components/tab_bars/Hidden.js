@@ -81,15 +81,23 @@ const Hidden = ({
     const transitonArea = useAnimatedStyle(()=>{
         const duration = 200
         const margin = 10
-        let h = 40
-        let size = (state.routes).length  * (h+ 2*margin)
+        let openHeight = 40
+        let openWidth = (state.routes).length  * (openHeight+ 2*margin)
+        let closeHeight = 0.45 * openHeight
+        let closeWidth = 0.5 * openWidth
+        closeWidth = (openWidth > 100 ? 100 : openWidth)
+
         if(appStyle.navigationMenu.position.horizontal != 'center'){
-            size = 40
-            h = (state.routes).length  * (size+ 2*margin)
+            openWidth = 40
+            openHeight = (state.routes).length  * (openWidth+ 2*margin)
+            closeHeight = 0.5 * openHeight
+            closeWidth = 0.45 * openWidth
+            closeHeight = (openHeight > 100 ? 100 : openHeight)
         } 
+        
         return {
-            height: withTiming( (open? 1 : 0.5)*h, {duration: duration}),
-            width: withTiming( (open? 1 : 0.5)*size, {duration: duration}),
+            height: withTiming( (open? openHeight : closeHeight), {duration: duration}),
+            width: withTiming( (open? openWidth : closeWidth), {duration: duration}),
             transform: [
                 //{scale: withTiming( (open? 1 : 0.5), {duration: 400})},
             ]

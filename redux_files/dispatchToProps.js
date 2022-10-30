@@ -7,9 +7,17 @@ function mapDispatchToProps(component) {
             return {
                 r_setAppStyle: (value) => dispatch({type: 'SET_STYLE_APP', value: value}),
                 r_setAppConfig: (value) => dispatch({type: 'SET_CONFIG_APP', value: value}),
-                r_setPreviewOpen: (value) => dispatch({type: 'SET_PREVIEW_OPEN', value: value}),
+                r_setHideMenu: (value) => dispatch({type: 'SET_MENU_HIDE', value: value}),
             };
-        };  
+        };
+        case "PALETTE_SCREEN": return function(dispatch) {
+            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
+            return {
+                r_setAppStyle: (value) => dispatch({type: 'SET_STYLE_APP', value: value}),
+                r_setAppConfig: (value) => dispatch({type: 'SET_CONFIG_APP', value: value}),
+                r_setHideMenu: (value) => dispatch({type: 'SET_MENU_HIDE', value: value}),
+            };
+        };   
         case "TABS_NAVIGATER": return function(dispatch) {
             console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
             return {

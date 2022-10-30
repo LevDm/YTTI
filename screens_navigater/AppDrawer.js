@@ -37,7 +37,7 @@ function AppDrawer(props) {
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
     const [appConfig, setAppConfig] = useState(props.appConfig);
-    const [previewOpen, setPreviewOpen] = useState(props.previewOpen);
+    const [hideMenu, setHideMenu] = useState(props.hideMenu);
 
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
 
@@ -64,8 +64,8 @@ function AppDrawer(props) {
             setAppConfig(jstore.appConfig);
         }
 
-        if(previewOpen != jstore.previewOpen){
-            setPreviewOpen(jstore.previewOpen)
+        if(hideMenu != jstore.hideMenu){
+            setHideMenu(jstore.hideMenu)
         }
     })
     
@@ -101,13 +101,13 @@ function AppDrawer(props) {
                     backgroundColor: Theme.basics.grounds.primary,
                 },
                 header: ({ navigation, route }) => {
-                  return (
+                    return (
                     <NavigationMenu
                         state = {navigation.getState()}
                         route = {route}  
                         navigation = {navigation}
 
-                        previewOpen = {previewOpen}
+                        hideMenu = {hideMenu}
                         
                         appStyle={appStyle}
                         appConfig={appConfig}

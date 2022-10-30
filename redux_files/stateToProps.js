@@ -10,6 +10,16 @@ function mapStateToProps(component) {
                     tasks: state.tasks
                 };
             }
+        }    
+        case "PALETTE_SCREEN": {
+            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            return function(state) {
+                return {
+                    appStyle: state.appStyle,
+                    appConfig: state.appConfig,
+                    hideMenu: state.hideMenu
+                };
+            }
         }
         case "SETTINGS_SCREEN": {
             console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
@@ -17,7 +27,7 @@ function mapStateToProps(component) {
                 return {
                     appStyle: state.appStyle,
                     appConfig: state.appConfig,
-                    previewOpen: state.previewOpen
+                    hideMenu: state.hideMenu
                 };
             }
         }
@@ -53,7 +63,7 @@ function mapStateToProps(component) {
                 return {
                     appStyle: state.appStyle,
                     appConfig: state.appConfig,
-                    previewOpen: state.previewOpen
+                    hideMenu: state.hideMenu
                 };
             }
         }

@@ -20,6 +20,8 @@ const deviceWidth = Dimensions.get('window').width
 //<MaterialCommunityIcons name="moon-waning-crescent" size={24} color="black" />
 //<MaterialCommunityIcons name="theme-light-dark" size={24} color="black" />
 
+import dataRedactor from "../../../../../../async_data_manager/data_redactor";
+
 import ColorShemeSwitch from "../../../../../../general_components/ColorShemeSwitch";
 
 import { 
@@ -32,10 +34,15 @@ import {
 import commonStaticStyles from "../CommonElements";
 
 export default ThemeRedacor = ({
+    goToPalleteScreen,
+
     appStyle,
     previewAppStyle,
     setPreviewAppStyle,
     getNewAppStyleObject,
+
+    setAppStyle,
+    r_setAppStyle,
 
     ThemeColorsAppIndex,
     ThemeSchema,
@@ -55,9 +62,18 @@ export default ThemeRedacor = ({
 
     const pressItem = (index) => {
         //console.log(index)
-        flatListRef.current.scrollToIndex({index: index})
-        setTimeout(()=>{changeThema(index)}, 41)
+        changeThema(index)
         
+
+        setTimeout(()=>{
+            flatListRef.current.scrollToIndex({index: index})
+        }, 20)
+        
+    }
+
+    const longPressItem = (index) => {
+        //console.log('longPressItem')
+        goToPalleteScreen(index)
     }
 
     const renderItem = ({ item,index }) => {
@@ -79,6 +95,102 @@ export default ThemeRedacor = ({
             inputRange,
             outputRange: [0.9, 1, 0.9]
         })
+
+        if(index === 0 && item === 'custom'){
+            return (
+                <>
+                <Pressable
+                    key = {String(`theme_selector_${item+index}`)} 
+                    style={{
+                        height: itemSize,
+                        width: itemSize,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                    onPress={()=>{pressItem(index)}}
+                    onLongPress={()=>{longPressItem(index)}}
+                >   
+                    <Animated.View
+                        style={{
+                            height: itemSize,
+                            width: itemSize,
+                            position: 'absolute',
+                            //backgroundColor: 'red',
+                            borderRadius: appStyle.borderRadius.additional,
+                            borderWidth:  3,
+                            borderColor: index === ThemeColorsAppIndex? 'black' : 'transparent',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            opacity: opacity,
+                            transform: [
+                                {scale: scale},
+                            ]
+                        }}
+                    >   
+                        <View
+                            style={{
+                                position: 'absolute',
+                                backgroundColor: '#afafaf',
+                                height: itemSize-10,
+                                width: itemSize-10,
+                                borderRadius: appStyle.borderRadius.additional -4,
+                            }}
+                        />
+                        <Text style={[staticStyles.themeName, {color: 'black'}]}>{item}</Text>
+                        <BaseBox
+                            isCheckBox={true}
+                            outerRing={false}
+                            size={18.95}
+                            style = {{
+                                //flex: 4,
+                                position: 'absolute',
+                                left: 10,
+                                top: 10,
+                                backgroundColor: Theme.basics.grounds.primary,
+                                borderRadius: appStyle.borderRadius.additional,
+                            }}
+                            Item={null}
+                            Check = {index === themesApp.indexOf(previewAppStyle.palette.theme)}
+                            onPress = {()=>{}}
+                            BoxBorderRadius = {appStyle.borderRadius.additional}
+                            ColorsChange = {{
+                                true: 'black', 
+                                false: `#00000000`
+                            }}
+                        />
+                    </Animated.View>
+                    
+                </Pressable>
+                {!themesColorsAppList[0] &&
+                <BasePressable
+                    type="t"
+                    text="create"
+                    style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        backgroundColor: Theme.icons.accents.primary,
+                        width: itemSize-10,
+                        marginHorizontal: 5,
+                        borderRadius: appStyle.borderRadius.additional
+                    }}
+                    textStyle={[staticStyles.themeName, {
+                        color: Theme.texts.neutrals.primary,
+                        fontWeight: '400'
+                    }]}
+                    android_ripple={{
+                        color: Theme.icons.accents.primary,
+                        borderless: true,
+                        foreground: false
+                    }}
+                    onPress={createCustomTheme}
+                />
+                }
+                </>
+            )
+        } else {
+
+        
+
         const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
         const schemaThisItem = 'light'
         const ThemeThisItem = themesColorsAppList[index][schemaThisItem]
@@ -92,6 +204,7 @@ export default ThemeRedacor = ({
                     alignItems: 'center'
                 }}
                 onPress={()=>{pressItem(index)}}
+                onLongPress={()=>{longPressItem(index)}}
             >   
                 <Animated.View
                     style={{
@@ -144,13 +257,38 @@ export default ThemeRedacor = ({
                 </Animated.View>
                 
             </Pressable>
-        );
+        );}
     };
 
     const changeThema = (themeIndex)=>{
-        let newAppStyle = getNewAppStyleObject();
-        newAppStyle.palette.theme = themesApp[themeIndex]
-        setPreviewAppStyle(newAppStyle)
+        if(themeIndex != 0){
+            let newAppStyle = getNewAppStyleObject();
+            newAppStyle.palette.theme = themesApp[themeIndex]
+            setPreviewAppStyle(newAppStyle)
+        } else {
+            if(!themesColorsAppList[0]){
+                console.log('not custom theme')
+            } else {
+                console.log('custom theme ok')
+                let newAppStyle = getNewAppStyleObject();
+                newAppStyle.palette.theme = themesApp[themeIndex]
+                setPreviewAppStyle(newAppStyle)
+            }
+        }
+        
+    }
+
+    const createCustomTheme = ()=>{
+        console.log('custom theme create')
+        let newAppStyle = getNewAppStyleObject('currentStyle')
+        newAppStyle.customTheme = themesColorsAppList[2]
+        themesColorsAppList.splice(0,1,themesColorsAppList[2])
+        //themesColorsAppList[0] = themesColorsAppList[2]
+
+        setAppStyle(newAppStyle);
+        r_setAppStyle(newAppStyle);
+        //dataRedactor("storedAppStyle",newAppStyle);
+        
     }
 
     
@@ -211,8 +349,10 @@ export default ThemeRedacor = ({
         <Animated.FlatList
             ref = {flatListRef}
             style={{
-                marginTop: 15, 
-                width: 3*itemSize 
+                marginTop: 15,
+                width: 3*itemSize,
+                height: itemSize+30,
+                //backgroundColor: 'red' 
             }}
             horizontal = {true}
             showsHorizontalScrollIndicator = {false}

@@ -265,6 +265,7 @@ const Gold = {
 import nightThemesColorsAppList from "./ThemesNight"
 
 const themesColorsAppList = [
+    null,
     {
         light: Emerald,
         dark: nightThemesColorsAppList[0]
@@ -281,4 +282,4 @@ const themesColorsAppList = [
 
 const themesColorsAppList0 = [Emerald, Olive, Gold]
 export default themesColorsAppList;
-export const themesApp = ["emerald", "olive", "gold"]; 
+export const themesApp = ["custom","emerald", "olive", "gold"]; 

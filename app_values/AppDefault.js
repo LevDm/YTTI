@@ -30,6 +30,7 @@ export const defaultAppStyle = {
         theme: "olive",
         scheme: 'auto'
     },
+    customTheme: undefined,
     borderRadius: {
         basic: 12, 
         additional: 12

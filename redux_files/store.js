@@ -64,7 +64,7 @@ const initialState = {
 
     languageApp: 'en',
     splash: false,
-    previewOpen: false
+    hideMenu: false
 }
 
 const reducer = (state=initialState, action) => {
@@ -91,9 +91,9 @@ const reducer = (state=initialState, action) => {
         }
 
         //variables
-        case 'SET_PREVIEW_OPEN': {
+        case 'SET_MENU_HIDE': {
             console.log('>'+action.type+'_'+(`${action.value}`).toUpperCase())
-            initialState.previewOpen = action.value
+            initialState.hideMenu = action.value
             return initialState
         }
 

@@ -13,6 +13,7 @@ import themesColorsAppList, { themesApp } from '../../../app_values/Themes';
 import languagesAppList, { languagesApp } from "../../../app_values/Languages";
 
 import Settings from './settings/Settings';
+import Palette from './palette/Palette';
 
 const Scr = ({ navigation, route }) => {
     const go = ()=> {
@@ -142,12 +143,13 @@ function SettingsStack(props) {
         >
             <Stack.Screen name="settings" component={Settings} />
             <Stack.Screen 
-                name="pallete" 
-                component={Scr} 
+                name="palette" 
+                component={Palette} 
                 options={{
-                    cardStyle: {
-                        backgroundColor: 'tomato',
-                    },
+                    //headerShown: true
+                    //cardStyle: {
+                    //    backgroundColor: 'tomato',
+                    //},
                 }}
                 
             />

@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import ThemesColorsAppList from '../styles/ColorsApp';
 import store from '../redux_files/store';
 import dataCleaner from './data_cleaner';
+
+import themesColorsAppList from '../app_values/Themes';
 
 const dataLoader = ()  => {
   console.log('>ASYNC_LOADING_APP_DATA>')
@@ -32,11 +33,17 @@ const dataLoader = ()  => {
   }).catch((error) => console.log(error));
 
   AsyncStorage.getItem("storedAppStyle").then(data =>{
-    //data = String(null) //hard-reset
+    data = String(null) //hard-reset
     if (data !== String(null) && data !== null){
       console.log('>>LOAD_STYLE')
       let styleData = JSON.parse(data)
       console.log(styleData)
+      
+      if(styleData.customTheme){
+        console.log('>>FINDED_CUSTOM_THEME')
+        //themesColorsAppList.splice(0,1, styleData.customTheme)
+      }
+
       store.dispatch({type: 'SET_STYLE_APP', value: styleData})
       store.dispatch({type: 'SET_LOAD_STATUS_STYLE_APP', value: true})
     } else {

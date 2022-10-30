@@ -447,11 +447,11 @@ const Settings = (props) => {
 
             //setSplashTheme(themeIndex);
             //setSplashVisible(true);
-            splashOut()    
+            applyAppStyle()    
         //}
     }
 
-    const splashOut = ()=>{
+    const applyAppStyle = ()=>{
         let newAppStyle = previewAppStyleA.value
         //console.log('fine ',newAppStyle)
         setAppStyle(newAppStyle)
@@ -802,7 +802,7 @@ const Settings = (props) => {
     const applyPress =()=>{
         console.log('pressa')
         
-        splashOut()
+        applyAppStyle()
         //splashStart(previewAppStyle.theme, themesApp.indexOf(previewAppStyle.theme));
     }  
     
@@ -857,6 +857,11 @@ const Settings = (props) => {
 
     const back = () => {
         props.navigation.goBack()
+    }
+    const goToPalleteScreen = (index = 0) => {
+        props.r_setHideMenu(true)
+        props.navigation.navigate('palette', {themeIndex: index})
+
     }
 
     
@@ -935,12 +940,12 @@ const Settings = (props) => {
     // callbacks
     const handlePresentModalPress = useCallback(() => {
         bottomSheetModalRef.current?.present();
-        props.r_setPreviewOpen(true)
+        props.r_setHideMenu(true)
     }, []);
     const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
         if(index === -1){
-            props.r_setPreviewOpen(false)
+            props.r_setHideMenu(false)
         }
     }, []);
 
@@ -1283,6 +1288,9 @@ const Settings = (props) => {
                         </Reanimated.View>
                         {RedactorComponent != null && 
                         <RedactorComponent
+                            //for themes redactor
+                            goToPalleteScreen = {goToPalleteScreen}
+
                             appStyle={appStyle}
                             setAppStyle={setAppStyle}
                             r_setAppStyle={props.r_setAppStyle}
@@ -1399,7 +1407,7 @@ const Settings = (props) => {
             theme={splashTheme}
             splashVisible = {splashVisible} 
             setSplashVisible = {setSplashVisible} 
-            splashOut = {splashOut}
+            splashOut = {applyAppStyle}
         />
         <BottomSheetModalProvider>
         <BottomSheetModal

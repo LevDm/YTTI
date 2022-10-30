@@ -35,7 +35,8 @@ import themesColorsAppList, { themesApp } from "../../../../../../app_values/The
 import { 
     BasePressable,
     BaseBox,
-    BaseSwitch 
+    BaseSwitch,
+    BaseTextInput 
 } from "../../../../../../general_components/base_components/BaseElements";
 
 import commonStaticStyles, { SwitchField } from "../CommonElements";
@@ -64,11 +65,11 @@ export default UserRedactor = ({
     const [textInputValue, setTextInputValue] = useState(appConfig.user.name? appConfig.user.name : null)
 
     const exit = ()=>{
-        console.log(textInputValue)
+        console.log('>>User name input:',textInputValue)
 
         let newAppConfig = getNewAppConfigObject();
         //console.log('this',newAppConfig)
-        newAppConfig.user.name = textInputValue;
+        newAppConfig.user.name = typeof textInputValue === 'string'? textInputValue : '';
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
     }
@@ -188,130 +189,6 @@ export default UserRedactor = ({
         />}
     </View>
     </>)
-}
-
-const BaseTextInput = ({
-    //generals
-    textValue,
-    setTextValue,
-
-    exit,
-    enter,
-    focus,
-
-    //panele
-    paneleStyle,
-    //text input
-    textInputProps,
-    //pressable
-    basePressableProps,
-}) => {
-    const [openState, setOpenState] = useState(false)
-    const [textInputValue, setTextInputValue] = useState(null)
-    
-    const texInputref = useRef()
-
-    const [keyboardVisible, setKeyboardVisible] = useState(false);
-    useEffect(() => {
-        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {setKeyboardVisible(true);});
-        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {setKeyboardVisible(false);});
-
-        return () => {
-            showSubscription.remove();
-            hideSubscription.remove();
-        };
-    }, []);
-
-    useEffect(()=>{
-        if(openState){
-            setTimeout(()=>{
-                texInputref.current.focus()
-            }, 100) 
-        }
-    },[openState])
-
-    useEffect(()=>{
-        if(!keyboardVisible){
-            openState ? onExit() : null
-        }
-    },[keyboardVisible])
-
-    const onFocus = () => {
-        setOpenState(true)
-        focus? focus() : null
-    }
-    
-    const onEnter =()=> {
-        
-        enter? enter() : null
-    }
-
-    const onExit =()=> {
-
-        setOpenState(false)
-        exit? exit() : null
-    }
-
-    return (
-        <>
-        <Modal
-            visible={openState}
-            transparent = {true}
-        >
-            <View
-                style={[{
-                    position: 'absolute',
-                    height: 50,
-                    width: '100%',
-                    bottom: 0,
-                    borderTopWidth: 1,
-                    borderColor: 'grey',
-                    backgroundColor: 'white',
-                    paddingHorizontal: 20
-                }, paneleStyle]}
-            >
-                <TextInput
-                    ref={texInputref}
-
-                    //all props
-                    {...textInputProps}
-
-                    style={[{
-                        flex: 1,
-                        color: 'black',
-                        fontSize: 16
-                    }, textInputProps.style]}
-
-                    onSubmitEditing={onEnter}
-                    onEndEditing={onExit}
-                    placeholder={textInputProps.placeholder}
-                    placeholderTextColor = {textInputProps.placeholderTextColor}
-                    maxLength={textInputProps.maxLength}
-                    defaultValue={textValue}
-                    selectTextOnFocus={true}
-                    onChangeText={(text)=>{
-                        setTextValue(text)
-                    }}
-                    
-                    selectionColor = {textInputProps.selectionColor}
-                    
-                    //android
-                    autoComplete={textInputProps.autoComplete}
-                    cursorColor={textInputProps.cursorColor}            
-                />
-            </View>
-        </Modal>
-        <BasePressable
-            type="t"
-
-            //all props
-            {...basePressableProps}
-
-            text={textValue? textValue : textInputProps.placeholder}
-            onPress={onFocus}
-        />
-        </>
-    )
 }
 
 const staticStyles = StyleSheet.create({

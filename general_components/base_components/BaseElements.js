@@ -11,7 +11,9 @@ import {
     Text, 
     Pressable, 
     View,
-    Modal
+    Modal,
+    Keyboard,
+    TextInput,
 } from 'react-native';
 
 import Slider from "@react-native-community/slider";
@@ -558,3 +560,127 @@ const staticStyles = StyleSheet.create({
         fontSize: 20,
     }
 });
+
+
+export const BaseTextInput = ({
+    //generals
+    textValue,
+    setTextValue,
+
+    exit,
+    enter,
+    focus,
+
+    //panele
+    paneleStyle,
+    //text input
+    textInputProps,
+    //pressable
+    basePressableProps,
+}) => {
+    const [openState, setOpenState] = useState(false)
+
+    const texInputref = useRef()
+
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
+    useEffect(() => {
+        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {setKeyboardVisible(true);});
+        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {setKeyboardVisible(false);});
+
+        return () => {
+            showSubscription.remove();
+            hideSubscription.remove();
+        };
+    }, []);
+
+    useEffect(()=>{
+        if(openState){
+            setTimeout(()=>{
+                texInputref.current.focus()
+            }, 100) 
+        }
+    },[openState])
+
+    useEffect(()=>{
+        if(!keyboardVisible){
+            openState ? onExit() : null
+        }
+    },[keyboardVisible])
+
+    const onFocus = () => {
+        setOpenState(true)
+        focus? focus() : null
+    }
+    
+    const onEnter =()=> {
+        
+        enter? enter() : null
+    }
+
+    const onExit =()=> {
+
+        setOpenState(false)
+        exit? exit() : null
+    }
+
+    return (
+        <>
+        <Modal
+            visible={openState}
+            transparent = {true}
+        >
+            <View
+                style={[{
+                    position: 'absolute',
+                    height: 50,
+                    width: '100%',
+                    bottom: 0,
+                    borderTopWidth: 1,
+                    borderColor: 'grey',
+                    backgroundColor: 'white',
+                    paddingHorizontal: 20
+                }, paneleStyle]}
+            >
+                <TextInput
+                    ref={texInputref}
+
+                    //all props
+                    {...textInputProps}
+
+                    style={[{
+                        flex: 1,
+                        color: 'black',
+                        fontSize: 16
+                    }, textInputProps.style]}
+
+                    onSubmitEditing={onEnter}
+                    onEndEditing={onExit}
+                    placeholder={textInputProps.placeholder}
+                    placeholderTextColor = {textInputProps.placeholderTextColor}
+                    maxLength={textInputProps.maxLength}
+                    defaultValue={textValue}
+                    selectTextOnFocus={true}
+                    onChangeText={(text)=>{
+                        setTextValue(text)
+                    }}
+                    
+                    selectionColor = {textInputProps.selectionColor}
+                    
+                    //android
+                    autoComplete={textInputProps.autoComplete}
+                    cursorColor={textInputProps.cursorColor}            
+                />
+            </View>
+        </Modal>
+        <BasePressable
+            type="t"
+
+            //all props
+            {...basePressableProps}
+
+            text={textValue? textValue : textInputProps.placeholder}
+            onPress={onFocus}
+        />
+        </>
+    )
+}

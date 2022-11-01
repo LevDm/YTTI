@@ -18,6 +18,8 @@ import {
 import Reanimated, {
   useAnimatedStyle,
   useSharedValue,
+  interpolate,
+  interpolateColor,
   runOnJS
 } from 'react-native-reanimated';
 
@@ -38,23 +40,21 @@ import ColorPicker from "./color_picker/ColorPicker";
 
 const BACKGROUND_COLOR = 'rgba(0,0,0,0.9)';
 const COLORS = [
-    '#ffffff',
-    '#ff8888',
-    '#ff0000',
-  '#ff8800',
-  '#ffff00',
-  '#88ff00',
-    '#00ff00',
-  '#00ff88',
-  '#00ffff',
-  '#0088ff',
-    '#0000ff',
-  '#8800ff',
-  '#ff00ff',
-  '#ff0088',
-    '#ff0000',
-  //'black',
-  //'white',
+   '#ffffff',
+  '#ff7f7f',
+   '#ff0000',
+  '#ff7f00',
+   '#ffff00',
+  '#7fff00',
+   '#00ff00',
+  '#00ff7f',
+   '#00ffff',
+  '#007fff',
+   '#0000ff',
+  '#7f00ff',
+   '#ff00ff',
+  '#ff007f',
+   '#ff0000',
 ];
 
 const COLORS_SECONDARY = []
@@ -77,35 +77,17 @@ const Palette = (props) => {
   const secondaryColor = useSharedValue(['white', COLORS[0],'black']);
   const [accent, setAccent] = useState(COLORS[0])
   const pickedColorSecondary = useSharedValue(COLORS[0]);
+  const [selectColor, setSelectColor] = useState('#')
 
-  const onColorChanged = useCallback((color) => {
-    'worklet';
-    const d2h = (d) => {return (+d).toString(16)}
-    //runOnJS(console.log)(d2h(color))
-
-    pickedColor.value = color;
-
-    let newColor = d2h(Math.abs(256*256*256+color))
-    
-    //newColor = newColor.split('').reverse().join('')
-    let add = ''
-    for(let i = 0; i<7-newColor.length; i++){
-      if(i == 0){
-        add += '#'
-      } else {
-        add += '0'
-      }
-      
-    }
-    
-    newColor = add+newColor
-    secondaryColor.value = ['#ffffff', newColor,'#000000']
-    runOnJS(setAccent)(newColor)
-  }, []);
+  const logg = (t)=>{
+    console.log(t)
+  }
 
   const onColorChangedSecondary = useCallback((color) => {
     'worklet';
+
     pickedColorSecondary.value = color;
+    runOnJS(setSelectColor)(color)
 
   }, []);
 
@@ -121,8 +103,9 @@ const Palette = (props) => {
     };
   });
 
-  //console.log(secondaryColor.value)
   const open = themesApp[props.route.params.themeIndex]
+
+  const initialColor = '#6b8e23'//'#af5657'
 
   return (
     <View style = {{ flex: 1}}>
@@ -135,8 +118,8 @@ const Palette = (props) => {
 
         }}
       >
-        <View style={{flex: 1, backgroundColor: 'black'}}/>
         <View style={{flex: 1, backgroundColor: 'white'}}/>
+        <View style={{flex: 1, backgroundColor: 'black'}}/>
       </View>
       <View
         style ={{
@@ -171,9 +154,13 @@ const Palette = (props) => {
             alignItems: 'center'
           }}
         >
-          {false &&<View style={[styles.circle, {backgroundColor: accent}]} />}
+          
           {false &&<Reanimated.View style={[styles.circle, rStyle]} />}
-          <Reanimated.View style={[styles.circle, rStyleSecondary]} />
+          {<Reanimated.View style={[styles.circle, {backgroundColor: initialColor}]} >
+            <Reanimated.View style={[styles.circle,rStyleSecondary, {height: CIRCLE_SIZE-20, width: CIRCLE_SIZE-20, borderRadius: (CIRCLE_SIZE-20)/2}]} />
+          </Reanimated.View>}
+
+          <Text style={{color: 'grey'}}>{selectColor}</Text>
         </View>
         <View
           style ={{
@@ -192,24 +179,15 @@ const Palette = (props) => {
           
           >
             <ColorPicker
-              colors={primaryColor}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.gradient}
-              maxWidth={PICKER_WIDTH}
-              onColorChanged={onColorChanged}
-            />
-
-            <ColorPicker
               accent={accent}
               colors={secondaryColor}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+
               style={styles.gradient}
               maxWidth={PICKER_WIDTH}
               onColorChanged={onColorChangedSecondary}
-            />
 
+              initialValue={initialColor}
+            />
           </View> 
         </View> 
       </View>
@@ -237,6 +215,8 @@ const styles = StyleSheet.create({
     width: CIRCLE_SIZE,
     height: CIRCLE_SIZE,
     borderRadius: CIRCLE_SIZE / 2,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   gradient: { height: 20, width: PICKER_WIDTH, borderRadius: 20 },
 });

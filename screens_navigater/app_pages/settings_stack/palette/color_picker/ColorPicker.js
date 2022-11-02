@@ -77,7 +77,8 @@ function hexToHSL(H) {
   else
     h = (r - g) / delta + 4;
 
-  h = Math.round(h * 60);
+  //h = Math.round(h * 60);
+  h = h * 60;
 
   if (h < 0)
     h += 360;
@@ -94,7 +95,7 @@ function hexToHSL(H) {
 
 
 
-const COLORS_PALETTE_HSL = COLORS_PALETTE.map((item, index)=>hexToHSL(item))
+//const COLORS_PALETTE_HSL = COLORS_PALETTE.map((item, index)=>hexToHSL(item))
 const start={ x: 0, y: 0 }
 const end={ x: 1, y: 0 }
 
@@ -122,8 +123,8 @@ const ColorPicker = ({
 
     const adjustedTranslateXH = useDerivedValue(() => {
       return Math.min(
-          Math.max(translateXH.value, -CIRCLE_PICKER_SIZE/2),
-          maxWidth - CIRCLE_PICKER_SIZE/2
+          Math.max(translateXH.value, 0),
+          maxWidth - 0
       );
     });
 
@@ -138,8 +139,9 @@ const ColorPicker = ({
           context.x = adjustedTranslateXH.value;
       },
       onActive: (event, context) => {
-          translateXH.value = event.translationX + context.x       
-          //runOnJS(logg)(`tx ${event.translationX + context.x}  ${translateX.value} ${maxWidth}`)
+          translateXH.value =  Math.min(Math.max(event.translationX + context.x, 0),maxWidth)  
+          //translateXH.value = event.translationX + context.x
+          //runOnJS(logg)(`txh ${event.translationX + context.x}  ${translateXH.value} ${maxWidth}`)
       },
       onEnd: onEndH,
     });
@@ -197,7 +199,7 @@ const ColorPicker = ({
       )
       selectH.value = d2h(backgroundColor)
       runOnJS(setStateH)(d2h(backgroundColor))
-      console.log(selectH.value)
+      //console.log(selectH.value)
       //onColorChanged?.(backgroundColor);
         
       return {
@@ -207,7 +209,7 @@ const ColorPicker = ({
     }, []);
     
     const gradientS = useAnimatedProps(()=>{
-      console.log('gradientS upd', selectH.value)
+      //console.log('gradientS upd', selectH.value)
       'worklet';
       return {
         colors: ['#000000', selectH.value]
@@ -223,8 +225,8 @@ const ColorPicker = ({
 
     const adjustedTranslateXS = useDerivedValue(() => {
       return Math.min(
-          Math.max(translateXS.value, -CIRCLE_PICKER_SIZE/2),
-          maxWidth - CIRCLE_PICKER_SIZE/2
+          Math.max(translateXS.value, 0),
+          maxWidth - 0
       );
     });
 
@@ -239,7 +241,8 @@ const ColorPicker = ({
           context.x = adjustedTranslateXS.value;
       },
       onActive: (event, context) => {
-          translateXS.value = event.translationX + context.x       
+          translateXS.value =  Math.min(Math.max(event.translationX + context.x, ),maxWidth)  
+          //translateXS.value = event.translationX + context.x       
           //runOnJS(logg)(`tx ${event.translationX + context.x}  ${translateX.value} ${maxWidth}`)
       },
       onEnd: onEndS,
@@ -286,7 +289,7 @@ const ColorPicker = ({
         'RGB'
       )
       selectS.value = backgroundColor
-      console.log(backgroundColor)
+      //console.log(backgroundColor)
       //onColorChanged?.(backgroundColor);
         
       return {
@@ -303,8 +306,8 @@ const ColorPicker = ({
 
     const adjustedTranslateXL = useDerivedValue(() => {
       return Math.min(
-          Math.max(translateXL.value, -CIRCLE_PICKER_SIZE/2),
-          maxWidth - CIRCLE_PICKER_SIZE/2
+          Math.max(translateXL.value, 0),
+          maxWidth - 0
       );
     });
 
@@ -319,7 +322,8 @@ const ColorPicker = ({
           context.x = adjustedTranslateXL.value;
       },
       onActive: (event, context) => {
-          translateXL.value = event.translationX + context.x       
+          translateXL.value =  Math.min(Math.max(event.translationX + context.x, 0),maxWidth)  
+          //translateXL.value = event.translationX + context.x       
           //runOnJS(logg)(`tx ${event.translationX + context.x}  ${translateX.value} ${maxWidth}`)
       },
       onEnd: onEndL,
@@ -366,7 +370,7 @@ const ColorPicker = ({
         'RGB'
       )
       selectL.value = backgroundColor
-      console.log(backgroundColor)
+      //console.log(backgroundColor)
       //onColorChanged?.(backgroundColor);
         
       return {
@@ -379,6 +383,7 @@ const ColorPicker = ({
     const HSLcolor = useAnimatedStyle(()=>{
 
       function HSLToHex(h,s,l) {
+        h = (h==360? 0 : h)
         s /= 100;
         l /= 100;
       
@@ -436,6 +441,7 @@ const ColorPicker = ({
         inputRange,
         outputRangeRercent
       )
+      //runOnJS(logg)(`${h} ${s} ${l}`)
       const color = HSLToHex(h,s,l)
 
       onColorChanged?.(color);
@@ -529,7 +535,7 @@ const ColorPicker = ({
             <Animated.View
                 style={[item.dynamicStyle.line, {
                   position: 'absolute',
-                  marginLeft: CIRCLE_PICKER_SIZE/2-1,
+                  marginLeft: -1,//CIRCLE_PICKER_SIZE/2
                   width: 2,
                   height: style.height,
                   backgroundColor: 'black',
@@ -560,6 +566,7 @@ const styles = StyleSheet.create({
   picker: {
     position: 'absolute',
     //backgroundColor: '#fff',
+    marginLeft: -CIRCLE_PICKER_SIZE/2,
     width: CIRCLE_PICKER_SIZE,
     height: CIRCLE_PICKER_SIZE,
     borderRadius: CIRCLE_PICKER_SIZE / 2,
@@ -576,158 +583,3 @@ const styles = StyleSheet.create({
 });
 
 export default ColorPicker;
-
-/*const d2h = (d) => {
-      if(d<0){
-        d = 0xffffff + d+1
-      }
-      return d.toString(16)
-    }
-
-    const nearer = (color) => {
-      //const COLORS = colors.value
-      color = color.slice(1)
-  
-      const h2d = (h) => {return parseInt(h, 16)}
-      const d2h = (d) => {return `${d<16? '0':''}${d.toString(16)}`}
-  
-      const colorRGB = {
-        r: h2d(color.slice(0,2)),
-        g: h2d(color.slice(2,4)),
-        b: h2d(color.slice(4)),
-      }
-  
-      const colorRGBNearer= {
-        r: Math.floor(127.5 * Math.round(colorRGB.r / 103) ),
-        g: Math.floor(127.5 * Math.round(colorRGB.g / 103) ),
-        b: Math.floor(127.5 * Math.round(colorRGB.b / 103) )
-      }
-  
-      const getNearer = () => d2h(colorRGBNearer.r)+d2h(colorRGBNearer.g)+d2h(colorRGBNearer.b)
-  
-      let colorNearer = getNearer()
-  
-      if(colorNearer.indexOf('ff')){
-        const max = Math.max(...Object.values(colorRGB)) 
-        for( let key in colorRGB){
-          if(colorRGB[key] == max){
-            colorRGBNearer[key] = 255
-            colorNearer = getNearer()
-            break
-          }
-        }
-      }
-      colorNearer = String('#'+colorNearer)
-      const indexNearer = COLORS_PALETTE.indexOf(colorNearer)
-  
-      //console.log(color, colorRGB, colorRGBNearer ,colorNearer, indexNearer)
-      
-      return {color: colorNearer, index: indexNearer}
-    }
-
-    const h2d = (h) => {return parseInt(h, 16) -256**3}
-
-    const setValue = (color)=>{
-      
-
-      
-
-      let colorNumber = h2d(color.slice(1))
-      console.log(colorNumber)
-      
-      const { color: nearerColor, index: nearerIndex } = nearer(color)
-      console.log('nearer',nearerColor, nearerIndex)
-
-      if(!accent){
-        const COLORS = colors.value
-
-        //const maxWidth = PICKER_WIDTH
-        const outputRange = (COLORS).map(
-          (_, index) => (index / (COLORS).length) * maxWidth
-        );
-
-        const inputRange = (COLORS).map(
-          (item, index) => h2d(item.slice(1))
-        );
-
-
-        const positionSliderColor = outputRange[nearerIndex]
-
-        const part = (3 / (COLORS_PALETTE).length) * maxWidth
-        
-        const add = interpolate(
-          colorNumber,
-          inputRange.slice(nearerIndex-1, nearerIndex+2),
-          outputRange.slice(nearerIndex-1, nearerIndex+2)
-        )
-        
-        console.log('add', add, positionSliderColor, colorNumber, inputRange.slice(nearerIndex-1, nearerIndex+2))
-        translateX.value = positionSliderColor//+part*add //+CIRCLE_PICKER_SIZE/2
-       
-      } else {
-        const COLORS = colors.value
-        const inputRangeGamma = (['#ffffff','#000000']).map(
-          (item, index) => h2d(item.slice(1)) 
-        );
-        console.log('accent', accent)
-        const gammaNumber = h2d( nearerColor.slice(1))
-        const outputRangeGamma = [0 ,maxWidth]
-    
-        const positionSliderGamma = interpolate(
-            gammaNumber,
-            inputRangeGamma,
-            outputRangeGamma
-        )
-    
-        console.log(inputRangeGamma, outputRangeGamma, colorNumber)
-    
-        console.log(positionSliderGamma)
-
-        translateX.value = positionSliderGamma//+CIRCLE_PICKER_SIZE/2
-      }
-  
-      
-  
-    }
-
-    useEffect(()=>{
-      initialValue?setValue(initialValue):null
-    },[initialValue])
-{[
-          {
-            tapGestureEvent: tapGestureEventH,
-            panGestureEvent: panGestureEventH,
-            colors: COLORS_PALETTE,
-            dynamicStyle: {
-              line: lineH,
-              thumbArea: rStyleH,
-              thumb: rInternalPickerStyleH
-            } 
-          },
-          {
-            tapGestureEvent: tapGestureEventS,
-            panGestureEvent: panGestureEventS,
-            colors: COLORS_PALETTE,
-            dynamicStyle: {
-              line: lineS,
-              thumbArea: rStyleS,
-              thumb: rInternalPickerStyleS
-            } 
-          },
-          {
-            tapGestureEvent: tapGestureEventL,
-            panGestureEvent: panGestureEventL,
-            colors: COLORS_PALETTE,
-            dynamicStyle: {
-              line: lineL,
-              thumbArea: rStyleL,
-              thumb: rInternalPickerStyleL
-            } 
-          },
-        ].map((item, index)=>{
-
-          return (
-
-          )
-        })}
-*/

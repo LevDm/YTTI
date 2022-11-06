@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { StyleSheet, Text, View, TextInput, Keyboard } from 'react-native';
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -21,21 +21,22 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { LinearGradient, LinearGradientProps } from 'expo-linear-gradient';
-const ReanimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient) 
+import { deviceHeight, deviceWidth } from '../../../../../app_values/AppDefault';
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
 
-const COLORS_PALETTE = [
+const RAINBOW = [
   '#ff0000',
- '#ff7f00',
+ '#ff8000',
   '#ffff00',
- '#7fff00',
+ '#80ff00',
   '#00ff00',
- '#00ff7f',
+ '#00ff80',
   '#00ffff',
- '#007fff',
+ '#0080ff',
   '#0000ff',
- '#7f00ff',
+ '#8000ff',
   '#ff00ff',
- '#ff007f',
+ '#ff0080',
   '#ff0000',
 ];
 
@@ -44,9 +45,8 @@ const COLORS_L = [
   '#ffffff'
 ]
 
-
 function hexToHSL(H) {
-  // Convert hex to RGB first
+  // Convert hex to RGB firsts
   let r = 0, g = 0, b = 0;
   if (H.length == 4) {
     r = "0x" + H[1] + H[1];
@@ -91,27 +91,58 @@ function hexToHSL(H) {
   return {h: h, s: s, l: l}//"hsl(" + h + "," + s + "%," + l + "%)";
 }
 
-
-
-
-
-//const COLORS_PALETTE_HSL = COLORS_PALETTE.map((item, index)=>hexToHSL(item))
 const start={ x: 0, y: 0 }
 const end={ x: 1, y: 0 }
 
+const PICKER_WIDTH = deviceWidth * 0.9;
+
+const maxWidth = PICKER_WIDTH
+
+const sliderSize = {height: 20, width: PICKER_WIDTH,}
+
+const interval_slider = [0, maxWidth]
+const interval_h = [0, 360]
+const interval_sl = [0, 100]
+
+
 const ColorPicker = ({
-  //colors ,
-  accent = false,
   initialValue,
-  //start,
-  //end,
-  style,
-  maxWidth,
   onColorChanged,
+
+  ThemeColorsAppIndex,
+  ThemeSchema,
+  LanguageAppIndex,
+  appStyle,
+  appConfig,
 }) => {
     const logg = (t)=>{
       console.log(t)
     }
+    const keyboardShow = useSharedValue(0);
+    useEffect(() => {
+      const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+        keyboardShow.value = 1
+      });
+      const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+        keyboardShow.value = 0
+      });
+
+      return () => {
+          showSubscription.remove();
+          hideSubscription.remove();
+      };
+    }, []);
+
+    const areaSliders = useAnimatedStyle(()=>{
+      const duration = 500
+      return (
+        {
+          transform: [
+            {translateY: withTiming( interpolate(keyboardShow.value, [0, 1], [0, (deviceHeight/4)*3/4]), {duration: duration}  )}
+          ]
+        }
+      )
+    })
 
     
     //______________________H
@@ -123,8 +154,8 @@ const ColorPicker = ({
 
     const adjustedTranslateXH = useDerivedValue(() => {
       return Math.min(
-          Math.max(translateXH.value, 0),
-          maxWidth - 0
+        Math.max(translateXH.value, 0),
+        maxWidth
       );
     });
 
@@ -136,21 +167,19 @@ const ColorPicker = ({
 
     const panGestureEventH = useAnimatedGestureHandler({
       onStart: (_, context) => {
-          context.x = adjustedTranslateXH.value;
+        context.x = adjustedTranslateXH.value;
       },
       onActive: (event, context) => {
-          translateXH.value =  Math.min(Math.max(event.translationX + context.x, 0),maxWidth)  
-          //translateXH.value = event.translationX + context.x
-          //runOnJS(logg)(`txh ${event.translationX + context.x}  ${translateXH.value} ${maxWidth}`)
+        translateXH.value = Math.min(Math.max(event.x, 0),maxWidth)  
       },
       onEnd: onEndH,
     });
 
-    const tapGestureEventH =useAnimatedGestureHandler({
+    const tapGestureEventH = useAnimatedGestureHandler({
       onStart: (event) => {
-          translateYH.value = withSpring(-style.height);
-          scaleH.value = withSpring(0.6);
-          translateXH.value = withTiming(event.absoluteX - CIRCLE_PICKER_SIZE);
+        translateYH.value = withSpring(-sliderSize.height);
+        scaleH.value = withSpring(0.6);
+        translateXH.value = event.x
       },
       onEnd: onEndH,
     });
@@ -174,7 +203,7 @@ const ColorPicker = ({
     });
 
     const thumbH = useAnimatedStyle(() => {
-      const color = COLORS_PALETTE
+      const color = RAINBOW
       const d2h = (d) => {
         if(d<0){
           d = 0xffffff + d+1
@@ -188,19 +217,19 @@ const ColorPicker = ({
         return add+number
       }
       const inputRange = (color).map(
-        (_, index) => ((index) / ((color).length-1)) * (maxWidth-CIRCLE_PICKER_SIZE)
+        (_, index) => ((index) / ((color).length-2)) * (maxWidth-CIRCLE_PICKER_SIZE)
       );
       
-      const backgroundColor =  interpolateColor(
+      const backgroundColor = interpolateColor(
         translateXH.value,
         inputRange,
         color,
         'RGB'
       )
-      selectH.value = d2h(backgroundColor)
-      runOnJS(setStateH)(d2h(backgroundColor))
-      //console.log(selectH.value)
-      //onColorChanged?.(backgroundColor);
+      
+      const resColor = d2h(backgroundColor)
+      selectH.value = resColor
+      runOnJS(setStateH)(resColor)
         
       return {
         backgroundColor,
@@ -209,7 +238,6 @@ const ColorPicker = ({
     }, []);
     
     const gradientS = useAnimatedProps(()=>{
-      //console.log('gradientS upd', selectH.value)
       'worklet';
       return {
         colors: ['#000000', selectH.value]
@@ -226,7 +254,7 @@ const ColorPicker = ({
     const adjustedTranslateXS = useDerivedValue(() => {
       return Math.min(
           Math.max(translateXS.value, 0),
-          maxWidth - 0
+          maxWidth
       );
     });
 
@@ -238,21 +266,19 @@ const ColorPicker = ({
 
     const panGestureEventS = useAnimatedGestureHandler({
       onStart: (_, context) => {
-          context.x = adjustedTranslateXS.value;
+        context.x = adjustedTranslateXS.value;
       },
       onActive: (event, context) => {
-          translateXS.value =  Math.min(Math.max(event.translationX + context.x, ),maxWidth)  
-          //translateXS.value = event.translationX + context.x       
-          //runOnJS(logg)(`tx ${event.translationX + context.x}  ${translateX.value} ${maxWidth}`)
+        translateXS.value =  Math.min(Math.max(event.x, 0),maxWidth)  
       },
       onEnd: onEndS,
     });
 
     const tapGestureEventS =useAnimatedGestureHandler({
       onStart: (event) => {
-          translateYS.value = withSpring(-style.height);
-          scaleS.value = withSpring(0.6);
-          translateXS.value = withTiming(event.absoluteX - CIRCLE_PICKER_SIZE);
+        translateYS.value = withSpring(-sliderSize.height);
+        scaleS.value = withSpring(0.6);
+        translateXS.value = event.x;
       },
       onEnd: onEndS,
     });
@@ -289,8 +315,6 @@ const ColorPicker = ({
         'RGB'
       )
       selectS.value = backgroundColor
-      //console.log(backgroundColor)
-      //onColorChanged?.(backgroundColor);
         
       return {
         backgroundColor,
@@ -307,7 +331,7 @@ const ColorPicker = ({
     const adjustedTranslateXL = useDerivedValue(() => {
       return Math.min(
           Math.max(translateXL.value, 0),
-          maxWidth - 0
+          maxWidth
       );
     });
 
@@ -322,18 +346,16 @@ const ColorPicker = ({
           context.x = adjustedTranslateXL.value;
       },
       onActive: (event, context) => {
-          translateXL.value =  Math.min(Math.max(event.translationX + context.x, 0),maxWidth)  
-          //translateXL.value = event.translationX + context.x       
-          //runOnJS(logg)(`tx ${event.translationX + context.x}  ${translateX.value} ${maxWidth}`)
+          translateXL.value =  Math.min(Math.max(event.x, 0),maxWidth)  
       },
       onEnd: onEndL,
     });
 
     const tapGestureEventL =useAnimatedGestureHandler({
       onStart: (event) => {
-          translateYL.value = withSpring(-style.height );
-          scaleL.value = withSpring(0.6);
-          translateXL.value = withTiming(event.absoluteX - CIRCLE_PICKER_SIZE);
+        translateYL.value = withSpring(-sliderSize.height );
+        scaleL.value = withSpring(0.6);
+        translateXL.value = event.x
       },
       onEnd: onEndH,
     });
@@ -370,8 +392,6 @@ const ColorPicker = ({
         'RGB'
       )
       selectL.value = backgroundColor
-      //console.log(backgroundColor)
-      //onColorChanged?.(backgroundColor);
         
       return {
         backgroundColor,
@@ -379,103 +399,251 @@ const ColorPicker = ({
         
     }, []);
     //===================================
-
-    const HSLcolor = useAnimatedStyle(()=>{
-
-      function HSLToHex(h,s,l) {
-        h = (h==360? 0 : h)
-        s /= 100;
-        l /= 100;
-      
-        let c = (1 - Math.abs(2 * l - 1)) * s,
-            x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-            m = l - c/2,
-            r = 0,
-            g = 0, 
-            b = 0; 
-      
-        if (0 <= h && h < 60) {
-          r = c; g = x; b = 0;
-        } else if (60 <= h && h < 120) {
-          r = x; g = c; b = 0;
-        } else if (120 <= h && h < 180) {
-          r = 0; g = c; b = x;
-        } else if (180 <= h && h < 240) {
-          r = 0; g = x; b = c;
-        } else if (240 <= h && h < 300) {
-          r = x; g = 0; b = c;
-        } else if (300 <= h && h < 360) {
-          r = c; g = 0; b = x;
-        }
-        // Having obtained RGB, convert channels to hex
-        r = Math.round((r + m) * 255).toString(16);
-        g = Math.round((g + m) * 255).toString(16);
-        b = Math.round((b + m) * 255).toString(16);
-      
-        // Prepend 0s, if necessary
-        if (r.length == 1)
-          r = "0" + r;
-        if (g.length == 1)
-          g = "0" + g;
-        if (b.length == 1)
-          b = "0" + b;
-      
-        return "#" + r + g + b;
+    function HSLToHex(h,s,l) {
+      'worklet';
+      h = (h==360? 0 : h)
+      s /= 100;
+      l /= 100;
+    
+      let c = (1 - Math.abs(2 * l - 1)) * s,
+          x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+          m = l - c/2,
+          r = 0,
+          g = 0, 
+          b = 0; 
+    
+      if (0 <= h && h < 60) {
+        r = c; g = x; b = 0;
+      } else if (60 <= h && h < 120) {
+        r = x; g = c; b = 0;
+      } else if (120 <= h && h < 180) {
+        r = 0; g = c; b = x;
+      } else if (180 <= h && h < 240) {
+        r = 0; g = x; b = c;
+      } else if (240 <= h && h < 300) {
+        r = x; g = 0; b = c;
+      } else if (300 <= h && h < 360) {
+        r = c; g = 0; b = x;
       }
+      // Having obtained RGB, convert channels to hex
+      r = Math.round((r + m) * 255).toString(16);
+      g = Math.round((g + m) * 255).toString(16);
+      b = Math.round((b + m) * 255).toString(16);
+    
+      // Prepend 0s, if necessary
+      if (r.length == 1)
+        r = "0" + r;
+      if (g.length == 1)
+        g = "0" + g;
+      if (b.length == 1)
+        b = "0" + b;
+    
+      return "#" + r + g + b;
+    }
 
-      const inputRange = [0, maxWidth]
-      const outputRangeAngle = [0, 360]
-      const outputRangeRercent = [0, 100]
+    const [ inputValue, setInputValue ] = useState()
+    const currentSelectColor = useSharedValue('')
+
+    const HS40Lcolor = useAnimatedStyle(()=>{
       const h = interpolate(
         translateXH.value,
-        inputRange,
-        outputRangeAngle
+        interval_slider,
+        interval_h
       )
       const s = interpolate(
         translateXS.value,
-        inputRange,
-        outputRangeRercent
+        interval_slider,
+        interval_sl
       )
       const l = interpolate(
         translateXL.value,
-        inputRange,
-        outputRangeRercent
+        interval_slider,
+        interval_sl
       )
-      //runOnJS(logg)(`${h} ${s} ${l}`)
-      const color = HSLToHex(h,s,l)
-
-      onColorChanged?.(color);
+      const color = HSLToHex(h,s, Math.max(l-10, 0))
 
       return{
         backgroundColor: color
       }
     })
 
+    const HS60Lcolor = useAnimatedStyle(()=>{
+      const h = interpolate(
+        translateXH.value,
+        interval_slider,
+        interval_h
+      )
+      const s = interpolate(
+        translateXS.value,
+        interval_slider,
+        interval_sl
+      )
+      const l = interpolate(
+        translateXL.value,
+        interval_slider,
+        interval_sl
+      )
+      const color = HSLToHex(h,s, Math.min(l+10, 100))
+
+      return{
+        backgroundColor: color
+      }
+    })
+    const HS50Lcolor = useAnimatedStyle(()=>{
+      const h = interpolate(
+        translateXH.value,
+        interval_slider,
+        interval_h
+      )
+      const s = interpolate(
+        translateXS.value,
+        interval_slider,
+        interval_sl
+      )
+      const l = interpolate(
+        translateXL.value,
+        interval_slider,
+        interval_sl
+      )
+      //runOnJS(logg)(`${h} ${s} ${l}`)
+      const color = HSLToHex(h,s,l)
+      
+      if(keyboardShow.value == 0){
+        //runOnJS(logg)(`iv set undef ${color} ${inputValue}`)
+        onColorChanged?.(color);
+        //inputValue != undefined? runOnJS(setInputValue)(undefined) : null
+        runOnJS(setInputValue)(undefined)
+        currentSelectColor.value = color
+      }
+
+      return{
+        backgroundColor: color
+      }
+    })
+
+    const settingSlidersColor = (color)=>{
+      //console.log('hsl slider set color')
+      const initHSL = hexToHSL(color)
+      translateXH.value = interpolate(initHSL.h, interval_h, interval_slider)
+      translateXS.value = interpolate(initHSL.s, interval_sl, interval_slider)
+      translateXL.value = interpolate(initHSL.l, interval_sl, interval_slider)
+    }
+
     useEffect(()=>{
-      const initHSL = hexToHSL(initialValue)
-
-      const ouputRange = [0, maxWidth]
-      const inputRangeAngle = [0, 360]
-      const inputRangeRercent = [0, 100]
-
-      translateXH.value = interpolate(initHSL.h, inputRangeAngle, ouputRange)
-      translateXS.value = interpolate(initHSL.s, inputRangeRercent, ouputRange)
-      translateXL.value = interpolate(initHSL.l, inputRangeRercent, ouputRange)
-
+      //console.log('ue iv')
+      settingSlidersColor(initialValue)
     },[initialValue])
-    
+
+    const onPressInText = () =>{
+      if(inputValue == undefined){
+        //console.log('iv set color')
+        setInputValue(currentSelectColor.value)
+      }
+    }
+
+    const changeTextColor = (text)=>{
+      let inputText = (text[0] == '#'? text.slice(1) : text)
+      inputText = inputText.toLowerCase()
+      let outputText = '#'
+      const allowedSymbols = '0123456789aAbBcCdDeEfF'
+      for(let s of inputText){
+        if(allowedSymbols.includes(s)){
+          outputText += s
+        }
+      }
+      outputText = outputText.toLowerCase()
+      setInputValue(outputText)
+    }
+
+    const changeEnd = ({nativeEvent: {text}})=>{
+      //console.log('end', text)
+      let outputText = text
+      for(let i = 0; i< 7-outputText.length; i++){
+        outputText += '0'
+      }
+      settingSlidersColor(outputText)
+    }
+
+    const circlesSize = 30
     return (
-      <View
-        style ={{
-          //justifyContent: 'center'
-        }}
+      <Animated.View
+        style ={[{
+          position: 'absolute',
+          height: deviceHeight/4,
+          width: deviceWidth,
+          justifyContent: 'center',
+          paddingHorizontal: CIRCLE_PICKER_SIZE/2,
+          backgroundColor: 'transparent',
+          borderRadius: 20,
+          //justifyContent: 'center',
+          alignItems: 'center'
+        }, areaSliders]}
       >
-        <Animated.View style={[style, HSLcolor]}/>
+        <View
+          style = {{
+            position: 'absolute',
+            width: deviceWidth,
+            height: '100%',
+            flexDirection: 'row',
+            //justifyContent: 'center',
+            //alignItems: 'center'
+            //backgroundColor: 'grey',
+          }}
+        >
+          <View style={{flex: 1, backgroundColor: 'white', borderTopLeftRadius: 20, borderBottomLeftRadius: 20}}/>
+          <View style={{flex: 1, backgroundColor: 'black', borderTopRightRadius: 20, borderBottomRightRadius: 20}}/>
+        </View>
+        <View
+          style ={{
+            flex: 1,
+            width: sliderSize.width,
+            //backgroundColor: 'grey',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}
+        >
+          <AnimatedTextInput
+            style={{
+              width: 85,
+              backgroundColor: '#00000025',
+              height: circlesSize,
+              borderRadius: circlesSize/2,
+              paddingHorizontal: 10
+            }}
+            maxLength = {7}
+            textAlign = {'center'}
+            contextMenuHidden={true}
+            //animatedProps={textInputAProps}
+            defaultValue={currentSelectColor.value}
+            value={inputValue}
+            onPressIn={onPressInText}
+            onChangeText={changeTextColor}
+            //onEndEditing = {changeEnd}
+            onSubmitEditing = {changeEnd}
+          />
+          <View
+            style ={{
+              flex: 1,
+              width: sliderSize.width,
+              //backgroundColor: 'grey',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              flexDirection: 'row',
+              marginRight: 85
+
+            }}
+          >
+            <Animated.View style={[ HS60Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}/>
+            <Animated.View style={[ HS50Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}/>
+            <Animated.View style={[ HS40Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}/>
+          </View>
+        </View>
       {[
         {
           tapGestureEvent: tapGestureEventH,
           panGestureEvent: panGestureEventH,
-          colors: COLORS_PALETTE,
+          colors: RAINBOW,
           gradient: {},
           dynamicStyle: {
             line: lineH,
@@ -511,7 +679,7 @@ const ColorPicker = ({
       <View
         key={`slider_hsl_${item}${index}`}
         style ={{
-          height: 50,
+          flex: 1,
           //backgroundColor: 'grey',
           justifyContent: 'center'
         }}
@@ -523,30 +691,24 @@ const ColorPicker = ({
             <LinearGradient          
               start={start}
               end={end}
-              style={style}
-              //
+              style={staticStyles.gradient}
               animatedProps={item.gradient}
               colors={item.colors}
-              
-             
-              //colors={accent? ['white',accent,'black'] : colors.value}
-              
             />
             <Animated.View
                 style={[item.dynamicStyle.line, {
                   position: 'absolute',
                   marginLeft: -1,//CIRCLE_PICKER_SIZE/2
                   width: 2,
-                  height: style.height,
+                  height: sliderSize.height,
                   backgroundColor: 'black',
                   opacity: 0.5,
                 }]}
               />
-            <Animated.View style={[styles.picker, item.dynamicStyle.areaThumb]}>
+            <Animated.View style={[staticStyles.picker, item.dynamicStyle.areaThumb]}>
               <Animated.View
-                style={[styles.internalPicker, item.dynamicStyle.thumb]}
+                style={[staticStyles.internalPicker, item.dynamicStyle.thumb]}
               />
-              
             </Animated.View>
           </Animated.View>
         </PanGestureHandler>
@@ -555,17 +717,16 @@ const ColorPicker = ({
       </View>
       )
       })} 
-      </View>
+      </Animated.View>
     );
 };
 
 const CIRCLE_PICKER_SIZE = 30;
 const INTERNAL_PICKER_SIZE = CIRCLE_PICKER_SIZE  ;
 
-const styles = StyleSheet.create({
+const staticStyles = StyleSheet.create({
   picker: {
     position: 'absolute',
-    //backgroundColor: '#fff',
     marginLeft: -CIRCLE_PICKER_SIZE/2,
     width: CIRCLE_PICKER_SIZE,
     height: CIRCLE_PICKER_SIZE,
@@ -580,6 +741,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.0,
     borderColor: 'rgba(0,0,0,0.2)',
   },
+  gradient: { height: sliderSize.height, width: sliderSize.width, borderRadius: sliderSize.height/2 },
 });
 
 export default ColorPicker;

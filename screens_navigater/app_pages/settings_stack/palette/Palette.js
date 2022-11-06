@@ -1,6 +1,7 @@
 import React, {useCallback, useState, useEffect, useRef} from "react";
 
 import {
+    Appearance,
     Text, 
     Pressable, 
     Animated, 
@@ -36,29 +37,13 @@ import themesColorsAppList, { themesApp } from "../../../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../../../app_values/Languages";
 import { deviceHeight, deviceWidth } from "../../../../app_values/AppDefault";
 
+
+import { statusBarHeight } from "../../../../app_values/AppDefault";
+
 import ColorPicker from "./color_picker/ColorPicker";
 
+
 const BACKGROUND_COLOR = 'rgba(0,0,0,0.9)';
-const COLORS = [
-   '#ffffff',
-  '#ff7f7f',
-   '#ff0000',
-  '#ff7f00',
-   '#ffff00',
-  '#7fff00',
-   '#00ff00',
-  '#00ff7f',
-   '#00ffff',
-  '#007fff',
-   '#0000ff',
-  '#7f00ff',
-   '#ff00ff',
-  '#ff007f',
-   '#ff0000',
-];
-
-const COLORS_SECONDARY = []
-
 const { width } = Dimensions.get('window');
 
 const CIRCLE_SIZE = width * 0.3;
@@ -66,18 +51,61 @@ const PICKER_WIDTH = width * 0.9;
 
 const Palette = (props) => {
 
+  const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
+  const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
+
+  const [appStyle, setAppStyle] = useState(props.appStyle);
+  const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
+  const [appConfig, setAppConfig] = useState(props.appConfig);
+
+  store.subscribe(() => {
+    const jstore = store.getState();
+
+    if(LanguageAppIndex != languagesApp.indexOf(jstore.appConfig.languageApp)){
+      setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
+    }
+
+    if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
+      setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
+    }
+
+    if(ThemeSchema != jstore.appStyle.palette.scheme){
+      setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
+    }
+
+    if (appStyle != jstore.appStyle) {
+      setAppStyle(jstore.appStyle);
+    }
+
+    if (appConfig != jstore.appConfig) {
+      setAppConfig(jstore.appConfig);
+    }
+  })
+
+  const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
+  useEffect(()=>{
+    if(listenerColorSheme){
+      if(appStyle.palette.scheme == 'auto' && listenerColorSheme != ThemeSchema){
+        //console.log('pallete accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
+        setThemeSchema(listenerColorSheme)
+      }
+    }
+  },[listenerColorSheme])
+  
+  Appearance.addChangeListener(({colorScheme})=>{
+    setListinerColorScheme(colorScheme)
+  })
+
+  const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+  const Language = languagesAppList[LanguageAppIndex]
+
   const back = () => {
     props.r_setHideMenu(false)
     props.navigation.goBack()
   }
+  const open = themesApp[props.route.params.themeIndex]
 
-  //console.log(props.route.params.themeIndex)
-  const pickedColor = useSharedValue(COLORS[0]);
-  const primaryColor = useSharedValue(COLORS);
-  const secondaryColor = useSharedValue(['white', COLORS[0],'black']);
-  const [accent, setAccent] = useState(COLORS[0])
-  const pickedColorSecondary = useSharedValue(COLORS[0]);
-  const [selectColor, setSelectColor] = useState('#')
+  const pickedColorSecondary = useSharedValue('');
 
   const logg = (t)=>{
     console.log(t)
@@ -85,17 +113,9 @@ const Palette = (props) => {
 
   const onColorChangedSecondary = useCallback((color) => {
     'worklet';
-
     pickedColorSecondary.value = color;
-    runOnJS(setSelectColor)(color)
-
+    //runOnJS(setSelectColor)(color)
   }, []);
-
-  const rStyle = useAnimatedStyle(() => {
-    return {
-      backgroundColor: pickedColor.value,
-    };
-  });
 
   const rStyleSecondary = useAnimatedStyle(() => {
     return {
@@ -103,41 +123,47 @@ const Palette = (props) => {
     };
   });
 
-  const open = themesApp[props.route.params.themeIndex]
+  
 
   const initialColor = '#6b8e23'//'#af5657'
 
   return (
     <View style = {{ flex: 1}}>
       <View
-        style = {{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          flexDirection: 'row',
-
-        }}
-      >
-        <View style={{flex: 1, backgroundColor: 'white'}}/>
-        <View style={{flex: 1, backgroundColor: 'black'}}/>
-      </View>
-      <View
         style ={{
           width: '100%',
-          height: 70,
-          //backgroundColor: 'red',
+          height: statusBarHeight + 45,
+          backgroundColor: Theme.basics.accents.primary,
           flexDirection: 'row',
           justifyContent: 'flex-start',
+          alignItems: 'center',
           paddingTop: 30,
           paddingHorizontal: 20
         }}
       >
-        
         <BasePressable
           type='i'
-          icon={{name: "keyboard-backspace", size: 30, color: 'white'}}
+          icon={{name: "keyboard-backspace", size: 30, color: Theme.icons.neutrals.primary }}
+          style={{
+            height: 45, 
+            width: 45, 
+            borderRadius: appStyle.borderRadius.additional
+          }}
           onPress={back}
+          android_ripple={{
+            color: Theme.texts.neutrals.primary,
+            borderless: true,
+            foreground: false
+          }}
         />
+        <Text
+          style = {[staticStyles.headerText, {
+            marginLeft: 15,
+            color: Theme.texts.neutrals.primary
+          }]}
+        >
+          creater customs themes
+        </Text>
       </View>
       
       <View
@@ -154,41 +180,27 @@ const Palette = (props) => {
             alignItems: 'center'
           }}
         >
-          
-          {false &&<Reanimated.View style={[styles.circle, rStyle]} />}
-          {<Reanimated.View style={[styles.circle, {backgroundColor: initialColor}]} >
-            <Reanimated.View style={[styles.circle,rStyleSecondary, {height: CIRCLE_SIZE-20, width: CIRCLE_SIZE-20, borderRadius: (CIRCLE_SIZE-20)/2}]} />
+          {<Reanimated.View style={[staticStyles.circle, {backgroundColor: initialColor}]} >
+            <Reanimated.View style={[staticStyles.circle,rStyleSecondary, {height: CIRCLE_SIZE-20, width: CIRCLE_SIZE-20, borderRadius: (CIRCLE_SIZE-20)/2}]} />
           </Reanimated.View>}
-
-          <Text style={{color: 'grey'}}>{selectColor}</Text>
         </View>
         <View
           style ={{
             height: deviceHeight/4,
             width: deviceWidth,
+            //backgroundColor: 'red'
           }}
         >
-          <View
-            style={{
-              height: '100%',
-              width: deviceWidth,
-              alignItems: 'center',
-              justifyContent: 'center',
-              //backgroundColor: 'grey'
-            }}
-          
-          >
-            <ColorPicker
-              accent={accent}
-              colors={secondaryColor}
+          <ColorPicker
+            onColorChanged={onColorChangedSecondary}
+            initialValue={initialColor}
 
-              style={styles.gradient}
-              maxWidth={PICKER_WIDTH}
-              onColorChanged={onColorChangedSecondary}
-
-              initialValue={initialColor}
-            />
-          </View> 
+            ThemeColorsAppIndex={ThemeColorsAppIndex}
+            ThemeSchema={ThemeSchema}
+            LanguageAppIndex={LanguageAppIndex}
+            appStyle={appStyle}
+            appConfig={appConfig}
+          />
         </View> 
       </View>
     </View>
@@ -198,7 +210,13 @@ const Palette = (props) => {
 export default connect(mapStateToProps('PALETTE_SCREEN'), mapDispatchToProps('PALETTE_SCREEN'))(Palette);
 
 
-const styles = StyleSheet.create({
+const staticStyles = StyleSheet.create({
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+    fontVariant: ['small-caps'],
+  },
   topContainer: {
     flex: 3,
     backgroundColor: BACKGROUND_COLOR,

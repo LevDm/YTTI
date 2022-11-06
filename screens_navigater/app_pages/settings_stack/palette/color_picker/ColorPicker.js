@@ -106,6 +106,7 @@ const interval_sl = [0, 100]
 
 
 const ColorPicker = ({
+  visible,
   initialValue,
   onColorChanged,
 
@@ -118,7 +119,7 @@ const ColorPicker = ({
     const logg = (t)=>{
       console.log(t)
     }
-    const keyboardShow = useSharedValue(0);
+    const keyboardShow = useSharedValue(-1);
     useEffect(() => {
       const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
         keyboardShow.value = 1
@@ -128,17 +129,21 @@ const ColorPicker = ({
       });
 
       return () => {
-          showSubscription.remove();
-          hideSubscription.remove();
+        showSubscription.remove();
+        hideSubscription.remove();
       };
     }, []);
+
+    useEffect(()=>{
+      if(visible && keyboardShow.value == -1){keyboardShow.value = 0}
+    },[visible])
 
     const areaSliders = useAnimatedStyle(()=>{
       const duration = 500
       return (
         {
           transform: [
-            {translateY: withTiming( interpolate(keyboardShow.value, [0, 1], [0, (deviceHeight/4)*3/4]), {duration: duration}  )}
+            {translateY: withTiming( interpolate(keyboardShow.value, [-1, 0, 1], [deviceHeight/4, 0, (deviceHeight/4)*3/4]), {duration: duration}  )}
           ]
         }
       )
@@ -324,7 +329,7 @@ const ColorPicker = ({
     
     //______________________L
     const selectL = useSharedValue(0);
-    const translateXL = useSharedValue(maxWidth/2 -CIRCLE_PICKER_SIZE/2);
+    const translateXL = useSharedValue(maxWidth/2);//-CIRCLE_PICKER_SIZE/2
     const translateYL = useSharedValue(0);
     const scaleL = useSharedValue(1);
 
@@ -508,8 +513,8 @@ const ColorPicker = ({
       //runOnJS(logg)(`${h} ${s} ${l}`)
       const color = HSLToHex(h,s,l)
       
-      if(keyboardShow.value == 0){
-        //runOnJS(logg)(`iv set undef ${color} ${inputValue}`)
+      if(keyboardShow.value != 1){
+        //runOnJS(logg)(`iv set undef ${color}`)
         onColorChanged?.(color);
         //inputValue != undefined? runOnJS(setInputValue)(undefined) : null
         runOnJS(setInputValue)(undefined)
@@ -519,6 +524,19 @@ const ColorPicker = ({
       return{
         backgroundColor: color
       }
+    })
+
+    const kontur = useAnimatedStyle(()=>{
+      return({
+        borderColor: currentSelectColor.value,
+        //color: currentSelectColor.value,
+      })
+    })
+
+    const text = useAnimatedProps(()=>{
+      return({
+        defaultValue: currentSelectColor.value,
+      })
     })
 
     const settingSlidersColor = (color)=>{
@@ -531,7 +549,8 @@ const ColorPicker = ({
 
     useEffect(()=>{
       //console.log('ue iv')
-      settingSlidersColor(initialValue)
+      initialValue? settingSlidersColor(initialValue) : null
+      
     },[initialValue])
 
     const onPressInText = () =>{
@@ -569,6 +588,7 @@ const ColorPicker = ({
       <Animated.View
         style ={[{
           position: 'absolute',
+          bottom: 0,
           height: deviceHeight/4,
           width: deviceWidth,
           justifyContent: 'center',
@@ -604,18 +624,20 @@ const ColorPicker = ({
           }}
         >
           <AnimatedTextInput
-            style={{
+            style={[kontur, {
               width: 85,
               backgroundColor: '#00000025',
               height: circlesSize,
               borderRadius: circlesSize/2,
-              paddingHorizontal: 10
-            }}
+              paddingHorizontal: 10,
+              borderWidth: 1
+            }]}
             maxLength = {7}
             textAlign = {'center'}
             contextMenuHidden={true}
-            //animatedProps={textInputAProps}
             defaultValue={currentSelectColor.value}
+            //animatedProps={text}
+            
             value={inputValue}
             onPressIn={onPressInText}
             onChangeText={changeTextColor}

@@ -41,6 +41,7 @@ import { deviceHeight, deviceWidth } from "../../../../app_values/AppDefault";
 import { statusBarHeight } from "../../../../app_values/AppDefault";
 
 import ColorPicker from "./color_picker/ColorPicker";
+import { ScrollView } from "react-native";
 
 
 const BACKGROUND_COLOR = 'rgba(0,0,0,0.9)';
@@ -123,9 +124,74 @@ const Palette = (props) => {
     };
   });
 
-  
+  const [initialColor, setInitialValue] = useState() //'#6b8e23'//'#af5657'
+  const [colorsPickerVisible, setColorsPickerVisible] = useState(false)
 
-  const initialColor = '#6b8e23'//'#af5657'
+  const pressColor = (color, trace) => {
+    const okTrace = !trace[0]? trace.slice(1) : trace
+    console.log('press', color, okTrace)
+
+    setInitialValue(color)
+    !colorsPickerVisible? setColorsPickerVisible(true) : null
+  }
+
+  const renderColors = (objColors, generals = false, trace = []) => {
+    //let newTrace = [...trace, item]
+    //generals? newTrace.push(generals) : null
+    return(
+      <View
+        key = {`color_general_${generals}`}
+        style={{
+          marginLeft: generals? 10 : 0,
+        }}
+      >
+        {generals && <Text style={{fontSize: 14, fontWeight: 'bold'}} >{generals}:</Text>}
+        {Object.keys(objColors).map((item, index)=>{
+          if(typeof objColors[item] == 'string'){
+            return (
+              <View
+                key = {`color_${generals? generals : ''}_${item}_${index}`}
+                style={{
+                  height: 31,
+                  marginLeft: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  borderBottomWidth: 1,
+                  borderColor: 'black',
+                  marginBottom: 1
+                }}
+              >
+                <Text style={{fontSize: 14}}>{item}:</Text>
+                <BasePressable
+                  type="t"
+                  text={objColors[item]}
+                  textStyle={{
+                    fontSize: 14
+                  }}
+                  style={{
+                    height: 30,
+                    width: 90,
+                    backgroundColor: objColors[item][0] === '#'? objColors[item] : 'transparent',
+                    borderRadius:appStyle.borderRadius.additional
+                  }}
+                  onPress={()=>{pressColor(objColors[item], [...trace, generals, item])}}
+                />
+              </View>
+            )
+          } else {
+            
+            return (
+              <View>
+                {renderColors(objColors[item], item, [ ...trace, generals])}
+              </View>
+            )
+          }
+        })}
+      </View>
+    )
+    
+  }
 
   return (
     <View style = {{ flex: 1}}>
@@ -166,7 +232,38 @@ const Palette = (props) => {
         </Text>
       </View>
       
-      <View
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: deviceHeight/3.5
+        }}
+        style={{
+          width: deviceWidth,
+          paddingLeft: 10,
+          paddingRight: 20
+        }}
+      >
+        {renderColors(Theme)}
+      </ScrollView>
+      
+      <ColorPicker
+        visible={colorsPickerVisible}
+        onColorChanged={onColorChangedSecondary}
+        initialValue={initialColor}
+
+        ThemeColorsAppIndex={ThemeColorsAppIndex}
+        ThemeSchema={ThemeSchema}
+        LanguageAppIndex={LanguageAppIndex}
+        appStyle={appStyle}
+        appConfig={appConfig}
+      />
+    </View>
+  );
+    
+}
+export default connect(mapStateToProps('PALETTE_SCREEN'), mapDispatchToProps('PALETTE_SCREEN'))(Palette);
+
+/*
+<View
         style ={{
           flex : 1,
           justifyContent: 'space-between',
@@ -184,32 +281,10 @@ const Palette = (props) => {
             <Reanimated.View style={[staticStyles.circle,rStyleSecondary, {height: CIRCLE_SIZE-20, width: CIRCLE_SIZE-20, borderRadius: (CIRCLE_SIZE-20)/2}]} />
           </Reanimated.View>}
         </View>
-        <View
-          style ={{
-            height: deviceHeight/4,
-            width: deviceWidth,
-            //backgroundColor: 'red'
-          }}
-        >
-          <ColorPicker
-            onColorChanged={onColorChangedSecondary}
-            initialValue={initialColor}
 
-            ThemeColorsAppIndex={ThemeColorsAppIndex}
-            ThemeSchema={ThemeSchema}
-            LanguageAppIndex={LanguageAppIndex}
-            appStyle={appStyle}
-            appConfig={appConfig}
-          />
-        </View> 
+          
       </View>
-    </View>
-  );
-    
-}
-export default connect(mapStateToProps('PALETTE_SCREEN'), mapDispatchToProps('PALETTE_SCREEN'))(Palette);
-
-
+*/
 const staticStyles = StyleSheet.create({
   headerText: {
     fontSize: 20,

@@ -5,9 +5,9 @@ const Emerald = {
     basics: {
         accents: {
             primary: '#50c878',
-            secondary: '#73d28e', 
-            tertiary: '#92dba4', 
-            quaternary: '#aee5ba',
+            secondary: '#77d496',  
+            tertiary: '#9ee0b4',
+            quaternary: '#c5edd2',
         },
         neutrals: {
             primary: '#ffffff', 
@@ -22,9 +22,9 @@ const Emerald = {
     texts: {
         accents: {
             primary: '#50c878',
-            secondary: '#73d28e', 
-            tertiary: '#92dba4', 
-            quaternary: '#aee5ba',
+            secondary: '#77d496',  
+            tertiary: '#9ee0b4',
+            quaternary: '#c5edd2',
         },
         neutrals: {
             primary: '#ffffff', 
@@ -35,9 +35,9 @@ const Emerald = {
     icons: {
         accents: {
             primary: '#50c878',
-            secondary: '#73d28e', 
-            tertiary: '#92dba4', 
-            quaternary: '#aee5ba',
+            secondary: '#77d496',  
+            tertiary: '#9ee0b4',
+            quaternary: '#c5edd2',
         },
         neutrals: {
             primary: '#ffffff', 

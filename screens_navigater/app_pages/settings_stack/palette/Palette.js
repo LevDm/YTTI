@@ -40,7 +40,7 @@ import { deviceHeight, deviceWidth } from "../../../../app_values/AppDefault";
 
 import { statusBarHeight } from "../../../../app_values/AppDefault";
 
-import ColorPicker from "./elemens_pickers/ColorPicker";
+import ColorPicker, { hexToHSL, HSLToHex } from "./elemens_pickers/ColorPicker";
 import ShemePicker from "./elemens_pickers/SchemePicker";
 import { ScrollView } from "react-native";
 
@@ -131,9 +131,9 @@ const Palette = (props) => {
     props.r_setHideMenu(false)
     props.navigation.goBack()
   }
-  const open = themesApp[props.route.params.themeIndex]
 
-  const [ themeName, setThemeName ] = useState(open)
+  const open = themesApp[props.route.params.themeIndex]
+  const [ themeName, setThemeName ] = useState('Your '+open)
 
   const exit = ()=>{
 
@@ -161,6 +161,108 @@ const Palette = (props) => {
   const [colorsPickerVisible, setColorsPickerVisible] = useState(false)
   const [shemesPickerVisible, setShemesPickerVisible] = useState(false)
 
+  const [ stateOpenedColor, setStateOpenedColor ] = useState()
+
+  const copyObject = (copied, currentTrace, listStates )=>{
+    const copy = {}
+    //let newTrace
+    for(let el in copied){  
+      let newTrace = [...currentTrace, el]
+      if((typeof copied[el] != 'object') || (Array.isArray(copied[el]))){        
+        let copyValue = copied[el]
+        for(let colorState of listStates){
+          if( typeof colorState.trace != 'string'){
+            if(newTrace.join('-') == colorState.trace.join('-')){
+              console.log('find element. trace find & color',newTrace.join('-'), colorState.trace.join('-'))
+              copyValue = colorState.value
+              break
+            } 
+          } else {
+            if(newTrace[0] == colorState.scheme){
+              if(colorState.trace.includes(newTrace[newTrace.length-2])){
+                //console.log('find element. trace find & color', el)
+                let color = listStates[Object.keys(copied).indexOf(el)].value
+                if(color == ''){color = copied[el]}
+                copyValue = color
+                break
+              } 
+              else if (colorState.trace.includes(newTrace[newTrace.length-1])){
+                copyValue = colorState.value
+                break
+              }
+            }
+            
+          }
+        }
+        copy[el] = copyValue
+      } else {
+        copy[el] = copyObject(copied[el], newTrace, listStates)
+      }
+    }
+    return copy
+  }
+
+  const [currentCustomTheme, setCurrentCustomTheme] = useState(currentCustomTheme? currentCustomTheme : themesColorsAppList[props.route.params.themeIndex])
+
+
+  const applyNewStateColor = (changeColor) => {
+    const stateColor = {
+      value: changeColor ,//+ stateOpenedColor.alpha,
+      trace: stateOpenedColor.trace
+    }
+    let ret = copyObject(currentCustomTheme, [], [stateColor])
+    //console.log(ret)
+
+    setCurrentCustomTheme(ret)
+  }
+
+  const accentsTrasing = (accentColor, type) => {
+    const HSLcolor = hexToHSL(accentColor) //to hsl
+
+    let states = []
+    for(let i=0; i< 4; i++){
+      let newL = 0  
+      if(type=='light'){
+        newL = Math.min(HSLcolor.l +10*i, 100)
+      } else {
+        newL = Math.max(HSLcolor.l -10*i, 0)
+      }
+      states.push(
+        {
+          value: HSLToHex(HSLcolor.h, HSLcolor.s, newL),
+          trace: 'accents thumb active outline',
+          scheme: stateOpenedColor.trace[0]
+        }
+      )
+    }
+    
+    let ret = copyObject(currentCustomTheme, [], states)
+
+    //console.log('accent/thumb'.split('/'))
+    //console.log(ret)
+    setCurrentCustomTheme(ret)
+  }
+
+  const neutralsTrasing = (accentColor) => {
+    const range = {
+      primary: 0,
+      secondary: 1,
+      tertiary: 2
+    }
+    let states = []
+    for(let i=0; i < 3; i++){
+      states.push(
+        {
+          value: i == range[stateOpenedColor.trace[stateOpenedColor.trace.length-1]]? accentColor : '',
+          trace: 'neutrals',
+          scheme: stateOpenedColor.trace[0]
+        }
+      )
+    }
+    let ret = copyObject(currentCustomTheme, [], states)
+    //console.log(ret)
+    setCurrentCustomTheme(ret)
+  }
 
   const onShemeChangedSecondary=()=>{}
 
@@ -169,13 +271,33 @@ const Palette = (props) => {
     console.log('press', color, okTrace)
     if(color[0] == '#'){
       setInitialValue(color)
+
+      
+
+      let test = [
+        "light",
+        "basics",
+        "grounds",
+        "secondary",
+      ]
+      
+      setStateOpenedColor({
+        value: color,
+        alpha: '',
+        trace: trace,
+      })
+
+      //copyObject(currentCustomTheme, [], [stateOpenedColor])
+      //applyNewStateColor('#123456')
+      //accentsTrasing()
+
+      
       shemesPickerVisible? setShemesPickerVisible(false) : null
       !colorsPickerVisible? setColorsPickerVisible(true) : null
     } else {
       if(trace[trace.length-1] == 'statusBar'){
         !shemesPickerVisible? setShemesPickerVisible(true) : null
         colorsPickerVisible? setColorsPickerVisible(false) : null
-
       }
     }
   }
@@ -185,17 +307,20 @@ const Palette = (props) => {
     colorsPickerVisible? setColorsPickerVisible(false) : null
   }
 
-  const renderColors = (objColors, generals = false, trace = []) => {
+  const renderColors = (objColors, generals = false, start = false, trace = []) => {
     //let newTrace = [...trace, item]
     //generals? newTrace.push(generals) : null
+
+    const textColor = getContrast((trace.length>0? trace[0] : generals) == 'light'? '#fffffe' : '#000000' )
+
     return(
       <View
-        key = {`color_general_${generals}`}
+        key = {`color_general_${Math.random()}_${generals}`}
         style={{
-          marginLeft: generals? 10 : 0,
+          marginLeft: !start? 10 : 0,
         }}
       >
-        {generals && <Text style={{fontSize: 14, fontWeight: 'bold'}} >{generals}:</Text>}
+        {!start && <Text style={{fontSize: 14, fontWeight: 'bold', color: textColor}} >{generals}:</Text>}
         {Object.keys(objColors).map((item, index)=>{
           if(typeof objColors[item] == 'string'){
             return (
@@ -208,12 +333,12 @@ const Palette = (props) => {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   borderBottomWidth: 1,
-                  borderColor: 'black',
+                  borderColor: textColor,
                   marginBottom: 1,
                   paddingHorizontal: 5
                 }}
               >
-                <Text style={{fontSize: 14, fontWeight: ['theme', 'scheme', 'statusBar'].includes(item)? 'bold' : 'normal'}}>{item}:</Text>
+                <Text style={{fontSize: 14, color: textColor, fontWeight: ['theme', 'scheme', 'statusBar'].includes(item)? 'bold' : 'normal'}}>{item}:</Text>
                 {item === 'theme' && 
                   <BaseTextInput 
                     textValue={themeName}
@@ -226,7 +351,7 @@ const Palette = (props) => {
                     }}
                     textInputProps={{
                         style: {
-                            color: Theme.texts.neutrals.secondary,
+                            color: textColor,
                             fontSize: 16,
                             //minWidth: 90,
                         },
@@ -243,7 +368,7 @@ const Palette = (props) => {
                     basePressableProps={{
                       textStyle: {
                         fontSize: 14,
-                        color: objColors[item][0] === '#'? getContrast( objColors[item]) : 'black'
+                        color: textColor
                       },
                       style: {
                         height: 29,
@@ -251,18 +376,18 @@ const Palette = (props) => {
                         backgroundColor: objColors[item][0] === '#'? objColors[item] : 'transparent',
                         borderRadius:appStyle.borderRadius.additional,
                         borderWidth: 1,
-                        borderColor: objColors[item][0] === '#'? getContrast( objColors[item]) : 'black'
+                        borderColor: textColor
                       }
                     }}
                   />
                 }
-                {item != 'theme' &&
+                {(item != 'theme' && item != 'scheme' ) &&
                 <BasePressable
                   type="t"
                   text={objColors[item]}
                   textStyle={{
                     fontSize: 14,
-                    color: objColors[item][0] === '#'? getContrast( objColors[item]) : 'black'
+                    color: objColors[item][0] === '#'? getContrast( objColors[item]) : textColor
                   }}
                   style={{
                     height: 29,
@@ -270,10 +395,23 @@ const Palette = (props) => {
                     backgroundColor: objColors[item][0] === '#'? objColors[item] : 'transparent',
                     borderRadius:appStyle.borderRadius.additional,
                     borderWidth: 1,
-                    borderColor: objColors[item][0] === '#'? getContrast( objColors[item]) : 'black'
+                    borderColor: objColors[item][0] === '#'? getContrast( objColors[item]) : textColor
                   }}
                   onPress={()=>{pressColor(objColors[item], [...trace, generals, item])}}
                 />
+                }
+                {item === 'scheme' && 
+                <Text 
+                  style={{
+                    height: 29,
+                    width: 90,
+                    fontSize: 14,
+                    //backgroundColor: 'red',
+                    textAlign: 'center',
+                    textAlignVertical: 'center',
+                    color: textColor
+                  }}
+                >{objColors[item]}</Text>
                 }
               </View>
             )
@@ -281,16 +419,16 @@ const Palette = (props) => {
             
             return (
               <View>
-                {renderColors(objColors[item], item, [ ...trace, generals])}
+                {renderColors(objColors[item], item, false,[ ...trace, generals])}
               </View>
             )
           }
         })}
       </View>
     )
-    
   }
 
+  
   return (
     <View style = {{ flex: 1}}>
       <View
@@ -329,22 +467,42 @@ const Palette = (props) => {
           creater customs themes
         </Text>
       </View>
-      
       <ScrollView
-        contentContainerStyle={{
-          paddingBottom: deviceHeight/3.5
-        }}
+        horizontal = {true}
+        snapToInterval={deviceWidth}
         style={{
-          width: deviceWidth,
-          paddingLeft: 10,
-          paddingRight: 20
+          
         }}
       >
-        {renderColors(Theme)}
-      </ScrollView>
+        {Object.keys(currentCustomTheme).map((item, index)=>{
+          return (
+            <ScrollView
+              key = {`theme_oject_${Math.random()}`}
+              contentContainerStyle={{
+                paddingTop: 10,
+                paddingBottom: deviceHeight/3.5
+              }}
+              style={{
+                width: deviceWidth,
+                paddingLeft: 10,
+                paddingRight: 20,
+                backgroundColor: themesColorsAppList[ThemeColorsAppIndex][item].basics.grounds.secondary
+              }}
+            >
+              {renderColors(currentCustomTheme[item], item, true)}
+            </ScrollView>
+          )
+        })}
+    </ScrollView>
+      
       
       <ColorPicker
         visible={colorsPickerVisible}
+
+        applyNewStateColor={applyNewStateColor}
+        accentsTrasing={accentsTrasing}
+        neutralsTrasing={neutralsTrasing}
+
         onColorChanged={onColorChangedSecondary}
         initialValue={initialColor}
 

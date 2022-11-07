@@ -22,6 +22,7 @@ import Animated, {
 
 import { LinearGradient, LinearGradientProps } from 'expo-linear-gradient';
 import { deviceHeight, deviceWidth } from '../../../../../app_values/AppDefault';
+import { BasePressable } from '../../../../../general_components/base_components/BaseElements';
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
 
 const RAINBOW = [
@@ -45,7 +46,7 @@ const COLORS_L = [
   '#ffffff'
 ]
 
-function hexToHSL(H) {
+export function hexToHSL(H) {
   // Convert hex to RGB firsts
   let r = 0, g = 0, b = 0;
   if (H.length == 4) {
@@ -91,6 +92,47 @@ function hexToHSL(H) {
   return {h: h, s: s, l: l}//"hsl(" + h + "," + s + "%," + l + "%)";
 }
 
+export function HSLToHex(h,s,l) {
+      'worklet';
+      h = (h==360? 0 : h)
+      s /= 100;
+      l /= 100;
+    
+      let c = (1 - Math.abs(2 * l - 1)) * s,
+          x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+          m = l - c/2,
+          r = 0,
+          g = 0, 
+          b = 0; 
+    
+      if (0 <= h && h < 60) {
+        r = c; g = x; b = 0;
+      } else if (60 <= h && h < 120) {
+        r = x; g = c; b = 0;
+      } else if (120 <= h && h < 180) {
+        r = 0; g = c; b = x;
+      } else if (180 <= h && h < 240) {
+        r = 0; g = x; b = c;
+      } else if (240 <= h && h < 300) {
+        r = x; g = 0; b = c;
+      } else if (300 <= h && h < 360) {
+        r = c; g = 0; b = x;
+      }
+      // Having obtained RGB, convert channels to hex
+      r = Math.round((r + m) * 255).toString(16);
+      g = Math.round((g + m) * 255).toString(16);
+      b = Math.round((b + m) * 255).toString(16);
+    
+      // Prepend 0s, if necessary
+      if (r.length == 1)
+        r = "0" + r;
+      if (g.length == 1)
+        g = "0" + g;
+      if (b.length == 1)
+        b = "0" + b;
+    
+      return "#" + r + g + b;
+}
 const start={ x: 0, y: 0 }
 const end={ x: 1, y: 0 }
 
@@ -109,6 +151,10 @@ const ColorPicker = ({
   visible,
   initialValue,
   onColorChanged,
+
+  applyNewStateColor,
+  accentsTrasing,
+  neutralsTrasing,
 
   ThemeColorsAppIndex,
   ThemeSchema,
@@ -144,7 +190,7 @@ const ColorPicker = ({
       return (
         {
           transform: [
-            {translateY: withTiming( interpolate(keyboardShow.value, [-1, 0, 1], [deviceHeight/4, 0, (deviceHeight/4)*3/4]), {duration: duration}  )}
+            {translateY: withTiming( interpolate(keyboardShow.value, [-1, 0, 1], [deviceHeight/4, 0, (deviceHeight/4)*3/5]), {duration: duration}  )}
           ]
         }
       )
@@ -405,47 +451,7 @@ const ColorPicker = ({
         
     }, []);
     //===================================
-    function HSLToHex(h,s,l) {
-      'worklet';
-      h = (h==360? 0 : h)
-      s /= 100;
-      l /= 100;
-    
-      let c = (1 - Math.abs(2 * l - 1)) * s,
-          x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-          m = l - c/2,
-          r = 0,
-          g = 0, 
-          b = 0; 
-    
-      if (0 <= h && h < 60) {
-        r = c; g = x; b = 0;
-      } else if (60 <= h && h < 120) {
-        r = x; g = c; b = 0;
-      } else if (120 <= h && h < 180) {
-        r = 0; g = c; b = x;
-      } else if (180 <= h && h < 240) {
-        r = 0; g = x; b = c;
-      } else if (240 <= h && h < 300) {
-        r = x; g = 0; b = c;
-      } else if (300 <= h && h < 360) {
-        r = c; g = 0; b = x;
-      }
-      // Having obtained RGB, convert channels to hex
-      r = Math.round((r + m) * 255).toString(16);
-      g = Math.round((g + m) * 255).toString(16);
-      b = Math.round((b + m) * 255).toString(16);
-    
-      // Prepend 0s, if necessary
-      if (r.length == 1)
-        r = "0" + r;
-      if (g.length == 1)
-        g = "0" + g;
-      if (b.length == 1)
-        b = "0" + b;
-    
-      return "#" + r + g + b;
-    }
+   
 
     const [ inputValue, setInputValue ] = useState()
     const currentSelectColor = useSharedValue('')
@@ -656,7 +662,7 @@ const ColorPicker = ({
               justifyContent: 'space-around',
               alignItems: 'center',
               flexDirection: 'row',
-              marginRight: 85
+              //marginRight: 85
 
             }}
           >
@@ -664,7 +670,75 @@ const ColorPicker = ({
             <Animated.View style={[ HS50Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}/>
             <Animated.View style={[ HS40Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}/>
           </View>
+          
+          <BasePressable
+            type = 't'
+            text='ok'
+            style = {{
+              width: 85,
+              backgroundColor: '#ffffff25',
+              height: circlesSize,
+              borderRadius: circlesSize/2,
+              paddingHorizontal: 10,
+            }} 
+            textStyle={{
+              color: 'white'
+            }}
+            onPress={()=>{applyNewStateColor(currentSelectColor.value)}}
+          />
         </View>
+        <View
+            style ={{
+              flex: 1,
+              width: sliderSize.width,
+              //backgroundColor: 'grey',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              flexDirection: 'row',
+              //marginRight: 85
+
+            }}
+          >
+            <BasePressable
+              type = 't'
+              text='trace L'
+              style = {{
+                flex: 1,
+                marginHorizontal: 10,
+                backgroundColor: '#00000025',
+                height: circlesSize,
+                borderRadius: circlesSize/2,
+                paddingHorizontal: 10,
+              }} 
+              onPress={()=>{accentsTrasing(currentSelectColor.value, 'light')}}
+            />
+            <BasePressable
+              type = 't'
+              text='trace D'
+              style = {{
+                flex: 1,
+                marginHorizontal: 10,
+                backgroundColor: '#80808025',
+                height: circlesSize,
+                borderRadius: circlesSize/2,
+                paddingHorizontal: 10,
+              }} 
+              onPress={()=>{accentsTrasing(currentSelectColor.value, 'dark')}}
+            />
+            <BasePressable
+              type = 't'
+              text='trace N'
+              style = {{
+                flex: 1,
+                marginHorizontal: 10,
+                backgroundColor: '#ffffff25',
+                height: circlesSize,
+                borderRadius: circlesSize/2,
+                paddingHorizontal: 10,
+              }} 
+              onPress={()=>{neutralsTrasing(currentSelectColor.value)}}
+            />
+          </View>
       {[
         {
           tapGestureEvent: tapGestureEventH,

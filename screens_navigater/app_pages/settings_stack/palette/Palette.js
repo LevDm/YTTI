@@ -31,7 +31,7 @@ import {connect} from 'react-redux';
 import mapStateToProps from "../../../../redux_files/stateToProps";
 import mapDispatchToProps from "../../../../redux_files/dispatchToProps";
 
-import { BasePressable } from "../../../../general_components/base_components/BaseElements";
+import { BasePressable, BaseTextInput } from "../../../../general_components/base_components/BaseElements";
 
 import themesColorsAppList, { themesApp } from "../../../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../../../app_values/Languages";
@@ -40,7 +40,8 @@ import { deviceHeight, deviceWidth } from "../../../../app_values/AppDefault";
 
 import { statusBarHeight } from "../../../../app_values/AppDefault";
 
-import ColorPicker from "./color_picker/ColorPicker";
+import ColorPicker from "./elemens_pickers/ColorPicker";
+import ShemePicker from "./elemens_pickers/SchemePicker";
 import { ScrollView } from "react-native";
 
 
@@ -100,11 +101,43 @@ const Palette = (props) => {
   const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
   const Language = languagesAppList[LanguageAppIndex]
 
+  const getContrast = (hcolor) => {
+    let r = 0, g = 0, b = 0;
+    if (hcolor.length == 4) {
+      r = "0x" + hcolor[1] + hcolor[1];
+      g = "0x" + hcolor[2] + hcolor[2];
+      b = "0x" + hcolor[3] + hcolor[3];
+    } else if (hcolor.length == 7) {
+      r = "0x" + hcolor[1] + hcolor[2];
+      g = "0x" + hcolor[3] + hcolor[4];
+      b = "0x" + hcolor[5] + hcolor[6];
+    } else if (hcolor.length > 7) {
+      let alfa = "0x"+hcolor.slice(7)
+      alfa /= 255
+      return alfa > 0.5? "white" : 'black'
+    }
+    r /= 255;
+    g /= 255;
+    b /= 255;
+
+    const count = (coef) => ((coef+0.055)/1.055)**2.4 
+    
+    let contr = count(r)+count(g)+count(b)
+
+    return contr <= 0.5? 'white' : 'black'
+  }
+
   const back = () => {
     props.r_setHideMenu(false)
     props.navigation.goBack()
   }
   const open = themesApp[props.route.params.themeIndex]
+
+  const [ themeName, setThemeName ] = useState(open)
+
+  const exit = ()=>{
+
+  }
 
   const pickedColorSecondary = useSharedValue('');
 
@@ -126,13 +159,30 @@ const Palette = (props) => {
 
   const [initialColor, setInitialValue] = useState() //'#6b8e23'//'#af5657'
   const [colorsPickerVisible, setColorsPickerVisible] = useState(false)
+  const [shemesPickerVisible, setShemesPickerVisible] = useState(false)
+
+
+  const onShemeChangedSecondary=()=>{}
 
   const pressColor = (color, trace) => {
     const okTrace = !trace[0]? trace.slice(1) : trace
     console.log('press', color, okTrace)
+    if(color[0] == '#'){
+      setInitialValue(color)
+      shemesPickerVisible? setShemesPickerVisible(false) : null
+      !colorsPickerVisible? setColorsPickerVisible(true) : null
+    } else {
+      if(trace[trace.length-1] == 'statusBar'){
+        !shemesPickerVisible? setShemesPickerVisible(true) : null
+        colorsPickerVisible? setColorsPickerVisible(false) : null
 
-    setInitialValue(color)
-    !colorsPickerVisible? setColorsPickerVisible(true) : null
+      }
+    }
+  }
+
+  const focus = ()=> {
+    shemesPickerVisible? setShemesPickerVisible(false) : null
+    colorsPickerVisible? setColorsPickerVisible(false) : null
   }
 
   const renderColors = (objColors, generals = false, trace = []) => {
@@ -159,24 +209,72 @@ const Palette = (props) => {
                   justifyContent: 'space-between',
                   borderBottomWidth: 1,
                   borderColor: 'black',
-                  marginBottom: 1
+                  marginBottom: 1,
+                  paddingHorizontal: 5
                 }}
               >
-                <Text style={{fontSize: 14}}>{item}:</Text>
+                <Text style={{fontSize: 14, fontWeight: ['theme', 'scheme', 'statusBar'].includes(item)? 'bold' : 'normal'}}>{item}:</Text>
+                {item === 'theme' && 
+                  <BaseTextInput 
+                    textValue={themeName}
+                    setTextValue={setThemeName}
+                    exit={exit}
+                    focus={focus}
+                    paneleStyle={{
+                      borderColor: Theme.basics.accents.primary,
+                      backgroundColor: Theme.basics.grounds.primary,
+                    }}
+                    textInputProps={{
+                        style: {
+                            color: Theme.texts.neutrals.secondary,
+                            fontSize: 16,
+                            //minWidth: 90,
+                        },
+                        
+                        placeholder: 'name theme',
+                        placeholderTextColor: Theme.texts.neutrals.tertiary,
+                        maxLength: 70,
+        
+                        selectionColor: Theme.texts.accents.primary,
+        
+                        //android
+                        cursorColor: Theme.texts.accents.primary
+                    }}
+                    basePressableProps={{
+                      textStyle: {
+                        fontSize: 14,
+                        color: objColors[item][0] === '#'? getContrast( objColors[item]) : 'black'
+                      },
+                      style: {
+                        height: 29,
+                        minWidth: 90,
+                        backgroundColor: objColors[item][0] === '#'? objColors[item] : 'transparent',
+                        borderRadius:appStyle.borderRadius.additional,
+                        borderWidth: 1,
+                        borderColor: objColors[item][0] === '#'? getContrast( objColors[item]) : 'black'
+                      }
+                    }}
+                  />
+                }
+                {item != 'theme' &&
                 <BasePressable
                   type="t"
                   text={objColors[item]}
                   textStyle={{
-                    fontSize: 14
+                    fontSize: 14,
+                    color: objColors[item][0] === '#'? getContrast( objColors[item]) : 'black'
                   }}
                   style={{
-                    height: 30,
+                    height: 29,
                     width: 90,
                     backgroundColor: objColors[item][0] === '#'? objColors[item] : 'transparent',
-                    borderRadius:appStyle.borderRadius.additional
+                    borderRadius:appStyle.borderRadius.additional,
+                    borderWidth: 1,
+                    borderColor: objColors[item][0] === '#'? getContrast( objColors[item]) : 'black'
                   }}
                   onPress={()=>{pressColor(objColors[item], [...trace, generals, item])}}
                 />
+                }
               </View>
             )
           } else {
@@ -249,6 +347,17 @@ const Palette = (props) => {
         visible={colorsPickerVisible}
         onColorChanged={onColorChangedSecondary}
         initialValue={initialColor}
+
+        ThemeColorsAppIndex={ThemeColorsAppIndex}
+        ThemeSchema={ThemeSchema}
+        LanguageAppIndex={LanguageAppIndex}
+        appStyle={appStyle}
+        appConfig={appConfig}
+      />
+      <ShemePicker
+        visible={shemesPickerVisible}
+        onShemeChanged={onShemeChangedSecondary}
+        initialValue={''}
 
         ThemeColorsAppIndex={ThemeColorsAppIndex}
         ThemeSchema={ThemeSchema}

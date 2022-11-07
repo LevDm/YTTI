@@ -122,10 +122,10 @@ const ColorPicker = ({
     const keyboardShow = useSharedValue(-1);
     useEffect(() => {
       const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
-        keyboardShow.value = 1
+        keyboardShow.value != -1? keyboardShow.value = 1 : null
       });
       const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-        keyboardShow.value = 0
+        keyboardShow.value != -1? keyboardShow.value = 0 : null
       });
 
       return () => {
@@ -136,6 +136,7 @@ const ColorPicker = ({
 
     useEffect(()=>{
       if(visible && keyboardShow.value == -1){keyboardShow.value = 0}
+      if(!visible && keyboardShow.value != -1){keyboardShow.value = -1}
     },[visible])
 
     const areaSliders = useAnimatedStyle(()=>{
@@ -534,10 +535,11 @@ const ColorPicker = ({
     })
 
     const text = useAnimatedProps(()=>{
-      return({
-        defaultValue: currentSelectColor.value,
-      })
-    })
+      'worklet';
+      return {
+        text: currentSelectColor.value,
+      }
+    }, [])
 
     const settingSlidersColor = (color)=>{
       //console.log('hsl slider set color')
@@ -636,13 +638,15 @@ const ColorPicker = ({
             textAlign = {'center'}
             contextMenuHidden={true}
             defaultValue={currentSelectColor.value}
-            //animatedProps={text}
+            
             
             value={inputValue}
             onPressIn={onPressInText}
             onChangeText={changeTextColor}
             //onEndEditing = {changeEnd}
             onSubmitEditing = {changeEnd}
+
+            animatedProps={text}
           />
           <View
             style ={{

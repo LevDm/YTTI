@@ -133,12 +133,9 @@ const Palette = (props) => {
   }
 
   const open = themesApp[props.route.params.themeIndex]
-  const [ themeName, setThemeName ] = useState('Your '+open)
-
-  const exit = ()=>{
-
-  }
-
+  const primeStateName = 'Your custom theme name'
+  const [ themeName, setThemeName ] = useState(primeStateName)
+  
   const pickedColorSecondary = useSharedValue('');
 
   const logg = (t)=>{
@@ -173,12 +170,12 @@ const Palette = (props) => {
         for(let colorState of listStates){
           if( typeof colorState.trace != 'string'){
             if(newTrace.join('-') == colorState.trace.join('-')){
-              console.log('find element. trace find & color',newTrace.join('-'), colorState.trace.join('-'))
+              //console.log('find element. trace find & color',newTrace.join('-'), colorState.trace.join('-'))
               copyValue = colorState.value
               break
             } 
           } else {
-            if(newTrace[0] == colorState.scheme){
+            if((colorState.scheme && (newTrace[0] == colorState.scheme)) || !colorState.scheme){
               if(colorState.trace.includes(newTrace[newTrace.length-2])){
                 //console.log('find element. trace find & color', el)
                 let color = listStates[Object.keys(copied).indexOf(el)].value
@@ -202,12 +199,15 @@ const Palette = (props) => {
     return copy
   }
 
-  const [currentCustomTheme, setCurrentCustomTheme] = useState(currentCustomTheme? currentCustomTheme : themesColorsAppList[props.route.params.themeIndex])
+  const [currentCustomTheme, setCurrentCustomTheme] = useState(copyObject(themesColorsAppList[props.route.params.themeIndex], [], [{value: !((themesApp.slice(1)).includes(open))? open : 'custom', trace: 'theme'}]))
 
+  const checkAlphaColor = (color)=>{
+    return color+stateOpenedColor.alpha
+  }
 
   const applyNewStateColor = (changeColor) => {
     const stateColor = {
-      value: changeColor ,//+ stateOpenedColor.alpha,
+      value: checkAlphaColor(changeColor) ,//+ stateOpenedColor.alpha,
       trace: stateOpenedColor.trace
     }
     let ret = copyObject(currentCustomTheme, [], [stateColor])
@@ -243,7 +243,8 @@ const Palette = (props) => {
     setCurrentCustomTheme(ret)
   }
 
-  const neutralsTrasing = (accentColor) => {
+  const trasing = (accentColor, type) => {
+    //type = 'neutrals', 'grounds
     const range = {
       primary: 0,
       secondary: 1,
@@ -254,7 +255,7 @@ const Palette = (props) => {
       states.push(
         {
           value: i == range[stateOpenedColor.trace[stateOpenedColor.trace.length-1]]? accentColor : '',
-          trace: 'neutrals',
+          trace: type,
           scheme: stateOpenedColor.trace[0]
         }
       )
@@ -264,43 +265,46 @@ const Palette = (props) => {
     setCurrentCustomTheme(ret)
   }
 
-  const onShemeChangedSecondary=()=>{}
+  const onShemeChangedSecondary=(scheme)=>{
+    const stateColor = {
+      value: scheme,
+      trace: stateOpenedColor.trace
+    }
+    let ret = copyObject(currentCustomTheme, [], [stateColor])
+    setCurrentCustomTheme(ret)
+  }
 
   const pressColor = (color, trace) => {
     const okTrace = !trace[0]? trace.slice(1) : trace
     console.log('press', color, okTrace)
     if(color[0] == '#'){
       setInitialValue(color)
-
-      
-
-      let test = [
-        "light",
-        "basics",
-        "grounds",
-        "secondary",
-      ]
-      
       setStateOpenedColor({
         value: color,
-        alpha: '',
+        alpha: color.length > 7? color.slice(7) : '',
         trace: trace,
       })
-
-      //copyObject(currentCustomTheme, [], [stateOpenedColor])
-      //applyNewStateColor('#123456')
-      //accentsTrasing()
-
-      
+      //console.log('alpha', color.length > 7? color.slice(7) : '')=
       shemesPickerVisible? setShemesPickerVisible(false) : null
       !colorsPickerVisible? setColorsPickerVisible(true) : null
     } else {
-      if(trace[trace.length-1] == 'statusBar'){
+      if(trace.includes('statusBar')){
+        setStateOpenedColor({
+          value: color,
+          trace: trace,
+        })
         !shemesPickerVisible? setShemesPickerVisible(true) : null
         colorsPickerVisible? setColorsPickerVisible(false) : null
       }
     }
   }
+
+  const exit = (fasterText)=>{
+    //console.log('exit', fasterText)
+    let ret = copyObject(currentCustomTheme, [], [{value: fasterText, trace: 'theme'}])
+    setCurrentCustomTheme(ret)
+  }
+
 
   const focus = ()=> {
     shemesPickerVisible? setShemesPickerVisible(false) : null
@@ -339,49 +343,7 @@ const Palette = (props) => {
                 }}
               >
                 <Text style={{fontSize: 14, color: textColor, fontWeight: ['theme', 'scheme', 'statusBar'].includes(item)? 'bold' : 'normal'}}>{item}:</Text>
-                {item === 'theme' && 
-                  <BaseTextInput 
-                    textValue={themeName}
-                    setTextValue={setThemeName}
-                    exit={exit}
-                    focus={focus}
-                    paneleStyle={{
-                      borderColor: Theme.basics.accents.primary,
-                      backgroundColor: Theme.basics.grounds.primary,
-                    }}
-                    textInputProps={{
-                        style: {
-                            color: textColor,
-                            fontSize: 16,
-                            //minWidth: 90,
-                        },
-                        
-                        placeholder: 'name theme',
-                        placeholderTextColor: Theme.texts.neutrals.tertiary,
-                        maxLength: 70,
-        
-                        selectionColor: Theme.texts.accents.primary,
-        
-                        //android
-                        cursorColor: Theme.texts.accents.primary
-                    }}
-                    basePressableProps={{
-                      textStyle: {
-                        fontSize: 14,
-                        color: textColor
-                      },
-                      style: {
-                        height: 29,
-                        minWidth: 90,
-                        backgroundColor: objColors[item][0] === '#'? objColors[item] : 'transparent',
-                        borderRadius:appStyle.borderRadius.additional,
-                        borderWidth: 1,
-                        borderColor: textColor
-                      }
-                    }}
-                  />
-                }
-                {(item != 'theme' && item != 'scheme' ) &&
+                {(item != 'scheme' && item != 'theme') &&
                 <BasePressable
                   type="t"
                   text={objColors[item]}
@@ -400,7 +362,7 @@ const Palette = (props) => {
                   onPress={()=>{pressColor(objColors[item], [...trace, generals, item])}}
                 />
                 }
-                {item === 'scheme' && 
+                {(item === 'scheme' || item === 'theme')  && 
                 <Text 
                   style={{
                     height: 29,
@@ -418,7 +380,9 @@ const Palette = (props) => {
           } else {
             
             return (
-              <View>
+              <View
+                key = {`rc_color_${generals? generals : ''}_${item}_${index}`}
+              >
                 {renderColors(objColors[item], item, false,[ ...trace, generals])}
               </View>
             )
@@ -434,38 +398,102 @@ const Palette = (props) => {
       <View
         style ={{
           width: '100%',
-          height: statusBarHeight + 45,
+          height: statusBarHeight + 45 + 35,
           backgroundColor: Theme.basics.accents.primary,
-          flexDirection: 'row',
-          justifyContent: 'flex-start',
+    
+          justifyContent: 'center',
           alignItems: 'center',
-          paddingTop: 30,
-          paddingHorizontal: 20
         }}
       >
-        <BasePressable
-          type='i'
-          icon={{name: "keyboard-backspace", size: 30, color: Theme.icons.neutrals.primary }}
-          style={{
-            height: 45, 
-            width: 45, 
-            borderRadius: appStyle.borderRadius.additional
+        <View
+          style ={{
+            width: '100%',
+            height: statusBarHeight + 45,
+            //backgroundColor: Theme.basics.accents.primary,
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            paddingTop: 30,
+            paddingHorizontal: 20
           }}
-          onPress={back}
-          android_ripple={{
-            color: Theme.texts.neutrals.primary,
-            borderless: true,
-            foreground: false
+        >
+          <BasePressable
+            type='i'
+            icon={{name: "keyboard-backspace", size: 30, color: Theme.icons.neutrals.primary }}
+            style={{
+              height: 45, 
+              width: 45, 
+              borderRadius: appStyle.borderRadius.additional
+            }}
+            onPress={back}
+            android_ripple={{
+              color: Theme.texts.neutrals.primary,
+              borderless: true,
+              foreground: false
+            }}
+          />
+          <Text
+            style = {[staticStyles.headerText, {
+              marginLeft: 15,
+              color: Theme.texts.neutrals.primary
+            }]}
+          >
+            creater customs themes
+          </Text>
+        </View>
+        <BaseTextInput 
+          textValue={themeName}
+          setTextValue={setThemeName}
+          exit={exit}
+          focus={focus}
+          paneleStyle={{
+            borderColor: Theme.basics.accents.primary,
+            backgroundColor: Theme.basics.grounds.primary,
+          }}
+          textInputProps={{
+              style: {
+                  color: Theme.texts.neutrals.secondary,
+                  fontSize: 16,
+                  //minWidth: 90,
+              },
+              
+              placeholder: 'name theme',
+              placeholderTextColor: Theme.texts.neutrals.tertiary,
+              maxLength: 70,
+
+              selectionColor: Theme.texts.accents.primary,
+
+              //android
+              cursorColor: Theme.texts.accents.primary
+          }}
+          basePressableProps={{
+            style: {
+              height: 35,
+              borderRadius:appStyle.borderRadius.additional,
+            },
+            styleItemContainer: {
+              justifyContent: 'flex-end',
+              paddingRight: 15,
+              flexDirection: 'row-reverse'
+              //alignItems: 'center'
+            },
+            textStyle: {
+              fontSize: 18,
+              color: Theme.texts.neutrals.primary
+            },
+            android_ripple: {
+              color: Theme.icons.accents.quaternary,
+              borderless: true,
+              foreground: false
+            },
+            type: 'ti',
+            icon: {
+              name: "pencil-outline", 
+              size: 20, 
+              color: Theme.icons.neutrals.primary
+            },
           }}
         />
-        <Text
-          style = {[staticStyles.headerText, {
-            marginLeft: 15,
-            color: Theme.texts.neutrals.primary
-          }]}
-        >
-          creater customs themes
-        </Text>
       </View>
       <ScrollView
         horizontal = {true}
@@ -474,25 +502,41 @@ const Palette = (props) => {
           
         }}
       >
+        <ScrollView
+          //horizontal = {true}
+          //snapToInterval={deviceWidth}
+          showsVerticalScrollIndicator={false}
+          style={{
+            width: deviceWidth*2,
+            //
+          }}
+          contentContainerStyle={{
+            
+            flexDirection: 'row',
+            
+
+          }}
+        >
         {Object.keys(currentCustomTheme).map((item, index)=>{
+
           return (
-            <ScrollView
-              key = {`theme_oject_${Math.random()}`}
-              contentContainerStyle={{
-                paddingTop: 10,
-                paddingBottom: deviceHeight/3.5
-              }}
+            <View
+              key = {`theme_oject_${item}_${Math.random()}`}
+              
               style={{
                 width: deviceWidth,
+                paddingTop: 10,
                 paddingLeft: 10,
                 paddingRight: 20,
+                paddingBottom: deviceHeight/3.5,
                 backgroundColor: themesColorsAppList[ThemeColorsAppIndex][item].basics.grounds.secondary
               }}
             >
               {renderColors(currentCustomTheme[item], item, true)}
-            </ScrollView>
+            </View>
           )
         })}
+        </ScrollView>
     </ScrollView>
       
       
@@ -501,10 +545,11 @@ const Palette = (props) => {
 
         applyNewStateColor={applyNewStateColor}
         accentsTrasing={accentsTrasing}
-        neutralsTrasing={neutralsTrasing}
+        trasing={trasing}
 
         onColorChanged={onColorChangedSecondary}
         initialValue={initialColor}
+        opened={stateOpenedColor}
 
         ThemeColorsAppIndex={ThemeColorsAppIndex}
         ThemeSchema={ThemeSchema}
@@ -515,7 +560,7 @@ const Palette = (props) => {
       <ShemePicker
         visible={shemesPickerVisible}
         onShemeChanged={onShemeChangedSecondary}
-        initialValue={''}
+        initialValue={ stateOpenedColor != undefined? (stateOpenedColor.value != undefined? stateOpenedColor.value : 'light') : 'light'}
 
         ThemeColorsAppIndex={ThemeColorsAppIndex}
         ThemeSchema={ThemeSchema}

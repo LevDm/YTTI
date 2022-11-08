@@ -556,7 +556,7 @@ export default WeatherRedactor = ({
             animationType = {'fade'}
             visible = {modalVisible}
             dimOut = {appStyle.modals.highlightMethods.dimOutDark? Theme.specials.transparents.dim : false} 
-            gradient = {appStyle.modals.highlightMethods.gradient? Theme.modals.basics.ground.tertiary : false}
+            gradient = {appStyle.modals.highlightMethods.gradient? Theme.modals.basics.accents : false}
             outPress = {outsideModalPress}
             onShow = {onShow}
             modalStyle = {{
@@ -565,7 +565,7 @@ export default WeatherRedactor = ({
                 height: 250
             }}
             style={{
-                backgroundColor: Theme.modals.basics.ground.primary,
+                backgroundColor: Theme.modals.basics.grounds.secondary,
                 borderTopLeftRadius: appStyle.borderRadius.additional,
                 borderTopRightRadius: appStyle.borderRadius.additional,
                 borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
@@ -593,7 +593,7 @@ export default WeatherRedactor = ({
                     alignItems: 'center'
                 }}
             >
-                <Text style = {[staticStyles.boldText, {color: Theme.modals.texts.primary}]}>
+                <Text style = {[staticStyles.boldText, {color: Theme.modals.texts.neutrals.primary}]}>
                     {Language[openedModal.type]}
                 </Text>
                 <View
@@ -638,7 +638,7 @@ export default WeatherRedactor = ({
                                 width: '45%',
                                 height: 150,
                                 borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: Theme.modals.basics.ground.secondary,
+                                backgroundColor: Theme.modals.basics.grounds.primary,
                                 //justifyContent: 'center',
                                 alignItems: 'center'
                             }, staticStyles.shadow]}
@@ -652,7 +652,7 @@ export default WeatherRedactor = ({
                                 }}
                                 onPress={()=>{selected(item)}}
                                 android_ripple={{
-                                    color: Theme.modals.basics.ground.tertiary,
+                                    color: Theme.modals.basics.accents,
                                     borderless: true,
                                     foreground: false
                                 }}
@@ -666,10 +666,10 @@ export default WeatherRedactor = ({
                                         alignItems: 'center'
                                     }}
                                 >
-                                    <MaterialCommunityIcons name={iconName} size={30} color={Theme.modals.icons.primary} />
+                                    <MaterialCommunityIcons name={iconName} size={30} color={Theme.modals.icons.neutrals.primary} />
                                     <Text 
                                         style = {[staticStyles.boldText, {
-                                            color: Theme.modals.texts.primary, 
+                                            color: Theme.modals.texts.neutrals.primary, 
                                             textAlign: 'center',
                                         }]}
                                     >
@@ -679,7 +679,7 @@ export default WeatherRedactor = ({
                                 <Text
                                     style = {[staticStyles.boldText, 
                                         {
-                                            color: Theme.modals.texts.primary,
+                                            color: Theme.modals.texts.neutrals.primary,
                                             marginTop: 20,
                                             padding: 5
                                         }
@@ -695,19 +695,19 @@ export default WeatherRedactor = ({
                                         width: '100%',
                                         height: '65%',
                                         borderRadius: appStyle.borderRadius.additional,
-                                        backgroundColor: Theme.modals.basics.ground.tertiary,
+                                        backgroundColor: Theme.modals.basics.accents,
                                         justifyContent: 'center',
                                         alignItems: 'center'
                                     }}
                                 >
                                     {!netConnectInfo &&
-                                    <MaterialCommunityIcons name="wifi-remove" size={40} color={Theme.modals.icons.primary}/>
+                                    <MaterialCommunityIcons name="wifi-remove" size={40} color={Theme.modals.icons.neutrals.primary}/>
                                     }
                                     {netConnectInfo &&
                                     <Text
                                         style = {[staticStyles.text, 
                                             {
-                                                color: Theme.modals.texts.secondary,
+                                                color: Theme.modals.texts.neutrals.secondary,
                                                 textAlign: 'center'
                                             }
                                         ]}

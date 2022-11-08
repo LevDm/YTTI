@@ -82,7 +82,7 @@ const Classical = ({
                     width: deviceWidth,
                     //position: 'absolute',
                     //bottom: 0, 
-                    backgroundColor: Theme.navigateBar.ground,
+                    backgroundColor: Theme.navigateBar.grounds,
                     flexDirection: 'row',
                     borderTopWidth: 1,
                     borderColor: Theme.navigateBar.transparentGround
@@ -168,7 +168,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Theme.navigateBar.text.active
+                                            color: Theme.navigateBar.texts.active
                                         }
                                     ]}
                                 >
@@ -195,7 +195,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Theme.navigateBar.text.notActive
+                                            color: Theme.navigateBar.texts.notActive
                                         }
                                     ]}
                                 >

@@ -23,6 +23,10 @@ import Animated, {
 import { LinearGradient, LinearGradientProps } from 'expo-linear-gradient';
 import { deviceHeight, deviceWidth } from '../../../../../app_values/AppDefault';
 
+import themesColorsAppList, {themesApp} from '../../../../../app_values/Themes';
+import languagesAppList, {languagesApp} from "../../../../../app_values/Languages";
+
+import { BaseBox } from '../../../../../general_components/base_components/BaseElements';
 
 const start={ x: 0, y: 0 }
 const end={ x: 1, y: 0 }
@@ -37,6 +41,7 @@ const interval_slider = [0, maxWidth]
 const interval_h = [0, 360]
 const interval_sl = [0, 100]
 
+const statusBarValues = ['auto','inverted','light','dark']
 
 const ShemePicker = ({
   visible,
@@ -49,6 +54,9 @@ const ShemePicker = ({
   appStyle,
   appConfig,
 }) => {
+  const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+  const Language = languagesAppList[LanguageAppIndex]
+
     const logg = (t)=>{
       console.log(t)
     }
@@ -69,9 +77,28 @@ const ShemePicker = ({
         }
       )
     })
+    
+    const getGroup = (type) => {
+      let group = []
+      for (let i of statusBarValues){
+          let check = false
+          if(type === i){check = true}
+          group.push(check)
+      }
+      return group
+    };
 
+    const [checkGroup, setCheckGroup] = useState(getGroup(initialValue));
 
-    const circlesSize = 30
+    useEffect(()=>{
+      setCheckGroup(getGroup(initialValue))
+    },[initialValue])
+
+    const statusBarStyleSetting = (newStyle, index)=>{
+      setCheckGroup(getGroup(newStyle));
+      onShemeChanged(newStyle)
+    }
+
     return (
     <Animated.View
         style ={[{
@@ -82,13 +109,37 @@ const ShemePicker = ({
             justifyContent: 'center',
             paddingHorizontal: CIRCLE_PICKER_SIZE/2,
             backgroundColor: 'transparent',
-            borderRadius: 20,
+            borderRadius: appStyle.borderRadius.additional,
             //justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: 'white'
         }, areaSliders]}
     >
-    
+        <View 
+            style = {[{marginLeft: 20, width: '60%'}]}
+        >
+            {statusBarValues.map((item, index)=>{
+                return(
+                    <BaseBox
+                        key = {item+index}
+                        style = {{
+                            borderRadius: appStyle.borderRadius.additional,
+                            backgroundColor: 'transparent'
+                        }}
+                        android_ripple={{
+                            color: Theme.icons.accents.primary,
+                            borderless: true,
+                            foreground: false
+                        }}
+                        Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{item}</Text>}
+                        Check = {checkGroup[index]}
+                        onPress = {()=>{statusBarStyleSetting(item, index)}}
+                        BoxBorderRadius = {appStyle.borderRadius.additional}
+                        ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
+                    />
+                )
+            })}
+        </View>
     </Animated.View>
     );
 };
@@ -97,6 +148,12 @@ const CIRCLE_PICKER_SIZE = 30;
 const INTERNAL_PICKER_SIZE = CIRCLE_PICKER_SIZE  ;
 
 const staticStyles = StyleSheet.create({
+  listText: {
+    marginLeft: 5,
+    fontSize: 14, 
+    fontWeight: '400', 
+    letterSpacing: 0.5
+  },
   picker: {
     position: 'absolute',
     marginLeft: -CIRCLE_PICKER_SIZE/2,

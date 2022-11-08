@@ -46,35 +46,35 @@ const Emerald = {
         },
     },
     navigateBar: {
-        ground: '#ffffff',
+        grounds: '#ffffff',
         transparentGround: '#00000020',
         icons: {active: '#50c878', notActive: '#000000'},
-        text: {active: '#50c878', notActive: '#000000'},
+        texts: {active: '#50c878', notActive: '#000000'},
     },
     modals: {
         thumb: '#50c878',
         outline: '#50c878',
-        ground: '#ffffff',
-
         basics: {
-            ground: {
-                primary: '#fafafa',
-                secondary: '#ffffff',
-                tertiary: '#50c878',
-            }
+            grounds: {
+                primary: '#ffffff',
+                secondary: '#fafafa',
+            },
+            accents: '#50c878',
         },
         texts: {
-            primary: '#000000',
-            secondary: '#ffffff',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#000000',
+                secondary: '#ffffff',
+                tertiary: '#808080',
+            },
         },
         icons: {
-            primary: '#000000',
-            secondary: '#ffffff',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#000000',
+                secondary: '#ffffff',
+                tertiary: '#808080',
+            }
         }
-
-
     },
     specials: {
         fire: {
@@ -136,32 +136,34 @@ const Olive = {
         },
     },
     navigateBar: {
-        ground: '#ffffff',
+        grounds: '#ffffff',
         transparentGround: '#00000020',
         icons: {active: '#6b8e23', notActive: '#000000'},
-        text: {active: '#6b8e23', notActive: '#000000'},
+        texts: {active: '#6b8e23', notActive: '#000000'},
     },
     modals: {
         thumb: '#6b8e23',
         outline: '#6b8e23',
-        ground: '#ffffff', 
-
         basics: {
-            ground: {
-                primary: '#fafafa',
-                secondary: '#ffffff',
-                tertiary: '#6b8e23',
-            }
+            grounds: {
+                primary: '#ffffff',
+                secondary: '#fafafa',
+            },
+            accents: '#6b8e23',
         },
         texts: {
-            primary: '#000000',
-            secondary: '#ffffff',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#000000',
+                secondary: '#ffffff',
+                tertiary: '#808080',
+            },
         },
         icons: {
-            primary: '#000000',
-            secondary: '#ffffff',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#000000',
+                secondary: '#ffffff',
+                tertiary: '#808080',
+            }
         }
     },
     specials: {
@@ -223,32 +225,34 @@ const Gold = {
         },
     },
     navigateBar: {
-        ground: '#ffffff',
+        grounds: '#ffffff',
         transparentGround: '#00000020',
         icons: {active: '#6b8e23', notActive: '#000000'},
-        text: {active: '#6b8e23', notActive: '#000000'},
+        texts: {active: '#6b8e23', notActive: '#000000'},
     },
     modals: {
         thumb: '#6b8e23',
         outline: '#6b8e23',
-        ground: '#ffffff',
-        
         basics: {
-            ground: {
-                primary: '#fafafa',
-                secondary: '#ffffff',
-                tertiary: '#6b8e23',
-            }
+            grounds: {
+                primary: '#ffffff',
+                secondary: '#fafafa',
+            },
+            accents: '#6b8e23',
         },
         texts: {
-            primary: '#000000',
-            secondary: '#ffffff',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#000000',
+                secondary: '#ffffff',
+                tertiary: '#808080',
+            },
         },
         icons: {
-            primary: '#000000',
-            secondary: '#ffffff',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#000000',
+                secondary: '#ffffff',
+                tertiary: '#808080',
+            }
         }
     },
     specials: {

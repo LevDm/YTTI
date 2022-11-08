@@ -46,32 +46,34 @@ const Emerald = {
         },
     },
     navigateBar: {
-        ground: '#222222',
+        grounds: '#222222',
         transparentGround: '#ffffff20',
         icons: {active: '#50c878', notActive: '#ffffff'},
-        text: {active: '#50c878', notActive: '#ffffff'},
+        texts: {active: '#50c878', notActive: '#ffffff'},
     },
     modals: {
         thumb: '#50c878',
         outline: '#50c878',
-        ground: '#222222', 
-
         basics: {
-            ground: {
-                primary: '#222222',
-                secondary: '#333333',
-                tertiary: '#50c878',
-            }
+            grounds: {
+                primary: '#333333',
+                secondary: '#222222',
+            },
+            accents: '#50c878',
         },
         texts: {
-            primary: '#ffffff',
-            secondary: '#000000',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#ffffff',
+                secondary: '#000000',
+                tertiary: '#808080',
+            },
         },
         icons: {
-            primary: '#ffffff',
-            secondary: '#000000',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#ffffff',
+                secondary: '#000000',
+                tertiary: '#808080',
+            }
         }
     },
     specials: {
@@ -133,32 +135,34 @@ const Olive = {
         },
     },
     navigateBar: {
-        ground: '#222222',
+        grounds: '#222222',
         transparentGround: '#ffffff20',
         icons: {active: '#6b8e23', notActive: '#ffffff'},
-        text: {active: '#6b8e23', notActive: '#ffffff'},
+        texts: {active: '#6b8e23', notActive: '#ffffff'},
     },
     modals: {
         thumb: '#6b8e23',
         outline: '#6b8e23',
-        ground: '#222222', 
-
         basics: {
-            ground: {
-                primary: '#222222',
-                secondary: '#333333',
-                tertiary: '#6b8e23',
-            }
+            grounds: {
+                primary: '#333333',
+                secondary: '#222222',
+            },
+            accents: '#6b8e23',
         },
         texts: {
-            primary: '#ffffff',
-            secondary: '#000000',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#ffffff',
+                secondary: '#000000',
+                tertiary: '#808080',
+            },
         },
         icons: {
-            primary: '#ffffff',
-            secondary: '#000000',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#ffffff',
+                secondary: '#000000',
+                tertiary: '#808080',
+            }
         }
     },
     specials: {
@@ -220,32 +224,34 @@ const Gold = {
         },
     },
     navigateBar: {
-        ground: '#222222',
+        grounds: '#222222',
         transparentGround: '#ffffff20',
         icons: {active: '#000', notActive: '#000'},
-        text: {active: '#6b8e23', notActive: '#000'},
+        texts: {active: '#6b8e23', notActive: '#000'},
     },
     modals: {
         thumb: '#6b8e23',
         outline: '#6b8e23',
-        ground: '#222222', 
-
         basics: {
-            ground: {
-                primary: '#222222',
-                secondary: '#333333',
-                tertiary: '#6b8e23',
-            }
+            grounds: {
+                primary: '#333333',
+                secondary: '#222222',
+            },
+            accents: '#6b8e23',
         },
         texts: {
-            primary: '#ffffff',
-            secondary: '#000000',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#ffffff',
+                secondary: '#000000',
+                tertiary: '#808080',
+            },
         },
         icons: {
-            primary: '#ffffff',
-            secondary: '#000000',
-            tertiary: '#808080',
+            neutrals: {
+                primary: '#ffffff',
+                secondary: '#000000',
+                tertiary: '#808080',
+            }
         }
     },
     specials: {

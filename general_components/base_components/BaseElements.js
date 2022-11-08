@@ -578,6 +578,7 @@ export const BaseTextInput = ({
     //pressable
     basePressableProps,
 }) => {
+    const [localText, setLocalText] = useState(textValue? textValue : textInputProps.placeholder)
     const [openState, setOpenState] = useState(false)
 
     const texInputref = useRef()
@@ -608,8 +609,9 @@ export const BaseTextInput = ({
     },[keyboardVisible])
 
     const onFocus = () => {
-        setOpenState(true)
+        
         focus? focus() : null
+        setOpenState(true)
     }
     
     const onEnter =()=> {
@@ -619,8 +621,14 @@ export const BaseTextInput = ({
 
     const onExit =()=> {
 
+        setTextValue(localText)
+        exit? exit(localText) : null
+        
         setOpenState(false)
-        exit? exit() : null
+    }
+
+    const setText = (text) => {
+        setLocalText(text)
     }
 
     return (
@@ -629,6 +637,12 @@ export const BaseTextInput = ({
             visible={openState}
             transparent = {true}
         >
+            <Pressable
+                style={{
+                    flex: 1
+                }}
+                onPress={onExit}
+            >        
             <View
                 style={[{
                     position: 'absolute',
@@ -659,10 +673,8 @@ export const BaseTextInput = ({
                     placeholderTextColor = {textInputProps.placeholderTextColor}
                     maxLength={textInputProps.maxLength}
                     defaultValue={textValue}
-                    selectTextOnFocus={true}
-                    onChangeText={(text)=>{
-                        setTextValue(text)
-                    }}
+                    selectTextOnFocus={true}//(text)=>{setTextValue(text)}
+                    onChangeText={setText}
                     
                     selectionColor = {textInputProps.selectionColor}
                     
@@ -671,6 +683,7 @@ export const BaseTextInput = ({
                     cursorColor={textInputProps.cursorColor}            
                 />
             </View>
+            </Pressable>
         </Modal>
         <BasePressable
             type="t"
@@ -678,7 +691,7 @@ export const BaseTextInput = ({
             //all props
             {...basePressableProps}
 
-            text={textValue? textValue : textInputProps.placeholder}
+            text={localText}
             onPress={onFocus}
         />
         </>

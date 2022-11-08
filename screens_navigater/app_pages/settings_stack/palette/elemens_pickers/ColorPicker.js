@@ -20,10 +20,16 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+
 import { LinearGradient, LinearGradientProps } from 'expo-linear-gradient';
 import { deviceHeight, deviceWidth } from '../../../../../app_values/AppDefault';
+
+import themesColorsAppList, {themesApp} from '../../../../../app_values/Themes';
+import languagesAppList, {languagesApp} from "../../../../../app_values/Languages";
+
 import { BasePressable } from '../../../../../general_components/base_components/BaseElements';
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
+
 
 const RAINBOW = [
   '#ff0000',
@@ -150,11 +156,12 @@ const interval_sl = [0, 100]
 const ColorPicker = ({
   visible,
   initialValue,
+  opened, 
   onColorChanged,
 
   applyNewStateColor,
   accentsTrasing,
-  neutralsTrasing,
+  trasing,
 
   ThemeColorsAppIndex,
   ThemeSchema,
@@ -162,6 +169,10 @@ const ColorPicker = ({
   appStyle,
   appConfig,
 }) => {
+
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex]
+
     const logg = (t)=>{
       console.log(t)
     }
@@ -554,7 +565,16 @@ const ColorPicker = ({
       translateXS.value = interpolate(initHSL.s, interval_sl, interval_slider)
       translateXL.value = interpolate(initHSL.l, interval_sl, interval_slider)
     }
+    const getTypeTracing = ()=> {
+      const current = (opened.trace).slice(0).join('-')
+      let type = ''
+      if(current.includes("basics-accents-primary")){type = 'accents'}
+      if(current.includes("basics-neutrals")){type = 'neutrals'}
+      if(current.includes("basics-grounds")){type = 'grounds'}
 
+      return type
+    }
+    const typeTrasing = getTypeTracing()
     useEffect(()=>{
       //console.log('ue iv')
       initialValue? settingSlidersColor(initialValue) : null
@@ -591,6 +611,18 @@ const ColorPicker = ({
       settingSlidersColor(outputText)
     }
 
+    const shift = (type) => {
+      const HSLcolor = hexToHSL(currentSelectColor.value)
+
+      let newL = 0  
+      if(type=='light'){
+        newL = Math.min(HSLcolor.l +10, 100)
+      } else {
+        newL = Math.max(HSLcolor.l -10, 0)
+      }
+      settingSlidersColor(HSLToHex(HSLcolor.h, HSLcolor.s, newL))
+    }
+
     const circlesSize = 30
     return (
       <Animated.View
@@ -602,7 +634,7 @@ const ColorPicker = ({
           justifyContent: 'center',
           paddingHorizontal: CIRCLE_PICKER_SIZE/2,
           backgroundColor: 'transparent',
-          borderRadius: 20,
+          borderRadius: appStyle.borderRadius.additional,
           //justifyContent: 'center',
           alignItems: 'center'
         }, areaSliders]}
@@ -666,17 +698,29 @@ const ColorPicker = ({
 
             }}
           >
-            <Animated.View style={[ HS60Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}/>
+            <Animated.View style={[ HS60Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}>
+              <BasePressable
+                type='t'
+                text='<'
+                onPress={()=>{shift('light')}}
+              />
+            </Animated.View>
             <Animated.View style={[ HS50Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}/>
-            <Animated.View style={[ HS40Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}/>
+            <Animated.View style={[ HS40Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}>
+              <BasePressable
+                type='t'
+                text='>'
+                onPress={()=>{shift('dark')}}
+              />
+            </Animated.View>
           </View>
           
           <BasePressable
-            type = 't'
-            text='ok'
+            type = 'i'
+            icon={{name: 'check-bold', size: 20, color: 'black'}}
             style = {{
               width: 85,
-              backgroundColor: '#ffffff25',
+              backgroundColor: '#ffffff85',
               height: circlesSize,
               borderRadius: circlesSize/2,
               paddingHorizontal: 10,
@@ -699,9 +743,13 @@ const ColorPicker = ({
 
             }}
           >
+            {typeTrasing == 'accents' &&
             <BasePressable
               type = 't'
-              text='trace L'
+              text='Trasing accents light'
+              textStyle={{
+                fontSize: 10,
+              }}
               style = {{
                 flex: 1,
                 marginHorizontal: 10,
@@ -711,33 +759,60 @@ const ColorPicker = ({
                 paddingHorizontal: 10,
               }} 
               onPress={()=>{accentsTrasing(currentSelectColor.value, 'light')}}
-            />
+            />}
+            {typeTrasing == 'accents' &&
             <BasePressable
               type = 't'
-              text='trace D'
+              text='Trasing accents dark'
+              textStyle={{
+                fontSize: 10,
+              }}
               style = {{
                 flex: 1,
                 marginHorizontal: 10,
-                backgroundColor: '#80808025',
+                backgroundColor: '#ffffff75',
                 height: circlesSize,
                 borderRadius: circlesSize/2,
                 paddingHorizontal: 10,
               }} 
               onPress={()=>{accentsTrasing(currentSelectColor.value, 'dark')}}
-            />
+            />}
+            {typeTrasing == 'neutrals' &&
             <BasePressable
               type = 't'
-              text='trace N'
+              text='Trasing neutrals value'
+              textStyle={{
+                fontSize: 10,
+                color: 'white'
+              }}
               style = {{
                 flex: 1,
                 marginHorizontal: 10,
-                backgroundColor: '#ffffff25',
+                backgroundColor: '#80808080',
                 height: circlesSize,
                 borderRadius: circlesSize/2,
                 paddingHorizontal: 10,
               }} 
-              onPress={()=>{neutralsTrasing(currentSelectColor.value)}}
-            />
+              onPress={()=>{trasing(currentSelectColor.value, 'neutrals')}}
+            />}
+            {typeTrasing == 'grounds' &&
+            <BasePressable
+              type = 't'
+              text='Trasing grounds value'
+              textStyle={{
+                fontSize: 10,
+                color: 'white'
+              }}
+              style = {{
+                flex: 1,
+                marginHorizontal: 10,
+                backgroundColor: '#80808080',
+                height: circlesSize,
+                borderRadius: circlesSize/2,
+                paddingHorizontal: 10,
+              }} 
+              onPress={()=>{trasing(currentSelectColor.value, 'grounds')}}
+            />}
           </View>
       {[
         {

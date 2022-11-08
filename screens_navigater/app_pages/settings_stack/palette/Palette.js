@@ -126,8 +126,34 @@ const Palette = (props) => {
 
     return contr <= 0.5? 'white' : 'black'
   }
+  
+  const copyAppStyle = (copied)=>{
+    const copy = {}
+    for(let el in copied){
+        if(el == 'customTheme'){continue}
+        if((typeof copied[el] != 'object') || (Array.isArray(copied[el]))){
+            copy[el] = copied[el]
+        } else {
+            copy[el] = copyAppStyle(copied[el])
+        }
+    }
+    return copy
+  }
+
+  const saveCustomTheme = () => {
+    //console.log('custom theme full save', appStyle)
+    let newAppStyle = copyAppStyle(appStyle)
+    newAppStyle.customTheme = currentCustomTheme
+    themesColorsAppList.splice(0,1,currentCustomTheme)
+
+    //setAppStyle(newAppStyle);
+    props.r_setAppStyle(newAppStyle);
+    //dataRedactor("storedAppStyle",newAppStyle);
+  }
 
   const back = () => {
+    saveCustomTheme()
+
     props.r_setHideMenu(false)
     props.navigation.goBack()
   }

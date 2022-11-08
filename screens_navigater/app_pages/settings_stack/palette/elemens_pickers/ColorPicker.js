@@ -566,12 +566,14 @@ const ColorPicker = ({
       translateXL.value = interpolate(initHSL.l, interval_sl, interval_slider)
     }
     const getTypeTracing = ()=> {
-      const current = (opened.trace).slice(0).join('-')
       let type = ''
-      if(current.includes("basics-accents-primary")){type = 'accents'}
-      if(current.includes("basics-neutrals")){type = 'neutrals'}
-      if(current.includes("basics-grounds")){type = 'grounds'}
-
+      if(opened != undefined && opened.trace != undefined){
+        const current = (opened.trace).slice(0).join('-')
+      
+        if(current.includes("basics-accents-primary")){type = 'accents'}
+        if(current.includes("basics-neutrals")){type = 'neutrals'}
+        if(current.includes("basics-grounds")){type = 'grounds'}
+      }
       return type
     }
     const typeTrasing = getTypeTracing()

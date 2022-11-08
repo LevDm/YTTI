@@ -73,7 +73,12 @@ export default ThemeRedacor = ({
 
     const longPressItem = (index) => {
         //console.log('longPressItem')
-        goToPalleteScreen(index)
+        if(index == 0 && themesColorsAppList[0]==null){
+            console.log('not custom theme for redactors')
+        } else {
+            goToPalleteScreen(index)
+        }
+        
     }
 
     const renderItem = ({ item,index }) => {
@@ -96,7 +101,7 @@ export default ThemeRedacor = ({
             outputRange: [0.9, 1, 0.9]
         })
 
-        if(index === 0 && item === 'custom'){
+        if((index === 0 && item === 'custom') && themesColorsAppList[0] == null ){
             return (
                 <>
                 <Pressable
@@ -232,7 +237,7 @@ export default ThemeRedacor = ({
                             borderRadius: appStyle.borderRadius.additional -4,
                         }}
                     />
-                    <Text style={[staticStyles.themeName, {color: ThemeThisItem.texts.neutrals.primary}]}>{item}</Text>
+                    <Text style={[staticStyles.themeName, {color: ThemeThisItem.texts.neutrals.primary}]}>{themesColorsAppList[index]['light'].theme}</Text>
                     <BaseBox
                         isCheckBox={true}
                         outerRing={false}
@@ -281,13 +286,15 @@ export default ThemeRedacor = ({
     const createCustomTheme = ()=>{
         console.log('custom theme create')
         let newAppStyle = getNewAppStyleObject('currentStyle')
-        newAppStyle.customTheme = themesColorsAppList[2]
-        themesColorsAppList.splice(0,1,themesColorsAppList[2])
+        newAppStyle.customTheme = themesColorsAppList[ThemeColorsAppIndex]
+        themesColorsAppList.splice(0,1,themesColorsAppList[ThemeColorsAppIndex])
         //themesColorsAppList[0] = themesColorsAppList[2]
 
         setAppStyle(newAppStyle);
         r_setAppStyle(newAppStyle);
         //dataRedactor("storedAppStyle",newAppStyle);
+
+        goToPalleteScreen(0)
         
     }
 

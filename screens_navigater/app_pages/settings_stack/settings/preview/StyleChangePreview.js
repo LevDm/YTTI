@@ -24,7 +24,7 @@ import {
 } from "../../../../../general_components/base_components/BaseElements";
 
 import Constants from "expo-constants";
-import { transform } from "@motify/core/node_modules/framer-motion";
+//import { transform } from "@motify/core/node_modules/framer-motion";
 
 
 const deviceHeight = Dimensions.get('window').height

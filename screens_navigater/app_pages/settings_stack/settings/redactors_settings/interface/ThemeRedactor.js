@@ -292,7 +292,7 @@ export default ThemeRedacor = ({
 
         setAppStyle(newAppStyle);
         r_setAppStyle(newAppStyle);
-        //dataRedactor("storedAppStyle",newAppStyle);
+        dataRedactor("storedAppStyle",newAppStyle);
 
         goToPalleteScreen(0)
         

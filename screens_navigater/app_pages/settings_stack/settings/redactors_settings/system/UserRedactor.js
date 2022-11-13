@@ -64,12 +64,12 @@ export default UserRedactor = ({
     
     const [textInputValue, setTextInputValue] = useState(appConfig.user.name? appConfig.user.name : null)
 
-    const exit = ()=>{
-        console.log('>>User name input:',textInputValue)
-
+    const exit = (text)=>{
+        console.log('>>User name input:', text,textInputValue)
+        
         let newAppConfig = getNewAppConfigObject();
         //console.log('this',newAppConfig)
-        newAppConfig.user.name = typeof textInputValue === 'string'? textInputValue : '';
+        newAppConfig.user.name = typeof text === 'string'? text : '';
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
     }

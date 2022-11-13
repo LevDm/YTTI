@@ -26,6 +26,8 @@ import Reanimated, {
 
 import { LinearGradient } from "expo-linear-gradient";
 
+import dataRedactor from "../../../../async_data_manager/data_redactor";
+
 import store from "../../../../redux_files/store";
 import {connect} from 'react-redux';
 import mapStateToProps from "../../../../redux_files/stateToProps";
@@ -148,7 +150,7 @@ const Palette = (props) => {
 
     //setAppStyle(newAppStyle);
     props.r_setAppStyle(newAppStyle);
-    //dataRedactor("storedAppStyle",newAppStyle);
+    dataRedactor("storedAppStyle",newAppStyle);
   }
 
   const back = () => {
@@ -159,6 +161,7 @@ const Palette = (props) => {
   }
 
   const open = themesApp[props.route.params.themeIndex]
+  console.log(open, themesColorsAppList[props.route.params.themeIndex].light.theme, '|')
   const primeStateName = 'Your custom theme name'
   const [ themeName, setThemeName ] = useState(primeStateName)
   
@@ -225,7 +228,7 @@ const Palette = (props) => {
     return copy
   }
 
-  const [currentCustomTheme, setCurrentCustomTheme] = useState(copyObject(themesColorsAppList[props.route.params.themeIndex], [], [{value: !((themesApp.slice(1)).includes(open))? open : 'custom', trace: 'theme'}]))
+  const [currentCustomTheme, setCurrentCustomTheme] = useState(copyObject(themesColorsAppList[props.route.params.themeIndex], [], [{value: themesColorsAppList[props.route.params.themeIndex].light.theme, trace: 'theme'}]))
 
   const checkAlphaColor = (color)=>{
     return color+stateOpenedColor.alpha

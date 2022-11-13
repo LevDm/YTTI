@@ -33,7 +33,7 @@ const dataLoader = ()  => {
   }).catch((error) => console.log(error));
 
   AsyncStorage.getItem("storedAppStyle").then(data =>{
-    data = String(null) //hard-reset
+    //data = String(null) //hard-reset
     if (data !== String(null) && data !== null){
       console.log('>>LOAD_STYLE')
       let styleData = JSON.parse(data)
@@ -41,7 +41,7 @@ const dataLoader = ()  => {
       
       if(styleData.customTheme){
         console.log('>>FINDED_CUSTOM_THEME')
-        //themesColorsAppList.splice(0,1, styleData.customTheme)
+        themesColorsAppList.splice(0,1, styleData.customTheme)
       }
 
       store.dispatch({type: 'SET_STYLE_APP', value: styleData})

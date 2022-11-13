@@ -228,7 +228,11 @@ const positionBobberButton =(buttonSize)=>({
 })
 
 const Settings = (props) => {
-    //console.log(props)
+    //console.log(props.navigation.isFocused(), store.getState().hideMenu,props.hideMenu)
+    if(props.navigation.isFocused() && store.getState().hideMenu){
+        //console.log('settings open', props.hideMenu)
+        props.r_setHideMenu(false)
+    }
 
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
     const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
@@ -278,6 +282,7 @@ const Settings = (props) => {
 
         if (appStyle != jstore.appStyle) {
             setAppStyle(jstore.appStyle);
+            setPreviewAppStyle(jstore.appStyle)
             setBottomBord(
                 jstore.appStyle.functionButton.size 
                 + 12.5 
@@ -452,7 +457,7 @@ const Settings = (props) => {
     }
 
     const applyAppStyle = ()=>{
-        let newAppStyle = previewAppStyleA.value
+        let newAppStyle = previewAppStyle
         //console.log('fine ',newAppStyle)
         setAppStyle(newAppStyle)
         dataRedactor("storedAppStyle",newAppStyle);
@@ -796,7 +801,7 @@ const Settings = (props) => {
         if(flag == 'currentStyle'){
             return copyObject(appStyle)
         }
-        return copyObject(previewAppStyleA.value)
+        return copyObject(previewAppStyle)
     }
   
     const applyPress =()=>{
@@ -1295,10 +1300,10 @@ const Settings = (props) => {
                             setAppStyle={setAppStyle}
                             r_setAppStyle={props.r_setAppStyle}
 
-                            previewAppStyle={previewAppStyleA.value}
+                            previewAppStyle={previewAppStyle}
 
                             getNewAppStyleObject={getNewAppStyleObject}
-                            setPreviewAppStyle={setPreviewAppStyleA}
+                            setPreviewAppStyle={setPreviewAppStyle}
 
                             appConfig={appConfig}
                             r_setAppConfig={props.r_setAppConfig}
@@ -1421,7 +1426,7 @@ const Settings = (props) => {
                 setAppStyle={setAppStyle}
                 r_setAppStyle={props.r_setAppStyle}
                 upd={upd}
-                previewAppStyle={previewAppStyleA}
+                previewAppStyle={previewAppStyle}
 
                 splashStart = {splashStart}
 

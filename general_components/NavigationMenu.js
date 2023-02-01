@@ -12,6 +12,8 @@ import {
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
+
+
 import Svg, {Path} from "react-native-svg";
 
 import themesColorsAppList from "../app_values/Themes";
@@ -104,7 +106,6 @@ const NavigationMenu = ({
             style = {[
                 {
                     position: 'absolute',
-                    
                 },
                 styleMenu()
             ]}

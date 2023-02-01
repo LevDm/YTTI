@@ -242,6 +242,7 @@ const Settings = (props) => {
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
     const [previewAppStyle, setPreviewAppStyle] = useState(props.appStyle);
+    
     const [upd, setUpd] = useState(false);
     const previewAppStyleA = useSharedValue(props.appStyle)
     const setPreviewAppStyleA = (newValue) => {
@@ -263,7 +264,7 @@ const Settings = (props) => {
             20 + interpolate(props.appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30]) 
             : 0
         )
-        ) 
+    ) 
     
     store.subscribe(() => {
         let jstore = store.getState();

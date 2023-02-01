@@ -13,6 +13,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Svg, {Path} from "react-native-svg";
 
+import { BlurView } from "@react-native-community/blur";
+
 import themesColorsAppList from "../../app_values/Themes";
 import languagesAppList from "../../app_values/Languages";
 
@@ -71,24 +73,43 @@ const Classical = ({
         };
     };
 
-    
+    const BLUR = true
 
     return (
         <View
-            style = {[
-                {
+            style = {
+                [{
                     height: appStyle.navigationMenu.height,
-                    //zIndex: 0,
                     width: deviceWidth,
-                    //position: 'absolute',
-                    //bottom: 0, 
+                },
+                BLUR? {} : {
+                    borderTopWidth:1,
+                    borderColor: Theme.navigateBar.transparentGround,
                     backgroundColor: Theme.navigateBar.grounds,
-                    flexDirection: 'row',
-                    borderTopWidth: 1,
-                    borderColor: Theme.navigateBar.transparentGround
-                }
-            ]}
-        >
+                }]
+            }
+        >   
+            {BLUR && 
+            <View 
+                style = {[StyleSheet.absoluteFillObject, {
+                    //specialty blur for android
+                    overflow: 'hidden',
+                }]}
+            >
+            <BlurView
+                style = {{flex: 1, }}
+                blurType = {'light'}
+                blurAmount = {10}
+                
+                //ANDROID_PROPS
+                overlayColor={`${Theme.navigateBar.grounds}50`}
+                //overlayColor={'transparent'}
+                //blurRadius	= {10}
+                //downsampleFactor = {10}
+            />
+            </View>}
+
+            <View style = {{flex: 1, flexDirection: 'row', }}>
             {state.routes.map((route, index) => {
                 const page = appConfig.appFunctions[route.name]
                 if(page && !page.used){
@@ -208,6 +229,7 @@ const Classical = ({
 
                 );
             })}
+            </View>
         </View>
     );
 }

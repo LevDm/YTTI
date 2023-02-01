@@ -148,8 +148,8 @@ export default Preview = (props) => {
     const scale = 2
 
     //const previewAppStyle0 = useSharedValue(previewAppStyle.value)
-
-    const PreviewThemeColorsAppIndex = themesApp.indexOf(previewAppStyle.value.palette.theme)
+    //console.log('prew',PreviewThemeColorsAppIndex)
+    const PreviewThemeColorsAppIndex = themesApp.indexOf(previewAppStyle.palette.theme)
     console.log('prew',PreviewThemeColorsAppIndex)
     /*
     const [PreviewThemeColorsAppIndex, setPreviewThemeColorAppIndex] = useState(themesApp.indexOf(props.previewAppStyle.theme))
@@ -479,7 +479,7 @@ export default Preview = (props) => {
                                     style = {[ {
                                         height: itemHeight,
                                         //zIndex: 0,
-                                        borderRadius: previewAppStyle.value.borderRadius.basic,
+                                        borderRadius: previewAppStyle.borderRadius.basic,
                                         margin: 5,
                                         padding: 10,
                                         backgroundColor: 'white',

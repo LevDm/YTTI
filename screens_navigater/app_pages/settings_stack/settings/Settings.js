@@ -231,7 +231,7 @@ const Settings = (props) => {
     //console.log(props.navigation.isFocused(), store.getState().hideMenu,props.hideMenu)
     if(props.navigation.isFocused() && store.getState().hideMenu){
         //console.log('settings open', props.hideMenu)
-        props.r_setHideMenu(false)
+        //props.r_setHideMenu(false)
     }
 
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
@@ -242,18 +242,8 @@ const Settings = (props) => {
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
     const [previewAppStyle, setPreviewAppStyle] = useState(props.appStyle);
-    
-    const [upd, setUpd] = useState(false);
+
     const previewAppStyleA = useSharedValue(props.appStyle)
-    const setPreviewAppStyleA = (newValue) => {
-        //console.log('set prew new', newValue.theme)
-        if(newValue != previewAppStyleA.value){
-            previewAppStyleA.value = newValue
-            setUpd(!upd)
-        }
-        
-        //handlePresentModalPress()
-    }
 
     // position wherein bobber not visible
     const [ bottomBord, setBottomBord ] = useState(
@@ -284,6 +274,7 @@ const Settings = (props) => {
         if (appStyle != jstore.appStyle) {
             setAppStyle(jstore.appStyle);
             setPreviewAppStyle(jstore.appStyle)
+            previewAppStyleA.value = jstore.appStyle
             setBottomBord(
                 jstore.appStyle.functionButton.size 
                 + 12.5 
@@ -336,14 +327,10 @@ const Settings = (props) => {
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen
 
-    const [accentParam, setAccentParam] = useState(0);
-    //const [accentCategory, setAccentCategory] = useState(0);
     const accentCategory = useSharedValue(0);
 
     const [listWidths, setListWidths] = useState([]);
     const [listHeights, setListHeights] = useState([]);
-    const animValueListWidths = useSharedValue([]);
-    const animValueListHeights = useSharedValue([]);
     const derivedValues = useSharedValue({
         listHeights: [],
         listWidths: [],
@@ -429,11 +416,6 @@ const Settings = (props) => {
         }
         
     })
-    const newCategoryOnAccent = (accent)=>{
-        flatCategorysListRef.current.scrollToIndex({
-            index: allStructurParams[accent].indexSection
-        })
-    }
     
     const animStyleIndicatorLine = useAnimatedStyle(() => {
         const duration = 450;
@@ -446,7 +428,6 @@ const Settings = (props) => {
         }
     })
 
-    
 
     const splashStart = (themeIndex) => {
         //if(appStyle.theme != theme){
@@ -476,7 +457,7 @@ const Settings = (props) => {
     const headFullHeight = headHeight + selectorLineHeightFull //((3*deviceHeight)/4)
     
     const previewHeight = (50+deviceHeight/2)+(!previewFixed? appStyle.lists.proximity : 0)
-    const settingsInfoHeight = (deviceHeight/4)+2*(!previewFixed? appStyle.lists.proximity : 0)
+    //const settingsInfoHeight = (deviceHeight/4)+2*(!previewFixed? appStyle.lists.proximity : 0)
 
 
     const animSelectorLine = useSharedValue(headFullHeight)
@@ -862,12 +843,12 @@ const Settings = (props) => {
     })
 
     const back = () => {
+        (!bottomSheetVisible && props.hideMenu)? props.r_setHideMenu(false) : null
         props.navigation.goBack()
     }
-    const goToPalleteScreen = (index = 0) => {
-        props.r_setHideMenu(true)
+    const goToPalleteScreen = (index = 0) => {  
+        (!bottomSheetVisible && !props.hideMenu)? props.r_setHideMenu(true) : null
         props.navigation.navigate('palette', {themeIndex: index})
-
     }
 
     
@@ -939,20 +920,26 @@ const Settings = (props) => {
 
     // ref
     const bottomSheetModalRef = useRef(BottomSheetModal);
-
+    const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
     // variables
     const snapPoints = useMemo(() => [previewHeight/3+30, previewHeight+30], []);
 
     // callbacks
     const handlePresentModalPress = useCallback(() => {
-        bottomSheetModalRef.current?.present();
         props.r_setHideMenu(true)
+        setBottomSheetVisible(true)
+        bottomSheetModalRef.current?.present();
     }, []);
     const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
         if(index === -1){
+            setBottomSheetVisible(false)
             props.r_setHideMenu(false)
         }
+        //if(!props.hideMenu && index != -1){
+            //props.r_setHideMenu(false)
+            //bottomSheetModalRef.current?.dismiss();
+        //}props.hideMenu
     }, []);
 
     return (
@@ -1302,9 +1289,12 @@ const Settings = (props) => {
                             r_setAppStyle={props.r_setAppStyle}
 
                             previewAppStyle={previewAppStyle}
+                            setPreviewAppStyle={setPreviewAppStyle}
+
+                            previewAppStyleA={previewAppStyleA}
 
                             getNewAppStyleObject={getNewAppStyleObject}
-                            setPreviewAppStyle={setPreviewAppStyle}
+                            
 
                             appConfig={appConfig}
                             r_setAppConfig={props.r_setAppConfig}
@@ -1339,7 +1329,7 @@ const Settings = (props) => {
         
 
         {/*BOBBER BUTTON*/}
-        {true && 
+        {!bottomSheetVisible && 
         <Reanimated.View 
             style = {[animStyleBobberButton, dynamicStyleBobberButton, {
                 position: 'absolute',
@@ -1426,9 +1416,8 @@ const Settings = (props) => {
                 appStyle={appStyle}
                 setAppStyle={setAppStyle}
                 r_setAppStyle={props.r_setAppStyle}
-                upd={upd}
                 previewAppStyle={previewAppStyle}
-
+                previewAppStyleA = {previewAppStyleA}
                 splashStart = {splashStart}
 
                 previewFixed={previewFixed}

@@ -24,7 +24,7 @@ import {
     BaseSwitch 
 } from "../../../../../../general_components/base_components/BaseElements";
 
-import commonStaticStyles, { SwitchField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
 export default LanguageRedactor = ({
     appStyle,
@@ -46,79 +46,38 @@ export default LanguageRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.languages
 
-    const getGroup = (type) => {
-        let group = []
-        for (let i of languagesApp){
-            let check = false
-            if(type === i){check = true}
-            group.push(check)
-        }
-        return group
-    };
-    const [checkGroup, setCheckGroup] = useState(getGroup(appConfig.languageApp));
-
-    const languageSetting = (languageAbriviature) => {
-        setCheckGroup(getGroup(languageAbriviature));
-
-        //let newLanguageApp = languageAbriviature//LanguageStor[Languages.indexOf(languageAbriviature)] 
-        //r_setLanguageApp(newLanguageApp);
-        //dataRedactor("storedLanguageSettings",newLanguageApp);
-
+    const languageSetting = (index) => {
         let newAppConfig = getNewAppConfigObject();
-        //console.log('this',newAppConfig)
-        newAppConfig.languageApp = languageAbriviature;
+        newAppConfig.languageApp = languagesApp[index];
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
     };
 
-    
-
+    const getItems = () => {
+        const items = []
+        for(let i = 0; i< languagesApp.length; i++){
+            items.push(languagesAppList[i].SettingsScreen.Redactors.languages.thisLanguage)
+        }
+        return items
+    }
     
     return (<>
-    <View 
-        style = {[{
-            marginLeft: 20,
-            width: "80%"
-        }]}
-    >
-        {languagesApp.map((item, index)=>{
-            return(
-                <BaseBox
-                    key = {item+index}
-                    style = {{
-                        height: 40,
-                        borderRadius: appStyle.borderRadius.additional,
-                        backgroundColor: 'transparent'
-                    }}
-                    android_ripple={{
-                        color: Theme.icons.accents.primary,
-                        borderless: true,
-                        foreground: false
-                    }}
-                    Item = {
-                        <Text 
-                            style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}
-                            numberOfLines={2}
-                        >
-                            {languagesAppList[index].SettingsScreen.Redactors.languages.thisLanguage}
-                        </Text>
-                    }
-                    Check = {checkGroup[index]}
-                    onPress = {()=>{languageSetting(item)}}
-                    BoxBorderRadius = {appStyle.borderRadius.additional}
-                    ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
-                />
-            )
-        })}
-    </View>
+        <BoxsField
+            //  'one'>true || 'multiple'>false
+            isChoiceOne={true}
+            title = {false}
+            //  'one'>index || 'multiple'>[indexs]
+            primaryValue = {LanguageAppIndex} 
+            groupSize = {languagesApp.length}
+            groupItems = {getItems()}         
+            onPress = {(activeIndex)=>{languageSetting(activeIndex)}}          
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
     </>)
 }
 
 const staticStyles = StyleSheet.create({
-    languageSelector: {
-        flexDirection: 'row',
-        alignItems : 'center',
-        
-    },
     ...commonStaticStyles
 });

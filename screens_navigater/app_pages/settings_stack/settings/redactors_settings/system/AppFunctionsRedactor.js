@@ -37,7 +37,7 @@ import {
 } from "../../../../../../general_components/base_components/BaseElements";
 
 
-import commonStaticStyles, { SwitchField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
 export default LanguageRedactor = ({
     appStyle,
@@ -136,7 +136,7 @@ export default LanguageRedactor = ({
                 BoxBorderRadius = {appStyle.borderRadius.additional}
                 ColorsChange = {{
                     true: Theme.icons.accents.primary, 
-                    false: `${Theme.icons.accents.quaternary}00`
+                    false: Theme.icons.accents.quaternary
                 }}
             />))}
         </View>

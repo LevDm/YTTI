@@ -25,12 +25,16 @@ import {
 //const borderRadiusValues = {min: 0, max: 32, step: 1}
 import { borderRadiusValues } from "../../../../../../app_values/AppDefault";
 
-import commonStaticStyles, { SwitchField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, SliderField } from "../CommonElements";
 
 export default BorderRadiusRedactor = ({
     appStyle,
 
+    previewAppStyle,
     setPreviewAppStyle,
+
+    previewAppStyleA,
+    
     getNewAppStyleObject,
 
     ThemeColorsAppIndex,
@@ -47,6 +51,7 @@ export default BorderRadiusRedactor = ({
 
     const settingBorderRadius = (type, value, isComplete) =>{
         const newAppStyle = getNewAppStyleObject();
+        //const newAppStyle = previewAppStyleA;
         if(type == "basic" || synchronousSlider){
             isComplete? setSliderValueBasic(value) : null
             newAppStyle.borderRadius.basic = Number(value);
@@ -55,7 +60,9 @@ export default BorderRadiusRedactor = ({
             isComplete? setSliderValueAdditional(value) : null
             newAppStyle.borderRadius.additional = Number(value);
         }
-        setPreviewAppStyle(newAppStyle);
+        //console.log(value)
+        previewAppStyleA.value = newAppStyle
+        //setPreviewAppStyle(newAppStyle)
     }
 
     const change = () =>{
@@ -69,47 +76,36 @@ export default BorderRadiusRedactor = ({
                 //marginBottom: 30,
             }}
         >
-        <SwitchField
-            text = {`${Language.synhronous} ${Language.synhronousState[`${synchronousSlider}`]}`}
-            primeValue={synchronousSlider}
-            onChange={change}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />
-        <View
-            style = {{
-                justifyContent: 'center',
-            }}
-        >
+            <SwitchField
+                text = {`${Language.synhronous} ${Language.synhronousState[`${synchronousSlider}`]}`}
+                primeValue={synchronousSlider}
+                onChange={change}
+                appStyle = {appStyle}
+                ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                ThemeSchema = {ThemeSchema}
+            />
             {['basic','additional'].map((item, index)=>(
-            <View
+            <SliderField
                 key = {String('slider'+item)}
-                style = {{marginTop: 15}}
-            >
-                <Text
-                    style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}
-                >
-                    {Language.type[item]}
-                </Text>
-                <BaseSlider
-                    signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                    signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}
-                    areaStyle = {{marginHorizontal: 20}}
-                    minimumValue={borderRadiusValues.min}
-                    maximumValue={borderRadiusValues.max}
-                    step = {borderRadiusValues.step}
-                    value = {item === 'basic'? sliderValueBasic : sliderValueAdditional}
-                    onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
-                    onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
-                    minimumTrackTintColor = {Theme.icons.accents.tertiary}
-                    maximumTrackTintColor = {Theme.icons.accents.quaternary}
-                    thumbTintColor = {Theme.icons.accents.primary}
-                />
-            </View>
+                //style = {{marginTop: 15}}
+
+                title = {Language.type[item]}
+
+                signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+                minimumValue={borderRadiusValues.min}
+                maximumValue={borderRadiusValues.max}
+                step = {borderRadiusValues.step}
+                value = {item === 'basic'? sliderValueBasic : sliderValueAdditional}
+                onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
+                onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
+
+                appStyle = {appStyle}
+                ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                ThemeSchema = {ThemeSchema}
+            />
             ))}
         </View>
-    </View>)
+    )
 }
 
 const staticStyles = StyleSheet.create({

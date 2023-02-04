@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text,Pressable, ScrollView,FlatList, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import Animated from "react-native-reanimated";
+import Reanimated from "react-native-reanimated";
 import {
     useSharedValue,
     useAnimatedProps,
@@ -30,7 +30,7 @@ const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const ReanimatedPressable = Reanimated.createAnimatedComponent(Pressable)
 
 
 export const Phone = (props) => {
@@ -101,7 +101,7 @@ export const Phone = (props) => {
     })
 
     return(
-        <AnimatedPressable
+        <ReanimatedPressable
             key = {props.key}
             style = {[animStyleBG,{
                 top: 1,
@@ -113,7 +113,7 @@ export const Phone = (props) => {
                 animatedState.value = !(animatedState.value)   
             }}
         >
-            <Animated.View
+            <Reanimated.View
                 style = {[animStylePhone,{
                     //top: 1,
                     borderColor: 'black',
@@ -124,15 +124,15 @@ export const Phone = (props) => {
                 }]}
             >
                 {props.children}
-            </Animated.View>
-        </AnimatedPressable>
+            </Reanimated.View>
+        </ReanimatedPressable>
     )
 }
 
 export default Preview = (props) => {
     const {
-        upd,
         previewAppStyle,
+        previewAppStyleA,
         appStyle,
         setAppStyle,
         r_setAppStyle,
@@ -154,12 +154,14 @@ export default Preview = (props) => {
     /*
     const [PreviewThemeColorsAppIndex, setPreviewThemeColorAppIndex] = useState(themesApp.indexOf(props.previewAppStyle.theme))
      */
-    useEffect(()=>{
-        //let newThemeIndex = themesApp.indexOf(props.previewAppStyle.theme)
-        //if(newThemeIndex != PreviewThemeColorsAppIndex){setPreviewThemeColorAppIndex(newThemeIndex)}
-        //console.log('preview style update')
-        
-    },[upd])
+
+    const A_borderStyle = useAnimatedStyle(()=>{
+        return (
+            {
+                borderRadius: previewAppStyleA.value.borderRadius.basic,
+            }
+        )
+    })
    
     const animStyleBody = useAnimatedStyle(()=>{
  
@@ -333,7 +335,7 @@ export default Preview = (props) => {
                 newAnimatedState(!animatedState.value)
             }}
         >
-                <Animated.View
+                <Reanimated.View
                     key = {String('head')}
                     style = {[animStyleScale2,{
                         borderTopLeftRadius: 30,
@@ -451,10 +453,10 @@ export default Preview = (props) => {
                             )
                         })}
                     </View>
-                </Animated.View>
+                </Reanimated.View>
 
 
-                <Animated.ScrollView
+                <Reanimated.ScrollView
                     key = {String('body')}
                     scrollEnabled = {false}
                     style = {[animStyleBody,{
@@ -474,12 +476,13 @@ export default Preview = (props) => {
                             }
 
                             return(
-                                <View
+                                <Reanimated.View
                                     key = {String('elements'+item+index)} 
-                                    style = {[ {
+                                    style = {[A_borderStyle, {
                                         height: itemHeight,
                                         //zIndex: 0,
-                                        borderRadius: previewAppStyle.borderRadius.basic,
+                                        //borderRadius: previewAppStyle.borderRadius.basic,
+                                        //borderRadius: previewAppStyleA.value.borderRadius.additional,
                                         margin: 5,
                                         padding: 10,
                                         backgroundColor: 'white',
@@ -568,13 +571,13 @@ export default Preview = (props) => {
                                         }}
                                         /> 
                                     </View>
-                                </View>
+                                </Reanimated.View>
                             )
                     })}
-                </Animated.ScrollView>
+                </Reanimated.ScrollView>
 
 
-                <Animated.View
+                <Reanimated.View
                     key = {String('foot')}
                     style = {[animStyleScale3, {
                         backgroundColor: 'white',
@@ -628,9 +631,9 @@ export default Preview = (props) => {
                                 </View>
                         )
                     })}
-                </Animated.View>
+                </Reanimated.View>
 
-                <Animated.View
+                <Reanimated.View
                     key = {String('funcbutton')}
                     style = {[animStyleBodyButton,{
                         backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].sky,
@@ -663,7 +666,7 @@ export default Preview = (props) => {
                             borderColor: 'white',
                         }}
                     /> 
-                </Animated.View> 
+                </Reanimated.View> 
         </Phone>
     )
 }

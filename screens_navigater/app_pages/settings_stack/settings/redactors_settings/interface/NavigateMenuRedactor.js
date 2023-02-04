@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import Animated from "react-native-reanimated";
+import Reanimated from "react-native-reanimated";
 import {
     useSharedValue,
     useAnimatedProps,
@@ -19,7 +19,7 @@ import {
     BaseSwitch 
 } from "../../../../../../general_components/base_components/BaseElements";
 
-import commonStaticStyles, { SwitchField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, SliderField, BoxsField } from "../CommonElements";
 
 //const menuTypes = ['classical','classical_animated','hidden', 'not'];
 //const positionNavigateMenu = {min: 20, max: 80, step: 5}
@@ -32,7 +32,11 @@ export default NavigateMenuRedactor = ({
     setAppStyle,
     r_setAppStyle,
 
+    previewAppStyle,
     setPreviewAppStyle,
+
+    previewAppStyleA,
+
     getNewAppStyleObject,
 
     ThemeColorsAppIndex,
@@ -42,51 +46,19 @@ export default NavigateMenuRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.navigationMenu
 
-    const getGroup = (type) => {
-        let group = []
-        for (let i of menuTypes){
-            let check = false
-            if(type === i){check = true}
-            group.push(check)
-        }
-        return group
-    };
+    const checkBoxPress = (activeIndex) => {
+        const type = menuTypes[activeIndex]
 
-    const getGroupPositions = (type) => {
-        let group = []
-        for (let i of valuePosition){
-            let check = false
-            if(type === i){check = true}
-            group.push(check)
-        }
-        return group
-    };
-
-    const getGroupPositionsDrawer = (type) => {
-        let group = []
-        for (let i of drawerPositions){
-            let check = false
-            if(type === i){check = true}
-            group.push(check)
-        }
-        return group
-    };
-
-    const [checkGroup, setCheckGroup] = useState(getGroup(appStyle.navigationMenu.type));
-    const checkBoxPress = (type) => {
-        const newGroup = getGroup(type)
         let newAppStyle = getNewAppStyleObject();
         if(type == "hidden" || type =="not"){
             newAppStyle.navigationMenu.height = 0
         } else {
-            console.log('new select class')
+            //console.log('new select class')
             newAppStyle.navigationMenu.height = 50
             setSliderValueMenuHeight(50)
         }
         newAppStyle.navigationMenu.type = type
-        //console.log('newAppStyle',newAppStyle)
         setPreviewAppStyle(newAppStyle);
-        setCheckGroup(newGroup);
     };
 
     const [signature, setSignature] = useState(appStyle.navigationMenu.signatureIcons);
@@ -119,25 +91,21 @@ export default NavigateMenuRedactor = ({
         setPreviewAppStyle(newAppStyle);
     }
 
-    const [checkGroupHorPos, setCheckGroupHorPos] = useState(getGroupPositions(appStyle.navigationMenu.position.horizontal));
-    const horizontalPositionSetting = (positionType, index) => {
-        setCheckGroupHorPos(getGroupPositions(positionType));
-
+    const horizontalPositionSetting = (index) => {
+        const positionType = valuePosition[index]
         let newAppStyle = getNewAppStyleObject();
-        newAppStyle.navigationMenu.position.horizontal = positionType//valuePosition[index];
+        newAppStyle.navigationMenu.position.horizontal = positionType
         setPreviewAppStyle(newAppStyle);
     };
 
-    const [drawerPosition, setDrawerPosition] = useState(getGroupPositionsDrawer(appStyle.navigationMenu.drawerPosition));
-    const drawerPositionSetting = (drawerPosition, index) => {
-        setDrawerPosition(getGroupPositionsDrawer(drawerPosition));
-
+    const drawerPositionSetting = (index) => {
+        const drawerPosition =  drawerPositions[index]
         let newAppStyle = getNewAppStyleObject();
-        newAppStyle.navigationMenu.drawerPosition = drawerPosition//valuePosition[index];
+        newAppStyle.navigationMenu.drawerPosition = drawerPosition
         setPreviewAppStyle(newAppStyle);
     };
 
-    const tingDuration = 200
+    const tingDuration = 100
     const entering = (targetValues) => {
         'worklet';
         const animations = {
@@ -168,52 +136,32 @@ export default NavigateMenuRedactor = ({
     return (
     <View 
         style ={{
-            //marginBottom: 30, 
+            
         }}
     >
-    <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
-        {Language.type}
-    </Text>
-    <View 
-        style = {[{
-            marginTop: 5,
-            marginLeft: 20,
-            width: '60%'
-        }]}
-    >
-        {menuTypes.map((item, index)=>(
-        <BaseBox
-            key = {item+index}
-            style = {{
-                borderRadius: appStyle.borderRadius.additional,
-                backgroundColor: 'transparent'
-            }}
-            android_ripple={{
-                color: Theme.icons.accents.primary,
-                borderless: true,
-                foreground: false
-            }}
-            Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{Language.types[index]}</Text>}
-            Check = {checkGroup[index]}
-            onPress = {()=>{checkBoxPress(item)}}
-            BoxBorderRadius = {appStyle.borderRadius.additional}
-            ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
-        />
-        ))}
-    </View>
-    <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15,}]}>
+    <BoxsField
+        //  'one'>true || 'multiple'>false
+        isChoiceOne={true}
+        title = {Language.type}
+        //  'one'>index || 'multiple'>[indexs]
+        primaryValue = {menuTypes.indexOf(appStyle.navigationMenu.type)} 
+        groupSize = {menuTypes.length}
+        groupItems = {Language.types}         
+        onPress = {(activeIndex)=>{checkBoxPress(activeIndex)}}          
+        appStyle = {appStyle}
+        ThemeColorsAppIndex = {ThemeColorsAppIndex}
+        ThemeSchema = {ThemeSchema}
+    />
+
+    <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15, paddingLeft: 10}]}>
         {Language.menuParams}
     </Text>
     
-    
-
     <View
         style = {[{
-            height: 210,
-            justifyContent: 'space-around'
+            height: 215,
         }]}
     >   
-
         <SwitchField
             text = {`${Language.rippleEffect} ${Language.rippleEffectState[rippleEffect]}`}
             primeValue={rippleEffect}
@@ -223,66 +171,35 @@ export default NavigateMenuRedactor = ({
             ThemeSchema = {ThemeSchema}
         />
         
-
-        {checkGroup[2] && 
-        <Animated.View 
-            exiting={exiting} 
+        {previewAppStyle.navigationMenu.type == menuTypes[2] && 
+        <Reanimated.View 
+            //exiting={exiting} 
             entering={entering}
         >
-            <View
-                style = {{
-                    maxHeight: 120,
-                }}
-            >
-                <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
-                    {Language.horizontalPositionDrawer}
-                </Text>
-                <View
-                    style = {{
-                        marginLeft: 20,
-                        width: '60%'
-                    }}
-                >
-                    {drawerPositions.map((item, index)=>(
-                    <BaseBox
-                        key = {item+index}
-                        style = {{
-                            //width: '100%',
-                            borderRadius: appStyle.borderRadius.additional,
-                            backgroundColor: 'transparent'
-                        }}
-                        android_ripple={{
-                            color: Theme.icons.accents.primary,
-                            borderless: true,
-                            foreground: false
-                        }}
-                        Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]} >{Language.horizontalPositionsDrawer[index]}</Text>}
-                        Check = {drawerPosition[index]}
-                        onPress = {()=>{drawerPositionSetting(item, index)}}
-                        BoxBorderRadius = {appStyle.borderRadius.additional}
-                        ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
-                    />
-                    ))}
-                </View>
-            </View>
-        </Animated.View>}
+            <BoxsField
+                //  'one'>true || 'multiple'>false
+                isChoiceOne={true}
+                title = {Language.horizontalPositionDrawer}
+                //  'one'>index || 'multiple'>[indexs]
+                primaryValue = {drawerPositions.indexOf(appStyle.navigationMenu.drawerPosition)} 
+                groupSize = {drawerPositions.length}
+                groupItems = {Language.horizontalPositionsDrawer}         
+                onPress = {(activeIndex)=>{drawerPositionSetting(activeIndex)}}          
+                appStyle = {appStyle}
+                ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                ThemeSchema = {ThemeSchema}
+            />
+        </Reanimated.View>}
 
-        {checkGroup[1] && 
-        <Animated.View 
-            exiting={exiting} 
+        {previewAppStyle.navigationMenu.type == menuTypes[1] &&  
+        <Reanimated.View 
+            //exiting={exiting} 
             entering={entering}
-            style = {{
-                maxHeight: 60,
-                minHeight: 55
-            }}
         >
-            <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
-                {Language.verticalPosition}
-            </Text>
-            <BaseSlider
+            <SliderField
+                style = {{marginTop: 15}}
+                title = {Language.verticalPosition}
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}
-                areaStyle = {{marginHorizontal: 20}}
                 minimumValue={positionNavigateMenu.min}
                 maximumValue={positionNavigateMenu.max}
                 step = {positionNavigateMenu.step}
@@ -294,69 +211,40 @@ export default NavigateMenuRedactor = ({
                 onValueChange = {(value)=>{              
                     setPrewBasicVertPos(value);
                 }}
-                minimumTrackTintColor = {Theme.icons.accents.tertiary}
-                maximumTrackTintColor = {Theme.icons.accents.quaternary}
-                thumbTintColor = {Theme.icons.accents.primary}
+                appStyle = {appStyle}
+                ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                ThemeSchema = {ThemeSchema}
             />
-        </Animated.View>}
+        </Reanimated.View>}
 
-        {checkGroup[1] && 
-        <Animated.View 
-            exiting={exiting} 
+        {previewAppStyle.navigationMenu.type == menuTypes[1] && 
+        <Reanimated.View 
+            //exiting={exiting} 
             entering={entering}
-            style = {{
-                maxHeight: 120,
-                //marginTop: 15
-            }}
         >
-            <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
-                {Language.horizontalPosition}
-            </Text>
-            <View
-                style = {{
-                    marginLeft: 20,
-                    width: '60%'
-                }}
-            >
-                {valuePosition.map((item, index)=>(
-                <BaseBox
-                    key = {item+index}
-                    style = {{
-                        borderRadius: appStyle.borderRadius.additional,
-                        backgroundColor: 'transparent'
-                    }}
-                    android_ripple={{
-                        color: Theme.icons.accents.primary,
-                        borderless: true,
-                        foreground: false
-                    }}
-                    Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]} >{Language.horizontalPositions[index]}</Text>}
-                    Check = {checkGroupHorPos[index]}
-                    onPress = {()=>{horizontalPositionSetting(item, index)}}
-                    BoxBorderRadius = {appStyle.borderRadius.additional}
-                    ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
-                />
-                ))}
-            </View>
-        </Animated.View>}
+            <BoxsField
+                //  'one'>true || 'multiple'>false
+                isChoiceOne={true}
+                title = {Language.horizontalPosition}
+                //  'one'>index || 'multiple'>[indexs]
+                primaryValue = {valuePosition.indexOf(appStyle.navigationMenu.position.horizontal)} 
+                groupSize = {valuePosition.length}
+                groupItems = {Language.horizontalPositions}         
+                onPress = {(activeIndex)=>{horizontalPositionSetting(activeIndex)}}          
+                appStyle = {appStyle}
+                ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                ThemeSchema = {ThemeSchema}
+            />
+        </Reanimated.View>}
 
-        {checkGroup[0] && 
-        <Animated.View 
-            exiting={exiting} 
+        {previewAppStyle.navigationMenu.type == menuTypes[0] && 
+        <Reanimated.View 
+            //exiting={exiting} 
             entering={entering}
-            style = {{
-                height: 60,
-                //minHeight: 50
-                //marginTop: 15
-            }}
         >
-            <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
-                {Language.height}
-            </Text>
-            <BaseSlider
-                signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}        
-                areaStyle = {{marginHorizontal: 20}}
+            <SliderField
+                title = {Language.height}
+                signaturesText = {{left: Language.slider.min, right: Language.slider.max}}     
                 minimumValue={heightNavigateMenu.min}
                 maximumValue={heightNavigateMenu.max}
                 step = {heightNavigateMenu.step}
@@ -368,25 +256,17 @@ export default NavigateMenuRedactor = ({
                 onValueChange = {(value)=>{              
                     setPrewBasicMenuHeight(value);
                 }}
-                minimumTrackTintColor = {Theme.icons.accents.tertiary}
-                maximumTrackTintColor = {Theme.icons.accents.quaternary}
-                thumbTintColor = {Theme.icons.accents.primary}
+                appStyle = {appStyle}
+                ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                ThemeSchema = {ThemeSchema}
             />
-        </Animated.View>}
+        </Reanimated.View>}
 
-        {checkGroup[0] && 
-        <Animated.View 
-            exiting={exiting} 
+        {previewAppStyle.navigationMenu.type == menuTypes[0] && 
+        <Reanimated.View 
+            //exiting={exiting} 
             entering={entering}
-            style ={{
-                //flexDirection: 'row',
-                //justifyContent: 'space-between',
-                //alignItems: 'center',
-
-                maxHeight: 60
-            }}
         >
-
             <SwitchField
                 text = {`${Language.signature} ${Language.signatureState[signature]}`}
                 primeValue={signature}
@@ -395,19 +275,12 @@ export default NavigateMenuRedactor = ({
                 ThemeColorsAppIndex = {ThemeColorsAppIndex}
                 ThemeSchema = {ThemeSchema}
             />
-        </Animated.View>}
+        </Reanimated.View>}
     </View>
     </View>)
 }
 
 const staticStyles = StyleSheet.create({
-    listText: {
-        //paddingLeft: 10,
-        marginLeft: 5,
-        fontSize: 14, 
-        //fontVariant: ['small-caps'], 
-        fontWeight: '400', 
-        letterSpacing: 0.5
-    },
+
     ...commonStaticStyles
 });

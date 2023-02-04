@@ -39,7 +39,7 @@ import {
     BaseTextInput 
 } from "../../../../../../general_components/base_components/BaseElements";
 
-import commonStaticStyles, { SwitchField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, ripple } from "../CommonElements";
 
 export default UserRedactor = ({
     appStyle,
@@ -94,7 +94,7 @@ export default UserRedactor = ({
             
         }]}
     >
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10}]}>
             {Language.accost}
         </Text>
         <BaseTextInput 
@@ -141,11 +141,7 @@ export default UserRedactor = ({
                 textProps: {
                     numberOfLines: 2,
                 },
-                android_ripple: {
-                    color: Theme.icons.accents.primary,
-                    borderless: true,
-                    foreground: false
-                },
+                android_ripple: ripple(Theme.icons.accents.primary),
                 type: 'ti', 
                 icon: {
                     name: textInputValue? "account-box-outline" : "pencil-outline", 
@@ -157,9 +153,9 @@ export default UserRedactor = ({
     </View>
     <View
         style = {{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            //flexDirection: 'row',
+            justifyContent: 'center',
+            //alignItems: 'center',
             height: 60,
             //paddingLeft: !appConfig.splachScreenShow? 10 : 0
         }}
@@ -169,8 +165,8 @@ export default UserRedactor = ({
             primeValue={welcomeUsed}
             onChange={welcomeUsedSetting}
             style={{
-                height: 60,
-                flex: 1
+                //height: 60,
+                //flex: 1
             }}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
@@ -182,7 +178,7 @@ export default UserRedactor = ({
                 width: '100%',
                 height: '100%',
                 position: 'absolute',
-                left: -5,
+                //left: -5,
                 backgroundColor: Theme.specials.transparents.dim,
                 borderRadius: appStyle.borderRadius.additional
             }}

@@ -168,7 +168,11 @@ const Classical = ({
                                 justifyContent: 'flex-start',
                             }
                         ]}
-                        android_ripple = {appStyle.navigationMenu.rippleEffect? {color: Theme.navigateBar.icons.active, borderless: true} : false}
+                        android_ripple = {appStyle.navigationMenu.rippleEffect? {
+                            color: `${Theme.navigateBar.icons.active}20`, 
+                            borderless: false,
+                            foreground: true
+                        } : false}
                     >
                         {isFocused && 
                             <Animated.View 

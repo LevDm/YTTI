@@ -21,7 +21,7 @@ const deviceWidth = Dimensions.get('window').width
 //const listsProximity = {min: 1, max: 5, step: 1}
 import { listsTextSize, listsProximity } from "../../../../../../app_values/AppDefault";
 
-import commonStaticStyles, { SwitchField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, SliderField } from "../CommonElements";
 
 export default ListsRedactor = ({
     appStyle,
@@ -78,11 +78,9 @@ export default ListsRedactor = ({
             //marginBottom: 30,
         }}
     >
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>{Language.textSize}</Text>
-        <BaseSlider
-            signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}        
-            areaStyle = {{marginHorizontal: 20}}
+        <SliderField
+            title = {Language.textSize}
+            signaturesText = {{left: Language.slider.min, right: Language.slider.max}}      
             minimumValue={listsTextSize.min}
             maximumValue={listsTextSize.max}
             step = {listsTextSize.step}
@@ -94,15 +92,13 @@ export default ListsRedactor = ({
             onValueChange = {(value)=>{              
                 setPrewTextSize(value);
             }}
-            minimumTrackTintColor = {Theme.icons.accents.tertiary}
-            maximumTrackTintColor = {Theme.icons.accents.quaternary}
-            thumbTintColor = {Theme.icons.accents.primary}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
         />
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15}]}>{Language.proximity}</Text>
-        <BaseSlider
+        <SliderField
+            title = {Language.proximity}
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]} 
-            areaStyle = {{marginHorizontal: 20}}
             minimumValue={listsProximity.min}
             maximumValue={listsProximity.max}
             step = {listsProximity.step}
@@ -114,17 +110,16 @@ export default ListsRedactor = ({
             onValueChange = {(value)=>{              
                 setPrewProximity(value);
             }}
-            minimumTrackTintColor = {Theme.icons.accents.tertiary}
-            maximumTrackTintColor = {Theme.icons.accents.quaternary}
-            thumbTintColor = {Theme.icons.accents.primary}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
         />
         <SwitchField
             text = {`${Language.fullWidth} ${Language.fullWidthState[`${fullWidth}`]}`}
             primeValue={fullWidth}
             onChange={fullWidthChange}
             style = {{
-                height: 60,
-                marginTop: 15
+                marginTop: 10
             }}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
@@ -135,8 +130,7 @@ export default ListsRedactor = ({
             primeValue={shadowUse}
             onChange={shadowChange}
             style = {{
-                height: 60,
-                marginTop: 15
+                marginTop: 10
             }}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}

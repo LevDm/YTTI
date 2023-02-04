@@ -31,7 +31,9 @@ import {
     BaseSwitch 
 } from "../../../../../../general_components/base_components/BaseElements";
 
-import commonStaticStyles from "../CommonElements";
+import commonStaticStyles, { BoxsField } from "../CommonElements";
+
+const schemes = ['light', 'auto', 'dark'] 
 
 export default ThemeRedacor = ({
     goToPalleteScreen,
@@ -193,77 +195,76 @@ export default ThemeRedacor = ({
                 </>
             )
         } else {
-
-        
-
-        const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
-        const schemaThisItem = 'light'
-        const ThemeThisItem = themesColorsAppList[index][schemaThisItem]
-        return (
-            <Pressable
-                key = {String(`theme_selector_${item+index}`)} 
-                style={{
-                    height: itemSize,
-                    width: itemSize,
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}
-                onPress={()=>{pressItem(index)}}
-                onLongPress={()=>{longPressItem(index)}}
-            >   
-                <Animated.View
+            const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
+            const schemaThisItem = 'light'
+            const ThemeThisItem = themesColorsAppList[index][schemaThisItem]
+            return (
+                <Pressable
+                    key = {String(`theme_selector_${item+index}`)} 
                     style={{
                         height: itemSize,
                         width: itemSize,
-                        position: 'absolute',
-                        //backgroundColor: 'red',
-                        borderRadius: appStyle.borderRadius.additional,
-                        borderWidth:  3,
-                        borderColor: index === ThemeColorsAppIndex? Theme.basics.accents.primary : 'transparent',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        opacity: opacity,
                         transform: [
-                            {scale: scale},
+                            {scale: .95}
                         ]
                     }}
+                    onPress={()=>{pressItem(index)}}
+                    onLongPress={()=>{longPressItem(index)}}
                 >   
                     <LinearGradient
                         colors={[ThemeThisItem.basics.accents.primary, ThemeThisItem.basics.accents.quaternary]}
                         style={{
-                            position: 'absolute',
-                            height: itemSize-10,
-                            width: itemSize-10,
-                            borderRadius: appStyle.borderRadius.additional -4,
-                        }}
-                    />
-                    <Text style={[staticStyles.themeName, {color: ThemeThisItem.texts.neutrals.primary}]}>{themesColorsAppList[index]['light'].theme}</Text>
-                    <BaseBox
-                        isCheckBox={true}
-                        outerRing={false}
-                        size={18.95}
-                        style = {{
-                            //flex: 4,
-                            position: 'absolute',
-                            left: 10,
-                            top: 10,
-                            backgroundColor: Theme.basics.grounds.primary,
+                            //position: 'absolute',
+                            height: itemSize,
+                            width: itemSize,
                             borderRadius: appStyle.borderRadius.additional,
                         }}
-                        Item={null}
-                        Check = {index === themesApp.indexOf(previewAppStyle.palette.theme)}
-                        onPress = {()=>{}}
-                        BoxBorderRadius = {appStyle.borderRadius.additional}
-                        ColorsChange = {{
-                            true: ThemeThisItem.icons.accents.primary, 
-                            false: `${ThemeThisItem.icons.accents.quaternary}00`
-                        }}
                     />
-                </Animated.View>
-                
-            </Pressable>
-        );}
-    };
+                    <Text 
+                        style={[staticStyles.themeName, {
+                            color: ThemeThisItem.texts.neutrals.primary,
+                            position: 'absolute',
+                        }]}
+                    >
+                        {themesColorsAppList[index]['light'].theme}
+                    </Text>
+
+                    <View
+                        style={{
+                            height: itemSize-6,//-(8)+1.5,
+                            width: itemSize-6,
+                            position: 'absolute',
+                            //backgroundColor: 'red',
+                            borderRadius: appStyle.borderRadius.additional -2,
+                            //borderTopRightRadius: appStyle.borderRadius.additional-10,
+                            //borderTopLeftRadius: appStyle.borderRadius.additional-12,
+                            borderWidth:  3,
+                            borderColor: index === ThemeColorsAppIndex? Theme.basics.neutrals.primary : 'transparent',
+                            alignItems: 'center',
+                            //top: (8)+1.5,
+                        }}
+                    >
+                        <View
+                            style={{
+                                height: 16,
+                                width: 40,
+                                position: 'absolute',
+                                top: -3,//-1.5-(8),
+                                //backgroundColor: 'red',
+                                borderRadius: appStyle.borderRadius.additional,
+                                
+                                borderWidth:  index === themesApp.indexOf(previewAppStyle.palette.theme)? 3 : 0,
+                                borderColor: Theme.basics.neutrals.primary,
+                                backgroundColor: index === themesApp.indexOf(previewAppStyle.palette.theme)? 'transparent' : Theme.basics.neutrals.primary
+                            }}
+                        />   
+                    </View>
+                </Pressable>
+            )
+        }
+    }
 
     const changeThema = (themeIndex)=>{
         if(themeIndex != 0){
@@ -299,11 +300,16 @@ export default ThemeRedacor = ({
     }
 
     
-    const switching = ()=>{
-        const schemes = ['light', 'auto', 'dark'] 
+    const switching = ()=>{   
         let index = schemes.indexOf(schema)
         index = (index+1) == schemes.length? 0 : index+1
         setSchema(schemes[index])
+        let newAppStyle = getNewAppStyleObject();
+        newAppStyle.palette.scheme = schemes[index]
+        setPreviewAppStyle(newAppStyle)
+    }
+
+    const shemaSetting = (index) => {
         let newAppStyle = getNewAppStyleObject();
         newAppStyle.palette.scheme = schemes[index]
         setPreviewAppStyle(newAppStyle)
@@ -313,50 +319,50 @@ export default ThemeRedacor = ({
     <View
         style={{
             //marginBottom: 30,
-            flex: 1, 
-            justifyContent: 'center',
-            alignItems: "center"
+            //flex: 1, 
+            //justifyContent: 'center',
+            //alignItems: "center"
         }}
-    >
+    >   
+        <BoxsField
+            //  'one'>true || 'multiple'>false
+            isChoiceOne={true}
+            title = {Language.colorMode}
+            //  'one'>index || 'multiple'>[indexs]
+            primaryValue = {schemes.indexOf(ThemeSchema)} 
+            groupSize = {schemes.length}
+            onPress = {(activeIndex)=>{shemaSetting(activeIndex)}}
+            groupItems = {Object.values(Language.colorsMods)}
+            /* 
+            renderItem = {(item, index)=>{
+                return(
+
+                )
+            }}
+            */
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        <Text
+            style = {[staticStyles.text, {
+                color: Theme.texts.neutrals.secondary,
+                paddingLeft: 10,
+                marginTop: 15,
+            }]}
+        >
+            Palette
+        </Text> 
         <View
-            style = {{
-                width: '100%',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+            style={{  
+                flex: 1, 
+                alignItems: "center"
             }}
         >
-            <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
-                {Language.colorMode}
-            </Text>
-            <ColorShemeSwitch
-                scheme = {schema}
-                sizeIcon = {25}
-                colorIcon = {Theme.icons.neutrals.secondary}
-                invertColorIcon = {Theme.icons.neutrals.primary}
-                text = {Language.colorsMods[schema]}
-                textStyle = {{
-                    color: Theme.texts.neutrals.secondary,
-                    fontSize: 12,
-                    fontWeight: '600',
-                    fontVariant: ['small-caps']
-                }}
-                pressableStyle = {{
-                    marginRight: 20,
-                    width: 125,
-                    paddingHorizontal: 10,
-                    borderWidth: 2,
-                    borderColor: Theme.icons.accents.primary,
-                    borderRadius: appStyle.borderRadius.additional
-                }}
-                switching = {switching}
-            />
-        </View>
-        
         <Animated.FlatList
             ref = {flatListRef}
             style={{
-                marginTop: 15,
+                
                 width: 3*itemSize,
                 height: itemSize+30,
                 //backgroundColor: 'red' 
@@ -382,6 +388,7 @@ export default ThemeRedacor = ({
             }}
             renderItem={renderItem}
         />
+        </View>
     </View>)
 }
 

@@ -21,7 +21,7 @@ import {
     BaseSlider 
 } from "../../../../../../general_components/base_components/BaseElements";
 
-import commonStaticStyles, { SwitchField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
 //const borderRadiusValues = {min: 0, max: 32, step: 1}
 //import { borderRadiusValues } from "../../../../../app_values/AppDefault";
@@ -38,17 +38,17 @@ export default ModalsRedactor = ({
 }) => {
 
     const [ horizontalProximity, setHorizontalProximity ] = useState(appStyle.modals.horizontalProximity == 0? true : false)
-    const [ outLine, setOutLine ] = useState(appStyle.modals.outline)
-    const [ dimOut, setDimOut ] = useState(appStyle.modals.dimOut)
-    //modals: {
-    //    horizontalProximity: 5,
-    //    outline: true,
-    //    dimOut: true
-
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.modals
 
+    const params = Object.keys(appStyle.modals.highlightMethods) // ['outline', 'dimOutDark', 'gradient']
+    const paramsGroup =  Object.values(appStyle.modals.highlightMethods)
+    const toIndexs = (group) => {
+        return group.map((item, index)=> item? index : -1).filter(item => item >= 0);
+    }
+
+    const items = [Language.outline, Language.dimOutDark, Language.gradient]
     
     const changeHorizontalProximity = () => {
         const newAppStyle = getNewAppStyleObject();
@@ -58,59 +58,12 @@ export default ModalsRedactor = ({
         setHorizontalProximity(!horizontalProximity)
     }
 
-    const changeOutLine = () => {
+    const settingMethods = (indexs) => {
         const newAppStyle = getNewAppStyleObject();
-        newAppStyle.modals.outline = !outLine
+        for (let i = 0; i < params.length; i++){
+            newAppStyle.modals.highlightMethods[params[i]] = indexs.includes(i)
+        }            
         setPreviewAppStyle(newAppStyle);
-
-        setOutLine(!outLine)
-    }
-
-    const changeDimOut = () => {
-        const newAppStyle = getNewAppStyleObject();
-        newAppStyle.modals.dimOut = !dimOut
-        setPreviewAppStyle(newAppStyle);
-
-        setDimOut(!dimOut)
-    }
-
-    
-
-    const getGroup = (changeIndex = -1) => {
-        let group = []
-        if(checkGroup){
-            checkGroup.map((item, index)=>{
-                if(changeIndex != -1){
-                    group.push(changeIndex == index? !item : item)
-                } else {
-                    group.push(item)
-                }
-            })
-        } else {
-            Object.keys(appStyle.modals.highlightMethods).map((item, index)=>{
-                let value = appStyle.modals.highlightMethods[item]
-                if(changeIndex != -1){
-                    group.push(changeIndex == index? !value : value)
-                } else {
-                    group.push(value)
-                }
-            })
-        }
-        return group
-    };
-
-    const [checkGroup, setCheckGroup] = useState(getGroup())
-
-    const settingMethods = (index) => {
-        const newGroup = getGroup(index)
-        const newAppStyle = getNewAppStyleObject();
-        Object.keys(newAppStyle.modals.highlightMethods).map((item, index)=>{
-            newAppStyle.modals.highlightMethods[item] = newGroup[index]
-        })
-        setPreviewAppStyle(newAppStyle);
-
-
-        setCheckGroup(newGroup)
     }
 
     return (<>
@@ -122,46 +75,20 @@ export default ModalsRedactor = ({
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15}]}>
-            {Language.highlightMethods}
-        </Text>
-        <View
-            style = {{
-                //flex: 1,
-                height: 94,
-                marginLeft: 20,
-                width: '60%',
-                justifyContent: 'space-between',
-            }}
-        >
-            {Object.keys(appStyle.modals.highlightMethods).map((item, index)=>(
-                <BaseBox
-                    key = {`highlightMethods_${item}`}
-                    isCheckBox={true}
-                    style = {{
-                        //flex: 4,
-                        backgroundColor: 'transparent',
-                        borderRadius: appStyle.borderRadius.additional,
-                    }}
-                    android_ripple={{
-                        color: Theme.icons.accents.primary,
-                        borderless: true,
-                        foreground: false
-                    }}
-                    Item = {
-                        <Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>
-                            {Language[item]}
-                        </Text>
-                    }
-                    Check = {checkGroup[index]}
-                    onPress = {()=>{settingMethods(index)}}
-                    BoxBorderRadius = {appStyle.borderRadius.additional}
-                    ColorsChange = {{
-                        true: Theme.icons.accents.primary, 
-                        false: `${Theme.icons.accents.quaternary}00`
-                    }}
-                />))}
-        </View>
+
+        <BoxsField
+            //  'one'>true || 'multiple'>false
+            isChoiceOne={false}
+            title = {Language.highlightMethods}
+            //  'one'>index || 'multiple'>[indexs]
+            primaryValue = {toIndexs(paramsGroup)}
+            groupSize = {params.length}
+            groupItems = {items}         
+            onPress = {(activeIndexs)=>{settingMethods(activeIndexs)}}          
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
     </>)
 }
 

@@ -21,7 +21,7 @@ const deviceWidth = Dimensions.get('window').width
 //const valuePosition = ['left','center','right']
 import { sizeButton, valuePosition } from "../../../../../../app_values/AppDefault";
 
-import commonStaticStyles, { SwitchField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, SliderField, BoxsField } from "../CommonElements";
 
 export default ListsRedactor = ({
     appStyle,
@@ -37,20 +37,7 @@ export default ListsRedactor = ({
 
     const [sliderValue, setSliderValue] = useState(appStyle.functionButton.size);
 
-    const getGroup = (type) => {
-        let group = []
-        for (let i of valuePosition){
-            let check = false
-            if(type === i){check = true}
-            group.push(check)
-        }
-        return group
-    };
-
-    const [checkGroup, setCheckGroup] = useState(getGroup(appStyle.functionButton.position));
-
-    const positionButtonSetting = (positionType, index) => {
-        setCheckGroup(getGroup(positionType));
+    const positionButtonSetting = (index) => {
         const newAppStyle = getNewAppStyleObject();
         newAppStyle.functionButton.position = valuePosition[index];
         setPreviewAppStyle(newAppStyle);
@@ -69,50 +56,37 @@ export default ListsRedactor = ({
             //marginBottom: 30,
         }}
     >
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
-            {Language.position}
-        </Text>
-        <View 
-            style = {[{marginLeft: 20, width: '60%'}]}
-        >
-            {valuePosition.map((item, index)=>{
-                return(
-                    <BaseBox
-                        key = {item+index}
-                        style = {{
-                            borderRadius: appStyle.borderRadius.additional,
-                            backgroundColor: 'transparent'
-                        }}
-                        android_ripple={{
-                            color: Theme.icons.accents.primary,
-                            borderless: true,
-                            foreground: false
-                        }}
-                        Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{Language.positions[index]}</Text>}
-                        Check = {checkGroup[index]}
-                        onPress = {()=>{positionButtonSetting(item, index)}}
-                        BoxBorderRadius = {appStyle.borderRadius.additional}
-                        ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
-                    />
-                )
-            })}
-        </View>
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15}]}>
-            {Language.size}
-        </Text>
-        <BaseSlider
+        <BoxsField
+            //  'one'>true || 'multiple'>false
+            isChoiceOne={true}
+            title = {Language.position}
+            //  'one'>index || 'multiple'>[indexs]
+            primaryValue = {valuePosition.indexOf(appStyle.functionButton.position)} 
+            groupSize = {valuePosition.length}
+            groupItems = {Language.positions}         
+            onPress = {(activeIndex)=>{positionButtonSetting(activeIndex)}}          
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        <SliderField
+            viewProps={{
+                style: {
+                    marginTop: 10,
+                }
+            }}
+            
+            title = {Language.size}
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            signaturesStyle = {[staticStyles.signaturesText, {color: Theme.texts.neutrals.tertiary}]}
-            areaStyle = {{marginHorizontal: 20}}
             minimumValue={sizeButton.min}
             maximumValue={sizeButton.max}
             step = {sizeButton.step}
             value = {sliderValue}
             onSlidingComplete = {(value)=>{settingSizeButton(value, true)}}
             onValueChange = {(value)=>{settingSizeButton(value, false)}}
-            minimumTrackTintColor = {Theme.icons.accents.tertiary}
-            maximumTrackTintColor = {Theme.icons.accents.quaternary}
-            thumbTintColor = {Theme.icons.accents.primary}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
         />
     </View>)
 }

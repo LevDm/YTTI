@@ -65,7 +65,7 @@ export default LoadSplashRedactor = ({
         primeValue={loadSplash}
         onChange={loadSplashShowSetting}
         style={{
-            height: 60
+            //height: 60
         }}
         appStyle = {appStyle}
         ThemeColorsAppIndex = {ThemeColorsAppIndex}

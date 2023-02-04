@@ -22,6 +22,8 @@ import Animated, {
     useSharedValue, 
     useAnimatedStyle, 
     withTiming, 
+    withSequence,
+    withSpring,
     useAnimatedScrollHandler, 
     cancelAnimation,
     useAnimatedRef,
@@ -230,11 +232,11 @@ export const BaseSlider = ({
 
 export const BaseBox = ({
     isCheckBox = false,
-    outerRing = true,
+    //outerRing = true,
     Item = <Text>Text</Text>,
     BoxBorderRadius = 12,
     style = {},
-    size = 30,
+    size = 24,
     rippleColor = '#00000080',
     ColorsChange = {true: Theme.icons.neutrals.primary, false: Theme.icons.neutrals.secondary},
     Check = false,
@@ -243,21 +245,23 @@ export const BaseBox = ({
     android_ripple
 }, props) => {
 
+    const duration = 300
+
     const dynamicStylePrimaryBox = useAnimatedStyle(()=>{
-        const duration = 300
+        const borderWidthValue = (isCheckBox || Check)? 2 : 0
         return {
-            borderWidth: withTiming((isCheckBox && outerRing)? 2 :((Check  && outerRing)? 2 : 0), {duration: duration}),
+            borderWidth: withTiming(borderWidthValue, {duration: duration}), 
             borderRadius: withTiming(BoxBorderRadius, {duration: duration}),
-            borderColor: withTiming(ColorsChange.true, {duration: duration}),
+            borderColor: withTiming((Check? ColorsChange.true : ColorsChange.false), {duration: duration}),
         }
     }, [Check,BoxBorderRadius, ColorsChange])
 
     const dynamicStyleSecondaryBox = useAnimatedStyle(()=>{
-        const duration = 300
+        const margimValue = (isCheckBox || Check)? 2 : 4
         return {
-            margin: withTiming((isCheckBox && outerRing)? 2 : (Check? 2 : 4), {duration: duration}),
+            margin: withTiming(margimValue , {duration: duration}), 
             borderRadius: withTiming((BoxBorderRadius-4), {duration: duration}),
-            backgroundColor: withTiming((Check? ColorsChange.true : ColorsChange.false) , {duration: duration})
+            backgroundColor: withTiming((Check? ColorsChange.true : isCheckBox? 'transparent' : ColorsChange.false) , {duration: duration})
         }
     }, [Check, BoxBorderRadius, ColorsChange])
 
@@ -281,16 +285,9 @@ export const BaseBox = ({
                     justifyContent: 'flex-start',
                 }}
                 android_ripple = {android_ripple? android_ripple : {}}
-                //android_ripple = {{
-                //    color: rippleColor,
-                //    borderless: true,
-                //    foreground: false
-                //}}
-                unstable_pressDelay = {300}
+                //unstable_pressDelay = {0}
                 onLongPress = {onLongPress}
-                //onPress = {()=>{ setTimeout(onPress, 150)}}
-                //onPressOut={()=>{ setTimeout(onPress, 0)}}
-                onPressOut={onPress}
+                onPress={onPress}
             >
                 <Animated.View
                     style = {[dynamicStylePrimaryBox, {
@@ -321,14 +318,18 @@ export const BaseBox = ({
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 export const BaseSwitch = ({
+    Item = <Text>Text</Text>,
+    separator,
+    separatorStyle,
     trackStyle = {},
     thumbStyle = {},
     style = {},
-    size = 30,
+    size = 24,
     primeValue = false,
     colors = {track: {true: 'green', false: 'grey'}, thumb: {true: 'green', false: 'blue'} },
     onChange,
-    duration = 300
+    duration = 300,
+    android_ripple
 }, props) => {
 
     const [switchValue, setSwitchValue] = useState(primeValue);
@@ -344,7 +345,7 @@ export const BaseSwitch = ({
         return {
             backgroundColor: withTiming((!switchValue? colors.thumb.true : colors.thumb.false), {duration: duration}),
             transform: [
-                {translateX: withTiming((size*(!switchValue? -0.5 : 0.8)), {duration: duration})}
+                {translateX: withTiming((size*(!switchValue? -0.5 : 0.7)), {duration: duration})}
             ],
         }
     },[switchValue, colors])
@@ -354,12 +355,13 @@ export const BaseSwitch = ({
             props = {props}
             style = {[{
                 minHeight: size,
-                minWidth: size*2.4,
+                minWidth: size*2,
                 //flex: 1,
                 //backgroundColor: 'red',
                 justifyContent: 'center',
                 alignItems: 'center',
             }, style]}
+            android_ripple = {android_ripple? android_ripple : {}}
             onPress = {()=>{
                 setSwitchValue(!switchValue)
                 if(onChange != undefined){onChange()};
@@ -367,14 +369,11 @@ export const BaseSwitch = ({
         >
         <Animated.View
             style = {[{
-                height: size*0.75,
-                width: size*1.3,
+                height: size*0.7,
+                width: size*1.2,
                 justifyContent: 'center',
+                marginRight: size/2,
             }, trackStyle, dynamicStyleTrack]}
-            //onPress = {()=>{
-            //    setSwitchValue(!switchValue)
-            //    if(onChange != undefined){onChange()};
-            //}}
         >
             <Animated.View
                 style = {[{
@@ -385,6 +384,8 @@ export const BaseSwitch = ({
                 }, thumbStyle, dynamicStyleTrumb]}
             />
         </Animated.View>
+        {separator && <View style={separatorStyle}/>}
+        {Item}
         </Pressable>
     );
 };

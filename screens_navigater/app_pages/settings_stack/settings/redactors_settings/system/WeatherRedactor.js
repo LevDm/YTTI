@@ -60,7 +60,7 @@ import {
     BaseModal 
 } from "../../../../../../general_components/base_components/BaseElements";
 
-import commonStaticStyles, { SwitchField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, BoxsField, ripple } from "../CommonElements";
 
 import { weatherTypes } from "../../../../../../app_values/AppDefault";
 
@@ -351,19 +351,16 @@ export default WeatherRedactor = ({
         return group
     };
 
-    const [checkBoxGroup, setCheckBoxGroup] = useState(getCheckBoxGroup(appConfig.weather.type));
-
-    const typeSetting = (item, index) => {
-        console.log('type setting', item)
+    const typeSetting = (index) => {
+        const type = weatherTypes[index]
+        console.log('type setting', type)
         let newAppConfig = getNewAppConfigObject();
-        newAppConfig.weather.type = item
+        newAppConfig.weather.type = type
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
 
-        setCheckBoxGroup(getCheckBoxGroup(item))
+        //setCheckBoxGroup(getCheckBoxGroup(item))
     }
-
-    
 
     return (<>
         <SwitchField
@@ -371,50 +368,34 @@ export default WeatherRedactor = ({
             primeValue={weatherUsed}
             onChange={weatherUsedSetting}
             style={{
-                height: 60
+                //height: 60
             }}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
-            {Language.type}
-        </Text>
-        <View 
-            style = {[{
-                marginLeft: 20,
-                width: '60%'
-            }]}
-        >
-            {weatherTypes.map((item, index)=>(
-            <BaseBox
-                key = {item+index}
-                style = {{
-                    borderRadius: appStyle.borderRadius.additional,
-                    backgroundColor: 'transparent'
-                }}
-                android_ripple={{
-                    color: Theme.icons.accents.primary,
-                    borderless: true,
-                    foreground: false
-                }}
-                Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{Language.types[item]}</Text>}
-                Check = {checkBoxGroup[index]}
-                onPress = {()=>{typeSetting(item, index)}}
-                BoxBorderRadius = {appStyle.borderRadius.additional}
-                ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
-            />   
-            ))}
-        </View>
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
+        <BoxsField
+            //  'one'>true || 'multiple'>false
+            isChoiceOne={true}
+            title = {Language.type}
+            //  'one'>index || 'multiple'>[indexs]
+            primaryValue = {weatherTypes.indexOf(appConfig.weather.type)} 
+            groupSize = {weatherTypes.length}
+            groupItems = {Object.values(Language.types)}         
+            onPress = {(activeIndex)=>{typeSetting(activeIndex)}}          
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10}]}>
             {Language.locations}
         </Text>
         <View
             style = {{
                 flex: 1,
                 height: 75,
-                marginLeft: 20,
-                width: '70%',
+                marginLeft: 30,
+                width: '85%',
                 justifyContent: 'space-between',
             }}
         >
@@ -466,11 +447,7 @@ export default WeatherRedactor = ({
                                 backgroundColor: 'transparent',
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
-                            android_ripple={{
-                                color: Theme.icons.accents.primary,
-                                borderless: true,
-                                foreground: false
-                            }}
+                            android_ripple={ripple(Theme.icons.accents.primary)}
                             Item = {
                                 <Text 
                                     style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}
@@ -483,7 +460,7 @@ export default WeatherRedactor = ({
                             BoxBorderRadius = {appStyle.borderRadius.additional}
                             ColorsChange = {{
                                 true: Theme.icons.accents.primary, 
-                                false: `${Theme.icons.accents.quaternary}00`
+                                false: Theme.icons.accents.quaternary
                             }}
                         />}
                         {(location && !addNewLocation) && 
@@ -499,11 +476,7 @@ export default WeatherRedactor = ({
                                 backgroundColor: 'transparent',
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
-                            android_ripple={{
-                                color: Theme.icons.accents.primary,
-                                borderless: true,
-                                foreground: false,
-                            }}
+                            android_ripple={ripple(Theme.icons.accents.primary)}
                             onPress={()=>{openModal('replace', index)}}
                         />}
                         {((location && !addNewLocation) && true) && 
@@ -519,11 +492,7 @@ export default WeatherRedactor = ({
                                 backgroundColor: 'transparent',
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
-                            android_ripple={{
-                                color: Theme.icons.accents.primary,
-                                borderless: true,
-                                foreground: false,
-                            }}
+                            android_ripple={ripple(Theme.icons.accents.primary)}
                             onPress={()=>{editLocation('del', usersLocations[index])}}
                         />}
                         {(!location && addNewLocation) && 
@@ -532,20 +501,22 @@ export default WeatherRedactor = ({
                             icon={{
                                 name: "map-marker-plus-outline", 
                                 size: 25, 
-                                color: Theme.icons.neutrals.secondary
+                                color: Theme.icons.accents.primary
                             }}
                             style = {{
                                 flex: 1,
                                 backgroundColor: 'transparent',
-                                borderColor: Theme.icons.accents.primary,
-                                borderWidth: 2,
+                                
+                                //borderColor: Theme.icons.accents.primary,
+                                //borderWidth: 2,
                                 borderRadius: appStyle.borderRadius.additional
                             }}
-                            android_ripple={{
-                                color: Theme.icons.accents.primary,
-                                borderless: true,
-                                foreground: false
+                            styleItemContainer={{
+                                justifyContent: 'flex-start',
+                                paddingLeft: 3
+                                //alignItems: 'flex-start',
                             }}
+                            android_ripple={ripple(Theme.icons.accents.primary)}
                             onPress={()=>{openModal('add', index)}}
                         />}
                     </View>)

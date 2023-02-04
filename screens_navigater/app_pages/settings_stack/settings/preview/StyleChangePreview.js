@@ -36,8 +36,9 @@ export default StyleChangePreview = ({
     appStyle,
     setAppStyle,
     r_setAppStyle,
-    upd,
     previewAppStyle,
+
+    previewAppStyleA,
 
     previewFixed,
     setPreviewFixed,
@@ -74,9 +75,6 @@ export default StyleChangePreview = ({
         r_setAppStyle(newAppStyle);
     }
     */
-    useEffect(()=>{
-        console.log('update preview')
-    },[upd])
 
     const setNewAppStyle = () => {
 
@@ -103,7 +101,8 @@ export default StyleChangePreview = ({
     const [scaleValues, setScaleValues] = useState([false, false, false]);
 
     const pressPreview = (index) => {
-        //console.log(index)
+        //console.log(previewAppStyle)
+
         let newScaleValues = [false, false, false] 
         newScaleValues[index] = true
         setScaleValues(newScaleValues)
@@ -189,8 +188,8 @@ export default StyleChangePreview = ({
                             onPress = {()=>{pressPreview(index)}}
 
                             appStyle = {appStyle}
-                            upd={upd}
                             previewAppStyle = {previewAppStyle}
+                            previewAppStyleA = {previewAppStyleA}
                         />
                     }
                     {item === 'modal' && 
@@ -277,7 +276,7 @@ export default StyleChangePreview = ({
                     text="apply"
                     icon = {{name: 'check-outline'}}
                     style={{flex: 1}}
-                    onPress={()=>{splashStart(themesApp.indexOf(previewAppStyle.value.palette.theme))}}
+                    onPress={()=>{splashStart(themesApp.indexOf(previewAppStyle.palette.theme))}}
                 />
                 <BasePressable
                     text={previewFixed? "unfixed" : "fixed"}

@@ -574,7 +574,7 @@ const Settings = (props) => {
             categorys: categoryIntervals
         }
     }
-    useEffect(()=>{countDerivedValues()},[LanguageAppIndex])//appStyle.lists.proximity
+    useEffect(()=>{countDerivedValues()},[LanguageAppIndex, appStyle])//appStyle.lists.proximity
 
 
 
@@ -675,6 +675,7 @@ const Settings = (props) => {
         animValueWidthLine.value = width;
         animValueMarginLeft.value = left;
 
+        cancelAnimation(accentCategory);
         accentCategory.value = allStructurParams[countAccent].indexSection
 
 
@@ -804,14 +805,15 @@ const Settings = (props) => {
             opacity: withSequence(withTiming(0*accentCategory.value, {duration: 0}), withTiming(1, {duration: duration})),
             transform: [
                 {scale: withSequence(withTiming(0.9, {duration: 0}), withTiming(1, {duration: duration})),}
-            ]
+            ],
         }
     })
     const categoryText = useAnimatedProps(()=>{
+        //console.log(Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type)
         return {
-            text: Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type,
+            value: Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type,
         }
-    },[Language])
+    },[Language, LanguageAppIndex])
 
     const dynamicStyleListItems = useAnimatedStyle(()=>{
         const duration = 300
@@ -1035,7 +1037,7 @@ const Settings = (props) => {
             </View>}   
         </Reanimated.View>
 
-        <View 
+        <Reanimated.View 
             style = {[staticStyles.SLtopBord,{ 
                 alignItems: 'center',
                 //backgroundColor: 'blue',
@@ -1052,12 +1054,7 @@ const Settings = (props) => {
             }]}
         >
             <Reanimated.View
-                style = {[staticStyles.SLtopBord, type, { 
-                    //alignItems: 'flex-start',
-                    //justifyContent: 'center',
-                    //right: 0
-                    //marginLeft: deviceWidth/2
-                }]}
+                style = {[staticStyles.SLtopBord, type, {}]}
             >
                 <ReanimatedTextInput     
                     editable = {false}
@@ -1078,7 +1075,7 @@ const Settings = (props) => {
                     {Language.app}
                 </Text>
             </Reanimated.View>
-        </View>
+        </Reanimated.View>
 
         <View 
             style = {[staticStyles.SLtopBord,{ 
@@ -1223,10 +1220,7 @@ const Settings = (props) => {
             </View>
             
             <Reanimated.View
-                style={[
-                    //params, 
-                    {
-
+                style={[{
                     height: selectorLineHeight,
                     //marginBottom: 0.5,
                     //backgroundColor: 'orange'

@@ -291,7 +291,6 @@ export default ThemeRedacor = ({
         style={{
         }}
     >   
-        {console.log('COLORS RENDER')}
         <BoxsField
             //  'one'>true || 'multiple'>false
             isChoiceOne={true}

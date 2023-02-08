@@ -82,7 +82,6 @@ import { BlurView } from "@react-native-community/blur";
 import { LinearGradient } from 'expo-linear-gradient';
 
 import ColorSplash from "../../../../componets/StyleColorSplash";
-
 import Classical from "../../../../general_components/tab_bars/Classical";
 
 const deviceHeight = Dimensions.get('window').height
@@ -357,7 +356,6 @@ const Settings = (props) => {
     const animValueCategorysScrolling = useSharedValue(false);
     
     const animValueBobberButtonVisible = useSharedValue(bottomBord);
-    //const animValueBobberButtonExpand = useSharedValue(0);
 
     const animValueScrollY = useSharedValue(0)
 
@@ -396,24 +394,36 @@ const Settings = (props) => {
             animValueCategorysScrolling.value = true;
         },
         onEndDrag: (e) => {
+            //runOnJS(logg)(`end ${e.contentOffset.x}`)
             animValueCategorysScrolling.value = false;
+        },
+        onMomentumEnd: (e) => {
+            //runOnJS(logg)(`momentum end ${e.contentOffset.x}`)
+            animValueScrollXCategorys.value = (e.contentOffset.x)
+            //animValueCategorysScrolling.value = false;
         },
         onScroll: (e, ctx) => {
             //animValueCategorysScrolling.value = true;
-            animValueScrollXCategorys.value = -(e.contentOffset.x)
+            animValueScrollXCategorys.value = (e.contentOffset.x)
         }
     })
 
     useDerivedValue(() => {
         const scroll = Math.abs(animValueScrollXCategorys.value)
-        if(animValueCategorysScrolling.value){
+        if(true){
             const categoryIntervals = derivedValues.value.categorys
 
-            const to = Math.round((scroll/(deviceWidth/2))-0.2)
-            runOnJS(logg)(` ${(to)} ${categoryIntervals[to]} ${categoryIntervals}`)
+            const yetIndex = Math.floor((scroll/(deviceWidth/2)))
+            const yetScroll = yetIndex*(deviceWidth/2)
+            const toIndex = Math.floor(( (Math.max((scroll-yetScroll),0) )/ (deviceWidth/4)))
+
+            const fineIndex = Math.min(yetIndex+toIndex, (categoryIntervals.length-1))
+
+            //runOnJS(logg)(` ${(deviceWidth/4)} `)
+            //runOnJS(logg)(` ${(scroll)} ||| ${(toIndex)} ||| ${categoryIntervals[toIndex]} ||| ${categoryIntervals}`)
             scrollTo(
                 flatListRef, //ref
-                categoryIntervals[to], //x offset
+                categoryIntervals[fineIndex], //x offset
                 0, //y offset
                 true //animate
             )
@@ -505,7 +515,7 @@ const Settings = (props) => {
     
 
     const countDerivedValues = () =>{
-
+        //console.log('reculc')
         const intervals = []//[{left: 0, right: 100}, ...]
         for(let i = 0; i < allStructurParams.length; i++){
             let right = -1;
@@ -574,7 +584,7 @@ const Settings = (props) => {
             categorys: categoryIntervals
         }
     }
-    useEffect(()=>{countDerivedValues()},[LanguageAppIndex, appStyle])//appStyle.lists.proximity
+    useEffect(()=>{countDerivedValues()},[appStyle])//appStyle.lists.proximity//Language, LanguageAppIndex, 
 
 
 
@@ -688,23 +698,32 @@ const Settings = (props) => {
     })
 
 
-    const selectParametr = (item, index) => {
+    const selectParametr = (item, index, type) => {
+        //console.log('selectParam', item, index)
         let itemIndex = 0;
         let sectionIndex = 0;
-        for(let i = 0; i<structure.length; i++){               
-            for(let j = 0; j<structure[i].data.length; j++){
-                if(structure[i].category === item.category && structure[i].data[j].param === item.param){
-                    itemIndex = j;
-                    sectionIndex = i;
-                    break;
+        if(type == 'params'){
+            for(let i = 0; i<structure.length; i++){               
+                for(let j = 0; j<structure[i].data.length; j++){
+                    if(structure[i].category === item.category && structure[i].data[j].param === item.param){
+                        itemIndex = j;
+                        sectionIndex = i;
+                        break;
+                    }
                 }
             }
+        } else {
+            itemIndex = 0;
+            sectionIndex = index;
         }
+        
         
         sectListRef.current.scrollToLocation({
             itemIndex: itemIndex+1,
             sectionIndex: sectionIndex,
-            animated: false
+            animated: false,
+            viewOffset: 30+appStyle.lists.proximity
+            //viewPosition: 0
         })
     }
 
@@ -718,9 +737,11 @@ const Settings = (props) => {
         }
         //console.log('st')
         if(
-            (listHeights.length == listWidths.length && listHeights.length == allStructurParams.length) 
-            || 
-            (derivedValues.value.listHeights != listHeights || derivedValues.value.listWidths != listWidths)
+            //(listHeights.length == listWidths.length && listHeights.length == allStructurParams.length) 
+            //|| 
+            ((derivedValues.value.listHeights != listHeights || derivedValues.value.listWidths != listWidths) 
+                && (listWidths.length == allStructurParams.length && listHeights.length == allStructurParams.length)
+            )
         ){
             //console.log('new full renders')
             countDerivedValues()
@@ -740,21 +761,10 @@ const Settings = (props) => {
         handlePresentModalPress()
     }
 
-   
 
-    const animStyleBobberButton = useAnimatedStyle(() => {
-        const duration = 400;
-        return {
-            //opacity: withTiming(animValueBobberButtonVisible.value == 0? 1 : 0, {duration: duration}),
-            transform: [
-                {translateY: withTiming(animValueBobberButtonVisible.value, {duration: duration})}
-            ] 
-        }
-    })
     const animStyleBobber1 = useAnimatedStyle(() => {
         const duration = 200;
         return {
-            //opacity: withTiming(animValueBobberButtonExpand.value == 1? 1 : 0.9, {duration: duration}),
             transform: [
                 {translateY: withTiming(animValueBobberButtonVisible.value == 0? -(5+appStyle.functionButton.size) : 0, {duration: duration})}
             ] 
@@ -812,8 +822,10 @@ const Settings = (props) => {
         //console.log(Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type)
         return {
             value: Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type,
+            text: Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type,
         }
-    },[Language, LanguageAppIndex])
+        //,[Language, LanguageAppIndex]
+    })
 
     const dynamicStyleListItems = useAnimatedStyle(()=>{
         const duration = 300
@@ -827,12 +839,13 @@ const Settings = (props) => {
     const dynamicStyleListItemsHeaders = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            paddingHorizontal:  withTiming((5 * appStyle.borderRadius.basic/32), {duration: duration}),
+            paddingHorizontal:  withTiming((7 * appStyle.borderRadius.basic/32), {duration: duration}),
         }
     })
 
     const dynamicStyleBobberButton = useAnimatedStyle(()=>{
         const duration = 300
+        const durationTranslate = 400;
         const position =(buttonSize)=>({
             center: (deviceWidth*0.5-(buttonSize/2)),
             left: ((deviceWidth-12)-buttonSize),
@@ -845,6 +858,10 @@ const Settings = (props) => {
             width:  withTiming(appStyle.functionButton.size, {duration: duration}),
             bottom:  withTiming((appStyle.navigationMenu.height+12.5+addBottom), {duration: duration}),
             right: withTiming( (position(appStyle.functionButton.size)[appStyle.functionButton.position]), {duration: duration}),
+
+            transform: [
+                {translateY: withTiming(animValueBobberButtonVisible.value, {duration: durationTranslate})}
+            ] 
         }
     })
 
@@ -867,15 +884,7 @@ const Settings = (props) => {
     const selectorLine = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            /*
-            backgroundColor: interpolateColor(
-                animSelectorLine.value, 
-                [headerHeight, headerHeight/2],
-                [`${Theme.basics.accents.primary}90`, `${Theme.basics.accents.primary}90`]  //'#00000000'
-            ),*/
-            //top: ((Constants.statusBarHeight+1)+itemCategoryHeight) +  animSelectorLine.value,
             transform: [
-               //{translateY: withTiming(animSelectorLine.value, {duration: 0})}
                {translateY: animSelectorLine.value-0.25}
             ]
         }
@@ -886,9 +895,8 @@ const Settings = (props) => {
         return {
             height: interpolate(
                 animSelectorLine.value, 
-                [headerHeight-(Constants.statusBarHeight+1), 0], //????-(18.95)
+                [headerHeight-(Constants.statusBarHeight+1), 0],
                 [selectorLineHeightFull, 0],
-                //[headerHeight, headerHeight+selectorLineHeight],
                 //extrapolation
                 {
                     extrapolateLeft: Extrapolation.CLAMP,
@@ -989,10 +997,7 @@ const Settings = (props) => {
             setBottomSheetVisible(false)
             props.r_setHideMenu(false)
         }
-        //if(!props.hideMenu && index != -1){
-            //props.r_setHideMenu(false)
-            //bottomSheetModalRef.current?.dismiss();
-        //}props.hideMenu
+
     }, []);
 
     const BLUR = false
@@ -1005,9 +1010,6 @@ const Settings = (props) => {
                     top: 0,
                     zIndex: 1,
                     position: 'absolute',                    
-                    //height: (Constants.statusBarHeight+1)+ 30 + 35,
-                    //paddingTop: (Constants.statusBarHeight+1),
-                    //height: headerHeight //(Constants.statusBarHeight+1)+itemCategoryHeight+selectorLineHeight
                 },
                 BLUR? {} : {
                     backgroundColor: Theme.basics.accents.primary,
@@ -1040,15 +1042,11 @@ const Settings = (props) => {
         <Reanimated.View 
             style = {[staticStyles.SLtopBord,{ 
                 alignItems: 'center',
-                //backgroundColor: 'blue',
-                //zIndex: 5
-                //flex: 1,
                 marginTop: (Constants.statusBarHeight+1),
                 position: 'absolute',
                 height: itemCategoryHeight,
                 right: 0,
                 zIndex: 2,
-                //backgroundColor :'black',
                 justifyContent: 'center',
                 
             }]}
@@ -1079,28 +1077,18 @@ const Settings = (props) => {
 
         <View 
             style = {[staticStyles.SLtopBord,{ 
-                //alignItems: 'flex-end',
-                //backgroundColor: 'blue',
-                //zIndex: 5
-                //flex: 1,
                 marginTop: (Constants.statusBarHeight+1),
                 position: 'absolute',
                 height: itemCategoryHeight,
                 left: 0,
-                zIndex: 2
-                //backgroundColor :'black'
-                //justifyContent: 'space-between',
-                
+                zIndex: 2         
             }]}
         >
             <View
                 style = {{
-                    //height: 50,
-                    //flex: 1,
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    flexDirection: 'row',
-                    
+                    flexDirection: 'row',                    
                 }}
             >
                 {appStyle.navigationMenu.type == 'not' &&
@@ -1119,10 +1107,8 @@ const Settings = (props) => {
                         color: Theme.texts.neutrals.primary,
                         borderless: true,
                         foreground: false
-
                     }}
-                />
-                }
+                />}
                 {appStyle.navigationMenu.type != 'not' && <View style={{height: 45, width: 45, marginLeft: 15,}}/>}
                 <Text style = {[staticStyles.AnimatedHeaderText, {color: Theme.texts.neutrals.primary}]}>
                     {Language.HeaderTitle}
@@ -1134,23 +1120,15 @@ const Settings = (props) => {
             style = {[selectorLine, {
                 height: selectorLineHeightFull,
                 width: '100%',
-                //backgroundColor: 'red',
-                //alignItems: 'flex-end',
-                //alignContent: 'flex-end',
                 justifyContent: 'flex-end',
-                //paddingTop: selectorLineHeight-35-5,
                 position: 'absolute',
                 top: ((Constants.statusBarHeight+1)),
                 zIndex: 1,
-                //transform: [
-                //    {translateY: headHeight}
-                //]
             }]}
         >
             <Reanimated.View
                 style = {[selectorLineColorHeight, {
                     backgroundColor: `${Theme.basics.accents.primary}${BLUR?'90':'ff'}`,
-                    //height: selectorLineHeightFull,
                     width: '100%',
                     position: 'absolute',
                     bottom: 0
@@ -1160,26 +1138,20 @@ const Settings = (props) => {
             <View
                 style={{
                     height: itemCategoryHeight,
-                    
-                    //backgroundColor: 'blue'
-                    //justifyContent: 'center',
                     alignItems: 'flex-end'
-
                 }}
             >
                 <Reanimated.View
                     style={[category, {
                         height: itemCategoryHeight,
-                        //backgroundColor: 'blue',
                         justifyContent: 'center',
-                        //paddingHorizontal: 3,
-                        alignItems: 'flex-start',
-                        
+                        alignItems: 'flex-start',                    
                     }]}
                 >
                     <ReanimatedFlatList
                         ref={flatCategorysListRef}
                         onScroll={scrollHandlerFlatListCategorys}
+                        //decelerationRate={'fast'}
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
                         style={{flex: 1 ,width: deviceWidth/2,}}
@@ -1195,23 +1167,16 @@ const Settings = (props) => {
                                 key={String(item.category+index)}
                                 type={'t'}
                                 style={[{
-                                    //marginHorizontal: 5, 
-                                    //marginRight: 5, 
-                                    width: deviceWidth/2,
-                                    //backgroundColor: 'red',
-                                    //padding: 0
-                                    
+                                    width: deviceWidth/2,                            
                                 }]}
                                 styleItemContainer = {{
                                     alignItems: 'center',
-                                    //backgroundColor: 'pink',
                                     justifyContent: 'flex-start',
-                                    //padding: 0
                                 }}
                                 text={Language.StructureScreen.typesSettings[item.category].category}
                                 textStyle={[staticStyles.AnimatedHeaderText, {color: Theme.texts.neutrals.primary,}]}
                                 rippleColor={false}
-                                onPress={()=>{selectParametr(item, index)}}
+                                onPress={()=>{selectParametr(item, index, 'categorys')}}
                             />
                             )
                         }}
@@ -1222,8 +1187,6 @@ const Settings = (props) => {
             <Reanimated.View
                 style={[{
                     height: selectorLineHeight,
-                    //marginBottom: 0.5,
-                    //backgroundColor: 'orange'
                 }]}
             >
                 <Reanimated.View 
@@ -1266,7 +1229,7 @@ const Settings = (props) => {
                                 text={Language.StructureScreen.params[item.param]}
                                 textStyle={[staticStyles.frontFLText, {color: Theme.texts.neutrals.primary}]}
                                 rippleColor={false}
-                                onPress={()=>{selectParametr(item, index)}}
+                                onPress={()=>{selectParametr(item, index, "params")}}
                             />
                         </View>
                         )
@@ -1277,13 +1240,14 @@ const Settings = (props) => {
 
         <ReanimatedSectionList
             ref={sectListRef}
+            contentOffset={{x: 0, y: (packHeight)}}
             stickySectionHeadersEnabled={false}
             showsVerticalScrollIndicator={false}
             onScroll={scrollSectionsList}
             sections={structure}
             keyExtractor={(item, index) => item.param + index}
             style={{
-                paddingTop: headerHeight//(Constants.statusBarHeight+1)+itemCategoryHeight+selectorLineHeight
+                paddingTop: headerHeight
             }}
             ListHeaderComponent={()=>{return(
                 <View
@@ -1292,10 +1256,7 @@ const Settings = (props) => {
                         maxHeight: headHeight,
                         width: '100%',
                         backgroundColor: Theme.basics.grounds.secondary,
-                        //flexDirection: 'row',
-                        //justifyContent: 'flex-start',
-                        //alignItems: 'center',
-                        marginBottom: selectorLineHeightFull//selectorLineHeight+itemCategoryHeight
+                        marginBottom: selectorLineHeightFull
                     }}
                 >
                     <Reanimated.View
@@ -1306,10 +1267,6 @@ const Settings = (props) => {
                             dynamicStyleListItems,
                             {
                                 backgroundColor: Theme.basics.grounds.primary,   
-                                justifyContent: 'flex-start',
-                                paddingVertical: 5,
-                                paddingBottom: 20,
-                                //width: '100%',
                             }
                         ]}
                     >  
@@ -1319,10 +1276,10 @@ const Settings = (props) => {
                                 { 
                                 flexDirection: 'row', 
                                 width: '100%',
-                                marginBottom: 5, 
+                                //marginBottom: 5, 
                                 alignItems: 'center',
-
-                                //paddingHorizontal: 5 * appStyle.borderRadius.basic/32 
+                                height: 25,
+                                backgroundColor: 'red'
                             }]}
                         >
                             <MaterialCommunityIcons name={"border-none-variant" } size={20} color={Theme.texts.neutrals.secondary} />
@@ -1339,11 +1296,9 @@ const Settings = (props) => {
                     style={{
                         height: headerStickysHeight,
                         width: '100%',
-                        //backgroundColor: 'yellow',
                         justifyContent: 'center',
                         alignItems: 'center',
                         marginVertical: appStyle.lists.proximity, 
-                        //marginTop: index == 0? 0 : (!previewFixed? appStyle.lists.proximity : 0),
                     }}
                 >
                     <Text 
@@ -1372,9 +1327,6 @@ const Settings = (props) => {
                             dynamicStyleListItems,
                             {
                                 backgroundColor: Theme.basics.grounds.primary,   
-                                justifyContent: 'flex-start',
-                                paddingVertical: 5,
-                                paddingBottom: 20
                             }
                         ]}
                         onLayout={(event)=>{stacker(listHeights, setListHeights, event.nativeEvent.layout.height+2*appStyle.lists.proximity)}}
@@ -1385,10 +1337,8 @@ const Settings = (props) => {
                                 { 
                                 flexDirection: 'row', 
                                 width: '100%',
-                                marginBottom: 5, 
+                                height: 25,
                                 alignItems: 'center',
-
-                                //paddingHorizontal: 5 * appStyle.borderRadius.basic/32 
                             }]}
                         >
                             <MaterialCommunityIcons name={item.icon} size={20} color={Theme.texts.neutrals.secondary} />
@@ -1443,7 +1393,7 @@ const Settings = (props) => {
         {/*BOBBER BUTTON*/}
         {!bottomSheetVisible && 
         <Reanimated.View 
-            style = {[animStyleBobberButton, dynamicStyleBobberButton, {
+            style = {[dynamicStyleBobberButton, {
                 position: 'absolute',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
@@ -1531,6 +1481,13 @@ const Settings = (props) => {
 };
 export default connect(mapStateToProps('SETTINGS_SCREEN'), mapDispatchToProps('SETTINGS_SCREEN'))(Settings);
 
+
+const BasisList = () =>{
+    return(<>
+        
+    </>)
+}
+
 const staticStyles = StyleSheet.create({
     FlatListsArea: {
         //position: 'absolute',
@@ -1591,7 +1548,10 @@ const staticStyles = StyleSheet.create({
         //backgroundColor: 'white',
         minHeight: 200, 
         paddingHorizontal: 10,
-        justifyContent: 'space-around',
+        //justifyContent: 'space-around',
+        justifyContent: 'flex-start',
+        paddingVertical: 5,
+        paddingBottom: 20
     },
     SLParamHeaderText: {
         marginLeft: 5,

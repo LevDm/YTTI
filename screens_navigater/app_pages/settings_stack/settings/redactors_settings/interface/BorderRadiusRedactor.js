@@ -88,7 +88,6 @@ export default BorderRadiusRedactor = ({
                 //marginBottom: 30,
             }}
         >
-            {console.log('ANGLES RENDER')}
             {false && 
             <SwitchField
                 text = {`${Language.synhronous} ${Language.synhronousState[`${synchronousSlider}`]}`}

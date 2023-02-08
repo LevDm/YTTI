@@ -225,7 +225,7 @@ export const BoxsField = ({
                     width: '85%'
                 }]}
             >
-                {checkGroup.map((item, index)=>(
+                {groupItems.map((item, index)=>(
                 <BaseBox
                     isCheckBox={!isChoiceOne}
                     key = {'boxs_field_'+Math.random()}
@@ -235,11 +235,11 @@ export const BoxsField = ({
                         backgroundColor: 'transparent'
                     }}
                     android_ripple={ripple(Theme.icons.accents.primary)}
-                    Item = {!renderItem? <Text style = {[commonStaticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{groupItems[index]}</Text> : renderItem(item, index)}
-                    Check = {checkGroup[index]}
+                    Item = {!renderItem? <Text style = {[commonStaticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{groupItems[index]}</Text> : renderItem(checkGroup[index], index)}
+                    check = {checkGroup[index]}
                     onPress = {()=>{checkBoxPress(index)}}
-                    BoxBorderRadius = {appStyle.borderRadius.additional}
-                    ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
+                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    colorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
                 />
                 ))}
             </View>

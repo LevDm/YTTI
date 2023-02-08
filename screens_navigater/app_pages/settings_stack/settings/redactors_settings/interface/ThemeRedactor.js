@@ -1,15 +1,36 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, memo} from "react";
 
-import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
-import { Appearance } from 'react-native';
+import {
+    StyleSheet, 
+    Text, 
+    Pressable, 
+    ScrollView,
+    FlatList, 
+    Animated, 
+    SectionList, 
+    View,
+    Button, 
+    Dimensions, 
+    Switch, 
+    Vibration,
+    ActivityIndicator
+} from 'react-native';
 
+import Reanimated, {
+    useSharedValue, 
+    useAnimatedStyle, 
+    withTiming,
+    interpolate,
+    useAnimatedProps,
+    cancelAnimation
+} from 'react-native-reanimated';
+
+import * as Haptics from 'expo-haptics';
 
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
-import nightThemesColorsAppList, {nightThemesApp} from "./../../../../../../app_values/ThemesNight";
 
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -33,7 +54,119 @@ import {
 
 import commonStaticStyles, { BoxsField } from "../CommonElements";
 
+const Reanimated_Pressable = Reanimated.createAnimatedComponent(Pressable)
+const R_ActivityIndicator = Reanimated.createAnimatedComponent(ActivityIndicator)
+
 const schemes = ['light', 'auto', 'dark'] 
+
+
+const ThemeItem = ({
+    title,
+
+    primaryCheck,
+    secondaryCheck,
+
+    onPress,
+    onLongPress,
+
+    pressDissable,
+
+    colors, //= {{
+        //gradient: [ThemeThisItem.basics.accents.primary, ThemeThisItem.basics.accents.quaternary],
+        //title: ThemeThisItem.texts.neutrals.primary,
+        //BackgroundColor: Theme.basics.neutrals.primary
+    //}}
+    itemSize,
+
+    appStyle,
+},props) => {
+
+    const longPressed = useSharedValue(0)
+
+    const scaleStyle = useAnimatedStyle(()=>{
+        return ({
+                transform: [
+                {
+                    scale: interpolate(
+                        longPressed.value,
+                        [0, 1],
+                        [.95, .85]
+                    )
+                }
+            ]
+        }
+        )
+    })
+
+    const duration = 400
+
+    return (
+        <Reanimated_Pressable
+            key = {props.key}
+            disabled = {pressDissable} 
+            style={[{
+                height: itemSize,
+                width: itemSize,
+                justifyContent: 'center',
+                alignItems: 'center',
+            }, scaleStyle]}
+            onPressIn={()=>{
+                cancelAnimation(longPressed)
+                longPressed.value = withTiming(1, {duration: duration})
+            }}
+            onPressOut={()=>{
+                cancelAnimation(longPressed)
+                longPressed.value = withTiming(0, {duration: duration/10})
+            }}
+            onPress={onPress}
+            delayLongPress={duration}
+            onLongPress={onLongPress}
+        >   
+            <LinearGradient
+                colors={colors.gradient}
+                style={{
+                    height: itemSize,
+                    width: itemSize,
+                    borderRadius: appStyle.borderRadius.additional,
+                }}
+            />
+
+            <Text 
+                style={[staticStyles.themeName, {
+                    color: colors.title,
+                    position: 'absolute',
+                }]}
+            >
+                {title}
+            </Text>
+
+            <View
+                style={{
+                    height: itemSize-6,//-(8)+1.5,
+                    width: itemSize-6,
+                    position: 'absolute',
+                    alignItems: 'center',
+                    borderRadius: appStyle.borderRadius.additional -2,
+                    borderWidth:  3,
+                    borderColor: primaryCheck? colors.background: 'transparent',
+                }}
+            >
+                <View
+                    style={{
+                        height: 16,
+                        width: 40,
+                        position: 'absolute',
+                        top: -3,
+                        borderRadius: appStyle.borderRadius.additional,                       
+                        borderWidth:  secondaryCheck? 3 : 0,
+                        borderColor: colors.background,
+                        backgroundColor: secondaryCheck? 'transparent' : colors.background
+                    }}
+                />   
+            </View>
+        </Reanimated_Pressable>
+    )
+}
 
 export default ThemeRedacor = ({
     goToPalleteScreen,
@@ -43,6 +176,8 @@ export default ThemeRedacor = ({
     setPreviewAppStyle,
     getNewAppStyleObject,
 
+    previewAppStyleA,
+
     setAppStyle,
     r_setAppStyle,
 
@@ -50,7 +185,7 @@ export default ThemeRedacor = ({
     ThemeSchema,
     LanguageAppIndex  
 }) => {
-    
+    const [previewThemeIndex, setPreviewThemeIndex] = useState(ThemeColorsAppIndex)
     const [schema, setSchema] = useState(appStyle.palette.scheme)
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
@@ -63,18 +198,17 @@ export default ThemeRedacor = ({
     const itemSize = 120
 
     const pressItem = (index) => {
-        //console.log(index)
-        changeThema(index)
-        
-
-        setTimeout(()=>{
+        console.log('THEME PressItem', index)
+        if(previewThemeIndex != index){
+            changeThema(index)
             flatListRef.current.scrollToIndex({index: index})
-        }, 20)
-        
+        }
     }
 
     const longPressItem = (index) => {
-        //console.log('longPressItem')
+        Vibration.vibrate([5,10])
+        console.log('THEME longPressItem')
+        
         if(index == 0 && themesColorsAppList[0]==null){
             console.log('not custom theme for redactors')
         } else {
@@ -83,223 +217,55 @@ export default ThemeRedacor = ({
         
     }
 
-    const renderItem = ({ item,index }) => {
-
-        const inputRange = [
-            //(index-2) *itemSize,
-            (index-1) *itemSize,
-            (index)*itemSize,
-            (index+1)*itemSize,
-            //(index+2)*itemSize,
-        ]
-
-        const scale = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.95, 1, 0.95]
-        })
-
-        const opacity = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.9, 1, 0.9]
-        })
-
-        if((index === 0 && item === 'custom') && themesColorsAppList[0] == null ){
-            return (
-                <>
-                <Pressable
-                    key = {String(`theme_selector_${item+index}`)} 
-                    style={{
-                        height: itemSize,
-                        width: itemSize,
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}
-                    onPress={()=>{pressItem(index)}}
-                    onLongPress={()=>{longPressItem(index)}}
-                >   
-                    <Animated.View
-                        style={{
-                            height: itemSize,
-                            width: itemSize,
-                            position: 'absolute',
-                            //backgroundColor: 'red',
-                            borderRadius: appStyle.borderRadius.additional,
-                            borderWidth:  3,
-                            borderColor: index === ThemeColorsAppIndex? 'black' : 'transparent',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            opacity: opacity,
-                            transform: [
-                                {scale: scale},
-                            ]
-                        }}
-                    >   
-                        <View
-                            style={{
-                                position: 'absolute',
-                                backgroundColor: '#afafaf',
-                                height: itemSize-10,
-                                width: itemSize-10,
-                                borderRadius: appStyle.borderRadius.additional -4,
-                            }}
-                        />
-                        <Text style={[staticStyles.themeName, {color: 'black'}]}>{item}</Text>
-                        <BaseBox
-                            isCheckBox={true}
-                            outerRing={false}
-                            size={18.95}
-                            style = {{
-                                //flex: 4,
-                                position: 'absolute',
-                                left: 10,
-                                top: 10,
-                                backgroundColor: Theme.basics.grounds.primary,
-                                borderRadius: appStyle.borderRadius.additional,
-                            }}
-                            Item={null}
-                            Check = {index === themesApp.indexOf(previewAppStyle.palette.theme)}
-                            onPress = {()=>{}}
-                            BoxBorderRadius = {appStyle.borderRadius.additional}
-                            ColorsChange = {{
-                                true: 'black', 
-                                false: `#00000000`
-                            }}
-                        />
-                    </Animated.View>
-                    
-                </Pressable>
-                {!themesColorsAppList[0] &&
-                <BasePressable
-                    type="t"
-                    text="create"
-                    style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        backgroundColor: Theme.icons.accents.primary,
-                        width: itemSize-10,
-                        marginHorizontal: 5,
-                        borderRadius: appStyle.borderRadius.additional
-                    }}
-                    textStyle={[staticStyles.themeName, {
-                        color: Theme.texts.neutrals.primary,
-                        fontWeight: '400'
-                    }]}
-                    android_ripple={{
-                        color: Theme.icons.accents.primary,
-                        borderless: true,
-                        foreground: false
-                    }}
-                    onPress={createCustomTheme}
-                />
-                }
-                </>
-            )
-        } else {
-            const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
-            const schemaThisItem = 'light'
-            const ThemeThisItem = themesColorsAppList[index][schemaThisItem]
-            return (
-                <Pressable
-                    key = {String(`theme_selector_${item+index}`)} 
-                    style={{
-                        height: itemSize,
-                        width: itemSize,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        transform: [
-                            {scale: .95}
-                        ]
-                    }}
-                    onPress={()=>{pressItem(index)}}
-                    onLongPress={()=>{longPressItem(index)}}
-                >   
-                    <LinearGradient
-                        colors={[ThemeThisItem.basics.accents.primary, ThemeThisItem.basics.accents.quaternary]}
-                        style={{
-                            //position: 'absolute',
-                            height: itemSize,
-                            width: itemSize,
-                            borderRadius: appStyle.borderRadius.additional,
-                        }}
-                    />
-                    <Text 
-                        style={[staticStyles.themeName, {
-                            color: ThemeThisItem.texts.neutrals.primary,
-                            position: 'absolute',
-                        }]}
-                    >
-                        {themesColorsAppList[index]['light'].theme}
-                    </Text>
-
-                    <View
-                        style={{
-                            height: itemSize-6,//-(8)+1.5,
-                            width: itemSize-6,
-                            position: 'absolute',
-                            //backgroundColor: 'red',
-                            borderRadius: appStyle.borderRadius.additional -2,
-                            //borderTopRightRadius: appStyle.borderRadius.additional-10,
-                            //borderTopLeftRadius: appStyle.borderRadius.additional-12,
-                            borderWidth:  3,
-                            borderColor: index === ThemeColorsAppIndex? Theme.basics.neutrals.primary : 'transparent',
-                            alignItems: 'center',
-                            //top: (8)+1.5,
-                        }}
-                    >
-                        <View
-                            style={{
-                                height: 16,
-                                width: 40,
-                                position: 'absolute',
-                                top: -3,//-1.5-(8),
-                                //backgroundColor: 'red',
-                                borderRadius: appStyle.borderRadius.additional,
-                                
-                                borderWidth:  index === themesApp.indexOf(previewAppStyle.palette.theme)? 3 : 0,
-                                borderColor: Theme.basics.neutrals.primary,
-                                backgroundColor: index === themesApp.indexOf(previewAppStyle.palette.theme)? 'transparent' : Theme.basics.neutrals.primary
-                            }}
-                        />   
-                    </View>
-                </Pressable>
-            )
-        }
-    }
+    
 
     const changeThema = (themeIndex)=>{
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         if(themeIndex != 0){
-            let newAppStyle = getNewAppStyleObject();
+            //let newAppStyle = getNewAppStyleObject();
+            
             newAppStyle.palette.theme = themesApp[themeIndex]
-            setPreviewAppStyle(newAppStyle)
+            //setPreviewAppStyle(newAppStyle)
+            cancelAnimation(previewAppStyleA)
+            previewAppStyleA.value = newAppStyle
+
+            setPreviewThemeIndex(themeIndex)
         } else {
             if(!themesColorsAppList[0]){
                 console.log('not custom theme')
             } else {
                 console.log('custom theme ok')
-                let newAppStyle = getNewAppStyleObject();
+                //let newAppStyle = getNewAppStyleObject();
                 newAppStyle.palette.theme = themesApp[themeIndex]
-                setPreviewAppStyle(newAppStyle)
+                //setPreviewAppStyle(newAppStyle)
+                cancelAnimation(previewAppStyleA)
+                previewAppStyleA.value = newAppStyle
+
+                setPreviewThemeIndex(themeIndex)
             }
         }
         
     }
+    
 
     const createCustomTheme = ()=>{
+        //setWaitRender(true)
         console.log('custom theme create')
-        let newAppStyle = getNewAppStyleObject('currentStyle')
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        //let newAppStyle = getNewAppStyleObject('currentStyle')
         newAppStyle.customTheme = themesColorsAppList[ThemeColorsAppIndex]
         themesColorsAppList.splice(0,1,themesColorsAppList[ThemeColorsAppIndex])
         //themesColorsAppList[0] = themesColorsAppList[2]
 
-        setAppStyle(newAppStyle);
-        r_setAppStyle(newAppStyle);
-        dataRedactor("storedAppStyle",newAppStyle);
+        //setAppStyle(newAppStyle);
+        //r_setAppStyle(newAppStyle);
+        //dataRedactor("storedAppStyle",newAppStyle);
 
         goToPalleteScreen(0)
         
     }
 
-    
+    /*
     const switching = ()=>{   
         let index = schemes.indexOf(schema)
         index = (index+1) == schemes.length? 0 : index+1
@@ -308,22 +274,24 @@ export default ThemeRedacor = ({
         newAppStyle.palette.scheme = schemes[index]
         setPreviewAppStyle(newAppStyle)
     }
+    */
 
     const shemaSetting = (index) => {
-        let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        //let newAppStyle = getNewAppStyleObject();
         newAppStyle.palette.scheme = schemes[index]
-        setPreviewAppStyle(newAppStyle)
+        //setPreviewAppStyle(newAppStyle)
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
     }
+    
 
     return (
     <View
         style={{
-            //marginBottom: 30,
-            //flex: 1, 
-            //justifyContent: 'center',
-            //alignItems: "center"
         }}
     >   
+        {console.log('COLORS RENDER')}
         <BoxsField
             //  'one'>true || 'multiple'>false
             isChoiceOne={true}
@@ -333,13 +301,6 @@ export default ThemeRedacor = ({
             groupSize = {schemes.length}
             onPress = {(activeIndex)=>{shemaSetting(activeIndex)}}
             groupItems = {Object.values(Language.colorsMods)}
-            /* 
-            renderItem = {(item, index)=>{
-                return(
-
-                )
-            }}
-            */
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
@@ -359,23 +320,17 @@ export default ThemeRedacor = ({
                 alignItems: "center"
             }}
         >
-        <Animated.FlatList
+        <FlatList
             ref = {flatListRef}
-            style={{
-                
+            style={{        
                 width: 3*itemSize,
-                height: itemSize+30,
-                //backgroundColor: 'red' 
+                height: itemSize,
             }}
             horizontal = {true}
             showsHorizontalScrollIndicator = {false}
             decelerationRate = {'fast'}
-            onScroll = {Animated.event(
-                [{nativeEvent: {contentOffset: {x: scrollX}}}],
-                {useNativeDriver: true},
-            )}
             contentContainerStyle = {{
-                paddingHorizontal: itemSize,
+                paddingRight: itemSize,
             }}
             snapToInterval={itemSize}
             getItemLayout={(data, index) => (
@@ -386,7 +341,59 @@ export default ThemeRedacor = ({
             keyExtractor={(item, index) => {
                 return item + index
             }}
-            renderItem={renderItem}
+            ListHeaderComponent={()=> (
+                <Pressable 
+                    style = {{
+                        width: itemSize,
+                        height: itemSize,
+
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: appStyle.borderRadius.additional,
+                        borderWidth:  3,
+                        //borderColor: ,
+                        transform: [{scale: .95}],
+                    }}
+                    onPress={createCustomTheme}
+                >
+                    <Text>open palette redactor</Text>
+                </Pressable>
+            )}
+            renderItem={({item, index})=>{
+                const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
+                const schemaThisItem = 'light'
+                const ThemeThisItem = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem] : Theme
+                const title = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem].theme : item
+                return (
+                <ThemeItem
+                    key = {String(`theme_selector_${item+index}`)} 
+                    title = {title}
+
+                    pressDissable = {themesColorsAppList[index]? false : true}
+                    
+                    onPress = {()=>{pressItem(index)}}
+                    onLongPress = {()=>{longPressItem(index)}}
+
+                    primaryCheck = {index === ThemeColorsAppIndex}
+                    secondaryCheck = {index === previewThemeIndex}//themesApp.indexOf(previewAppStyle.palette.theme)
+                   
+                    appStyle = {appStyle}
+                                    
+                    colors = {
+                        themesColorsAppList[index]? {
+                        gradient: [ThemeThisItem.basics.accents.primary, ThemeThisItem.basics.accents.quaternary],
+                        title: ThemeThisItem.texts.neutrals.primary,
+                        background: Theme.basics.neutrals.primary
+                        } : {
+                        //not custom palette
+                        gradient: ['#00000060', '#0000000a'],
+                        title: Theme.texts.neutrals.secondary,
+                        background: 'transparent'  
+                    }}
+                        
+                    itemSize={itemSize}
+                />
+            )}}
         />
         </View>
     </View>)

@@ -156,7 +156,7 @@ const Palette = (props) => {
   const back = () => {
     saveCustomTheme()
 
-    //props.r_setHideMenu(false)
+    props.r_setHideMenu(false)
     props.navigation.goBack()
   }
 

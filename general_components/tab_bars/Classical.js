@@ -73,7 +73,7 @@ const Classical = ({
         };
     };
 
-    const BLUR = true
+    const BLUR = false
 
     return (
         <View
@@ -102,14 +102,19 @@ const Classical = ({
                 blurAmount = {10}
                 
                 //ANDROID_PROPS
-                overlayColor={`${Theme.navigateBar.grounds}50`}
+                overlayColor={`${Theme.navigateBar.grounds}90`}
                 //overlayColor={'transparent'}
                 //blurRadius	= {10}
                 //downsampleFactor = {10}
             />
             </View>}
 
-            <View style = {{flex: 1, flexDirection: 'row', }}>
+            <View 
+                style = {{
+                    flex: 1, 
+                    flexDirection: 'row',
+                }}
+            >
             {state.routes.map((route, index) => {
                 const page = appConfig.appFunctions[route.name]
                 if(page && !page.used){
@@ -153,8 +158,15 @@ const Classical = ({
                 }
 
                 return (
-                    <Pressable
+                    <View
                         key = {`${Math.random()}`}
+                        style = {{
+                            flex: 1, 
+                            backgroundColor: 'transparent',
+                            borderRadius: appStyle.borderRadius.additional
+                        }}
+                    >
+                    <Pressable
                         disabled = {isFocused}
                         onPress={()=>{
                             navigation.navigate(route.name)
@@ -166,12 +178,13 @@ const Classical = ({
                                 alignContent: 'center',
                                 paddingTop: appStyle.navigationMenu.height > 55? 8 : 3,
                                 justifyContent: 'flex-start',
+                                //backgroundColor: 'transparent' 
                             }
                         ]}
                         android_ripple = {appStyle.navigationMenu.rippleEffect? {
                             color: `${Theme.navigateBar.icons.active}20`, 
-                            borderless: false,
-                            foreground: true
+                            borderless: true,
+                            foreground: false
                         } : false}
                     >
                         {isFocused && 
@@ -230,8 +243,8 @@ const Classical = ({
                             </Animated.View>        
                         }
                     </Pressable>    
-
-                );
+                    </View>
+                )
             })}
             </View>
         </View>

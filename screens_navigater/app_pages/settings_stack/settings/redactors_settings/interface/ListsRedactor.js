@@ -2,6 +2,9 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
+
+import { cancelAnimation } from "react-native-reanimated";
+
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 import { 
@@ -27,6 +30,7 @@ export default ListsRedactor = ({
     appStyle,
     setPreviewAppStyle,
     getNewAppStyleObject,
+    previewAppStyleA,
 
     ThemeColorsAppIndex,
     ThemeSchema,
@@ -39,35 +43,47 @@ export default ListsRedactor = ({
     const [sliderTextSizeValue, setSliderTextSizeValue] = useState(appStyle.lists.textSize);
 
     const setPrewTextSize = (value) => {
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.lists.textSize = Number(value);
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
     }
 
     const [sliderProximityValue, setSliderProximityValue] = useState(appStyle.lists.proximity);
 
     const setPrewProximity = (value) => {
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.lists.proximity = Number(value);
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
     }
 
 
     const [fullWidth, setFullWidth] = useState(appStyle.lists.fullWidth);
     
     const fullWidthChange = () =>{
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.lists.fullWidth = !fullWidth;
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
         setFullWidth(!fullWidth)
     }
 
     const [shadowUse, setShadowUse] = useState(appStyle.lists.shadow);
     
     const shadowChange = () =>{
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.lists.shadow = !shadowUse;
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
         setShadowUse(!shadowUse)
     }
 

@@ -1,4 +1,4 @@
-package com.levdm.Diary.newarchitecture;
+package com.F1F.YTAT.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -20,9 +20,9 @@ import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.levdm.Diary.BuildConfig;
-import com.levdm.Diary.newarchitecture.components.MainComponentsRegistry;
-import com.levdm.Diary.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.F1F.YTAT.BuildConfig;
+import com.F1F.YTAT.newarchitecture.components.MainComponentsRegistry;
+import com.F1F.YTAT.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

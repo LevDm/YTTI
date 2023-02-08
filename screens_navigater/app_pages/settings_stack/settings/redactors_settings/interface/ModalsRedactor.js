@@ -9,7 +9,8 @@ import {
     useSharedValue,
     useAnimatedProps,
     useAnimatedStyle,
-    withTiming
+    withTiming,
+    cancelAnimation
 } from 'react-native-reanimated';
 
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
@@ -32,6 +33,8 @@ export default ModalsRedactor = ({
     setPreviewAppStyle,
     getNewAppStyleObject,
 
+    previewAppStyleA,
+
     ThemeColorsAppIndex,
     ThemeSchema,
     LanguageAppIndex   
@@ -51,19 +54,25 @@ export default ModalsRedactor = ({
     const items = [Language.outline, Language.dimOutDark, Language.gradient]
     
     const changeHorizontalProximity = () => {
-        const newAppStyle = getNewAppStyleObject();
+        //const newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.modals.horizontalProximity = !horizontalProximity? 0 : 5
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
 
         setHorizontalProximity(!horizontalProximity)
     }
 
     const settingMethods = (indexs) => {
-        const newAppStyle = getNewAppStyleObject();
+        //const newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         for (let i = 0; i < params.length; i++){
             newAppStyle.modals.highlightMethods[params[i]] = indexs.includes(i)
         }            
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
     }
 
     return (<>

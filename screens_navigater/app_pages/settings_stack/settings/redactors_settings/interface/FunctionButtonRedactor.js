@@ -2,6 +2,8 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
+import { cancelAnimation } from "react-native-reanimated";
+
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 import { 
@@ -28,6 +30,8 @@ export default ListsRedactor = ({
     setPreviewAppStyle,
     getNewAppStyleObject,
 
+    previewAppStyleA,
+
     ThemeColorsAppIndex,
     ThemeSchema,
     LanguageAppIndex  
@@ -38,16 +42,22 @@ export default ListsRedactor = ({
     const [sliderValue, setSliderValue] = useState(appStyle.functionButton.size);
 
     const positionButtonSetting = (index) => {
-        const newAppStyle = getNewAppStyleObject();
+        //const newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.functionButton.position = valuePosition[index];
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
     };
 
     const settingSizeButton = (value, isComplete) =>{
-        const newAppStyle = getNewAppStyleObject();
+        //const newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         isComplete? setSliderValue(value) : null
         newAppStyle.functionButton.size = Number(value);
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
     }
 
     return (

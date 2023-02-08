@@ -10,6 +10,7 @@ import {
     SectionList, 
     View, 
     Dimensions,
+    ToastAndroid,
     Keyboard 
 } from 'react-native';
 
@@ -33,7 +34,8 @@ import Reanimated, {
     interpolate,
     Extrapolate,
     runOnUI,
-    Easing 
+    Easing,
+    Extrapolation 
 } from 'react-native-reanimated';
 import Constants from "expo-constants";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -76,7 +78,7 @@ import AppFunctionsRedactor from "./redactors_settings/system/AppFunctionsRedact
 
 import Ohter from "./redactors_settings/ohterts";
 import StyleChangePreview from "./preview/StyleChangePreview";
-
+import { BlurView } from "@react-native-community/blur";
 import { LinearGradient } from 'expo-linear-gradient';
 
 import ColorSplash from "../../../../componets/StyleColorSplash";
@@ -175,6 +177,9 @@ const structure = [
     }
 ]
 
+//<MaterialCommunityIcons name="magic-staff" size={24} color="black" />
+//<MaterialCommunityIcons name="storefront" size={24} color="black" />
+
 //<MaterialCommunityIcons name="palette" size={24} color="black" />
 //<MaterialCommunityIcons name="vector-rectangle" size={24} color="black" />
 //<MaterialCommunityIcons name="menu" size={24} color="black" />
@@ -232,6 +237,7 @@ const Settings = (props) => {
     if(props.navigation.isFocused() && store.getState().hideMenu){
         //console.log('settings open', props.hideMenu)
         //props.r_setHideMenu(false)
+        //bottomSheetVisible? props.r_setHideMenu(false) : null;
     }
 
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
@@ -331,6 +337,7 @@ const Settings = (props) => {
 
     const [listWidths, setListWidths] = useState([]);
     const [listHeights, setListHeights] = useState([]);
+
     const derivedValues = useSharedValue({
         listHeights: [],
         listWidths: [],
@@ -340,18 +347,14 @@ const Settings = (props) => {
         categorys: []
     })
     
-    const [previewFixed, setPreviewFixed] = useState(false);
-
     const animValueWidthLine = useSharedValue(
-        (((Language.StructureScreen.params[allStructurParams[0].param]).length) * (staticStyles.frontFLText.fontSize * 0.75) + 10)
-    );
+        ((Language.StructureScreen.params[allStructurParams[0].param]).length) * (staticStyles.frontFLText.fontSize * 0.75) + 10
+    )
+    
     const animValueMarginLeft = useSharedValue(0);
     const animValueTranslateX = useSharedValue(0);
     const animValueScrollXCategorys = useSharedValue(0);
     const animValueCategorysScrolling = useSharedValue(false);
-
-    const [splashTheme, setSplashTheme] = useState(0)
-    const [splashVisible, setSplashVisible] = useState(false);
     
     const animValueBobberButtonVisible = useSharedValue(bottomBord);
     //const animValueBobberButtonExpand = useSharedValue(0);
@@ -367,6 +370,7 @@ const Settings = (props) => {
             animValueTranslateX.value = -(e.contentOffset.x)            
         }
     })
+
     useDerivedValue(() => {
         const scroll = Math.abs(animValueTranslateX.value)
         if(!animValueCategorysScrolling.value){
@@ -385,7 +389,6 @@ const Settings = (props) => {
                 true //animate
             )
         } 
-        
     })
 
     const scrollHandlerFlatListCategorys = useAnimatedScrollHandler({
@@ -400,12 +403,13 @@ const Settings = (props) => {
             animValueScrollXCategorys.value = -(e.contentOffset.x)
         }
     })
+
     useDerivedValue(() => {
         const scroll = Math.abs(animValueScrollXCategorys.value)
         if(animValueCategorysScrolling.value){
             const categoryIntervals = derivedValues.value.categorys
 
-            let to = Math.round((scroll/(deviceWidth/2))-0.2)
+            const to = Math.round((scroll/(deviceWidth/2))-0.2)
             runOnJS(logg)(` ${(to)} ${categoryIntervals[to]} ${categoryIntervals}`)
             scrollTo(
                 flatListRef, //ref
@@ -439,31 +443,33 @@ const Settings = (props) => {
     }
 
     const applyAppStyle = ()=>{
-        let newAppStyle = previewAppStyle
+        //let newAppStyle = previewAppStyle
         //console.log('fine ',newAppStyle)
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+
         setAppStyle(newAppStyle)
         dataRedactor("storedAppStyle",newAppStyle);
         props.r_setAppStyle(newAppStyle);
     }
 
-    
-
-    const headerStickysHeight = 40
-    const selectorLineHeight = 35
-    const itemCategoryHeight = 45
-    const headerStickysFullHeight = headerStickysHeight +(!previewFixed? 2*appStyle.lists.proximity : 0)
-    const selectorLineHeightFull = selectorLineHeight + itemCategoryHeight
-    const headHeight = -itemCategoryHeight
-    const headFullHeight = headHeight + selectorLineHeightFull //((3*deviceHeight)/4)
-    
-    const previewHeight = (50+deviceHeight/2)+(!previewFixed? appStyle.lists.proximity : 0)
+     const previewHeight = (50+deviceHeight/2)+(appStyle.lists.proximity)
     //const settingsInfoHeight = (deviceHeight/4)+2*(!previewFixed? appStyle.lists.proximity : 0)
 
-
-    const animSelectorLine = useSharedValue(headFullHeight)
-
-
+    const headerStickysHeight = 40
+    const itemCategoryHeight = 45
+    const selectorLineHeight = 35
     
+    const packHeight = 300
+
+    const headerHeight = (Constants.statusBarHeight+1)+itemCategoryHeight//+selectorLineHeight
+
+    const headerStickysFullHeight = headerStickysHeight +(2*appStyle.lists.proximity)
+    const selectorLineHeightFull = itemCategoryHeight + selectorLineHeight
+    const headHeight = packHeight-itemCategoryHeight
+    const headFullHeight = headHeight + selectorLineHeightFull //((3*deviceHeight)/4)
+    
+    const animSelectorLine = useSharedValue(headFullHeight-selectorLineHeight)
+
 
     const scrollSectionsList = useAnimatedScrollHandler({
         onScroll: (event, ctx) => {
@@ -478,18 +484,20 @@ const Settings = (props) => {
 
             isEnd = (event.layoutMeasurement.height + event.contentOffset.y) >= (event.contentSize.height - 5);
             isStart = event.contentOffset.y > (headFullHeight); //scroll>preview
-            let visibleBobber = ((isUpScroll || isEnd) && isStart) && !previewFixed
+            const visibleBobber = ((isUpScroll || isEnd) && isStart)
 
             cancelAnimation(animValueBobberButtonVisible);
             animValueBobberButtonVisible.value = visibleBobber? 0 : bottomBord
 
-            let useScroll = event.contentOffset.y
-            useScroll = -(useScroll < 0? 0 : useScroll)
+            const useScroll = -Math.max(event.contentOffset.y, 0) 
+            //useScroll = -(useScroll < 0? 0 : useScroll)
+            cancelAnimation(animValueScrollY);
             animValueScrollY.value = useScroll
 
-            let selectLine = headFullHeight + useScroll
+            const selectLine = Math.max((headFullHeight + useScroll -selectorLineHeight), 0)
             //runOnJS(logg)(`${selectLine}`)
-            selectLine = selectLine < 0? 0 : selectLine
+            //selectLine = selectLine < 0? 0 : selectLine
+            cancelAnimation(animSelectorLine);
             animSelectorLine.value = selectLine
             
         },
@@ -502,15 +510,11 @@ const Settings = (props) => {
         for(let i = 0; i < allStructurParams.length; i++){
             let right = -1;
             let left = -1;
-            if(!previewFixed){
-                right += headFullHeight//+headerStickysFullHeight
-            }
-            if(allStructurParams[i].indexSection != 0){
-                if(!previewFixed){
-                    right += allStructurParams[i].indexSection*(headerStickysFullHeight)
-                } else {
-                    right += (headFullHeight)
-                }
+
+            right += headFullHeight -selectorLineHeight//+headerStickysFullHeight
+            
+            if(allStructurParams[i].indexSection != 0){               
+                right += allStructurParams[i].indexSection*(headerStickysFullHeight)
             }
 
             left += listHeights.reduce(((countValue, currentValue, index)=>(index <= (i>=1?i-1:0)? (countValue+currentValue) : countValue)), 0)
@@ -570,7 +574,7 @@ const Settings = (props) => {
             categorys: categoryIntervals
         }
     }
-    useEffect(()=>{countDerivedValues()},[previewFixed, LanguageAppIndex])//appStyle.lists.proximity
+    useEffect(()=>{countDerivedValues()},[LanguageAppIndex])//appStyle.lists.proximity
 
 
 
@@ -591,7 +595,7 @@ const Settings = (props) => {
             limList.length == 0  
         ){return}
 
-        let yScroll = Math.abs(animValueScrollY.value)
+        const yScroll = Math.abs(animValueScrollY.value)
 
 
         const countAccent = intervals.findIndex((el, index)=>(
@@ -601,8 +605,8 @@ const Settings = (props) => {
         ))
 
 
-        let accentBarXScroll = (yScroll- (!previewFixed? (/*headerStickysFullHeight+*/headFullHeight) : 0) )
-        if(accentBarXScroll<0){accentBarXScroll = 0}
+        let accentBarXScroll = Math.max((yScroll- (headFullHeight-selectorLineHeight)), 0)
+        //if(accentBarXScroll<0){accentBarXScroll = 0}
 
         let compens = 0
         const over = aListHeights.reduce(((countValue, currentValue, index)=>(index <= (countAccent-1)? (countValue+currentValue) : countValue)), 0)
@@ -610,10 +614,9 @@ const Settings = (props) => {
             if(over < accentBarXScroll){
                 compens =  accentBarXScroll-over
                 let ignoreHeight = headerStickysFullHeight//-headerStickysFullHeight//+2*appStyle.lists.proximity
-                if(previewFixed){
-                    ignoreHeight += headFullHeight
-                } 
+
                 if(compens > ignoreHeight){compens = ignoreHeight}
+
                 accentBarXScroll -= compens
             }
         }
@@ -712,10 +715,11 @@ const Settings = (props) => {
             list.push(newValue);
             setList(list); 
         }
-        //console.log('r')
+        //console.log('st')
         if(
             (listHeights.length == listWidths.length && listHeights.length == allStructurParams.length) 
-            || (derivedValues.value.listHeights != listHeights || derivedValues.value.listWidths != listWidths)
+            || 
+            (derivedValues.value.listHeights != listHeights || derivedValues.value.listWidths != listWidths)
         ){
             //console.log('new full renders')
             countDerivedValues()
@@ -843,20 +847,31 @@ const Settings = (props) => {
     })
 
     const back = () => {
+        console.log('settings back', bottomSheetVisible , props.hideMenu)
         (!bottomSheetVisible && props.hideMenu)? props.r_setHideMenu(false) : null
         props.navigation.goBack()
     }
-    const goToPalleteScreen = (index = 0) => {  
+    const goToPalleteScreen = (index = 0) => {
+        ToastAndroid.show('LOAD', ToastAndroid.SHORT);   
+        bottomSheetVisible? bottomSheetModalRef.current?.dismiss(): null;    
         (!bottomSheetVisible && !props.hideMenu)? props.r_setHideMenu(true) : null
+        //console.log('settings to palette', bottomSheetVisible , props.hideMenu) 
         props.navigation.navigate('palette', {themeIndex: index})
+        console.log('settings to palette', bottomSheetVisible , props.hideMenu)  
+        
     }
 
     
     const selectorLine = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            
-            //top: ((Constants.statusBarHeight+1)+itemCategoryHeight) +  animSelectorLine.value
+            /*
+            backgroundColor: interpolateColor(
+                animSelectorLine.value, 
+                [headerHeight, headerHeight/2],
+                [`${Theme.basics.accents.primary}90`, `${Theme.basics.accents.primary}90`]  //'#00000000'
+            ),*/
+            //top: ((Constants.statusBarHeight+1)+itemCategoryHeight) +  animSelectorLine.value,
             transform: [
                //{translateY: withTiming(animSelectorLine.value, {duration: 0})}
                {translateY: animSelectorLine.value-0.25}
@@ -864,14 +879,49 @@ const Settings = (props) => {
         }
     })
 
+    const selectorLineColorHeight = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            height: interpolate(
+                animSelectorLine.value, 
+                [headerHeight-(Constants.statusBarHeight+1), 0], //????-(18.95)
+                [selectorLineHeightFull, 0],
+                //[headerHeight, headerHeight+selectorLineHeight],
+                //extrapolation
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }   
+            ),
+        }
+    })
+
     const params = useAnimatedStyle(()=>{
         const duration = 300
         return {
+            
             backgroundColor: interpolateColor(
                 animSelectorLine.value, 
-                [0.01, 0],
+                [headerHeight/2, headerHeight/4],
                 [Theme.basics.accents.primary, '#00000000']  
             ),
+            
+        }
+    })
+
+    const header = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            height: interpolate(
+                animSelectorLine.value, 
+                [headerHeight-(Constants.statusBarHeight+1), 0],
+                [headerHeight, headerHeight+selectorLineHeight],
+                //extrapolation
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }  
+            ),   
         }
     })
 
@@ -912,8 +962,8 @@ const Settings = (props) => {
         return {
             opacity: interpolate(
                 animSelectorLine.value, 
-                [headFullHeight, 0],
-                [1, -0.5]  
+                [headerHeight/2, 0],
+                [1, 0]  
             ),
         }
     })
@@ -930,9 +980,10 @@ const Settings = (props) => {
         setBottomSheetVisible(true)
         bottomSheetModalRef.current?.present();
     }, []);
+
     const handleSheetChanges = useCallback((index) => {
         console.log('handleSheetChanges', index);
-        if(index === -1){
+        if(index === -1 && bottomSheetVisible){
             setBottomSheetVisible(false)
             props.r_setHideMenu(false)
         }
@@ -942,31 +993,59 @@ const Settings = (props) => {
         //}props.hideMenu
     }, []);
 
+    const BLUR = false
     return (
     <>  
-        <View
+        <Reanimated.View
             style={[
-                staticStyles.FlatListsArea,
-                {
-                    backgroundColor: Theme.basics.accents.primary,
+                staticStyles.FlatListsArea,              
+                {   
+                    top: 0,
+                    zIndex: 1,
+                    position: 'absolute',                    
                     //height: (Constants.statusBarHeight+1)+ 30 + 35,
-                    paddingTop: (Constants.statusBarHeight+1),
-                    height: (Constants.statusBarHeight+1)+itemCategoryHeight+selectorLineHeight
-                }
+                    //paddingTop: (Constants.statusBarHeight+1),
+                    //height: headerHeight //(Constants.statusBarHeight+1)+itemCategoryHeight+selectorLineHeight
+                },
+                BLUR? {} : {
+                    backgroundColor: Theme.basics.accents.primary,
+                },
+                header
             ]}
-        >   
-        </View>    
+        >
+            {BLUR && 
+            <View 
+                style = {[StyleSheet.absoluteFillObject, {
+                    flex: 1,
+                    //specialty blur for android
+                    overflow: 'hidden',
+                }]}
+            >
+            <BlurView
+                style = {{flex: 1, }}
+                blurType = {'light'}
+                blurAmount = {10}
+                
+                //ANDROID_PROPS
+                overlayColor={`${Theme.basics.accents.primary}90`}
+                //overlayColor={'transparent'}
+                //blurRadius	= {10}
+                //downsampleFactor = {10}
+            />
+            </View>}   
+        </Reanimated.View>
+
         <View 
             style = {[staticStyles.SLtopBord,{ 
                 alignItems: 'center',
-                //backgroundColor: 'red',
+                //backgroundColor: 'blue',
                 //zIndex: 5
                 //flex: 1,
                 marginTop: (Constants.statusBarHeight+1),
                 position: 'absolute',
                 height: itemCategoryHeight,
                 right: 0,
-                zIndex: 4,
+                zIndex: 2,
                 //backgroundColor :'black',
                 justifyContent: 'center',
                 
@@ -1000,17 +1079,18 @@ const Settings = (props) => {
                 </Text>
             </Reanimated.View>
         </View>
+
         <View 
             style = {[staticStyles.SLtopBord,{ 
                 //alignItems: 'flex-end',
-                //backgroundColor: 'red',
+                //backgroundColor: 'blue',
                 //zIndex: 5
                 //flex: 1,
                 marginTop: (Constants.statusBarHeight+1),
                 position: 'absolute',
                 height: itemCategoryHeight,
                 left: 0,
-                zIndex: 4
+                zIndex: 2
                 //backgroundColor :'black'
                 //justifyContent: 'space-between',
                 
@@ -1052,6 +1132,7 @@ const Settings = (props) => {
                 </Text>
             </View>
         </View>
+
         <Reanimated.View
             style = {[selectorLine, {
                 height: selectorLineHeightFull,
@@ -1069,6 +1150,16 @@ const Settings = (props) => {
                 //]
             }]}
         >
+            <Reanimated.View
+                style = {[selectorLineColorHeight, {
+                    backgroundColor: `${Theme.basics.accents.primary}${BLUR?'90':'ff'}`,
+                    //height: selectorLineHeightFull,
+                    width: '100%',
+                    position: 'absolute',
+                    bottom: 0
+                }]}
+            />
+
             <View
                 style={{
                     height: itemCategoryHeight,
@@ -1130,8 +1221,12 @@ const Settings = (props) => {
                     />
                 </Reanimated.View> 
             </View>
+            
             <Reanimated.View
-                style={[params, {
+                style={[
+                    //params, 
+                    {
+
                     height: selectorLineHeight,
                     //marginBottom: 0.5,
                     //backgroundColor: 'orange'
@@ -1141,7 +1236,7 @@ const Settings = (props) => {
                     style={[animStyleIndicatorLine, { 
                         backgroundColor: Theme.icons.accents.quaternary,
                         position: 'absolute',
-                        bottom: 0,
+                        bottom: -0.1,
                         height: 4,
                         borderRadius: 5,
                         borderBottomRightRadius: 0,
@@ -1184,28 +1279,62 @@ const Settings = (props) => {
                     }}
                 />
             </Reanimated.View>
-            
         </Reanimated.View>
+
         <ReanimatedSectionList
             ref={sectListRef}
-            stickySectionHeadersEnabled={previewFixed}
+            stickySectionHeadersEnabled={false}
             showsVerticalScrollIndicator={false}
             onScroll={scrollSectionsList}
             sections={structure}
             keyExtractor={(item, index) => item.param + index}
+            style={{
+                paddingTop: headerHeight//(Constants.statusBarHeight+1)+itemCategoryHeight+selectorLineHeight
+            }}
             ListHeaderComponent={()=>{return(
                 <View
                     style={{
                         height: headHeight,
+                        maxHeight: headHeight,
                         width: '100%',
-                        backgroundColor: 'grey',
+                        backgroundColor: Theme.basics.grounds.secondary,
                         //flexDirection: 'row',
-                        justifyContent: 'flex-start',
-                        alignItems: 'center',
-                        marginBottom: selectorLineHeight
+                        //justifyContent: 'flex-start',
+                        //alignItems: 'center',
+                        marginBottom: selectorLineHeightFull//selectorLineHeight+itemCategoryHeight
                     }}
                 >
-                    
+                    <Reanimated.View
+                        //key={String(item.param+index)}  
+                        style={[
+                            staticStyles.SLArea, 
+                            appStyle.lists.shadow? staticStyles.shadow : {},
+                            dynamicStyleListItems,
+                            {
+                                backgroundColor: Theme.basics.grounds.primary,   
+                                justifyContent: 'flex-start',
+                                paddingVertical: 5,
+                                paddingBottom: 20,
+                                //width: '100%',
+                            }
+                        ]}
+                    >  
+                        <Reanimated.View
+                            style={[ 
+                                dynamicStyleListItemsHeaders, 
+                                { 
+                                flexDirection: 'row', 
+                                width: '100%',
+                                marginBottom: 5, 
+                                alignItems: 'center',
+
+                                //paddingHorizontal: 5 * appStyle.borderRadius.basic/32 
+                            }]}
+                        >
+                            <MaterialCommunityIcons name={"border-none-variant" } size={20} color={Theme.texts.neutrals.secondary} />
+                            <Text style={[staticStyles.SLParamHeaderText, {color: Theme.texts.neutrals.secondary}]}>settings</Text>
+                        </Reanimated.View>
+                    </Reanimated.View>
                 </View> 
             )}}
             renderSectionHeader={({section: {category, indexSection: index}})=>{
@@ -1219,7 +1348,7 @@ const Settings = (props) => {
                         //backgroundColor: 'yellow',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        marginVertical: !previewFixed? appStyle.lists.proximity  : 0, 
+                        marginVertical: appStyle.lists.proximity, 
                         //marginTop: index == 0? 0 : (!previewFixed? appStyle.lists.proximity : 0),
                     }}
                 >
@@ -1239,12 +1368,7 @@ const Settings = (props) => {
             }}
             renderItem={({item, index})=>{
                 const RedactorComponent = item.paramRedactorComponent;
-                const redactorName = Language.StructureScreen.params[
-                    //allStructurParams.findIndex((element, index)=>{
-                    //    if(item.param == element.param){return index+1}
-                    //})
-                    item.param
-                ]
+                const redactorName = Language.StructureScreen.params[item.param]
                 return (
                     <Reanimated.View
                         key={String(item.param+index)}  
@@ -1255,11 +1379,8 @@ const Settings = (props) => {
                             {
                                 backgroundColor: Theme.basics.grounds.primary,   
                                 justifyContent: 'flex-start',
-                                paddingVertical: 5,// + 10 * appStyle.borderRadius.basic/32,
-                                paddingBottom: 30
-                                //borderRadius: appStyle.borderRadius.basic,
-                                //marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
-                                //marginVertical: appStyle.lists.proximity,
+                                paddingVertical: 5,
+                                paddingBottom: 20
                             }
                         ]}
                         onLayout={(event)=>{stacker(listHeights, setListHeights, event.nativeEvent.layout.height+2*appStyle.lists.proximity)}}
@@ -1270,7 +1391,7 @@ const Settings = (props) => {
                                 { 
                                 flexDirection: 'row', 
                                 width: '100%',
-                                marginBottom: 10, 
+                                marginBottom: 5, 
                                 alignItems: 'center',
 
                                 //paddingHorizontal: 5 * appStyle.borderRadius.basic/32 
@@ -1308,14 +1429,11 @@ const Settings = (props) => {
                 )
             }}
             ListFooterComponent = {()=>{
-                const statusBarHeight = 30
-                const headerHeigt = 0//30 + 35
-                const navigateMenuHeight = 0 // if navigatemenu = 'hidden'->80, 'classical_animated'->130, 'classical'->100,
                 let lastObject = listHeights[listHeights.length-1]
                 lastObject = (lastObject == NaN || lastObject == undefined)? 160 : lastObject
                 return (
                     <View style={{
-                            height: deviceHeight ,//- statusBarHeight - headerHeigt - lastObject - navigateMenuHeight,
+                            height: deviceHeight,
                             alignItems: 'center',
                             justifyContent: 'center'
                         }}
@@ -1335,11 +1453,6 @@ const Settings = (props) => {
                 position: 'absolute',
                 alignItems: 'flex-end',
                 justifyContent: 'flex-end',
-
-                //height: 5+2*appStyle.functionButton.size,
-                //width: appStyle.functionButton.size,
-                //bottom: appStyle.navigationMenu.height + 5,//'8%', // if navigatemenu = 'hidden'->2, 'classical_animated'->8, 'classical'->8, 
-                //right: positionBobberButton(appStyle.functionButton.size)[appStyle.functionButton.position]
             }]}
         >   
             {["apply", "jumpUp"].map((item, index)=>{
@@ -1399,12 +1512,6 @@ const Settings = (props) => {
         </Reanimated.View>}
 
         {/*STYLE UPDATE*/}
-        <ColorSplash
-            theme={splashTheme}
-            splashVisible = {splashVisible} 
-            setSplashVisible = {setSplashVisible} 
-            splashOut = {applyAppStyle}
-        />
         <BottomSheetModalProvider>
         <BottomSheetModal
           ref={bottomSheetModalRef}
@@ -1419,9 +1526,6 @@ const Settings = (props) => {
                 previewAppStyle={previewAppStyle}
                 previewAppStyleA = {previewAppStyleA}
                 splashStart = {splashStart}
-
-                previewFixed={previewFixed}
-                setPreviewFixed={setPreviewFixed}
 
                 ThemeColorsAppIndex={ThemeColorsAppIndex}
                 ThemeSchema={ThemeSchema}

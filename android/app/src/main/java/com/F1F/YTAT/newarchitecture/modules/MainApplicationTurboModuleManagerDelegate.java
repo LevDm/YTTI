@@ -1,4 +1,4 @@
-package com.levdm.Diary.newarchitecture.modules;
+package com.F1F.YTAT.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

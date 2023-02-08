@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, memo } from "react";
 
 import { StyleSheet, Text, Pressable, ScrollView,FlatList, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
@@ -9,6 +9,7 @@ import {
     useSharedValue,
     useAnimatedProps,
     useAnimatedStyle,
+    cancelAnimation,
     withTiming
 } from 'react-native-reanimated';
 
@@ -30,28 +31,34 @@ import commonStaticStyles, { SwitchField, SliderField } from "../CommonElements"
 export default BorderRadiusRedactor = ({
     appStyle,
 
-    previewAppStyle,
-    setPreviewAppStyle,
+    //previewAppStyle,
+    //setPreviewAppStyle,
 
     previewAppStyleA,
     
-    getNewAppStyleObject,
+    //getNewAppStyleObject,
 
     ThemeColorsAppIndex,
     ThemeSchema,
     LanguageAppIndex   
 }) => {
+
+    //console.log('BR', basic, additional)
+
     const [sliderValueBasic, setSliderValueBasic] = useState(appStyle.borderRadius.basic);
     const [sliderValueAdditional, setSliderValueAdditional] = useState(appStyle.borderRadius.additional);
 
-    const [synchronousSlider, setSynchronousSlider] = useState(appStyle.borderRadius.basic == appStyle.borderRadius.additional);
+    const [synchronousSlider, setSynchronousSlider] = useState(false);//appStyle.borderRadius.basic == appStyle.borderRadius.additional
+    const change = () =>{
+        setSliderValueAdditional(sliderValueBasic)
+        setSynchronousSlider(!synchronousSlider)     
+    }
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.fillets
 
     const settingBorderRadius = (type, value, isComplete) =>{
-        const newAppStyle = getNewAppStyleObject();
-        //const newAppStyle = previewAppStyleA;
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         if(type == "basic" || synchronousSlider){
             isComplete? setSliderValueBasic(value) : null
             newAppStyle.borderRadius.basic = Number(value);
@@ -60,15 +67,20 @@ export default BorderRadiusRedactor = ({
             isComplete? setSliderValueAdditional(value) : null
             newAppStyle.borderRadius.additional = Number(value);
         }
-        //console.log(value)
+        
+        cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
         //setPreviewAppStyle(newAppStyle)
     }
 
-    const change = () =>{
-        setSliderValueAdditional(sliderValueBasic)
-        setSynchronousSlider(!synchronousSlider)     
+    const accepteer = () => {//path, value
+        //const xx = {...JSON.parse(JSON.stringify(previewAppStyleA.value)), ...newAppStyle}
+
+
+        //console.log(JSON.stringify(xx))
     }
+
+    
 
     return (
         <View
@@ -76,6 +88,8 @@ export default BorderRadiusRedactor = ({
                 //marginBottom: 30,
             }}
         >
+            {console.log('ANGLES RENDER')}
+            {false && 
             <SwitchField
                 text = {`${Language.synhronous} ${Language.synhronousState[`${synchronousSlider}`]}`}
                 primeValue={synchronousSlider}
@@ -83,7 +97,7 @@ export default BorderRadiusRedactor = ({
                 appStyle = {appStyle}
                 ThemeColorsAppIndex = {ThemeColorsAppIndex}
                 ThemeSchema = {ThemeSchema}
-            />
+            />}
             {['basic','additional'].map((item, index)=>(
             <SliderField
                 key = {String('slider'+item)}

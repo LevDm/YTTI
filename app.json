@@ -4,37 +4,40 @@
     "slug": "YTAT",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/iconY.png",
     "plugins": [
       [
         "expo-notifications"
       ]
     ],
     "userInterfaceStyle": "automatic",
+
     "updates": {
       "fallbackToCacheTimeout": 0
     },
+
     "assetBundlePatterns": [
       "**/*"
     ],
+
     "ios": {
       "supportsTablet": true
     },
+
     "android": {
+      "userInterfaceStyle": "light",
+      "icon": "./assets/iconY.png",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/foreground_iconY.png",
+        "backgroundColor": "#000000",
+        "backgroundImage": "./assets/background_iconY.png"
+      },
       "splash": {
         "image": "./assets/splashY.png",
         "resizeMode": "contain",
         "backgroundColor": "#000000"
       },
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/iconY.png",
-        "backgroundColor": "#000000"
-      },
-      "package": "com.levdm.Diary"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "jsEngine": "hermes"
+      "package": "com.F1F.YTAT",
+      "jsEngine": "hermes"
+    }
   }
 }

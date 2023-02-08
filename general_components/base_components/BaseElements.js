@@ -234,36 +234,40 @@ export const BaseBox = ({
     isCheckBox = false,
     //outerRing = true,
     Item = <Text>Text</Text>,
-    BoxBorderRadius = 12,
+    boxBorderRadius = 12,
     style = {},
     size = 24,
     rippleColor = '#00000080',
-    ColorsChange = {true: Theme.icons.neutrals.primary, false: Theme.icons.neutrals.secondary},
-    Check = false,
+    colorsChange = {true: Theme.icons.neutrals.primary, false: Theme.icons.neutrals.secondary},
+    check = false,
     onLongPress,
     onPress,
-    android_ripple
+    android_ripple,    
 }, props) => {
 
     const duration = 300
 
     const dynamicStylePrimaryBox = useAnimatedStyle(()=>{
-        const borderWidthValue = (isCheckBox || Check)? 2 : 0
+        const borderWidthValue = (isCheckBox || check)? 2 : 0
         return {
             borderWidth: withTiming(borderWidthValue, {duration: duration}), 
-            borderRadius: withTiming(BoxBorderRadius, {duration: duration}),
-            borderColor: withTiming((Check? ColorsChange.true : ColorsChange.false), {duration: duration}),
+            borderRadius: withTiming(boxBorderRadius, {duration: duration}),
+            borderColor: withTiming((check? colorsChange.true : colorsChange.false), {duration: duration}),
         }
-    }, [Check,BoxBorderRadius, ColorsChange])
+    }, [check,boxBorderRadius, colorsChange])
 
     const dynamicStyleSecondaryBox = useAnimatedStyle(()=>{
-        const margimValue = (isCheckBox || Check)? 2 : 4
+        const margimValue = (isCheckBox || check)? 2 : 4
         return {
             margin: withTiming(margimValue , {duration: duration}), 
-            borderRadius: withTiming((BoxBorderRadius-4), {duration: duration}),
-            backgroundColor: withTiming((Check? ColorsChange.true : isCheckBox? 'transparent' : ColorsChange.false) , {duration: duration})
+            borderRadius: withTiming((boxBorderRadius-4), {duration: duration}),
+            backgroundColor: withTiming(
+
+                (check? colorsChange.true : isCheckBox? 'transparent' : colorsChange.false) , 
+                {duration: duration}
+            )
         }
-    }, [Check, BoxBorderRadius, ColorsChange])
+    }, [check, boxBorderRadius, colorsChange])
 
     return (
         <View
@@ -271,8 +275,7 @@ export const BaseBox = ({
             style = {[
                 {
                     minHeight: size,
-                    minWidth: size,
-                    //backgroundColor: '#00ff000f'    
+                    minWidth: size,   
                 }, 
                 style
             ]}
@@ -290,23 +293,17 @@ export const BaseBox = ({
                 onPress={onPress}
             >
                 <Animated.View
-                    style = {[dynamicStylePrimaryBox, {
-                        //borderRadius: BoxBorderRadius,
-                        //borderWidth: Check? 2 : 0,
+                    style = {[{
                         minHeight: size,
                         minWidth: size,
-                        //borderColor: ColorsChange.true,
                         justifyContent: "center",
                         alignContent: 'center'
-                    }]}
+                    }, dynamicStylePrimaryBox]}
                 >
                     <Animated.View
-                        style = {[dynamicStyleSecondaryBox, {
-                            //borderRadius: BoxBorderRadius-4,
-                            //margin: Check? 2 : 4,
+                        style = {[{
                             flex: 1,
-                            //backgroundColor: Check? ColorsChange.true : ColorsChange.false,
-                        }]}
+                        }, dynamicStyleSecondaryBox]}
                     />
                 </Animated.View>
                 {Item}
@@ -328,7 +325,7 @@ export const BaseSwitch = ({
     primeValue = false,
     colors = {track: {true: 'green', false: 'grey'}, thumb: {true: 'green', false: 'blue'} },
     onChange,
-    duration = 300,
+    duration = 200,
     android_ripple
 }, props) => {
 

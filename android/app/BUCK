@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.levdm.Diary",
+    package = "com.F1F.YTAT",
 )
 
 android_resource(
     name = "res",
-    package = "com.levdm.Diary",
+    package = "com.F1F.YTAT",
     res = "src/main/res",
 )
 

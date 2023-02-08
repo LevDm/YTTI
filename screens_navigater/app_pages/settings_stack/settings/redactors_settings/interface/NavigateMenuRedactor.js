@@ -7,6 +7,7 @@ import {
     useSharedValue,
     useAnimatedProps,
     useAnimatedStyle,
+    cancelAnimation,
     withTiming
 } from 'react-native-reanimated';
 
@@ -46,10 +47,12 @@ export default NavigateMenuRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.navigationMenu
 
+    const [previewMenuType, setPreviewMenuType] = useState(appStyle.navigationMenu.type)
+
     const checkBoxPress = (activeIndex) => {
         const type = menuTypes[activeIndex]
-
-        let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        //let newAppStyle = getNewAppStyleObject();
         if(type == "hidden" || type =="not"){
             newAppStyle.navigationMenu.height = 0
         } else {
@@ -58,61 +61,89 @@ export default NavigateMenuRedactor = ({
             setSliderValueMenuHeight(50)
         }
         newAppStyle.navigationMenu.type = type
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA);
+        previewAppStyleA.value = newAppStyle;
+
+        setPreviewMenuType(type)
     };
 
     const [signature, setSignature] = useState(appStyle.navigationMenu.signatureIcons);
     const signatureChange = () =>{
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.signatureIcons = !signature;
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA);
+        previewAppStyleA.value = newAppStyle;
         setSignature(!signature)
     }
 
     const [rippleEffect, setRippleEffect] = useState(appStyle.navigationMenu.rippleEffect);
     const rippleEffectChange = () =>{
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.rippleEffect = !rippleEffect;
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA);
+        previewAppStyleA.value = newAppStyle;
         setRippleEffect(!rippleEffect)
     }
 
     const [sliderValueVert, setSliderValueVert] = useState(appStyle.navigationMenu.position.vertical);
     const setPrewBasicVertPos = (value) => {
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.position.vertical = Number(value);
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA);
+        previewAppStyleA.value = newAppStyle;
     }
 
     const [sliderValueMenuHeight, setSliderValueMenuHeight] = useState(appStyle.navigationMenu.height);
     const setPrewBasicMenuHeight = (value) => {
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.height = Number(value);
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA);
+        previewAppStyleA.value = newAppStyle;
     }
 
     const horizontalPositionSetting = (index) => {
         const positionType = valuePosition[index]
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.position.horizontal = positionType
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA);
+        previewAppStyleA.value = newAppStyle;
     };
 
     const drawerPositionSetting = (index) => {
         const drawerPosition =  drawerPositions[index]
-        let newAppStyle = getNewAppStyleObject();
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.drawerPosition = drawerPosition
-        setPreviewAppStyle(newAppStyle);
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA);
+        previewAppStyleA.value = newAppStyle;
     };
 
-    const tingDuration = 100
+    const tingDuration = 300
     const entering = (targetValues) => {
         'worklet';
         const animations = {
           opacity: withTiming(1, { duration: tingDuration }),
+          transform: [
+            {scale: withTiming(1, { duration: tingDuration })}
+          ]
         };
         const initialValues = {
           opacity: 0,
+          transform: [
+            {scale: .97}
+          ]
         };
         return {
           initialValues,
@@ -171,7 +202,7 @@ export default NavigateMenuRedactor = ({
             ThemeSchema = {ThemeSchema}
         />
         
-        {previewAppStyle.navigationMenu.type == menuTypes[2] && 
+        {previewMenuType == menuTypes[2] && 
         <Reanimated.View 
             //exiting={exiting} 
             entering={entering}
@@ -191,7 +222,7 @@ export default NavigateMenuRedactor = ({
             />
         </Reanimated.View>}
 
-        {previewAppStyle.navigationMenu.type == menuTypes[1] &&  
+        {previewMenuType == menuTypes[1] &&  
         <Reanimated.View 
             //exiting={exiting} 
             entering={entering}
@@ -217,7 +248,7 @@ export default NavigateMenuRedactor = ({
             />
         </Reanimated.View>}
 
-        {previewAppStyle.navigationMenu.type == menuTypes[1] && 
+        {previewMenuType == menuTypes[1] && 
         <Reanimated.View 
             //exiting={exiting} 
             entering={entering}
@@ -237,7 +268,7 @@ export default NavigateMenuRedactor = ({
             />
         </Reanimated.View>}
 
-        {previewAppStyle.navigationMenu.type == menuTypes[0] && 
+        {previewMenuType == menuTypes[0] && 
         <Reanimated.View 
             //exiting={exiting} 
             entering={entering}
@@ -262,7 +293,7 @@ export default NavigateMenuRedactor = ({
             />
         </Reanimated.View>}
 
-        {previewAppStyle.navigationMenu.type == menuTypes[0] && 
+        {previewMenuType == menuTypes[0] && 
         <Reanimated.View 
             //exiting={exiting} 
             entering={entering}

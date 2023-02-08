@@ -40,8 +40,8 @@ export default StyleChangePreview = ({
 
     previewAppStyleA,
 
-    previewFixed,
-    setPreviewFixed,
+    //previewFixed,
+    //setPreviewFixed,
 
     splashStart,
 
@@ -279,10 +279,9 @@ export default StyleChangePreview = ({
                     onPress={()=>{splashStart(themesApp.indexOf(previewAppStyle.palette.theme))}}
                 />
                 <BasePressable
-                    text={previewFixed? "unfixed" : "fixed"}
+                    text={'?'}
                     style={{flex: 1}}
-                    icon = {{name: `pin${previewFixed? '-off' : ''}-outline`}}
-                    onPress={()=>{setPreviewFixed(!previewFixed)}}
+                    //onPress={()=>{setPreviewFixed(!previewFixed)}}
                 />
             </View>
         </View>

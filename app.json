@@ -9,7 +9,9 @@
         "expo-notifications"
       ]
     ],
-    "userInterfaceStyle": "automatic",
+    "extra": {
+      "WEATHER_API_KEY": ""
+    },
 
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -23,13 +25,18 @@
       "supportsTablet": true
     },
 
+    "androidNavigationBar": {
+      "visible": "sticky-immersive"
+    },
+
     "android": {
       "userInterfaceStyle": "light",
       "icon": "./assets/iconY.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/foreground_iconY.png",
         "backgroundColor": "#000000",
-        "backgroundImage": "./assets/background_iconY.png"
+        "backgroundImage": "./assets/background_iconY.png",
+        "monochromeImage": "./assets/monochrome_iconY.png"
       },
       "splash": {
         "image": "./assets/splashY.png",

@@ -162,7 +162,7 @@ const  ListItems = ({
             ListHeaderComponent = {
             <View style = {{flexGrow: 1}}>
                 <LinearGradient
-                    colors={[ColorsApp.statusBar, "transparent",]}
+                    colors={['green', "transparent",]}
                     style={{
                         position: 'absolute',
                         //borderRadius: 12,
@@ -172,7 +172,7 @@ const  ListItems = ({
                         height: 300,
                     }}
                 />
-                <WeatherList LanguageStore = {LanguageStore} />
+                {false && <WeatherList LanguageStore = {LanguageStore} />}
                 <Calendar LanguageStore = {LanguageStore}/>
             </View>}
             ListFooterComponent = {

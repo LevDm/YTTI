@@ -25,8 +25,6 @@ import Reanimated, {
     cancelAnimation
 } from 'react-native-reanimated';
 
-import * as Haptics from 'expo-haptics';
-
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 

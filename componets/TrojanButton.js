@@ -85,7 +85,7 @@ const TrojanButton = ({trojanButtonVisible, handleClearTasks, setInputModalVisib
             </Pressable>
         </Animated.View>
         
-        {pointerVisible && trojanButtonVisible && <AnimatPointerText action = {true} LanguageStore = {LanguageStore}/>}
+        {false && pointerVisible && trojanButtonVisible && <AnimatPointerText action = {true} LanguageStore = {LanguageStore}/>}
         </>
     )
 }

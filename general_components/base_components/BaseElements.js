@@ -281,6 +281,7 @@ export const BaseBox = ({
             ]}
         >
             <Pressable
+                disabled = {!isCheckBox && check}
                 style = {{
                     flex: 1,
                     flexDirection: 'row',
@@ -595,6 +596,7 @@ export const BaseTextInput = ({
     useEffect(()=>{
         if(openState){
             setTimeout(()=>{
+                console.log('ti focus')
                 texInputref.current.focus()
             }, 100) 
         }
@@ -602,23 +604,24 @@ export const BaseTextInput = ({
 
     useEffect(()=>{
         if(!keyboardVisible){
+            console.log('exit <', !keyboardVisible, openState)
             openState ? onExit() : null
         }
     },[keyboardVisible])
 
     const onFocus = () => {
-        
+        console.log('onfocus')
         focus? focus() : null
         setOpenState(true)
     }
     
     const onEnter =()=> {
-        
+        console.log('onEnter')
         enter? enter() : null
     }
 
     const onExit =()=> {
-
+        console.log('onExit')
         setTextValue(localText)
         exit? exit(localText) : null
         

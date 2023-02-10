@@ -36,10 +36,11 @@ import mapStateToProps from "../../redux_files/stateToProps";
 const screen = Dimensions.get('screen')
 const widthScreen = screen.width
 const heightScreen = screen.height
-
+//console.log(screen)
 const widthLogo = 980/screen.scale
-const sizeY = 440/screen.scale
-const borderWidth = 40/screen.scale
+//const sizeY = 440/screen.scale
+const sizeY = 146.67//*screen.scale
+const borderWidth = 13.33//40/screen.scale
 //general anim duration
 const globalDuration = 1000 * 1
 
@@ -101,27 +102,38 @@ const SplashY = (props) => {
     const time = ['night','morning', 'day', 'evening'][Math.floor((new Date()).getHours()/6)]
 
     const start = 30
-    const dgDuration = 330//globalDuration
+    const dgDuration = 930//globalDuration
     const circleDuration = dgDuration/2
     const opacityDuration = 100
     const general = dgDuration+opacityDuration
    
     const state = useSharedValue(0)
     const body = useAnimatedStyle(()=>({
+        opacity: interpolate(
+            state.value,
+            [dgDuration, general],
+            [1, 0],
+        ) 
+    }))
+
+    const bg = useAnimatedStyle(()=>({
         backgroundColor: interpolateColor(
             state.value,
             [start, dgDuration],
-            ['#000000', Theme.basics.accents.primary]
+            [ `${Theme.basics.accents.primary}00`, Theme.basics.accents.primary]
             /* 
             {
                 extrapolateLeft: Extrapolation.CLAMP,
                 extrapolateRight: Extrapolation.CLAMP
             }*/  
         ),
+    }))
+
+    const hello = useAnimatedStyle(()=>({
         opacity: interpolate(
             state.value,
-            [dgDuration, general],
-            [1, 0],
+            [start, circleDuration],
+            [0, 1],
         ) 
     }))
 
@@ -145,21 +157,23 @@ const SplashY = (props) => {
     return (
         <Animated.View
             style = {[StyleSheet.absoluteFill,{
-                
+                backgroundColor: 'black'
                 //paddingTop: Constants.statusBarHeight
             },body]}
         >   
-            <View
-                style = {{
+            <Animated.View
+                style = {[{
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                }}
+                    
+                },bg]}
             >
 
             <Animated.View
                 style = {[{position: 'absolute'}]}
             >                
+                {false &&
                 <Svg width={290/screen.scale} height={345/screen.scale} viewBox="0 -55 290 345" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <Circle cx="30" cy="30" r="30" fill="white"/>
                 <Circle cx="260" cy="30" r="30" fill="white"/>
@@ -168,7 +182,18 @@ const SplashY = (props) => {
                 <Rect x="115" y="259" width="115" height="60" transform="rotate(-90 115 259)" fill="white"/>
                 <Rect x="124" y="123.502" width="161.93" height="60" transform="rotate(-45 124 123.502)" fill="white"/>
                 <Rect x="51.4264" y="9" width="161.93" height="60" transform="rotate(45 51.4264 9)" fill="white"/>
+                </Svg>}
+          
+                <Svg width={148} height={148} viewBox="0 0 148 148" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <Circle cx="35.6666" cy="45.6667" r="10" fill="white"/>
+                <Circle cx="112.333" cy="45.6667" r="10" fill="white"/>
+                <Circle cx="74" cy="122.333" r="10" fill="white"/>
+                <Circle cx="74" cy="83.6667" r="10" fill="white"/>
+                <Rect x="64" y="122" width="38.3333" height="20" transform="rotate(-90 64 122)" fill="white"/>
+                <Rect x="67" y="76.834" width="53.9767" height="20" transform="rotate(-45 67 76.834)" fill="white"/>
+                <Rect x="42.8087" y="38.6667" width="53.9767" height="20" transform="rotate(45 42.8087 38.6667)" fill="white"/>
                 </Svg>
+
             </Animated.View>
 
             <Animated.View
@@ -185,17 +210,23 @@ const SplashY = (props) => {
             
 
             {(appConfig.user.welcome) &&
-            <Text
-                style = {{
+            <Animated.View
+                style = {[{
                     position: 'absolute',
                     bottom: 200,
+                }, hello]}
+            >
+            <Text
+                style = {{
+                    
                     color: 'white',
                     fontSize: 30,
                 }}
             >
                 {appConfig.user.name? `${Language[time]}, ${appConfig.user.name}!` : `${Language[time]}!`}
-            </Text>}
-            </View>   
+            </Text>
+            </Animated.View> }
+            </Animated.View>   
         </Animated.View>
     )
 }

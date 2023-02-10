@@ -85,41 +85,56 @@ const LanguageStoreRu = {
             type: 'интерфейса',
             category: 'интерфейс'
           },
-          system: {
-            type: 'системы',
-            category: 'система'
+
+          functions: {
+            type: 'функционала',
+            category: 'функционал'
           },
+          
           additional: {
-            type: 'остального',
-            category: 'остальное'
+            type: 'для каждого',
+            category: 'распространение'
           },
         },
+
         categorys: [
           "внешнего вида",
           "системы",
           "спец"
         ],
+
+        subCategorys: {
+          globalProperties: 'общее',
+          elements: 'элементы',
+          additionalFunctions: 'дополнительные',  
+        },
+
         params: {
+
+          presets: 'пресеты',
+          
+          effects: "эффекты", 
+
           thema: "тема", 
           borderRadius: "скругления", 
-          navigationMenu: "навигационное меню", 
-          loadAnimation: "загрузочная анимация",
-          lists: "списки",
-          bobberButton:"кнопка поплавок",
-          modals: 'вспрывающие окна',
+          navigationMenu: "меню навигации", 
+          loadAnimation: "загрузка",
+          lists: "ленты",
+          bobberButton:"плавающая кнопка",
+          modals: 'модальные окна',
           language: "язык",
           //"location", 
           appFunctions:"функции",
           user: "пользователь",
           
           weather: "погода",
-          ohters: "другое"
+          ohters: "делись"
         }
       },
       Redactors: {
         themes: {
           colorMode: "Цветовой режим",
-          colorsMods: {auto: 'системный', light: 'светлый', dark: 'темный'}
+          colorsMods: {auto: 'Системный', light: 'Светлый', dark: 'Темный'}
         },
         fillets: {
           synhronous: "Синхронизация значений",
@@ -180,7 +195,7 @@ const LanguageStoreRu = {
           gradient: 'Градиент границы',
         },
         languages: {
-          thisLanguage: 'Приложение будет использовать русский язык'
+          thisLanguage: 'Использовать русский язык'
         },
         weather: {
           used: 'Определять и использовать погоду',
@@ -324,40 +339,51 @@ const LanguageStoreEng = {
             type: 'interface',
             category: 'interface'
           },
-          system: {
-            type: 'systems',
-            category: 'system'
+
+          functions: {
+            type: 'functions',
+            category: 'functions'
           },
+
           additional: {
             type: 'rest of it',
             category: 'rest of it'
           },
         },
-        categorys: [
-          "appearance", 
-          "systems",
-          "spezial"
-        ],
-        params: { 
+
+        subCategorys: {
+          globalProperties:'global properties',
+          elements: 'elements',
+          additionalFunctions: 'additional functions',  
+        },
+
+        params: {
+          presets: 'presets',
+          
           thema: "theme", 
-          borderRadius: "fillets", 
+          borderRadius: "fillets",
+          effects: "effects", 
+
           navigationMenu: "navigation menu", 
           loadAnimation: "loading animation",
           lists: "lists",
           bobberButton:"bobber button",
           modals: 'popup windows',
+
           language: "language",
+          user: "user",
           //"location", 
           appFunctions: "functions",
-          user: "user",
+
           weather: "weather", 
+
           ohters: "others"
         }
       },
       Redactors: {
         themes: {
           colorMode: "Color mode",
-          colorsMods: {auto: 'systemic', light: 'light', dark: 'dark'}
+          colorsMods: {auto: 'Systemic', light: 'Light', dark: 'Dark'}
         },
         fillets: {
           synhronous: "Value synchronization",
@@ -418,7 +444,7 @@ const LanguageStoreEng = {
           gradient: 'Gradient bord',
         },
         languages: {
-          thisLanguage: 'The application will use English'
+          thisLanguage: 'Use English'
         },
         weather: {
           used: 'Detect and use weather',

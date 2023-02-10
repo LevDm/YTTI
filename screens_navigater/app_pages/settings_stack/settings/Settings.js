@@ -38,7 +38,9 @@ import Reanimated, {
     Extrapolation 
 } from 'react-native-reanimated';
 import Constants from "expo-constants";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+//import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import {
     BottomSheetModal,
@@ -67,11 +69,12 @@ import {
 import ThemeRedacor from "./redactors_settings/interface/ThemeRedactor";
 import BorderRadiusRedactor from "./redactors_settings/interface/BorderRadiusRedactor";
 import NavigateMenuRedactor from "./redactors_settings/interface/NavigateMenuRedactor";
-import LoadSplashRedactor  from "./redactors_settings/system/LoadSplashRedactor";
 import LanguageRedactor from "./redactors_settings/system/LanguageRedactor";
 import ListsRedactor from "./redactors_settings/interface/ListsRedactor";
 import FunctionButtonRedactor from "./redactors_settings/interface/FunctionButtonRedactor";
 import ModalsRedactor from "./redactors_settings/interface/ModalsRedactor";
+
+import LoadSplashRedactor  from "./redactors_settings/system/LoadSplashRedactor";
 import UserRedactor from "./redactors_settings/system/UserRedactor";
 import WeatherRedactor from "./redactors_settings/system/WeatherRedactor";
 import AppFunctionsRedactor from "./redactors_settings/system/AppFunctionsRedactor";
@@ -87,94 +90,169 @@ import Classical from "../../../../general_components/tab_bars/Classical";
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
-const structure = [
-    {
-        indexSection: 0,
-        category: "appearance",
-        data: [
-            {
-                param: "thema",
-                icon:  "palette",
-                paramRedactorComponent: ThemeRedacor
-            },
-            {
-                param: "borderRadius",
-                icon:  "vector-rectangle",
-                paramRedactorComponent: BorderRadiusRedactor
-            },
-            {
-                param: "navigationMenu",
-                icon:  "menu",
-                paramRedactorComponent: NavigateMenuRedactor
-            },
-            
-            {
-                param: "lists",
-                icon:  "view-list",
-                paramRedactorComponent: ListsRedactor
-            },
-            {
-                param: "bobberButton",
-                icon:  "balloon",
-                paramRedactorComponent: FunctionButtonRedactor
-            },
-            {
-                param: "modals",
-                icon:  "window-restore",
-                paramRedactorComponent: ModalsRedactor
-            },  
-        ]
-    },
-    {   
-        indexSection: 1,
-        category: "system",
-        data: [
-            {
-                param: "language",
-                icon:  "earth",
-                paramRedactorComponent: LanguageRedactor
-            },
-            {
-                param:"user",
-                icon:  "account",
-                paramRedactorComponent: UserRedactor
-            },
-            {
-                param: "loadAnimation",
-                icon:  "animation-play",
-                paramRedactorComponent: LoadSplashRedactor
-            },
-            {
-                param:"weather",
-                icon:  "weather-cloudy-clock",
-                paramRedactorComponent: WeatherRedactor
-            }, 
-            //{
-            //    param:"location",
-            //    icon:  "balloon",
-            //    paramRedactorComponent: null
-            //}, 
-            {
-                param:"appFunctions",
-                icon:  "store",
-                paramRedactorComponent: AppFunctionsRedactor
-            }, 
-             
-            
-        ]
-    },
-    {   
-        indexSection: 2,
-        category: "additional",
-        data: [
-            {
-                param:"ohters",
-                icon:  "qrcode-scan",
-                paramRedactorComponent: null
-            },
-        ]
+const STRUCTURE = {
+    settingsData: [
+        {
+            param: "language",
+            icon:  "earth",
+            paramRedactorComponent: LanguageRedactor
+        },
+        {
+            param:"user",
+            icon:  "account",
+            paramRedactorComponent: UserRedactor
+        },
+    ],
+    customizer: [
+        {
+            category: "appearance",            
+            data: [
+                
+                {
+                    param: "presets",
+                    icon:  "storefront" ,
+                    paramRedactorComponent: null
+                },
+                {
+                    subCategory: "globalProperties",
+                    data: [
+                        {
+                            param: "thema",
+                            icon:  "palette",
+                            paramRedactorComponent: ThemeRedacor
+                        },
+                        {
+                            param: "borderRadius",
+                            icon:  "vector-rectangle",
+                            paramRedactorComponent: BorderRadiusRedactor
+                        },
+                        {
+                            param: "effects",
+                            icon:  "magic-staff",
+                            paramRedactorComponent: null
+                        },
+                    ]
+                },              
+                {
+                    subCategory: "elements",
+                    data: [
+                        {
+                            param: "navigationMenu",
+                            icon:  "menu",
+                            paramRedactorComponent: NavigateMenuRedactor
+                        },
+                        {
+                            param: "bobberButton",
+                            icon:  "balloon",
+                            paramRedactorComponent: FunctionButtonRedactor
+                        },
+                        {
+                            param: "lists",
+                            icon:  "view-list",
+                            paramRedactorComponent: ListsRedactor
+                        },
+                        
+                        {
+                            param: "modals",
+                            icon:  "window-restore",
+                            paramRedactorComponent: ModalsRedactor
+                        },  
+                    ]
+                },                  
+            ]
+        },
+        {   
+            category: "functions",
+            data: [
+                {
+                    param:"appFunctions",
+                    icon:  "store",
+                    paramRedactorComponent: AppFunctionsRedactor
+                },                
+                {
+                    subCategory: "additionalFunctions",
+                    data: [
+                        {
+                            param: "loadAnimation",
+                            icon:  "animation-play",
+                            paramRedactorComponent: LoadSplashRedactor
+                        },
+                        {
+                            param:"weather",
+                            icon:  "weather-cloudy-clock",
+                            paramRedactorComponent: WeatherRedactor
+                        }, 
+                    ]
+                },                                            
+            ]
+        },
+        {   
+            indexSection: 2,
+            category: "additional",
+            data: [
+                {
+                    param:"ohters",
+                    icon:  "qrcode-scan",
+                    paramRedactorComponent: null
+                },
+            ]
+        }
+    ]
+}
+
+const categorysCustomizer = []
+const structureCustomizer = []
+
+for(let id = 0; id<STRUCTURE.customizer.length; id++){
+    const itemCust = STRUCTURE.customizer[id]
+
+    const category = itemCust.category
+    const rawData = itemCust.data
+
+    const subCategorys = []
+    const data = []
+
+    for(let el of rawData){
+        let newEl
+        if(el.subCategory){
+            subCategorys.push(el.subCategory)
+            newEl = el.data.map((item, index)=>{               
+                return  {
+                    ...item,
+                    fromCustom: true,
+                    indexSection: id,
+                    category: category, 
+                    subCategory: el.subCategory, 
+                    subTitle: index === 0, 
+                    
+                }              
+            })
+        } else {
+            newEl = {
+                ...el,
+                fromCustom: true,
+                indexSection: id,
+                category: category,
+                
+                subTitle: false, 
+            }
+        }
+        data.push(newEl)
     }
-]
+
+    
+
+    structureCustomizer.push({
+        indexSection: id,
+        category: category,
+        subCategorys: subCategorys,
+        data: data.flat()
+    })
+
+    categorysCustomizer.push(
+        category,
+    )
+}
 
 //<MaterialCommunityIcons name="magic-staff" size={24} color="black" />
 //<MaterialCommunityIcons name="storefront" size={24} color="black" />
@@ -201,35 +279,44 @@ const structure = [
 //<MaterialCommunityIcons name="keyboard-backspace" size={24} color="black" />
 
 const allStructurParams = [];
-for (let el of structure){
+for (let el of structureCustomizer){
+    /* 
     for (let item of el.data){
         allStructurParams.push({
             param: item.param, 
             icon: item.icon, 
             category: el.category, 
             indexSection: el.indexSection
-        });
-    }
+        })
+    }*/
+
+    el.data.map((item, index)=>{
+        newItem = {
+            //param: item.param, 
+            //icon: item.icon, 
+            ...item,
+            //category: el.category,
+            //indexSection: el.indexSection,
+            indexInSection: index,
+        }
+        delete newItem.paramRedactorComponent 
+        allStructurParams.push(newItem)
+    })
+
 }
 
+/* 
 const allCategorys = [];
-for (let el of structure){
+for (let el of structureCustomizer){
     //for (let item of el.data){
         allCategorys.push({category: el.category, indexSection: el.indexSection});
     //}
-}
+}*/
 
 const ReanimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
 const ReanimatedSectionList = Reanimated.createAnimatedComponent(SectionList);
 const ReanimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 
-//bober button heigt = 60 const bottomBord = buttonSize + 12 + menuHeight 
-const bottomBord = deviceWidth+60
-const positionBobberButton =(buttonSize)=>({
-    center: (deviceWidth*0.5-(buttonSize/2)),
-    left: (deviceWidth-5-buttonSize),
-    right: (5)
-})
 
 const Settings = (props) => {
     //console.log(props.navigation.isFocused(), store.getState().hideMenu,props.hideMenu)
@@ -315,7 +402,7 @@ const Settings = (props) => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
             console.log('keyboard Will Show')
             setKeyboardVisible(true);
-            animValueBobberButtonVisible.value = bottomBord
+            animValueBobberButtonVisible.value = 1//bottomBord
         });
         const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {setKeyboardVisible(false);});
 
@@ -325,12 +412,381 @@ const Settings = (props) => {
         };
     }, []);
 
-    const sectListRef = useRef();
-    const flatCategorysListRef = useAnimatedRef(); 
-    const flatListRef = useAnimatedRef(); 
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen
+
+
+    
+    const animValueBobberButtonVisible = useSharedValue(1);//bottomBord
+
+
+    const splashStart = (themeIndex) => {
+        //if(appStyle.theme != theme){
+
+            //setSplashTheme(themeIndex);
+            //setSplashVisible(true);
+            applyAppStyle()    
+        //}
+    }
+
+    const applyAppStyle = ()=>{
+        //let newAppStyle = previewAppStyle
+        //console.log('fine ',newAppStyle)
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+
+        setAppStyle(newAppStyle)
+        dataRedactor("storedAppStyle",newAppStyle);
+        props.r_setAppStyle(newAppStyle);
+    }
+
+
+
+
+
+
+    const jumpPress =()=>{
+        console.log('pressj')
+        /*
+        sectListRef.current.scrollToLocation({
+            itemIndex: 0,
+            sectionIndex: 0,
+            viewPosition: 1,
+            animated: false,
+        })
+        */
+        handlePresentModalPress()
+    }
+
+
+    
+
+    const copyObject = (copied)=>{
+        const copy = {}
+        for(let el in copied){
+            if((typeof copied[el] != 'object') || (Array.isArray(copied[el]))){
+                copy[el] = copied[el]
+            } else {
+                copy[el] = copyObject(copied[el])
+            }
+        }
+        return copy
+    }
+
+    const getNewAppConfigObject =()=>{
+        return copyObject(appConfig)
+    }
+
+    const getNewAppStyleObject =(flag = 'previewStyle')=>{
+        if(flag == 'currentStyle'){
+            return copyObject(appStyle)
+        }
+        return copyObject(previewAppStyle)
+    }
+  
+    const applyPress =()=>{
+        console.log('pressa')
+        
+        applyAppStyle()
+        //splashStart(previewAppStyle.theme, themesApp.indexOf(previewAppStyle.theme));
+    }  
+
+
+    const back = () => {
+        console.log('settings back', bottomSheetVisible , props.hideMenu)
+        (!bottomSheetVisible && props.hideMenu)? props.r_setHideMenu(false) : null
+        props.navigation.goBack()
+    }
+
+    const goToPalleteScreen = (index = 0) => {
+        ToastAndroid.show('LOAD', ToastAndroid.SHORT);   
+        bottomSheetVisible? bottomSheetModalRef.current?.dismiss(): null;    
+        (!bottomSheetVisible && !props.hideMenu)? props.r_setHideMenu(true) : null
+        //console.log('settings to palette', bottomSheetVisible , props.hideMenu) 
+        props.navigation.navigate('palette', {themeIndex: index})
+        console.log('settings to palette', bottomSheetVisible , props.hideMenu)  
+        
+    }
+
+
+    const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+    const previewHeight = (50+deviceHeight/2)+(appStyle.lists.proximity)
+
+    const bottomSheetModalRef = useRef(BottomSheetModal);
+    const snapPoints = useMemo(() => [previewHeight/3+30, previewHeight+30], []);
+
+    const handlePresentModalPress = useCallback(() => {
+        props.r_setHideMenu(true)
+        setBottomSheetVisible(true)
+        bottomSheetModalRef.current?.present();
+    }, []);
+
+    const handleSheetChanges = useCallback((index) => {
+        console.log('handleSheetChanges', index);
+        if(index === -1 && bottomSheetVisible){
+            setBottomSheetVisible(false)
+            props.r_setHideMenu(false)
+        }
+
+    }, []);
+    
+    
+
+    
+    return (
+    <>  
+        <BasisList 
+            reaValueBobberButtonVisible = {animValueBobberButtonVisible}
+
+            setAppConfig = {setAppConfig}
+            setAppStyle = {setAppStyle} 
+    
+            r_setAppStyle = {props.r_setAppStyle}
+            r_setAppConfig = {props.r_setAppConfig}
+    
+            previewAppStyleA = {previewAppStyleA}
+    
+            previewAppStyle = {previewAppStyle}
+            setPreviewAppStyle = {setPreviewAppStyle}
+    
+            goToPalleteScreen = {goToPalleteScreen}
+    
+            backBurgerPress = {back}
+    
+            getNewAppStyleObject = {getNewAppStyleObject}
+            getNewAppConfigObject = {getNewAppConfigObject}
+    
+            
+            appConfig = {appConfig}
+            LanguageAppIndex = {LanguageAppIndex}
+
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        
+        <BobberButton 
+            enabled={!bottomSheetVisible}
+     
+            bottomBord = {bottomBord}
+            reaValueBobberButtonVisible = {animValueBobberButtonVisible}
+
+            upPress = {jumpPress}
+            downPress = {applyPress}
+
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+
+        {/*STYLE UPDATE*/}
+        {false && 
+        <BottomSheetModalProvider>
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+        >           
+            <StyleChangePreview
+                appStyle={appStyle}
+                setAppStyle={setAppStyle}
+                r_setAppStyle={props.r_setAppStyle}
+                previewAppStyle={previewAppStyle}
+                previewAppStyleA = {previewAppStyleA}
+                splashStart = {splashStart}
+
+                ThemeColorsAppIndex={ThemeColorsAppIndex}
+                ThemeSchema={ThemeSchema}
+                LanguageAppIndex={LanguageAppIndex}
+            />
+        </BottomSheetModal>
+        </BottomSheetModalProvider>}
+    </>);  
+};
+export default connect(mapStateToProps('SETTINGS_SCREEN'), mapDispatchToProps('SETTINGS_SCREEN'))(Settings);
+
+//====================================================================================================================================
+//====================================================================================================================================
+//====================================================================================================================================
+
+const BobberButton = (props) => {
+    const {
+        reaValueBobberButtonVisible,
+        bottomBord,
+        enabled,
+
+        upPress,
+        downPress,
+
+        appConfig,
+        LanguageAppIndex,
+
+        appStyle,
+        ThemeColorsAppIndex,
+        ThemeSchema
+    } = props
+
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    
+    const dynamicStyleBobberUp = useAnimatedStyle(() => {
+        const duration = 200;
+        return {
+            transform: [
+                {translateY: withTiming((reaValueBobberButtonVisible.value == 0 && enabled)? -(5+appStyle.functionButton.size) : 0, {duration: duration})}
+            ] 
+        }
+    })
+    const dynamicStyleBobberDown = useAnimatedStyle(() => {
+        const duration = 200;
+        return {
+            //opacity: withTiming(animValueBobberButtonExpand.value == 1? 1 : 0.9, {duration: duration}),
+        }
+    })
+
+    const dynamicStyleBobberButton = useAnimatedStyle(()=>{
+        const duration = 300
+        const durationTranslate = 400;
+        const position =(buttonSize)=>({
+            center: (deviceWidth*0.5-(buttonSize/2)),
+            left: ((deviceWidth-12)-buttonSize),
+            right: (12)
+        })
+        const bottom = interpolate(appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
+        const addBottom = (appStyle.navigationMenu.type == 'hidden' && appStyle.navigationMenu.position.horizontal == 'center' && appStyle.functionButton.position == 'center')? (20+bottom) : 0
+        return {
+            height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
+            width:  withTiming(appStyle.functionButton.size, {duration: duration}),
+            bottom:  withTiming((appStyle.navigationMenu.height+12.5+addBottom), {duration: duration}),
+            right: withTiming( (position(appStyle.functionButton.size)[appStyle.functionButton.position]), {duration: duration}),
+
+            transform: [
+                {translateY: withTiming((reaValueBobberButtonVisible.value == 0 && enabled)? 0 : bottomBord, {duration: durationTranslate})}
+            ] 
+        }
+    })
+
+    return(
+        <Reanimated.View 
+            style = {[dynamicStyleBobberButton, {
+                position: 'absolute',
+                alignItems: 'flex-end',
+                justifyContent: 'flex-end',
+            }]}
+        >   
+            {["down", "up"].map((item, index)=>{
+                let animStyle;
+                let iconName;
+                let pressFunction;
+                switch(item){
+                    case "up": 
+                        animStyle = dynamicStyleBobberUp;
+                        iconName = "arrow-collapse-up";
+                        pressFunction = upPress;
+                        break;
+                    case "down": 
+                        animStyle = dynamicStyleBobberDown;
+                        iconName = "check-outline";
+                        pressFunction = downPress;
+                        break;
+                }
+                return (
+                    <Reanimated.View
+                        key={item+index}
+                        
+                        style = {[animStyle,{
+                            zIndex: 1,       
+                            position: 'absolute',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }]}
+                    >
+                        <BasePressable
+                            type={"i"}
+                            icon={{name: iconName, size: 24, color: Theme.icons.neutrals.primary}}
+                            style={{
+                                height: appStyle.functionButton.size,
+                                width: appStyle.functionButton.size,
+                                borderRadius: appStyle.borderRadius.additional,
+                                backgroundColor: Theme.basics.accents.secondary,
+
+                                shadowColor: "#000",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 2
+                                },
+                                shadowOpacity: 0.25,
+                                shadowRadius: 4,
+                                elevation: 4,
+                            }}
+                            android_ripple={{
+                                color: Theme.icons.accents.quaternary,
+                                borderless: true,
+                                foreground: false
+                            }}
+                            onPress={pressFunction}
+                        />
+                    </Reanimated.View>
+                )
+            })}
+        </Reanimated.View>
+    )
+}
+
+//====================================================================================================================================
+const headerStickysHeight = 33
+const itemCategoryHeight = 45
+const selectorLineHeight = 35
+const headerHeight = (Constants.statusBarHeight+1)+itemCategoryHeight//+selectorLineHeight
+const packHeight = 100
+
+const BasisList = (props) => {
+    const {
+        reaValueBobberButtonVisible,
+
+        setAppConfig,
+        setAppStyle,
+
+        r_setAppStyle,
+        r_setAppConfig,
+
+        previewAppStyleA,
+
+        previewAppStyle,
+        setPreviewAppStyle,
+
+        goToPalleteScreen,
+
+        backBurgerPress,
+
+        getNewAppStyleObject,
+        getNewAppConfigObject,
+
+        appStyle,
+        appConfig,
+        LanguageAppIndex,
+        ThemeColorsAppIndex,
+        ThemeSchema
+    } = props
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen
+
+    const BLUR = false
+
+    const headerStickysFullHeight = headerStickysHeight //+(2*appStyle.lists.proximity)
+    const selectorLineHeightFull = itemCategoryHeight + selectorLineHeight
+    const headHeight = packHeight-itemCategoryHeight
+    const [headHeightTop, setHeadHeightTop] = useState(headHeight);
+
+    //const headFullHeight = headHeight + selectorLineHeightFull
+    const headFullHeight = headHeightTop + selectorLineHeightFull  
+    
+    const animSelectorLine = useSharedValue(headFullHeight-selectorLineHeight)
+
+
+    const sectListRef = useRef();
+    const flatCategorysListRef = useAnimatedRef(); 
+    const flatListRef = useAnimatedRef(); 
 
     const accentCategory = useSharedValue(0);
 
@@ -353,11 +809,10 @@ const Settings = (props) => {
     const animValueMarginLeft = useSharedValue(0);
     const animValueTranslateX = useSharedValue(0);
     const animValueScrollXCategorys = useSharedValue(0);
-    const animValueCategorysScrolling = useSharedValue(false);
-    
-    const animValueBobberButtonVisible = useSharedValue(bottomBord);
+    const animValueCategorysScrolling = useSharedValue(0);
 
     const animValueScrollY = useSharedValue(0)
+
 
     const logg = (info) =>{
         console.log(info)
@@ -371,7 +826,7 @@ const Settings = (props) => {
 
     useDerivedValue(() => {
         const scroll = Math.abs(animValueTranslateX.value)
-        if(!animValueCategorysScrolling.value){
+        if(animValueCategorysScrolling.value == 0){
             const categoryIntervals = derivedValues.value.categorys
             //runOnJS(logg)(` ${(scroll)} bords ${categoryIntervals} ${indexs}`)
             let to = 0
@@ -391,16 +846,17 @@ const Settings = (props) => {
 
     const scrollHandlerFlatListCategorys = useAnimatedScrollHandler({
         onBeginDrag: (e) => {
-            animValueCategorysScrolling.value = true;
+            animValueCategorysScrolling.value = 1;
         },
         onEndDrag: (e) => {
             //runOnJS(logg)(`end ${e.contentOffset.x}`)
-            animValueCategorysScrolling.value = false;
+            animValueCategorysScrolling.value = 0;
         },
         onMomentumEnd: (e) => {
-            //runOnJS(logg)(`momentum end ${e.contentOffset.x}`)
+            runOnJS(logg)(`momentum end ${e.contentOffset.x}`)
             animValueScrollXCategorys.value = (e.contentOffset.x)
-            //animValueCategorysScrolling.value = false;
+            animValueCategorysScrolling.value = 0.5;
+            
         },
         onScroll: (e, ctx) => {
             //animValueCategorysScrolling.value = true;
@@ -410,7 +866,7 @@ const Settings = (props) => {
 
     useDerivedValue(() => {
         const scroll = Math.abs(animValueScrollXCategorys.value)
-        if(true){
+        if(animValueCategorysScrolling.value >= 0.5){
             const categoryIntervals = derivedValues.value.categorys
 
             const yetIndex = Math.floor((scroll/(deviceWidth/2)))
@@ -419,8 +875,6 @@ const Settings = (props) => {
 
             const fineIndex = Math.min(yetIndex+toIndex, (categoryIntervals.length-1))
 
-            //runOnJS(logg)(` ${(deviceWidth/4)} `)
-            //runOnJS(logg)(` ${(scroll)} ||| ${(toIndex)} ||| ${categoryIntervals[toIndex]} ||| ${categoryIntervals}`)
             scrollTo(
                 flatListRef, //ref
                 categoryIntervals[fineIndex], //x offset
@@ -443,47 +897,9 @@ const Settings = (props) => {
     })
 
 
-    const splashStart = (themeIndex) => {
-        //if(appStyle.theme != theme){
-
-            //setSplashTheme(themeIndex);
-            //setSplashVisible(true);
-            applyAppStyle()    
-        //}
-    }
-
-    const applyAppStyle = ()=>{
-        //let newAppStyle = previewAppStyle
-        //console.log('fine ',newAppStyle)
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-
-        setAppStyle(newAppStyle)
-        dataRedactor("storedAppStyle",newAppStyle);
-        props.r_setAppStyle(newAppStyle);
-    }
-
-     const previewHeight = (50+deviceHeight/2)+(appStyle.lists.proximity)
-    //const settingsInfoHeight = (deviceHeight/4)+2*(!previewFixed? appStyle.lists.proximity : 0)
-
-    const headerStickysHeight = 40
-    const itemCategoryHeight = 45
-    const selectorLineHeight = 35
-    
-    const packHeight = 300
-
-    const headerHeight = (Constants.statusBarHeight+1)+itemCategoryHeight//+selectorLineHeight
-
-    const headerStickysFullHeight = headerStickysHeight +(2*appStyle.lists.proximity)
-    const selectorLineHeightFull = itemCategoryHeight + selectorLineHeight
-    const headHeight = packHeight-itemCategoryHeight
-    const headFullHeight = headHeight + selectorLineHeightFull //((3*deviceHeight)/4)
-    
-    const animSelectorLine = useSharedValue(headFullHeight-selectorLineHeight)
-
-
     const scrollSectionsList = useAnimatedScrollHandler({
         onScroll: (event, ctx) => {
-        
+            //runOnJS(logg)(`|scroll|| ${event.contentOffset.y}`)
             let isUpScroll = false;
             let isEnd = false;
             let isStart = false;
@@ -491,22 +907,20 @@ const Settings = (props) => {
             if(Math.abs(event.velocity.y).toFixed(4) != 0){
                 isUpScroll = (event.velocity.y).toFixed(4) < 0.0001;
             }
-
             isEnd = (event.layoutMeasurement.height + event.contentOffset.y) >= (event.contentSize.height - 5);
-            isStart = event.contentOffset.y > (headFullHeight); //scroll>preview
+            isStart = event.contentOffset.y > (headFullHeight);
             const visibleBobber = ((isUpScroll || isEnd) && isStart)
 
-            cancelAnimation(animValueBobberButtonVisible);
-            animValueBobberButtonVisible.value = visibleBobber? 0 : bottomBord
+            cancelAnimation(reaValueBobberButtonVisible);
+            reaValueBobberButtonVisible.value = visibleBobber? 0 : 1//bottomBord
 
-            const useScroll = -Math.max(event.contentOffset.y, 0) 
-            //useScroll = -(useScroll < 0? 0 : useScroll)
+            const useScroll = -Math.max(event.contentOffset.y, 0)
+
             cancelAnimation(animValueScrollY);
             animValueScrollY.value = useScroll
 
             const selectLine = Math.max((headFullHeight + useScroll -selectorLineHeight), 0)
-            //runOnJS(logg)(`${selectLine}`)
-            //selectLine = selectLine < 0? 0 : selectLine
+
             cancelAnimation(animSelectorLine);
             animSelectorLine.value = selectLine
             
@@ -515,7 +929,7 @@ const Settings = (props) => {
     
 
     const countDerivedValues = () =>{
-        //console.log('reculc')
+        console.log('reculc')
         const intervals = []//[{left: 0, right: 100}, ...]
         for(let i = 0; i < allStructurParams.length; i++){
             let right = -1;
@@ -564,8 +978,8 @@ const Settings = (props) => {
         }
 
         const indexs = []
-        for(let i=0; i<structure.length; i++){
-            indexs[i] = 0 + i>0? (indexs[i-1]+structure[i-1].data.length) : 0
+        for(let i=0; i<structureCustomizer.length; i++){
+            indexs[i] = 0 + i>0? (indexs[i-1]+structureCustomizer[i-1].data.length) : 0
         }
         const categoryIntervals = []
         for(let i = 0; i<indexs.length ; i++){
@@ -584,12 +998,9 @@ const Settings = (props) => {
             categorys: categoryIntervals
         }
     }
-    useEffect(()=>{countDerivedValues()},[appStyle])//appStyle.lists.proximity//Language, LanguageAppIndex, 
+    //useEffect(()=>{countDerivedValues()})//appStyle.lists.proximity//Language, LanguageAppIndex, ,[appStyle]
 
 
-
-    
-    
     useDerivedValue(() => {
         const aListHeights = derivedValues.value.listHeights
         const aListWidths = derivedValues.value.listWidths
@@ -699,19 +1110,22 @@ const Settings = (props) => {
 
 
     const selectParametr = (item, index, type) => {
-        //console.log('selectParam', item, index)
+        console.log('selectParam', item, index)
         let itemIndex = 0;
         let sectionIndex = 0;
         if(type == 'params'){
-            for(let i = 0; i<structure.length; i++){               
-                for(let j = 0; j<structure[i].data.length; j++){
-                    if(structure[i].category === item.category && structure[i].data[j].param === item.param){
+            /*
+            for(let i = 0; i<structureCustomizer.length; i++){               
+                for(let j = 0; j<structureCustomizer[i].data.length; j++){
+                    if(structureCustomizer[i].category === item.category && structureCustomizer[i].data[j].param === item.param){
                         itemIndex = j;
                         sectionIndex = i;
                         break;
                     }
                 }
-            }
+            } */
+            itemIndex = item.indexInSection;
+            sectionIndex = item.indexSection;
         } else {
             itemIndex = 0;
             sectionIndex = index;
@@ -736,78 +1150,23 @@ const Settings = (props) => {
             setList(list); 
         }
         //console.log('st')
-        if(
-            //(listHeights.length == listWidths.length && listHeights.length == allStructurParams.length) 
-            //|| 
-            ((derivedValues.value.listHeights != listHeights || derivedValues.value.listWidths != listWidths) 
-                && (listWidths.length == allStructurParams.length && listHeights.length == allStructurParams.length)
-            )
-        ){
-            //console.log('new full renders')
+
+        //const eqh = listHeights.map((item, index)=>item-derivedValues.value.listHeights[index])
+        //const eqw = listWidths.map((item, index)=>item-derivedValues.value.listWidths[index])
+
+        const heightsEqaul = (derivedValues.value.listHeights.toString() === listHeights.toString())
+        const heightsCountEqaul = (listHeights.length === allStructurParams.length)
+
+        const widthsEqaul = (derivedValues.value.listWidths.toString() === listWidths.toString())
+        const widthsCountEqaul = (listWidths.length === allStructurParams.length)
+
+        if((!heightsEqaul || !widthsEqaul) && ( heightsCountEqaul && widthsCountEqaul)){
+            //console.log('lh',listHeights, listHeights.length)
+            //console.log('lw',listWidths, listWidths.length)
             countDerivedValues()
         }
     };
 
-    const jumpPress =()=>{
-        console.log('pressj')
-        /*
-        sectListRef.current.scrollToLocation({
-            itemIndex: 0,
-            sectionIndex: 0,
-            viewPosition: 1,
-            animated: false,
-        })
-        */
-        handlePresentModalPress()
-    }
-
-
-    const animStyleBobber1 = useAnimatedStyle(() => {
-        const duration = 200;
-        return {
-            transform: [
-                {translateY: withTiming(animValueBobberButtonVisible.value == 0? -(5+appStyle.functionButton.size) : 0, {duration: duration})}
-            ] 
-        }
-    })
-    const animStyleBobber2 = useAnimatedStyle(() => {
-        const duration = 200;
-        return {
-            //opacity: withTiming(animValueBobberButtonExpand.value == 1? 1 : 0.9, {duration: duration}),
-        }
-    })
-
-    const copyObject = (copied)=>{
-        const copy = {}
-        for(let el in copied){
-            if((typeof copied[el] != 'object') || (Array.isArray(copied[el]))){
-                copy[el] = copied[el]
-            } else {
-                copy[el] = copyObject(copied[el])
-            }
-        }
-        return copy
-    }
-
-    const getNewAppConfigObject =()=>{
-        return copyObject(appConfig)
-    }
-
-    const getNewAppStyleObject =(flag = 'previewStyle')=>{
-
-        if(flag == 'currentStyle'){
-            return copyObject(appStyle)
-        }
-        return copyObject(previewAppStyle)
-    }
-  
-    const applyPress =()=>{
-        console.log('pressa')
-        
-        applyAppStyle()
-        //splashStart(previewAppStyle.theme, themesApp.indexOf(previewAppStyle.theme));
-    }  
-    
     //category updater
     const categoryStyle = useAnimatedStyle(()=>{
         const duration = 250
@@ -821,8 +1180,8 @@ const Settings = (props) => {
     const categoryText = useAnimatedProps(()=>{
         //console.log(Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type)
         return {
-            value: Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type,
-            text: Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type,
+            value: Language.StructureScreen.typesSettings[`${categorysCustomizer[accentCategory.value]}`].type,
+            text: Language.StructureScreen.typesSettings[`${categorysCustomizer[accentCategory.value]}`].type,
         }
         //,[Language, LanguageAppIndex]
     })
@@ -843,44 +1202,7 @@ const Settings = (props) => {
         }
     })
 
-    const dynamicStyleBobberButton = useAnimatedStyle(()=>{
-        const duration = 300
-        const durationTranslate = 400;
-        const position =(buttonSize)=>({
-            center: (deviceWidth*0.5-(buttonSize/2)),
-            left: ((deviceWidth-12)-buttonSize),
-            right: (12)
-        })
-        const bottom = interpolate(appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
-        const addBottom = (appStyle.navigationMenu.type == 'hidden' && appStyle.navigationMenu.position.horizontal == 'center' && appStyle.functionButton.position == 'center')? (20+bottom) : 0
-        return {
-            height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
-            width:  withTiming(appStyle.functionButton.size, {duration: duration}),
-            bottom:  withTiming((appStyle.navigationMenu.height+12.5+addBottom), {duration: duration}),
-            right: withTiming( (position(appStyle.functionButton.size)[appStyle.functionButton.position]), {duration: duration}),
 
-            transform: [
-                {translateY: withTiming(animValueBobberButtonVisible.value, {duration: durationTranslate})}
-            ] 
-        }
-    })
-
-    const back = () => {
-        console.log('settings back', bottomSheetVisible , props.hideMenu)
-        (!bottomSheetVisible && props.hideMenu)? props.r_setHideMenu(false) : null
-        props.navigation.goBack()
-    }
-    const goToPalleteScreen = (index = 0) => {
-        ToastAndroid.show('LOAD', ToastAndroid.SHORT);   
-        bottomSheetVisible? bottomSheetModalRef.current?.dismiss(): null;    
-        (!bottomSheetVisible && !props.hideMenu)? props.r_setHideMenu(true) : null
-        //console.log('settings to palette', bottomSheetVisible , props.hideMenu) 
-        props.navigation.navigate('palette', {themeIndex: index})
-        console.log('settings to palette', bottomSheetVisible , props.hideMenu)  
-        
-    }
-
-    
     const selectorLine = useAnimatedStyle(()=>{
         const duration = 300
         return {
@@ -903,19 +1225,6 @@ const Settings = (props) => {
                     extrapolateRight: Extrapolation.CLAMP
                 }   
             ),
-        }
-    })
-
-    const params = useAnimatedStyle(()=>{
-        const duration = 300
-        return {
-            
-            backgroundColor: interpolateColor(
-                animSelectorLine.value, 
-                [headerHeight/2, headerHeight/4],
-                [Theme.basics.accents.primary, '#00000000']  
-            ),
-            
         }
     })
 
@@ -976,33 +1285,155 @@ const Settings = (props) => {
                 [1, 0]  
             ),
         }
-    })
+    })    
+    
+    
+    const renderItem = ({item, index})=>{
+        const RedactorComponent = item.paramRedactorComponent;
+        const redactorName = Language.StructureScreen.params[item.param]
+        const icon = (item.icon != null? item.icon : "border-none-variant");
+        //console.log(item, index)
 
-    // ref
-    const bottomSheetModalRef = useRef(BottomSheetModal);
-    const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-    // variables
-    const snapPoints = useMemo(() => [previewHeight/3+30, previewHeight+30], []);
+        
+        /*
+        presets 220.18182373046875
+        thema 380.6363525390625
+        borderRadius 220.18182373046875
+        effects 219.81817626953125
+        navigationMenu 475.9090881347656
+        lists 310
+        bobberButton 241.63636779785156
+        modals 220.18182373046875
+        appFunctions 220.18182373046875
+        loadAnimation 274.0909118652344
+        weather 316.5454406738281
+        ohters 219.81817626953125
 
-    // callbacks
-    const handlePresentModalPress = useCallback(() => {
-        props.r_setHideMenu(true)
-        setBottomSheetVisible(true)
-        bottomSheetModalRef.current?.present();
-    }, []);
 
-    const handleSheetChanges = useCallback((index) => {
-        console.log('handleSheetChanges', index);
-        if(index === -1 && bottomSheetVisible){
-            setBottomSheetVisible(false)
-            props.r_setHideMenu(false)
-        }
+        ============================base<sub
+        presets 210
+        thema 343.81817626953125
+        borderRadius 210
+        effects 210
+        navigationMenu 438.7272644042969
+        lists 299.81817626953125
+        bobberButton 231.81817626953125
+        modals 210
+        appFunctions 210
+        loadAnimation 210
+        weather 306.7272644042969
+        ohters 210
 
-    }, []);
 
-    const BLUR = false
-    return (
-    <>  
+
+        =============================base
+        presets 210
+        thema 316.9090881347656
+        borderRadius 210
+        effects 210
+        navigationMenu 411.81817626953125
+        lists 300.18182373046875
+        bobberButton 231.81817626953125
+        modals 210
+        appFunctions 210
+        loadAnimation 210
+        weather 306.7272644042969
+        ohters 210
+
+
+
+        
+        */
+        
+        return (
+            <Reanimated.View
+                key={String(item.param+index)}
+                onLayout={(event)=>{
+                    if(item.fromCustom){
+                        /*
+                        console.log(
+                            item.param,
+                            event.nativeEvent.layout.height+2*appStyle.lists.proximity
+                        )
+                        //+(item.subTitle? 27 : 0)
+                        */
+                        stacker(listHeights, setListHeights, event.nativeEvent.layout.height)
+                    }
+                }}
+            >
+            {item.subTitle &&
+            <Text
+                style={[{
+                    height: 27,
+                    textAlign: 'center',
+                    color: Theme.texts.accents.secondary,
+                    fontSize: 22,
+                    fontWeight: 'bold',
+                    letterSpacing: 4,
+                    fontVariant: ['small-caps'],
+                }]}
+            >
+                {Language.StructureScreen.subCategorys[item.subCategory]}
+            </Text>}
+            <Reanimated.View
+            
+                style={[
+                    staticStyles.SLArea, 
+                    appStyle.lists.shadow? staticStyles.shadow : {},
+                    dynamicStyleListItems,
+                    {   
+                        minHeight: item.fromCustom? 200 : 70,
+                        backgroundColor: Theme.basics.grounds.primary,   
+                    }
+                ]}
+                
+            >   
+                <Reanimated.View
+                    style={[ 
+                        dynamicStyleListItemsHeaders, 
+                        { 
+                        flexDirection: 'row', 
+                        width: '100%',
+                        height: 25,
+                        alignItems: 'center',
+                    }]}
+                >
+                    <MaterialCommunityIcons name={icon} size={20} color={Theme.texts.neutrals.secondary} />
+                    <Text style={[staticStyles.SLParamHeaderText, {color: Theme.texts.neutrals.secondary}]}>{redactorName? redactorName : item.param}</Text>
+                </Reanimated.View>
+                {RedactorComponent != null && 
+                <RedactorComponent
+                    //for themes redactor
+                    goToPalleteScreen = {goToPalleteScreen}
+
+                    appStyle={appStyle}
+                    setAppStyle={setAppStyle}
+                    r_setAppStyle={r_setAppStyle}
+
+                    previewAppStyle={previewAppStyle}
+                    setPreviewAppStyle={setPreviewAppStyle}
+
+                    previewAppStyleA={previewAppStyleA}
+
+                    getNewAppStyleObject={getNewAppStyleObject}
+                    
+
+                    appConfig={appConfig}
+                    r_setAppConfig={r_setAppConfig}
+                    getNewAppConfigObject={getNewAppConfigObject}
+
+                    ThemeColorsAppIndex={ThemeColorsAppIndex}
+                    ThemeSchema={ThemeSchema}
+                    LanguageAppIndex={LanguageAppIndex}
+
+                    //
+                />}         
+            </Reanimated.View>
+            </Reanimated.View>
+        )
+    }
+
+    return(<>
         <Reanimated.View
             style={[
                 staticStyles.FlatListsArea,              
@@ -1102,7 +1533,7 @@ const Settings = (props) => {
                         paddingTop: 3,
                         borderRadius: appStyle.borderRadius.additional
                     }}
-                    onPress={back}
+                    onPress={backBurgerPress}
                     android_ripple={{
                         color: Theme.texts.neutrals.primary,
                         borderless: true,
@@ -1159,12 +1590,12 @@ const Settings = (props) => {
                         getItemLayout={(data, index) => (
                             {length: deviceWidth/2, offset: deviceWidth/2 * index, index: index}
                         )}
-                        data={structure}
-                        keyExtractor={item => item.category}
+                        data={categorysCustomizer}
+                        keyExtractor={item => item}
                         renderItem={({item, index})=> {
                             return (
                             <BasePressable
-                                key={String(item.category+index)}
+                                key={String(item+index)}
                                 type={'t'}
                                 style={[{
                                     width: deviceWidth/2,                            
@@ -1173,7 +1604,7 @@ const Settings = (props) => {
                                     alignItems: 'center',
                                     justifyContent: 'flex-start',
                                 }}
-                                text={Language.StructureScreen.typesSettings[item.category].category}
+                                text={Language.StructureScreen.typesSettings[item].category}
                                 textStyle={[staticStyles.AnimatedHeaderText, {color: Theme.texts.neutrals.primary,}]}
                                 rippleColor={false}
                                 onPress={()=>{selectParametr(item, index, 'categorys')}}
@@ -1240,54 +1671,34 @@ const Settings = (props) => {
 
         <ReanimatedSectionList
             ref={sectListRef}
-            contentOffset={{x: 0, y: (packHeight)}}
+            contentOffset={{x: 0, y: (headHeightTop+itemCategoryHeight)}}
             stickySectionHeadersEnabled={false}
             showsVerticalScrollIndicator={false}
             onScroll={scrollSectionsList}
-            sections={structure}
+            sections={structureCustomizer}
             keyExtractor={(item, index) => item.param + index}
             style={{
                 paddingTop: headerHeight
             }}
-            ListHeaderComponent={()=>{return(
+            ListHeaderComponent={
                 <View
                     style={{
-                        height: headHeight,
-                        maxHeight: headHeight,
+                        //height: headHeight,
+                        //maxHeight: headHeight,
                         width: '100%',
                         backgroundColor: Theme.basics.grounds.secondary,
                         marginBottom: selectorLineHeightFull
                     }}
-                >
-                    <Reanimated.View
-                        //key={String(item.param+index)}  
-                        style={[
-                            staticStyles.SLArea, 
-                            appStyle.lists.shadow? staticStyles.shadow : {},
-                            dynamicStyleListItems,
-                            {
-                                backgroundColor: Theme.basics.grounds.primary,   
-                            }
-                        ]}
-                    >  
-                        <Reanimated.View
-                            style={[ 
-                                dynamicStyleListItemsHeaders, 
-                                { 
-                                flexDirection: 'row', 
-                                width: '100%',
-                                //marginBottom: 5, 
-                                alignItems: 'center',
-                                height: 25,
-                                backgroundColor: 'red'
-                            }]}
-                        >
-                            <MaterialCommunityIcons name={"border-none-variant" } size={20} color={Theme.texts.neutrals.secondary} />
-                            <Text style={[staticStyles.SLParamHeaderText, {color: Theme.texts.neutrals.secondary}]}>settings</Text>
-                        </Reanimated.View>
-                    </Reanimated.View>
+
+                    onLayout={(event)=>{
+                        const height = event.nativeEvent.layout.height
+                        if(height != headHeightTop){setHeadHeightTop(height)}
+                        
+                    }}
+                >   
+                    {STRUCTURE.settingsData.map((item, index)=>{return(renderItem({item, index}))})}               
                 </View> 
-            )}}
+            }
             renderSectionHeader={({section: {category, indexSection: index}})=>{
                 if(index==0){return null}
                 return (
@@ -1298,7 +1709,8 @@ const Settings = (props) => {
                         width: '100%',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        marginVertical: appStyle.lists.proximity, 
+                        //backgroundColor: 'red'
+                        //marginVertical: appStyle.lists.proximity, 
                     }}
                 >
                     <Text 
@@ -1308,6 +1720,7 @@ const Settings = (props) => {
                             fontWeight: 'bold',
                             letterSpacing: 4,
                             fontVariant: ['small-caps'],
+                            //backgroundColor: 'blue'
                         }]}
                     >
                         {Language.StructureScreen.typesSettings[`${category}`].category}
@@ -1315,177 +1728,34 @@ const Settings = (props) => {
                 </View> 
                 )
             }}
-            renderItem={({item, index})=>{
-                const RedactorComponent = item.paramRedactorComponent;
-                const redactorName = Language.StructureScreen.params[item.param]
-                return (
-                    <Reanimated.View
-                        key={String(item.param+index)}  
-                        style={[
-                            staticStyles.SLArea, 
-                            appStyle.lists.shadow? staticStyles.shadow : {},
-                            dynamicStyleListItems,
-                            {
-                                backgroundColor: Theme.basics.grounds.primary,   
-                            }
-                        ]}
-                        onLayout={(event)=>{stacker(listHeights, setListHeights, event.nativeEvent.layout.height+2*appStyle.lists.proximity)}}
-                    >   
-                        <Reanimated.View
-                            style={[ 
-                                dynamicStyleListItemsHeaders, 
-                                { 
-                                flexDirection: 'row', 
-                                width: '100%',
-                                height: 25,
-                                alignItems: 'center',
-                            }]}
-                        >
-                            <MaterialCommunityIcons name={item.icon} size={20} color={Theme.texts.neutrals.secondary} />
-                            <Text style={[staticStyles.SLParamHeaderText, {color: Theme.texts.neutrals.secondary}]}>{redactorName}</Text>
-                        </Reanimated.View>
-                        {RedactorComponent != null && 
-                        <RedactorComponent
-                            //for themes redactor
-                            goToPalleteScreen = {goToPalleteScreen}
-
-                            appStyle={appStyle}
-                            setAppStyle={setAppStyle}
-                            r_setAppStyle={props.r_setAppStyle}
-
-                            previewAppStyle={previewAppStyle}
-                            setPreviewAppStyle={setPreviewAppStyle}
-
-                            previewAppStyleA={previewAppStyleA}
-
-                            getNewAppStyleObject={getNewAppStyleObject}
-                            
-
-                            appConfig={appConfig}
-                            r_setAppConfig={props.r_setAppConfig}
-                            getNewAppConfigObject={getNewAppConfigObject}
-
-                            ThemeColorsAppIndex={ThemeColorsAppIndex}
-                            ThemeSchema={ThemeSchema}
-                            LanguageAppIndex={LanguageAppIndex}
-                        />}         
-                    </Reanimated.View>
-                )
-            }}
+            renderItem={renderItem}
             ListFooterComponent = {()=>{
-                let lastObject = listHeights[listHeights.length-1]
-                lastObject = (lastObject == NaN || lastObject == undefined)? 160 : lastObject
+                //let lastObject = listHeights[listHeights.length-1]
+                //lastObject = (lastObject == NaN || lastObject == undefined)? 200 : lastObject
                 return (
                     <View style={{
-                            height: deviceHeight,
+                            height: deviceHeight -200, //-headerHeight-selectorLineHeight
                             alignItems: 'center',
                             justifyContent: 'center'
                         }}
                     >
-                        <Text>till all</Text>
+                        <Text 
+                            style = {[{
+                                color: '#f010f0',
+                                fontSize: 25,
+                                fontWeight: 'bold',
+                                letterSpacing: 1,
+                                fontVariant: ['small-caps'],
+                                opacity: .5
+                            }]}
+                        >F1F</Text>
                     </View>
                 )
             }}
         />
-        
-        
-
-        {/*BOBBER BUTTON*/}
-        {!bottomSheetVisible && 
-        <Reanimated.View 
-            style = {[dynamicStyleBobberButton, {
-                position: 'absolute',
-                alignItems: 'flex-end',
-                justifyContent: 'flex-end',
-            }]}
-        >   
-            {["apply", "jumpUp"].map((item, index)=>{
-                let animStyle;
-                let iconName;
-                let pressFunction;
-                switch(item){
-                    case "jumpUp": 
-                        animStyle = animStyleBobber1;
-                        iconName = "arrow-collapse-up";
-                        pressFunction = jumpPress;
-                        break;
-                    case "apply": 
-                        animStyle = animStyleBobber2;
-                        iconName = "check-outline";
-                        pressFunction = applyPress;
-                        break;
-                }
-                return (
-                    <Reanimated.View
-                        key={item+index}
-                        
-                        style = {[animStyle,{
-                            zIndex: 1,       
-                            position: 'absolute',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }]}
-                    >
-                        <BasePressable
-                            type={"i"}
-                            icon={{name: iconName, size: 24, color: Theme.icons.neutrals.primary}}
-                            style={{
-                                height: appStyle.functionButton.size,
-                                width: appStyle.functionButton.size,
-                                borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: Theme.basics.accents.secondary,
-                                shadowColor: "#000",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 2
-                                },
-                                shadowOpacity: 0.25,
-                                shadowRadius: 4,
-                                elevation: 4,
-                            }}
-                            android_ripple={{
-                                color: Theme.icons.accents.quaternary,
-                                borderless: true,
-                                foreground: false
-                            }}
-                            onPress={pressFunction}
-                        />
-                    </Reanimated.View>
-                )
-            })}
-        </Reanimated.View>}
-
-        {/*STYLE UPDATE*/}
-        <BottomSheetModalProvider>
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={1}
-          snapPoints={snapPoints}
-          onChange={handleSheetChanges}
-        >           
-            <StyleChangePreview
-                appStyle={appStyle}
-                setAppStyle={setAppStyle}
-                r_setAppStyle={props.r_setAppStyle}
-                previewAppStyle={previewAppStyle}
-                previewAppStyleA = {previewAppStyleA}
-                splashStart = {splashStart}
-
-                ThemeColorsAppIndex={ThemeColorsAppIndex}
-                ThemeSchema={ThemeSchema}
-                LanguageAppIndex={LanguageAppIndex}
-            />
-        </BottomSheetModal>
-        </BottomSheetModalProvider>
-    </>);  
-};
-export default connect(mapStateToProps('SETTINGS_SCREEN'), mapDispatchToProps('SETTINGS_SCREEN'))(Settings);
-
-
-const BasisList = () =>{
-    return(<>
-        
     </>)
+
+
 }
 
 const staticStyles = StyleSheet.create({
@@ -1546,7 +1816,7 @@ const staticStyles = StyleSheet.create({
     },
     SLArea: {
         //backgroundColor: 'white',
-        minHeight: 200, 
+        minHeight: 70, 
         paddingHorizontal: 10,
         //justifyContent: 'space-around',
         justifyContent: 'flex-start',

@@ -7,6 +7,15 @@
     "plugins": [
       [
         "expo-notifications"
+      ],
+      [
+        "expo-navigation-bar",
+        {
+          "position": "absolute",
+          "visibility": "hidden",
+          "behavior": "inset-swipe",
+          "backgroundColor": "#00000080"
+        }
       ]
     ],
     "extra": {
@@ -25,10 +34,6 @@
       "supportsTablet": true
     },
 
-    "androidNavigationBar": {
-      "visible": "sticky-immersive"
-    },
-
     "android": {
       "userInterfaceStyle": "light",
       "icon": "./assets/iconY.png",
@@ -39,8 +44,8 @@
         "monochromeImage": "./assets/monochrome_iconY.png"
       },
       "splash": {
+        "resizeMode": "native",
         "image": "./assets/splashY.png",
-        "resizeMode": "contain",
         "backgroundColor": "#000000"
       },
       "package": "com.F1F.YTAT",

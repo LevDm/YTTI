@@ -156,8 +156,8 @@ export const SwitchField = ({
                     true: Theme.icons.accents.primary
                 },
                 thumb: { 
-                    false: Theme.basics.grounds.primary,//Theme.icons.accents.quaternary, 
-                    true: Theme.basics.grounds.primary,//Theme.icons.accents.primary, 
+                    false: Theme.basics.neutrals.secondary,//Theme.icons.accents.quaternary, 
+                    true: Theme.basics.neutrals.secondary,//Theme.icons.accents.primary, 
                 }
             }}
             primeValue={primeValue}

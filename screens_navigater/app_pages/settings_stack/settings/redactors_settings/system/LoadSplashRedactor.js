@@ -24,13 +24,13 @@ import commonStaticStyles, { SwitchField } from "../CommonElements";
 
 export default LoadSplashRedactor = ({
     appStyle,
-    setAppStyle,
-    r_setAppStyle,
+    //setAppStyle,
+    //r_setAppStyle,
 
-    setPreviewAppStyle,
-    getNewAppStyleObject,
+    //setPreviewAppStyle,
+    //getNewAppStyleObject,
 
-    getNewAppConfigObject,
+    //getNewAppConfigObject,
     appConfig,
     r_setAppConfig,
 
@@ -49,7 +49,8 @@ export default LoadSplashRedactor = ({
         //r_setAppStyle(newAppStyle)
         
 
-        let newAppConfig = getNewAppConfigObject();
+        //let newAppConfig = getNewAppConfigObject();
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
         newAppConfig.splachScreenShow = (!loadSplash);
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);

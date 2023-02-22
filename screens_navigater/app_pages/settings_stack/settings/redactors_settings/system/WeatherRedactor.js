@@ -78,7 +78,7 @@ export default WeatherRedactor = ({
 
     appConfig,
     r_setAppConfig,
-    getNewAppConfigObject,
+    //getNewAppConfigObject,
     
 }) => {
     
@@ -212,7 +212,8 @@ export default WeatherRedactor = ({
 
     const editLocation = (type, location) => {
         //types = ['add', 'replace']
-        let newAppConfig = getNewAppConfigObject();
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
+        //let newAppConfig = getNewAppConfigObject();
 
         if(type == 'add'){
             newAppConfig.weather.locationInfo.push(location);
@@ -312,7 +313,8 @@ export default WeatherRedactor = ({
     const settingLocaion = (index) => {
         //console.log('setting for', index, !checkGroup[index])
         const newGroup = getGroup(index)
-        let newAppConfig = getNewAppConfigObject();
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
+        //let newAppConfig = getNewAppConfigObject();
         for(let i = 0; i < checkGroup.length; i++){
             newAppConfig.weather.locationInfo[i].used = newGroup[i];
         }
@@ -333,7 +335,8 @@ export default WeatherRedactor = ({
 
     const weatherUsedSetting = () => {
         console.log('switch use weather')
-        let newAppConfig = getNewAppConfigObject();
+        //let newAppConfig = getNewAppConfigObject();
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
         newAppConfig.weather.used = !weatherUsed
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
@@ -354,7 +357,8 @@ export default WeatherRedactor = ({
     const typeSetting = (index) => {
         const type = weatherTypes[index]
         console.log('type setting', type)
-        let newAppConfig = getNewAppConfigObject();
+        //let newAppConfig = getNewAppConfigObject();
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
         newAppConfig.weather.type = type
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
@@ -448,17 +452,11 @@ export default WeatherRedactor = ({
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
                             android_ripple={ripple(Theme.icons.accents.primary)}
-                            Item = {
-                                <Text 
-                                    style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}
-                                >
-                                    {usersLocations[index].city}
-                                </Text>
-                            }
-                            Check = {checkGroup[index]}
+                            Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{usersLocations[index].city}</Text>}
+                            check = {checkGroup[index]}
                             onPress = {()=>{settingLocaion(index)}}
-                            BoxBorderRadius = {appStyle.borderRadius.additional}
-                            ColorsChange = {{
+                            boxBorderRadius = {appStyle.borderRadius.additional}
+                            colorsChange = {{
                                 true: Theme.icons.accents.primary, 
                                 false: Theme.icons.accents.quaternary
                             }}
@@ -526,8 +524,9 @@ export default WeatherRedactor = ({
         <BaseModal
             animationType = {'fade'}
             visible = {modalVisible}
-            dimOut = {appStyle.modals.highlightMethods.dimOutDark? Theme.specials.transparents.dim : false} 
-            gradient = {appStyle.modals.highlightMethods.gradient? Theme.modals.basics.accents : false}
+            dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.basics.neutrals.tertiary}25`: false} 
+            gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.primary : false}
+            blur={true}
             outPress = {outsideModalPress}
             onShow = {onShow}
             modalStyle = {{
@@ -536,7 +535,7 @@ export default WeatherRedactor = ({
                 height: 250
             }}
             style={{
-                backgroundColor: Theme.modals.basics.grounds.secondary,
+                backgroundColor: Theme.basics.neutrals.primary,
                 borderTopLeftRadius: appStyle.borderRadius.additional,
                 borderTopRightRadius: appStyle.borderRadius.additional,
                 borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
@@ -546,12 +545,12 @@ export default WeatherRedactor = ({
                 //borderRightWidth: 0,
                 //borderLeftWidth: appStyle.modals.highlightMethods.outline? (appStyle.modals.horizontalProximity? 1 : 0) : 0,
                 //borderRightWidth: appStyle.modals.highlightMethods.outline? (appStyle.modals.horizontalProximity? 1 : 0) : 0,
-                borderColor: Theme.modals.outline,
+                borderColor: Theme.icons.accents.primary,
                 flex: 1,
                 //width: deviceWidth-2*appStyle.modals.horizontalProximity,
             }}
             thumbStyle = {{
-                backgroundColor: Theme.modals.thumb,
+                backgroundColor: Theme.icons.accents.primary,
                 width: 50
             }}
             snapHeights = {[250, 250]}
@@ -564,7 +563,7 @@ export default WeatherRedactor = ({
                     alignItems: 'center'
                 }}
             >
-                <Text style = {[staticStyles.boldText, {color: Theme.modals.texts.neutrals.primary}]}>
+                <Text style = {[staticStyles.boldText, {color: Theme.texts.neutrals.secondary}]}>
                     {Language[openedModal.type]}
                 </Text>
                 <View
@@ -609,7 +608,7 @@ export default WeatherRedactor = ({
                                 width: '45%',
                                 height: 150,
                                 borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: Theme.modals.basics.grounds.primary,
+                                backgroundColor: Theme.basics.neutrals.secondary,
                                 //justifyContent: 'center',
                                 alignItems: 'center'
                             }, staticStyles.shadow]}
@@ -623,7 +622,7 @@ export default WeatherRedactor = ({
                                 }}
                                 onPress={()=>{selected(item)}}
                                 android_ripple={{
-                                    color: Theme.modals.basics.accents,
+                                    color: Theme.basics.accents.primary,
                                     borderless: true,
                                     foreground: false
                                 }}
@@ -637,10 +636,10 @@ export default WeatherRedactor = ({
                                         alignItems: 'center'
                                     }}
                                 >
-                                    <MaterialCommunityIcons name={iconName} size={30} color={Theme.modals.icons.neutrals.primary} />
+                                    <MaterialCommunityIcons name={iconName} size={30} color={Theme.icons.neutrals.secondary} />
                                     <Text 
                                         style = {[staticStyles.boldText, {
-                                            color: Theme.modals.texts.neutrals.primary, 
+                                            color: Theme.texts.neutrals.secondary, 
                                             textAlign: 'center',
                                         }]}
                                     >
@@ -650,7 +649,7 @@ export default WeatherRedactor = ({
                                 <Text
                                     style = {[staticStyles.boldText, 
                                         {
-                                            color: Theme.modals.texts.neutrals.primary,
+                                            color: Theme.texts.neutrals.secondary,
                                             marginTop: 20,
                                             padding: 5
                                         }
@@ -666,19 +665,21 @@ export default WeatherRedactor = ({
                                         width: '100%',
                                         height: '65%',
                                         borderRadius: appStyle.borderRadius.additional,
-                                        backgroundColor: Theme.modals.basics.accents,
+                                        borderTopLeftRadius: 0,
+                                        borderTopRightRadius: 0,
+                                        backgroundColor: Theme.basics.accents.primary,
                                         justifyContent: 'center',
                                         alignItems: 'center'
                                     }}
                                 >
                                     {!netConnectInfo &&
-                                    <MaterialCommunityIcons name="wifi-remove" size={40} color={Theme.modals.icons.neutrals.primary}/>
+                                    <MaterialCommunityIcons name="wifi-remove" size={40} color={Theme.icons.neutrals.primary}/>
                                     }
                                     {netConnectInfo &&
                                     <Text
                                         style = {[staticStyles.text, 
                                             {
-                                                color: Theme.modals.texts.neutrals.secondary,
+                                                color: Theme.texts.neutrals.primary,
                                                 textAlign: 'center'
                                             }
                                         ]}

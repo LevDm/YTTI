@@ -28,15 +28,15 @@ import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
 export default LanguageRedactor = ({
     appStyle,
-    setAppStyle,
+    //setAppStyle,
 
     appConfig,
     r_setAppConfig,
 
-    r_setLanguageApp,
-    getNewAppStyleObject,
+    //r_setLanguageApp,
+    //getNewAppStyleObject,
     getNewAppConfigObject,
-    LanguageStore,
+    //LanguageStore,
 
     ThemeColorsAppIndex,
     ThemeSchema,
@@ -47,7 +47,8 @@ export default LanguageRedactor = ({
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.languages
 
     const languageSetting = (index) => {
-        let newAppConfig = getNewAppConfigObject();
+        //let newAppConfig = getNewAppConfigObject();
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
         newAppConfig.languageApp = languagesApp[index];
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);

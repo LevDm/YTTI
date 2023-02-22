@@ -15,64 +15,6 @@ import languagesAppList, { languagesApp } from "../../../app_values/Languages";
 import Settings from './settings/Settings';
 import Palette from './palette/Palette';
 
-const Scr = ({ navigation, route }) => {
-    const go = ()=> {
-      if(route.name == "Settings"){navigation.navigate("Colors")}
-      //if(route.name == "SettingsDr"){navigation.navigate("ColorsSt")}
-      if(route.name == "Colors"){navigation.navigate("Settings")}
-
-      if(route.name == "Splash"){navigation.navigate("App")}
-    }
-    const tabBar = route.name == "Home" || route.name == "Settings" || route.name == "Ohter"
-    return (
-        <View
-            style ={{
-                flex: 1,
-                alignItems: 'center', 
-                justifyContent: 'center',
-                //backgroundColor: 'blue'
-            }}
-        >
-            <Text>Screen {route.name}</Text>
-            <Button
-              title={"Go"}
-              onPress={go}
-            >
-            </Button>
-            {tabBar && 
-            <View
-              style = {{
-                position: 'absolute',
-                backgroundColor: 'red',
-                height: 60,
-                width: 180,
-                flexDirection: 'row',
-                bottom: 10
-              }}
-            >
-              <Button
-                title={"Home"}
-                color={route.name == "Home"?'green' : 'red'}
-                onPress={()=>{navigation.navigate("Home")}}
-              />
-              <Button
-                title={"Settings"}
-                color={route.name == "Settings"?'green' : 'red'}
-                onPress={()=>{navigation.navigate("SettingsStack")}}
-              />
-              <Button
-                title={"Ohter"}
-                color={route.name == "Ohter"?'green' : 'red'}
-                onPress={()=>{navigation.navigate("Ohter")}}
-              />
-            </View>
-            }
-        </View>
-    )
-}
-
-
-
 const Stack = createStackNavigator();
 
 function SettingsStack(props) {
@@ -137,21 +79,26 @@ function SettingsStack(props) {
                 animationEnabled: false,
                 gestureEnabled: false,
                 cardStyle: {
-                    backgroundColor: Theme.basics.grounds.secondary
+                    backgroundColor: Theme.basics.neutrals.primary
                 },
             }}
         >
-            <Stack.Screen name="settings" component={Settings} />
+            <Stack.Screen 
+                name="settings" 
+                component={Settings} 
+                //options={{detachPreviousScreen: false}}
+            />
             <Stack.Screen 
                 name="palette" 
                 component={Palette} 
                 options={{
+
                     //headerShown: true
                     //cardStyle: {
                     //    backgroundColor: 'tomato',
                     //},
-                }}
-                
+                    detachPreviousScreen: false
+                }} 
             />
         </Stack.Navigator>
     );

@@ -29,6 +29,7 @@ import languagesAppList, { languagesApp } from "../../../../../../app_values/Lan
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 
 import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -55,7 +56,7 @@ import commonStaticStyles, { BoxsField } from "../CommonElements";
 const Reanimated_Pressable = Reanimated.createAnimatedComponent(Pressable)
 const R_ActivityIndicator = Reanimated.createAnimatedComponent(ActivityIndicator)
 
-const schemes = ['light', 'auto', 'dark'] 
+const schemes = ['auto', 'light', 'dark'] 
 
 
 const ThemeItem = ({
@@ -75,6 +76,7 @@ const ThemeItem = ({
         //BackgroundColor: Theme.basics.neutrals.primary
     //}}
     itemSize,
+    outlineSize,
 
     appStyle,
 },props) => {
@@ -122,13 +124,16 @@ const ThemeItem = ({
         >   
             <LinearGradient
                 colors={colors.gradient}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                locations={[.3,.6,.8,1]}
                 style={{
                     height: itemSize,
                     width: itemSize,
                     borderRadius: appStyle.borderRadius.additional,
                 }}
             />
-
+            {false && 
             <Text 
                 style={[staticStyles.themeName, {
                     color: colors.title,
@@ -136,32 +141,53 @@ const ThemeItem = ({
                 }]}
             >
                 {title}
-            </Text>
+            </Text>}
 
             <View
                 style={{
-                    height: itemSize-6,//-(8)+1.5,
-                    width: itemSize-6,
+                    height: itemSize-(2*outlineSize),//-(8)+1.5,
+                    width: itemSize-(2*outlineSize),
                     position: 'absolute',
                     alignItems: 'center',
                     borderRadius: appStyle.borderRadius.additional -2,
-                    borderWidth:  3,
+                    borderWidth:  outlineSize,
                     borderColor: primaryCheck? colors.background: 'transparent',
                 }}
             >
                 <View
                     style={{
-                        height: 16,
-                        width: 40,
+                        height: itemSize/8,
+                        width: itemSize/3.1,
                         position: 'absolute',
-                        top: -3,
+                        top: -outlineSize,
                         borderRadius: appStyle.borderRadius.additional,                       
-                        borderWidth:  secondaryCheck? 3 : 0,
+                        borderWidth:  secondaryCheck? outlineSize : 0,
                         borderColor: colors.background,
                         backgroundColor: secondaryCheck? 'transparent' : colors.background
                     }}
                 />   
             </View>
+         
+            <MaterialCommunityIcons 
+                name="format-color-text" 
+                size={25} 
+                color={colors.subTitle}
+                style={{
+                    position: 'absolute',
+                    top: (itemSize/2-12)+3,
+                    left: (itemSize/2-12)+3
+                }}
+            />
+            <MaterialCommunityIcons 
+                name="format-color-text" 
+                size={25} 
+                color={colors.title}
+                style={{
+                    position: 'absolute',
+                    bottom: (itemSize/2-12)+3,
+                    right: (itemSize/2-12)+3
+                }}
+            />
         </Reanimated_Pressable>
     )
 }
@@ -170,14 +196,14 @@ export default ThemeRedacor = ({
     goToPalleteScreen,
 
     appStyle,
-    previewAppStyle,
-    setPreviewAppStyle,
-    getNewAppStyleObject,
+    //previewAppStyle,
+    //setPreviewAppStyle,
+    //getNewAppStyleObject,
 
     previewAppStyleA,
 
-    setAppStyle,
-    r_setAppStyle,
+    //setAppStyle,
+    //r_setAppStyle,
 
     ThemeColorsAppIndex,
     ThemeSchema,
@@ -193,7 +219,8 @@ export default ThemeRedacor = ({
     const scrollX = React.useRef(new Animated.Value(0)).current;
     const [chosenThemeIndex, setChosenThemeIndex] = useState(themesApp.indexOf(appStyle.palette.theme))
 
-    const itemSize = 120
+    const itemSize = 72
+    const outlineSize = 2
 
     const pressItem = (index) => {
         console.log('THEME PressItem', index)
@@ -210,7 +237,7 @@ export default ThemeRedacor = ({
         if(index == 0 && themesColorsAppList[0]==null){
             console.log('not custom theme for redactors')
         } else {
-            goToPalleteScreen(index)
+            goToPalleteScreen(index, 1)
         }
         
     }
@@ -259,7 +286,7 @@ export default ThemeRedacor = ({
         //r_setAppStyle(newAppStyle);
         //dataRedactor("storedAppStyle",newAppStyle);
 
-        goToPalleteScreen(0)
+        goToPalleteScreen(previewThemeIndex, 0)
         
     }
 
@@ -294,7 +321,7 @@ export default ThemeRedacor = ({
             isChoiceOne={true}
             title = {Language.colorMode}
             //  'one'>index || 'multiple'>[indexs]
-            primaryValue = {schemes.indexOf(ThemeSchema)} 
+            primaryValue = {schemes.indexOf(appStyle.palette.scheme)} 
             groupSize = {schemes.length}
             onPress = {(activeIndex)=>{shemaSetting(activeIndex)}}
             groupItems = {Object.values(Language.colorsMods)}
@@ -306,10 +333,10 @@ export default ThemeRedacor = ({
             style = {[staticStyles.text, {
                 color: Theme.texts.neutrals.secondary,
                 paddingLeft: 10,
-                marginTop: 15,
+                marginTop: 10,
             }]}
         >
-            Palette
+            {Language.palette}
         </Text> 
         <View
             style={{  
@@ -320,7 +347,7 @@ export default ThemeRedacor = ({
         <FlatList
             ref = {flatListRef}
             style={{        
-                width: 3*itemSize,
+                width: 5*itemSize,
                 height: itemSize,
             }}
             horizontal = {true}
@@ -338,7 +365,7 @@ export default ThemeRedacor = ({
             keyExtractor={(item, index) => {
                 return item + index
             }}
-            ListHeaderComponent={()=> (
+            ListHeaderComponent={
                 <Pressable 
                     style = {{
                         width: itemSize,
@@ -347,15 +374,28 @@ export default ThemeRedacor = ({
                         alignItems: 'center',
                         justifyContent: 'center',
                         borderRadius: appStyle.borderRadius.additional,
-                        borderWidth:  3,
-                        //borderColor: ,
+                        borderWidth:  outlineSize,
+                        borderColor: Theme.texts.neutrals.secondary,
                         transform: [{scale: .95}],
+                        paddingTop: 6
                     }}
                     onPress={createCustomTheme}
                 >
-                    <Text>open palette redactor</Text>
+                    <MaterialCommunityIcons name="palette-advanced" size={35} color={Theme.texts.neutrals.secondary} />
+                    <Text
+                        style = {{
+                            top: -5,
+                            color: Theme.texts.neutrals.secondary,
+                            fontSize: 10,
+                            fontWeight: 'bold',
+                            letterSpacing: 0,
+                            fontVariant: ['small-caps'],
+                        }}
+                    >
+                        {Language.openPainter}
+                    </Text>
                 </Pressable>
-            )}
+            }
             renderItem={({item, index})=>{
                 const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
                 const schemaThisItem = 'light'
@@ -378,17 +418,19 @@ export default ThemeRedacor = ({
                                     
                     colors = {
                         themesColorsAppList[index]? {
-                        gradient: [ThemeThisItem.basics.accents.primary, ThemeThisItem.basics.accents.quaternary],
+                        gradient: [ThemeThisItem.basics.accents.primary,ThemeThisItem.basics.accents.secondary, ThemeThisItem.basics.accents.tertiary, ThemeThisItem.basics.accents.quaternary],
                         title: ThemeThisItem.texts.neutrals.primary,
                         background: Theme.basics.neutrals.primary
                         } : {
                         //not custom palette
                         gradient: ['#00000060', '#0000000a'],
-                        title: Theme.texts.neutrals.secondary,
+                        subTitle: Theme.texts.neutrals.secondary,
+                        title: Theme.texts.neutrals.primary,
                         background: 'transparent'  
                     }}
                         
                     itemSize={itemSize}
+                    outlineSize={outlineSize}
                 />
             )}}
         />

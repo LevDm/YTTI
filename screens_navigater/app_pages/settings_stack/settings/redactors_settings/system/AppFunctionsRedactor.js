@@ -41,15 +41,15 @@ import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
 export default LanguageRedactor = ({
     appStyle,
-    setAppStyle,
+    //setAppStyle,
 
     appConfig,
     r_setAppConfig,
 
-    r_setLanguageApp,
-    getNewAppStyleObject,
+    //r_setLanguageApp,
+    //getNewAppStyleObject,
     getNewAppConfigObject,
-    LanguageStore,
+    //LanguageStore,
 
     ThemeColorsAppIndex,
     ThemeSchema,
@@ -131,10 +131,10 @@ export default LanguageRedactor = ({
                         {item}
                     </Text>
                 }
-                Check = {checkGroup[index]}
+                check = {checkGroup[index]}
                 onPress = {()=>{settingFunctions(index)}}
-                BoxBorderRadius = {appStyle.borderRadius.additional}
-                ColorsChange = {{
+                boxBorderRadius = {appStyle.borderRadius.additional}
+                colorsChange = {{
                     true: Theme.icons.accents.primary, 
                     false: Theme.icons.accents.quaternary
                 }}

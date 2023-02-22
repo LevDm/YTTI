@@ -1,24 +1,27 @@
-import React, {useCallback, useState, useEffect, useRef} from "react";
+import React, {useCallback, useState, useEffect,  useRef} from "react";
 
 import {
     Appearance,
     Text, 
     Pressable, 
-    Animated, 
     View,
+    TextInput,
+    Modal,
     Button, 
     Platform, 
-    Image, 
+    Image,
+    Keyboard, 
     Dimensions, 
-    FlatList, 
-    SafeAreaView, 
-    TouchableOpacity, 
+    FlatList,
+    ToastAndroid, 
+    BackHandler, 
     StyleSheet
 } from 'react-native';
 
 import Reanimated, {
   useAnimatedStyle,
   useSharedValue,
+  useAnimatedProps,
   interpolate,
   interpolateColor,
   runOnJS
@@ -46,12 +49,61 @@ import ColorPicker, { hexToHSL, HSLToHex } from "./elemens_pickers/ColorPicker";
 import ShemePicker from "./elemens_pickers/SchemePicker";
 import { ScrollView } from "react-native";
 
+import EasePicker from "./ease_mode/EasePicker";
+import FullPalettePicker from "./full_mod/FullPalettePicker";
+
+const Reanimated_TextInput = Reanimated.createAnimatedComponent(TextInput);
 
 const BACKGROUND_COLOR = 'rgba(0,0,0,0.9)';
 const { width } = Dimensions.get('window');
 
 const CIRCLE_SIZE = width * 0.3;
 const PICKER_WIDTH = width * 0.9;
+
+const easeUpdate = (copiedObject, pathList, newValue) => {
+  const shemes = ['light', 'dark']
+  const newObject = JSON.parse(JSON.stringify(copiedObject));
+
+  const multiPath = Array.isArray(pathList[0])
+
+  for(let i = 0; i<pathList.length; i++){
+    const onePathList = multiPath? pathList[i] : pathList
+    const oneValue = multiPath? newValue[i] : newValue
+    const allShemesUpdate = (onePathList[0] != shemes[0] && onePathList[0] != shemes[1])
+    for(let primaryKey of shemes){
+      const resPath = allShemesUpdate? [primaryKey, ...onePathList] : onePathList
+      //console.log(resPath,'=',oneValue)
+      switch(resPath.length){
+        case 1: 
+          newObject[resPath[0]] = oneValue;
+          break;
+        case 2: 
+          newObject[resPath[0]][resPath[1]] = oneValue;
+          break;
+        case 3: 
+          newObject[resPath[0]][resPath[1]][resPath[2]] = oneValue;
+          break;
+        case 4: 
+          newObject[resPath[0]][resPath[1]][resPath[2]][resPath[3]] = oneValue;
+          break;
+        case 5: 
+          newObject[resPath[0]][resPath[1]][resPath[2]][resPath[3]][resPath[4]] = oneValue;
+          break;
+        default:
+          console.log('!!!>PAINTER_EASE_UPDATE_DOES_NOT_HAVE_THIS_OBJECT_LVL',onePathList.length, onePathList);
+      }
+      if(!allShemesUpdate){break}
+    }
+    if(!multiPath){break}
+  }
+  return newObject
+}
+
+const ripple = (color='#ffffff') => ({
+  color: `${color}20`,
+  borderless: true,
+  foreground: false
+})
 
 const Palette = (props) => {
 
@@ -77,11 +129,11 @@ const Palette = (props) => {
       setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
     }
 
-    if (appStyle != jstore.appStyle) {
+    if(JSON.stringify(appStyle) != JSON.stringify(jstore.appStyle)){
       setAppStyle(jstore.appStyle);
     }
 
-    if (appConfig != jstore.appConfig) {
+    if(JSON.stringify(appConfig) != JSON.stringify(jstore.appConfig)){
       setAppConfig(jstore.appConfig);
     }
   })
@@ -101,93 +153,76 @@ const Palette = (props) => {
   })
 
   const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-  const Language = languagesAppList[LanguageAppIndex]
+  const Language = languagesAppList[LanguageAppIndex].SettingsScreen.PainterScreen
 
-  const getContrast = (hcolor) => {
-    let r = 0, g = 0, b = 0;
-    if (hcolor.length == 4) {
-      r = "0x" + hcolor[1] + hcolor[1];
-      g = "0x" + hcolor[2] + hcolor[2];
-      b = "0x" + hcolor[3] + hcolor[3];
-    } else if (hcolor.length == 7) {
-      r = "0x" + hcolor[1] + hcolor[2];
-      g = "0x" + hcolor[3] + hcolor[4];
-      b = "0x" + hcolor[5] + hcolor[6];
-    } else if (hcolor.length > 7) {
-      let alfa = "0x"+hcolor.slice(7)
-      alfa /= 255
-      return alfa > 0.5? "white" : 'black'
-    }
-    r /= 255;
-    g /= 255;
-    b /= 255;
+  const colorsPickerShow = useSharedValue(-1);
+  const shemePickerShow = useSharedValue(-1);
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      colorsPickerShow.value != -1? colorsPickerShow.value = 1 : null
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      colorsPickerShow.value != -1? colorsPickerShow.value = 0 : null
+    });
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
 
-    const count = (coef) => ((coef+0.055)/1.055)**2.4 
-    
-    let contr = count(r)+count(g)+count(b)
+  useEffect(() => {
+    const backAction = () => {
+      back()
+      return true;
+    };
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    return () => backHandler.remove();
+  }, []);
 
-    return contr <= 0.5? 'white' : 'black'
-  }
-  
-  const copyAppStyle = (copied)=>{
-    const copy = {}
-    for(let el in copied){
-        if(el == 'customTheme'){continue}
-        if((typeof copied[el] != 'object') || (Array.isArray(copied[el]))){
-            copy[el] = copied[el]
-        } else {
-            copy[el] = copyAppStyle(copied[el])
-        }
-    }
-    return copy
-  }
+  const [savedWindowShow, setSavedWindowShow] = useState(false)
 
-  const saveCustomTheme = () => {
-    //console.log('custom theme full save', appStyle)
-    let newAppStyle = copyAppStyle(appStyle)
-    newAppStyle.customTheme = currentCustomTheme
-    themesColorsAppList.splice(0,1,currentCustomTheme)
-
-    //setAppStyle(newAppStyle);
-    props.r_setAppStyle(newAppStyle);
-    dataRedactor("storedAppStyle",newAppStyle);
-  }
-
-  const back = () => {
-    saveCustomTheme()
-
+  const exit = () => {
+    console.log('exit')
     props.r_setHideMenu(false)
     props.navigation.goBack()
   }
 
-  const open = themesApp[props.route.params.themeIndex]
-  console.log(open, themesColorsAppList[props.route.params.themeIndex].light.theme, '|')
-  const primeStateName = 'Your custom theme name'
-  const [ themeName, setThemeName ] = useState(primeStateName)
-  
-  const pickedColorSecondary = useSharedValue('');
-
-  const logg = (t)=>{
-    console.log(t)
+  const back = () => {
+    const notEqual = !(JSON.stringify(appStyle.customTheme) == JSON.stringify(currentCustomTheme))
+    console.log('back', notEqual)
+    if(notEqual){
+      setSavedWindowShow(true)
+    } else {
+      exit()
+    }
   }
 
-  const onColorChangedSecondary = useCallback((color) => {
-    'worklet';
-    pickedColorSecondary.value = color;
-    //runOnJS(setSelectColor)(color)
-  }, []);
+  const saveAndExit = () => {
+    saveCustomTheme()
+    closeModal()
+    exit()
+  }
 
-  const rStyleSecondary = useAnimatedStyle(() => {
-    return {
-      backgroundColor: pickedColorSecondary.value,
-    };
-  });
+  const closeModal = () => {
+    setSavedWindowShow(false)
+  }
 
-  const [initialColor, setInitialValue] = useState() //'#6b8e23'//'#af5657'
-  const [colorsPickerVisible, setColorsPickerVisible] = useState(false)
-  const [shemesPickerVisible, setShemesPickerVisible] = useState(false)
+  const saveCustomTheme = (saved = false) => {
+    const saveObject = saved? saved : currentCustomTheme
+    const equal = (JSON.stringify(appStyle.customTheme) === JSON.stringify(saveObject))
+    if(!equal){
+      const newAppStyle = JSON.parse(JSON.stringify(appStyle));
+      newAppStyle.customTheme = saveObject
+      newAppStyle.palette.theme = 'custom'
+      themesColorsAppList.splice(0,1,saveObject)
+      props.r_setAppStyle(newAppStyle);
+      dataRedactor("storedAppStyle",newAppStyle);
+      ToastAndroid.show(Language.saved, ToastAndroid.LONG);
+    }
+  }
 
-  const [ stateOpenedColor, setStateOpenedColor ] = useState()
+  const [initialColor, setInitialValue] = useState() 
+  const [stateOpenedColor, setStateOpenedColor] = useState()
 
   const copyObject = (copied, currentTrace, listStates )=>{
     const copy = {}
@@ -228,78 +263,169 @@ const Palette = (props) => {
     return copy
   }
 
-  const [currentCustomTheme, setCurrentCustomTheme] = useState(copyObject(themesColorsAppList[props.route.params.themeIndex], [], [{value: themesColorsAppList[props.route.params.themeIndex].light.theme, trace: 'theme'}]))
+  const [modIndex, setModIndex] = useState(props.route.params.modIndex ? props.route.params.modIndex : 0 )
+  const [currentCustomTheme, setCurrentCustomTheme] = useState(easeUpdate(themesColorsAppList[props.route.params.themeIndex], ['theme'], 'custom'))
 
   const checkAlphaColor = (color)=>{
     return color+stateOpenedColor.alpha
   }
 
   const applyNewStateColor = (changeColor) => {
-    const stateColor = {
-      value: checkAlphaColor(changeColor) ,//+ stateOpenedColor.alpha,
-      trace: stateOpenedColor.trace
-    }
-    let ret = copyObject(currentCustomTheme, [], [stateColor])
-    //console.log(ret)
-
+    const ret = easeUpdate(currentCustomTheme, stateOpenedColor.trace, checkAlphaColor(changeColor))
     setCurrentCustomTheme(ret)
   }
 
-  const accentsTrasing = (accentColor, type) => {
+  const gradientTracing = (accentColor, type, copied = false) => {
+    const accentsRans = getAccentsTrace(accentColor, type)
+
+    let paths = [
+      ['basics','accents', 'primary'],
+      ['basics','accents', 'secondary'],
+      ['basics','accents', 'tertiary'],
+      ['basics','accents', 'quaternary'],
+
+      ['texts','accents', 'primary'],
+      ['texts','accents', 'secondary'],
+      ['texts','accents', 'tertiary'],
+      ['texts','accents', 'quaternary'],
+
+      ['icons','accents', 'primary'],
+      ['icons','accents', 'secondary'],
+      ['icons','accents', 'tertiary'],
+      ['icons','accents', 'quaternary'],
+    ]
+
+    
+    if(stateOpenedColor? stateOpenedColor.trace[0] == 'light' || stateOpenedColor.trace[0] == 'dark' : false){
+      console.log('add shema accents tracing')
+      paths = paths.map((item)=>[ stateOpenedColor.trace[0], ...item])
+    }
+
+    const values = [
+      ...Object.values(accentsRans),
+
+      ...Object.values(accentsRans),
+
+      ...Object.values(accentsRans),
+    ]
+
+    //console.log(values)
+
+    
+    if(copied){
+      return easeUpdate(copied, paths, values) 
+    }
+    let ret = easeUpdate(currentCustomTheme, paths, values) 
+    setCurrentCustomTheme(ret)
+  }
+
+  const symbolsTasing = (primaryColor, copied = false) => {
+
+    let paths = [
+      ['texts','neutrals', 'primary'],
+
+      ['icons','neutrals', 'primary'],
+    ]
+
+    if(stateOpenedColor? stateOpenedColor.trace[0] == 'light' || stateOpenedColor.trace[0] == 'dark' : false){
+      console.log('add shema symb tracing')
+      paths = paths.map((item)=>[ stateOpenedColor.trace[0], ...item])
+    }
+
+    const values = [
+      primaryColor,
+
+      primaryColor,
+    ]
+
+    if(copied){
+      return easeUpdate(copied, paths, values) 
+    } 
+    let ret = easeUpdate(currentCustomTheme, paths, values)
+    setCurrentCustomTheme(ret)
+  }
+
+
+
+  const valueTacing = (color ) => {
+    let paths = [[...stateOpenedColor.trace.slice(1)]]
+    console.log('p0',paths)
+    const ground = ['basics','texts','icons']
+    for(let item of ground){
+      if(stateOpenedColor.trace[1] != item){
+        const newP = [item, ...stateOpenedColor.trace.slice(2)]
+        if(newP.slice(0, 2).join('-') != ['basics', 'neutrals'].join('-')){
+          paths.push(newP)
+        }
+      }
+    } 
+    
+
+    console.log('p1',paths)
+  
+    if(stateOpenedColor? stateOpenedColor.trace[0] == 'light' || stateOpenedColor.trace[0] == 'dark' : false){
+      console.log('add shema symb tracing')
+      paths = paths.map((item)=>[ stateOpenedColor.trace[0], ...item])
+    }
+
+    let values = []
+    for(let i = 0; i<paths.length;i++){values.push(color)}
+
+    let ret = easeUpdate(currentCustomTheme, paths, values)
+    setCurrentCustomTheme(ret)
+  }
+
+  const valueGradient = (color, type ) => {
+    const accentsRans = getAccentsTrace(color, type)
+
+    let paths = [[...stateOpenedColor.trace.slice(1)]]
+    console.log('gp0',paths)
+
+    for(let item of Object.keys(accentsRans)){
+      if(stateOpenedColor.trace[3] != item){
+        paths.push([...stateOpenedColor.trace.slice(1, 3), item])
+      }
+    } 
+
+    console.log('gp1',paths)
+  
+    if(stateOpenedColor? stateOpenedColor.trace[0] == 'light' || stateOpenedColor.trace[0] == 'dark' : false){
+      console.log('add shema symb tracing')
+      paths = paths.map((item)=>[ stateOpenedColor.trace[0], ...item])
+    }
+
+    let values = []
+    for(let i = 0; i<paths.length;i++){values.push(Object.values(accentsRans)[i])}
+
+    let ret = easeUpdate(currentCustomTheme, paths, values)
+    setCurrentCustomTheme(ret)
+  }
+
+  const getAccentsTrace = (accentColor, type) => {
     const HSLcolor = hexToHSL(accentColor) //to hsl
 
-    let states = []
-    for(let i=0; i< 4; i++){
+    const accentsRans = {
+      primary: '',
+      secondary: '',
+      tertiary: '',
+      quaternary: '',
+    }
+
+    for(let i=0; i<4; i++){
       let newL = 0  
       if(type=='light'){
         newL = Math.min(HSLcolor.l +10*i, 100)
       } else {
         newL = Math.max(HSLcolor.l -10*i, 0)
       }
-      states.push(
-        {
-          value: HSLToHex(HSLcolor.h, HSLcolor.s, newL),
-          trace: 'accents thumb active outline',
-          scheme: stateOpenedColor.trace[0]
-        }
-      )
+      accentsRans[Object.keys(accentsRans)[i]] = HSLToHex(HSLcolor.h, HSLcolor.s, newL)
     }
-    
-    let ret = copyObject(currentCustomTheme, [], states)
 
-    //console.log('accent/thumb'.split('/'))
-    //console.log(ret)
-    setCurrentCustomTheme(ret)
-  }
-
-  const trasing = (accentColor, type) => {
-    //type = 'neutrals', 'grounds
-    const range = {
-      primary: 0,
-      secondary: 1,
-      tertiary: 2
-    }
-    let states = []
-    for(let i=0; i < 3; i++){
-      states.push(
-        {
-          value: i == range[stateOpenedColor.trace[stateOpenedColor.trace.length-1]]? accentColor : '',
-          trace: type,
-          scheme: stateOpenedColor.trace[0]
-        }
-      )
-    }
-    let ret = copyObject(currentCustomTheme, [], states)
-    //console.log(ret)
-    setCurrentCustomTheme(ret)
+    return accentsRans
   }
 
   const onShemeChangedSecondary=(scheme)=>{
-    const stateColor = {
-      value: scheme,
-      trace: stateOpenedColor.trace
-    }
-    let ret = copyObject(currentCustomTheme, [], [stateColor])
+    let ret = easeUpdate(currentCustomTheme, ['statusBar'], scheme)
     setCurrentCustomTheme(ret)
   }
 
@@ -313,325 +439,283 @@ const Palette = (props) => {
         alpha: color.length > 7? color.slice(7) : '',
         trace: trace,
       })
-      //console.log('alpha', color.length > 7? color.slice(7) : '')=
-      shemesPickerVisible? setShemesPickerVisible(false) : null
-      !colorsPickerVisible? setColorsPickerVisible(true) : null
+      shemePickerShow.value = -1
+      colorsPickerShow.value = 0
     } else {
       if(trace.includes('statusBar')){
         setStateOpenedColor({
           value: color,
           trace: trace,
         })
-        !shemesPickerVisible? setShemesPickerVisible(true) : null
-        colorsPickerVisible? setColorsPickerVisible(false) : null
+        shemePickerShow.value = 0
+        colorsPickerShow.value = -1
+        
       }
     }
   }
 
-  const exit = (fasterText)=>{
-    //console.log('exit', fasterText)
-    let ret = copyObject(currentCustomTheme, [], [{value: fasterText, trace: 'theme'}])
-    setCurrentCustomTheme(ret)
+  const buildPalette = (primaryAccent, typeAccents, primarySymbols) => {
+    const palette1 = easeUpdate(currentCustomTheme, ['statusBar'], 'auto')
+    const palette2 = symbolsTasing(primarySymbols, palette1)
+    const palette3 = gradientTracing(primaryAccent, typeAccents, palette2)
+    saveCustomTheme(palette3)
+    setCurrentCustomTheme(palette3)
   }
 
+  const modes = [Language.easeMod.title, Language.fullMod.title, Language.fullMod.title]
+  const themes = ['', Language.themes.light, Language.themes.dark]
+  
+  const PICKER_AREA_HEIGHT = 270
 
-  const focus = ()=> {
-    shemesPickerVisible? setShemesPickerVisible(false) : null
-    colorsPickerVisible? setColorsPickerVisible(false) : null
+  const subTitle = useSharedValue({mod: modes[modIndex], theme: themes[modIndex]})
+
+  const scrolling = (event) => {
+    const scrollX = event.nativeEvent.contentOffset.x
+    const scrollIndex = Math.abs(Math.round(scrollX/deviceWidth))
+    //console.log(scrollIndex)
+    subTitle.value = {mod: modes[scrollIndex], theme: themes[scrollIndex]}
+    if(scrollIndex == 0){
+      shemePickerShow.value = -1
+      colorsPickerShow.value = -1
+    }
   }
 
-  const renderColors = (objColors, generals = false, start = false, trace = []) => {
-    //let newTrace = [...trace, item]
-    //generals? newTrace.push(generals) : null
+  const modText = useAnimatedProps(()=>{
+    const text = `${subTitle.value.mod} ${Language.mod}`
+    //console.log(text)
+    return {
+      text: text,
+      value: text
+    }
+  })
 
-    const textColor = getContrast((trace.length>0? trace[0] : generals) == 'light'? '#fffffe' : '#000000' )
-
-    return(
-      <View
-        key = {`color_general_${Math.random()}_${generals}`}
-        style={{
-          marginLeft: !start? 10 : 0,
-        }}
-      >
-        {!start && <Text style={{fontSize: 14, fontWeight: 'bold', color: textColor}} >{generals}:</Text>}
-        {Object.keys(objColors).map((item, index)=>{
-          if(typeof objColors[item] == 'string'){
-            return (
-              <View
-                key = {`color_${generals? generals : ''}_${item}_${index}`}
-                style={{
-                  height: 31,
-                  marginLeft: 10,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  borderBottomWidth: 1,
-                  borderColor: textColor,
-                  marginBottom: 1,
-                  paddingHorizontal: 5
-                }}
-              >
-                <Text style={{fontSize: 14, color: textColor, fontWeight: ['theme', 'scheme', 'statusBar'].includes(item)? 'bold' : 'normal'}}>{item}:</Text>
-                {(item != 'scheme' && item != 'theme') &&
-                <BasePressable
-                  type="t"
-                  text={objColors[item]}
-                  textStyle={{
-                    fontSize: 14,
-                    color: objColors[item][0] === '#'? getContrast( objColors[item]) : textColor
-                  }}
-                  style={{
-                    height: 29,
-                    width: 90,
-                    backgroundColor: objColors[item][0] === '#'? objColors[item] : 'transparent',
-                    borderRadius:appStyle.borderRadius.additional,
-                    borderWidth: 1,
-                    borderColor: objColors[item][0] === '#'? getContrast( objColors[item]) : textColor
-                  }}
-                  onPress={()=>{pressColor(objColors[item], [...trace, generals, item])}}
-                />
-                }
-                {(item === 'scheme' || item === 'theme')  && 
-                <Text 
-                  style={{
-                    height: 29,
-                    width: 90,
-                    fontSize: 14,
-                    //backgroundColor: 'red',
-                    textAlign: 'center',
-                    textAlignVertical: 'center',
-                    color: textColor
-                  }}
-                >{objColors[item]}</Text>
-                }
-              </View>
-            )
-          } else {
-            
-            return (
-              <View
-                key = {`rc_color_${generals? generals : ''}_${item}_${index}`}
-              >
-                {renderColors(objColors[item], item, false,[ ...trace, generals])}
-              </View>
-            )
-          }
-        })}
-      </View>
-    )
-  }
-
+  const themeText = useAnimatedProps(()=>{
+    const text = subTitle.value.theme
+    //console.log(text)
+    return {
+      text: text,
+      value: text
+    }
+  })
   
   return (
     <View style = {{ flex: 1}}>
       <View
         style ={{
           width: '100%',
-          height: statusBarHeight + 45 + 35,
-          backgroundColor: Theme.basics.accents.primary,
-    
-          justifyContent: 'center',
-          alignItems: 'center',
+          paddingTop: statusBarHeight,
+          height: statusBarHeight+45+35,
+          backgroundColor: 'black',   
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+          borderBottomWidth: 2,
+          borderColor: 'white'
         }}
       >
         <View
           style ={{
-            width: '100%',
-            height: statusBarHeight + 45,
-            //backgroundColor: Theme.basics.accents.primary,
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            paddingTop: 30,
-            paddingHorizontal: 20
+            width: deviceWidth/2,
+            height: 45,
+            paddingHorizontal: 3
           }}
         >
-          <BasePressable
-            type='i'
-            icon={{name: "keyboard-backspace", size: 30, color: Theme.icons.neutrals.primary }}
-            style={{
-              height: 45, 
-              width: 45, 
-              borderRadius: appStyle.borderRadius.additional
+          <View
+            style = {{
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row',                    
             }}
-            onPress={back}
-            android_ripple={{
-              color: Theme.texts.neutrals.primary,
-              borderless: true,
-              foreground: false
-            }}
-          />
-          <Text
-            style = {[staticStyles.headerText, {
-              marginLeft: 15,
-              color: Theme.texts.neutrals.primary
-            }]}
           >
-            creater customs themes
-          </Text>
+            <BasePressable
+              type='i'
+              icon={{name: "keyboard-backspace", size: 24, color: 'white' }}
+              style={{
+                height: 45, 
+                width: 45,
+                paddingTop: 4,
+                marginLeft: 15,
+                borderRadius: 22.5//appStyle.borderRadius.additional
+              }}
+              onPress={back}
+              android_ripple={{
+                color: 'white',
+                borderless: true,
+                foreground: false
+              }}
+            />
+            <Text
+              style = {[staticStyles.headerText, {
+                left: 0,
+                color: 'white'
+              }]}
+            >
+              {Language.title}
+            </Text>
+          </View>
         </View>
-        <BaseTextInput 
-          textValue={themeName}
-          setTextValue={setThemeName}
-          exit={exit}
-          focus={focus}
-          paneleStyle={{
-            borderColor: Theme.basics.accents.primary,
-            backgroundColor: Theme.basics.grounds.primary,
+        <View
+          style ={{
+            width: deviceWidth,
+            height: 35,
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignContent: 'center'
           }}
-          textInputProps={{
-              style: {
-                  color: Theme.texts.neutrals.secondary,
-                  fontSize: 16,
-                  //minWidth: 90,
-              },
-              
-              placeholder: 'name theme',
-              placeholderTextColor: Theme.texts.neutrals.tertiary,
-              maxLength: 70,
-
-              selectionColor: Theme.texts.accents.primary,
-
-              //android
-              cursorColor: Theme.texts.accents.primary
-          }}
-          basePressableProps={{
-            style: {
-              height: 35,
-              borderRadius:appStyle.borderRadius.additional,
-            },
-            styleItemContainer: {
-              justifyContent: 'flex-end',
-              paddingRight: 15,
-              flexDirection: 'row-reverse'
-              //alignItems: 'center'
-            },
-            textStyle: {
-              fontSize: 18,
-              color: Theme.texts.neutrals.primary
-            },
-            android_ripple: {
-              color: Theme.icons.accents.quaternary,
-              borderless: true,
-              foreground: false
-            },
-            type: 'ti',
-            icon: {
-              name: "pencil-outline", 
-              size: 20, 
-              color: Theme.icons.neutrals.primary
-            },
-          }}
-        />
+        >       
+          <Reanimated_TextInput
+            editable = {false}
+            animatedProps={modText}
+            style={[staticStyles.text, {flex: 1, textAlign: 'center',  color: 'white'}]}
+          />
+          <Reanimated_TextInput
+            editable = {false}
+            animatedProps={themeText}
+            style={[staticStyles.text, {flex: 1, textAlign: 'center', color: 'white'}]}
+          />
+        </View>
       </View>
-      <ScrollView
-        horizontal = {true}
-        snapToInterval={deviceWidth}
+      
+
+    <ScrollView
+      horizontal = {true}
+      snapToInterval={deviceWidth}
+      contentOffset={{x: modIndex*deviceWidth, y: 0}}
+      onScroll={scrolling}
+      style={{
+        backgroundColor: 'black'
+      }}
+      decelerationRate = {'fast'}
+    >
+      <View
         style={{
-          
+          width: deviceWidth,
+          height: deviceHeight,
+          justifyContent: 'flex-start',
+          alignItems: 'center'
         }}
       >
-        <ScrollView
-          //horizontal = {true}
-          //snapToInterval={deviceWidth}
-          showsVerticalScrollIndicator={false}
-          style={{
-            width: deviceWidth*2,
-            //
-          }}
-          contentContainerStyle={{
-            
-            flexDirection: 'row',
-            
+        <EasePicker getAccentsTrace={getAccentsTrace} buildPalette={buildPalette} LanguageAppIndex={LanguageAppIndex}/>
+      </View>
 
-          }}
-        >
-        {Object.keys(currentCustomTheme).map((item, index)=>{
-
-          return (
-            <View
-              key = {`theme_oject_${item}_${Math.random()}`}
-              
-              style={{
-                width: deviceWidth,
-                paddingTop: 10,
-                paddingLeft: 10,
-                paddingRight: 20,
-                paddingBottom: deviceHeight/3.5,
-                backgroundColor: themesColorsAppList[ThemeColorsAppIndex][item].basics.grounds.secondary
-              }}
-            >
-              {renderColors(currentCustomTheme[item], item, true)}
-            </View>
-          )
-        })}
-        </ScrollView>
+      <FullPalettePicker
+        pressColor = {pressColor}
+        currentTrace={stateOpenedColor? stateOpenedColor.trace.join('-') : undefined}
+        currentCustomTheme = {currentCustomTheme}
+      />
     </ScrollView>
       
-      
-      <ColorPicker
-        visible={colorsPickerVisible}
+    <ColorPicker
+      show={colorsPickerShow}
 
-        applyNewStateColor={applyNewStateColor}
-        accentsTrasing={accentsTrasing}
-        trasing={trasing}
+      applyNewStateColor={applyNewStateColor}
+      valueGradient={valueGradient}
+      valueTacing={valueTacing}
 
-        onColorChanged={onColorChangedSecondary}
-        initialValue={initialColor}
-        opened={stateOpenedColor}
+      initialValue={initialColor}
+      opened={stateOpenedColor}
 
-        ThemeColorsAppIndex={ThemeColorsAppIndex}
-        ThemeSchema={ThemeSchema}
-        LanguageAppIndex={LanguageAppIndex}
-        appStyle={appStyle}
-        appConfig={appConfig}
-      />
-      <ShemePicker
-        visible={shemesPickerVisible}
-        onShemeChanged={onShemeChangedSecondary}
-        initialValue={ stateOpenedColor != undefined? (stateOpenedColor.value != undefined? stateOpenedColor.value : 'light') : 'light'}
+      LanguageAppIndex={LanguageAppIndex}
+    />
 
-        ThemeColorsAppIndex={ThemeColorsAppIndex}
-        ThemeSchema={ThemeSchema}
-        LanguageAppIndex={LanguageAppIndex}
-        appStyle={appStyle}
-        appConfig={appConfig}
-      />
+    <ShemePicker
+      show={shemePickerShow}
+
+      onShemeChanged={onShemeChangedSecondary}
+      initialValue={ stateOpenedColor != undefined? (stateOpenedColor.value != undefined? stateOpenedColor.value : 'light') : 'light'}
+
+      LanguageAppIndex={LanguageAppIndex}
+    />
+
+    <Modal
+      visible={savedWindowShow}
+      animationType={'fade'}
+      transparent={true}
+    >
+    <Pressable 
+      style={{flex: 1, backgroundColor: '#000000a0'}}
+      onPress={closeModal}
+    />
+    <View
+        style={{
+          padding: 15,
+          position: 'absolute',
+          top: .375*deviceHeight,
+          left: .125*deviceWidth,
+          height: .25*deviceHeight,
+          width: .75*deviceWidth,
+          borderWidth: 1,
+          borderColor: 'white',
+          borderRadius: 20,
+          backgroundColor: 'black'
+        }}
+      >
+        <Text style = {[staticStyles.headerText, {flex: 1, color: 'white',}]}>{Language.isNew}</Text>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'row',  
+            backgroundColor: '#00000001'
+          }}
+        >
+          <Pressable
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: 5
+            }}
+            android_ripple={ripple()}
+            onPress={saveAndExit}
+          >
+            <Text style = {[staticStyles.headerText, { color: 'white',fontSize: 14}]}>{Language.isNewActions.y}</Text>
+          </Pressable>
+          <Pressable
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginHorizontal: 5
+            }}
+            android_ripple={ripple()}
+            onPress={closeModal}
+          >
+            <Text style = {[staticStyles.headerText, { color: 'white',fontSize: 14}]}>{Language.isNewActions.n}</Text>
+          </Pressable>
+          <Pressable
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 5
+            }}
+            android_ripple={ripple()}
+            onPress={exit}
+          >
+            <Text style = {[staticStyles.headerText, {color: 'white',fontSize: 12}]}>{Language.isNewActions.yn}</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Modal>
     </View>
   );
     
 }
 export default connect(mapStateToProps('PALETTE_SCREEN'), mapDispatchToProps('PALETTE_SCREEN'))(Palette);
 
-/*
-<View
-        style ={{
-          flex : 1,
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
-        <View
-          style ={{
-            flex : 1,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          {<Reanimated.View style={[staticStyles.circle, {backgroundColor: initialColor}]} >
-            <Reanimated.View style={[staticStyles.circle,rStyleSecondary, {height: CIRCLE_SIZE-20, width: CIRCLE_SIZE-20, borderRadius: (CIRCLE_SIZE-20)/2}]} />
-          </Reanimated.View>}
-        </View>
 
-          
-      </View>
-*/
 const staticStyles = StyleSheet.create({
   headerText: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '500',
     letterSpacing: 0.5,
     fontVariant: ['small-caps'],
+  },
+  text: {
+    fontSize: 16,
+    //opacity: .9,
+    fontWeight: '500',
+    fontVariant: ['small-caps'],
+    //color:  'white'//ThemesColorsAppList[0].skyUpUpUp//
   },
   topContainer: {
     flex: 3,

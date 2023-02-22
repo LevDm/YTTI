@@ -10,13 +10,9 @@ const Emerald = {
             quaternary: '#c5edd2',
         },
         neutrals: {
-            primary: '#000000', 
-            secondary: '#ffffff', 
-            tertiary: '#808080',
-        },
-        grounds: {
-            primary: '#222222', 
-            secondary: '#333333', 
+            primary: '#333333', 
+            secondary: '#222222', 
+            tertiary: '#000000',
         },
     },
     texts: {
@@ -45,45 +41,11 @@ const Emerald = {
             tertiary: '#808080',
         },
     },
-    navigateBar: {
-        grounds: '#222222',
-        transparentGround: '#ffffff20',
-        icons: {active: '#50c878', notActive: '#ffffff'},
-        texts: {active: '#50c878', notActive: '#ffffff'},
-    },
-    modals: {
-        thumb: '#50c878',
-        outline: '#50c878',
-        basics: {
-            grounds: {
-                primary: '#333333',
-                secondary: '#222222',
-            },
-            accents: '#50c878',
-        },
-        texts: {
-            neutrals: {
-                primary: '#ffffff',
-                secondary: '#000000',
-                tertiary: '#808080',
-            },
-        },
-        icons: {
-            neutrals: {
-                primary: '#ffffff',
-                secondary: '#000000',
-                tertiary: '#808080',
-            }
-        }
-    },
     specials: {
         fire: {
             primary: '#f00',
             secondary: '#a5a5a5',
         },
-        transparents: {
-            dim: '#00000045',
-        }
     },
 }
 
@@ -99,13 +61,9 @@ const Olive = {
             quaternary: '#b6c590',
         },
         neutrals: {
-            primary: '#000000', 
-            secondary: '#ffffff', 
-            tertiary: '#808080',
-        },
-        grounds: {
-            primary: '#222222', 
-            secondary: '#333333', 
+            primary: '#333333', 
+            secondary: '#222222', 
+            tertiary: '#000000',
         },
     },
     texts: {
@@ -116,7 +74,7 @@ const Olive = {
             quaternary: '#b6c590',
         },
         neutrals: {
-            primary: '#000000', 
+            primary: '#ffffff', 
             secondary: '#ffffff', 
             tertiary: '#808080',
         },
@@ -129,50 +87,17 @@ const Olive = {
             quaternary: '#b6c590',
         },
         neutrals: {
-            primary: '#000000', 
+            primary: '#ffffff', 
             secondary: '#ffffff', 
             tertiary: '#808080',
         },
     },
-    navigateBar: {
-        grounds: '#222222',
-        transparentGround: '#ffffff20',
-        icons: {active: '#6b8e23', notActive: '#ffffff'},
-        texts: {active: '#6b8e23', notActive: '#ffffff'},
-    },
-    modals: {
-        thumb: '#6b8e23',
-        outline: '#6b8e23',
-        basics: {
-            grounds: {
-                primary: '#333333',
-                secondary: '#222222',
-            },
-            accents: '#6b8e23',
-        },
-        texts: {
-            neutrals: {
-                primary: '#ffffff',
-                secondary: '#000000',
-                tertiary: '#808080',
-            },
-        },
-        icons: {
-            neutrals: {
-                primary: '#ffffff',
-                secondary: '#000000',
-                tertiary: '#808080',
-            }
-        }
-    },
+
     specials: {
         fire: {
             primary: '#f00',
             secondary: '#a5a5a5',
         },
-        transparents: {
-            dim: '#00000045',
-        }
     },
 }
 
@@ -188,13 +113,9 @@ const Gold = {
             quaternary: '#ffd700',
         },
         neutrals: {
-            primary: '#000', 
-            secondary: '#fff', 
-            tertiary: '#808080',
-        },
-        grounds: {
-            primary: '#fff', 
-            secondary: '#f5f5f5', 
+            primary: '#333333', 
+            secondary: '#222222', 
+            tertiary: '#000000',
         },
     },
     texts: {
@@ -205,7 +126,7 @@ const Gold = {
             quaternary: '#ffd700',
         },
         neutrals: {
-            primary: '#000', 
+            primary: '#fff', 
             secondary: '#fff', 
             tertiary: '#808080',
         },
@@ -223,45 +144,12 @@ const Gold = {
             tertiary: '#808080',
         },
     },
-    navigateBar: {
-        grounds: '#222222',
-        transparentGround: '#ffffff20',
-        icons: {active: '#000', notActive: '#000'},
-        texts: {active: '#6b8e23', notActive: '#000'},
-    },
-    modals: {
-        thumb: '#6b8e23',
-        outline: '#6b8e23',
-        basics: {
-            grounds: {
-                primary: '#333333',
-                secondary: '#222222',
-            },
-            accents: '#6b8e23',
-        },
-        texts: {
-            neutrals: {
-                primary: '#ffffff',
-                secondary: '#000000',
-                tertiary: '#808080',
-            },
-        },
-        icons: {
-            neutrals: {
-                primary: '#ffffff',
-                secondary: '#000000',
-                tertiary: '#808080',
-            }
-        }
-    },
+
     specials: {
         fire: {
             primary: '#f00',
             secondary: '#a5a5a5',
         },
-        transparents: {
-            dim: '#00000045',
-        }
     },
 }
 

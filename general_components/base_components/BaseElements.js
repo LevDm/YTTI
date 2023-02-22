@@ -397,6 +397,7 @@ import BottomSheet, {
   
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "@react-native-community/blur";
 
 export const BaseModal = ({
     animationType,
@@ -412,6 +413,7 @@ export const BaseModal = ({
     snapHeights,
     dimOut, //color
     gradient,
+    blur = false,
     children
 }) => {
     // ref
@@ -502,7 +504,37 @@ export const BaseModal = ({
                         return (
                         <View         
                             style={style}
+                            backgroundColor={blur? 'transparent' : style.backgroundColor}
                         >
+                            {blur && 
+                            <View 
+                                style = {[StyleSheet.absoluteFillObject, {
+                                    top: 0,
+                                    height: '100%',
+                                    width: '100%',
+                                    borderTopLeftRadius: style.borderTopLeftRadius - (gradient? 1 : 0),
+                                    borderTopRightRadius: style.borderTopRightRadius - (gradient? 1 : 0),
+                                    //specialty blur for android
+                                    overflow: 'hidden',
+                                    
+
+                                }]}
+                            >
+                            <BlurView
+                                style = {{
+                                    flex: 1, 
+                                }}
+                                blurType = {'light'}
+                                blurAmount = {10}
+                                
+                                //ANDROID_PROPS
+                                overlayColor={`${style.backgroundColor}90`}
+                                //overlayColor={'transparent'}
+                                //blurRadius	= {10}
+                                //downsampleFactor = {10}
+                            />
+                            </View>}
+
                             <LinearGradient
                                 colors={[gradient? gradient : 'transparent', 'transparent']}
                                 style={{

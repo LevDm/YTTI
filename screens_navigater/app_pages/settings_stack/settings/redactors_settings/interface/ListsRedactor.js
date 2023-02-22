@@ -28,8 +28,8 @@ import commonStaticStyles, { SwitchField, SliderField } from "../CommonElements"
 
 export default ListsRedactor = ({
     appStyle,
-    setPreviewAppStyle,
-    getNewAppStyleObject,
+    //setPreviewAppStyle,
+    //getNewAppStyleObject,
     previewAppStyleA,
 
     ThemeColorsAppIndex,

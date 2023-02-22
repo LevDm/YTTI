@@ -99,45 +99,45 @@ export function hexToHSL(H) {
 }
 
 export function HSLToHex(h,s,l) {
-      'worklet';
-      h = (h==360? 0 : h)
-      s /= 100;
-      l /= 100;
-    
-      let c = (1 - Math.abs(2 * l - 1)) * s,
-          x = c * (1 - Math.abs((h / 60) % 2 - 1)),
-          m = l - c/2,
-          r = 0,
-          g = 0, 
-          b = 0; 
-    
-      if (0 <= h && h < 60) {
-        r = c; g = x; b = 0;
-      } else if (60 <= h && h < 120) {
-        r = x; g = c; b = 0;
-      } else if (120 <= h && h < 180) {
-        r = 0; g = c; b = x;
-      } else if (180 <= h && h < 240) {
-        r = 0; g = x; b = c;
-      } else if (240 <= h && h < 300) {
-        r = x; g = 0; b = c;
-      } else if (300 <= h && h < 360) {
-        r = c; g = 0; b = x;
-      }
-      // Having obtained RGB, convert channels to hex
-      r = Math.round((r + m) * 255).toString(16);
-      g = Math.round((g + m) * 255).toString(16);
-      b = Math.round((b + m) * 255).toString(16);
-    
-      // Prepend 0s, if necessary
-      if (r.length == 1)
-        r = "0" + r;
-      if (g.length == 1)
-        g = "0" + g;
-      if (b.length == 1)
-        b = "0" + b;
-    
-      return "#" + r + g + b;
+  'worklet';
+  h = (h==360? 0 : h)
+  s /= 100;
+  l /= 100;
+
+  let c = (1 - Math.abs(2 * l - 1)) * s,
+      x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+      m = l - c/2,
+      r = 0,
+      g = 0, 
+      b = 0; 
+
+  if (0 <= h && h < 60) {
+    r = c; g = x; b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x; g = c; b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0; g = c; b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0; g = x; b = c;
+  } else if (240 <= h && h < 300) {
+    r = x; g = 0; b = c;
+  } else if (300 <= h && h < 360) {
+    r = c; g = 0; b = x;
+  }
+  // Having obtained RGB, convert channels to hex
+  r = Math.round((r + m) * 255).toString(16);
+  g = Math.round((g + m) * 255).toString(16);
+  b = Math.round((b + m) * 255).toString(16);
+
+  // Prepend 0s, if necessary
+  if (r.length == 1)
+    r = "0" + r;
+  if (g.length == 1)
+    g = "0" + g;
+  if (b.length == 1)
+    b = "0" + b;
+
+  return "#" + r + g + b;
 }
 const start={ x: 0, y: 0 }
 const end={ x: 1, y: 0 }
@@ -152,56 +152,30 @@ const interval_slider = [0, maxWidth]
 const interval_h = [0, 360]
 const interval_sl = [0, 100]
 
-
+const PICKER_AREA_HEIGHT = 270
 const ColorPicker = ({
-  visible,
+  show,
   initialValue,
   opened, 
-  onColorChanged,
 
   applyNewStateColor,
-  accentsTrasing,
-  trasing,
+  valueGradient,
+  valueTacing,
 
-  ThemeColorsAppIndex,
-  ThemeSchema,
   LanguageAppIndex,
-  appStyle,
-  appConfig,
 }) => {
-
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
     const logg = (t)=>{
       console.log(t)
     }
-    const keyboardShow = useSharedValue(-1);
-    useEffect(() => {
-      const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
-        keyboardShow.value != -1? keyboardShow.value = 1 : null
-      });
-      const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-        keyboardShow.value != -1? keyboardShow.value = 0 : null
-      });
-
-      return () => {
-        showSubscription.remove();
-        hideSubscription.remove();
-      };
-    }, []);
-
-    useEffect(()=>{
-      if(visible && keyboardShow.value == -1){keyboardShow.value = 0}
-      if(!visible && keyboardShow.value != -1){keyboardShow.value = -1}
-    },[visible])
 
     const areaSliders = useAnimatedStyle(()=>{
       const duration = 500
       return (
         {
           transform: [
-            {translateY: withTiming( interpolate(keyboardShow.value, [-1, 0, 1], [deviceHeight/4, 0, (deviceHeight/4)*3/5]), {duration: duration}  )}
+            {translateY: withTiming( interpolate(show.value, [-1, 0, 1], [PICKER_AREA_HEIGHT, 0, -(90)]), {duration: duration}  )}
           ]
         }
       )
@@ -531,10 +505,8 @@ const ColorPicker = ({
       //runOnJS(logg)(`${h} ${s} ${l}`)
       const color = HSLToHex(h,s,l)
       
-      if(keyboardShow.value != 1){
-        //runOnJS(logg)(`iv set undef ${color}`)
-        onColorChanged?.(color);
-        //inputValue != undefined? runOnJS(setInputValue)(undefined) : null
+      if(show.value != 1){
+        //onColorChanged?.(color);
         runOnJS(setInputValue)(undefined)
         currentSelectColor.value = color
       }
@@ -570,9 +542,8 @@ const ColorPicker = ({
       if(opened != undefined && opened.trace != undefined){
         const current = (opened.trace).slice(0).join('-')
       
-        if(current.includes("basics-accents-primary")){type = 'accents'}
+        if(current.includes("accents-primary")){type = 'accents'}
         if(current.includes("basics-neutrals")){type = 'neutrals'}
-        if(current.includes("basics-grounds")){type = 'grounds'}
       }
       return type
     }
@@ -626,18 +597,18 @@ const ColorPicker = ({
     }
 
     const circlesSize = 30
+
     return (
       <Animated.View
         style ={[{
           position: 'absolute',
           bottom: 0,
-          height: deviceHeight/4,
+          height: PICKER_AREA_HEIGHT,
+          paddingBottom: 20,
           width: deviceWidth,
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
           paddingHorizontal: CIRCLE_PICKER_SIZE/2,
           backgroundColor: 'transparent',
-          borderRadius: appStyle.borderRadius.additional,
-          //justifyContent: 'center',
           alignItems: 'center'
         }, areaSliders]}
       >
@@ -645,16 +616,17 @@ const ColorPicker = ({
           style = {{
             position: 'absolute',
             width: deviceWidth,
-            height: '100%',
+            height: PICKER_AREA_HEIGHT,
             flexDirection: 'row',
             //justifyContent: 'center',
             //alignItems: 'center'
             //backgroundColor: 'grey',
           }}
         >
-          <View style={{flex: 1, backgroundColor: 'white', borderTopLeftRadius: 20, borderBottomLeftRadius: 20}}/>
-          <View style={{flex: 1, backgroundColor: 'black', borderTopRightRadius: 20, borderBottomRightRadius: 20}}/>
+          <View style={{flex: 1, backgroundColor: 'white', borderTopLeftRadius: 30, borderBottomLeftRadius: 0}}/>
+          <View style={{flex: 1, backgroundColor: 'black', borderTopRightRadius: 30, borderBottomRightRadius: 0}}/>
         </View>
+
         <View
           style ={{
             flex: 1,
@@ -734,88 +706,71 @@ const ColorPicker = ({
           />
         </View>
         <View
-            style ={{
-              flex: 1,
-              width: sliderSize.width,
-              //backgroundColor: 'grey',
-              justifyContent: 'space-around',
-              alignItems: 'center',
-              flexDirection: 'row',
-              //marginRight: 85
+          style ={{
+            flex: 1,
+            width: sliderSize.width,
+            //backgroundColor: 'grey',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            flexDirection: 'row',
+            //marginRight: 85
 
+          }}
+        >
+          {typeTrasing == 'accents' &&
+          <BasePressable
+            type = 't'
+            text='light gradient'
+            textStyle={{
+              fontSize: 10,
             }}
-          >
-            {typeTrasing == 'accents' &&
-            <BasePressable
-              type = 't'
-              text='Trasing accents light'
-              textStyle={{
-                fontSize: 10,
-              }}
-              style = {{
-                flex: 1,
-                marginHorizontal: 10,
-                backgroundColor: '#00000025',
-                height: circlesSize,
-                borderRadius: circlesSize/2,
-                paddingHorizontal: 10,
-              }} 
-              onPress={()=>{accentsTrasing(currentSelectColor.value, 'light')}}
-            />}
-            {typeTrasing == 'accents' &&
-            <BasePressable
-              type = 't'
-              text='Trasing accents dark'
-              textStyle={{
-                fontSize: 10,
-              }}
-              style = {{
-                flex: 1,
-                marginHorizontal: 10,
-                backgroundColor: '#ffffff75',
-                height: circlesSize,
-                borderRadius: circlesSize/2,
-                paddingHorizontal: 10,
-              }} 
-              onPress={()=>{accentsTrasing(currentSelectColor.value, 'dark')}}
-            />}
-            {typeTrasing == 'neutrals' &&
-            <BasePressable
-              type = 't'
-              text='Trasing neutrals value'
-              textStyle={{
-                fontSize: 10,
-                color: 'white'
-              }}
-              style = {{
-                flex: 1,
-                marginHorizontal: 10,
-                backgroundColor: '#80808080',
-                height: circlesSize,
-                borderRadius: circlesSize/2,
-                paddingHorizontal: 10,
-              }} 
-              onPress={()=>{trasing(currentSelectColor.value, 'neutrals')}}
-            />}
-            {typeTrasing == 'grounds' &&
-            <BasePressable
-              type = 't'
-              text='Trasing grounds value'
-              textStyle={{
-                fontSize: 10,
-                color: 'white'
-              }}
-              style = {{
-                flex: 1,
-                marginHorizontal: 10,
-                backgroundColor: '#80808080',
-                height: circlesSize,
-                borderRadius: circlesSize/2,
-                paddingHorizontal: 10,
-              }} 
-              onPress={()=>{trasing(currentSelectColor.value, 'grounds')}}
-            />}
-          </View>
+            style = {{
+              flex: 1,
+              marginHorizontal: 10,
+              backgroundColor: '#00000025',
+              height: circlesSize,
+              borderRadius: circlesSize/2,
+              paddingHorizontal: 10,
+            }} 
+            onPress={()=>{valueGradient(currentSelectColor.value, 'light')}}
+          />}
+          {typeTrasing != 'neutrals' &&
+          <BasePressable
+            type = 't'
+            text='Trace value'
+            textStyle={{
+              fontSize: 10,
+              color: 'white'
+            }}
+            style = {{
+              flex: 1,
+              marginHorizontal: 10,
+              backgroundColor: '#80808080',
+              height: circlesSize,
+              borderRadius: circlesSize/2,
+              paddingHorizontal: 10,
+            }} 
+            onPress={()=>{valueTacing(currentSelectColor.value)}}
+          />}
+          {typeTrasing == 'accents' &&
+          <BasePressable
+            type = 't'
+            text='dark gradient'
+            textStyle={{
+              fontSize: 10,
+            }}
+            style = {{
+              flex: 1,
+              marginHorizontal: 10,
+              backgroundColor: '#ffffff75',
+              height: circlesSize,
+              borderRadius: circlesSize/2,
+              paddingHorizontal: 10,
+            }} 
+            onPress={()=>{valueGradient(currentSelectColor.value, 'dark')}}
+          />}
+          
+        </View>
       {[
         {
           tapGestureEvent: tapGestureEventH,
@@ -893,7 +848,7 @@ const ColorPicker = ({
         </TapGestureHandler>
       </View>
       )
-      })} 
+      })}
       </Animated.View>
     );
 };

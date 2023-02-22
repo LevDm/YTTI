@@ -43,15 +43,15 @@ import commonStaticStyles, { SwitchField, ripple } from "../CommonElements";
 
 export default UserRedactor = ({
     appStyle,
-    setAppStyle,
+    //setAppStyle,
 
     appConfig,
     r_setAppConfig,
 
-    r_setLanguageApp,
-    getNewAppStyleObject,
-    getNewAppConfigObject,
-    LanguageStore,
+    //r_setLanguageApp,
+    //getNewAppStyleObject,
+    //getNewAppConfigObject,
+    //LanguageStore,
 
     ThemeColorsAppIndex,
     ThemeSchema,
@@ -66,8 +66,8 @@ export default UserRedactor = ({
 
     const exit = (text)=>{
         console.log('>>User name input:', text,textInputValue)
-        
-        let newAppConfig = getNewAppConfigObject();
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
+        //let newAppConfig = getNewAppConfigObject();
         //console.log('this',newAppConfig)
         newAppConfig.user.name = typeof text === 'string'? text : '';
         r_setAppConfig(newAppConfig);
@@ -77,7 +77,8 @@ export default UserRedactor = ({
     const [welcomeUsed, setWelcomeUsed] = useState(appConfig.user.welcome)
 
     const welcomeUsedSetting = () => {
-        let newAppConfig = getNewAppConfigObject();
+        //let newAppConfig = getNewAppConfigObject();
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
         newAppConfig.user.welcome = !welcomeUsed
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
@@ -103,7 +104,7 @@ export default UserRedactor = ({
             exit={exit}
             paneleStyle={{
                 borderColor: Theme.basics.accents.primary,
-                backgroundColor: Theme.basics.grounds.primary,
+                backgroundColor: Theme.basics.neutrals.secondary,
             }}
             textInputProps={{
                 style: {
@@ -154,7 +155,7 @@ export default UserRedactor = ({
     <View
         style = {{
             //flexDirection: 'row',
-            justifyContent: 'center',
+            justifyContent: 'center',   
             //alignItems: 'center',
             height: 60,
             //paddingLeft: !appConfig.splachScreenShow? 10 : 0
@@ -179,7 +180,7 @@ export default UserRedactor = ({
                 height: '100%',
                 position: 'absolute',
                 //left: -5,
-                backgroundColor: Theme.specials.transparents.dim,
+                backgroundColor: `${Theme.basics.neutrals.tertiary}25`,
                 borderRadius: appStyle.borderRadius.additional
             }}
         />}

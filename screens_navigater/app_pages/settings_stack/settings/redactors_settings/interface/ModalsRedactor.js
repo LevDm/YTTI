@@ -30,8 +30,8 @@ import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 export default ModalsRedactor = ({
     appStyle,
 
-    setPreviewAppStyle,
-    getNewAppStyleObject,
+    //setPreviewAppStyle,
+    //getNewAppStyleObject,
 
     previewAppStyleA,
 

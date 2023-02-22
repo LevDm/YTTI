@@ -43,109 +43,151 @@ const interval_sl = [0, 100]
 
 const statusBarValues = ['auto','inverted','light','dark']
 
+const PICKER_AREA_HEIGHT = 270
 const ShemePicker = ({
-  visible,
+  show,
   initialValue,
   onShemeChanged,
 
-  ThemeColorsAppIndex,
-  ThemeSchema,
   LanguageAppIndex,
-  appStyle,
-  appConfig,
 }) => {
-  const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-  const Language = languagesAppList[LanguageAppIndex]
+  const Language = languagesAppList[LanguageAppIndex].SettingsScreen.PainterScreen.fullMod
 
-    const logg = (t)=>{
-      console.log(t)
-    }
-    const show = useSharedValue(-1);
-
-    useEffect(()=>{
-      if(visible && show.value == -1){show.value = 0}
-      if(!visible && show.value == 0){show.value = -1}
-    },[visible])
-
-    const areaSliders = useAnimatedStyle(()=>{
-      const duration = 500
-      return (
-        {
-          transform: [
-            {translateY: withTiming( interpolate(show.value, [-1, 0], [deviceHeight/4, 0]), {duration: duration}  )}
-          ]
-        }
-      )
-    })
-    
-    const getGroup = (type) => {
-      let group = []
-      for (let i of statusBarValues){
-          let check = false
-          if(type === i){check = true}
-          group.push(check)
-      }
-      return group
-    };
-
-    const [checkGroup, setCheckGroup] = useState(getGroup(initialValue));
-
-    useEffect(()=>{
-      setCheckGroup(getGroup(initialValue))
-    },[initialValue])
-
-    const statusBarStyleSetting = (newStyle, index)=>{
-      setCheckGroup(getGroup(newStyle));
-      onShemeChanged(newStyle)
-    }
-
+  const areaSliders = useAnimatedStyle(()=>{
+    const duration = 500
     return (
+      {
+        transform: [
+          {translateY: withTiming( interpolate(show.value, [-1, 0], [PICKER_AREA_HEIGHT, 0]), {duration: duration}  )}
+        ]
+      }
+    )
+  })
+
+  const statusBarStyleSetting = (index)=>{
+    const newStyle = statusBarValues[index]
+    //setCheckGroup(getGroup(newStyle));
+    onShemeChanged(newStyle)
+  }
+
+  return (
     <Animated.View
-        style ={[{
-            position: 'absolute',
-            bottom: 0,
-            height: deviceHeight/4,
-            width: deviceWidth,
-            justifyContent: 'center',
-            paddingHorizontal: CIRCLE_PICKER_SIZE/2,
-            backgroundColor: 'transparent',
-            borderRadius: appStyle.borderRadius.additional,
-            //justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'white'
-        }, areaSliders]}
+      style ={[{
+          position: 'absolute',
+          bottom: 0,
+          height: PICKER_AREA_HEIGHT,
+          width: deviceWidth,
+          justifyContent: 'center',
+          paddingHorizontal: CIRCLE_PICKER_SIZE/2,
+          backgroundColor: 'transparent',
+          borderRadius: 30,
+          //justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'white'
+      }, areaSliders]}
     >
-        <View 
-            style = {[{marginLeft: 20, width: '60%'}]}
-        >
-            {statusBarValues.map((item, index)=>{
-                return(
-                    <BaseBox
-                        key = {item+index}
-                        style = {{
-                            borderRadius: appStyle.borderRadius.additional,
-                            backgroundColor: 'transparent'
-                        }}
-                        android_ripple={{
-                            color: Theme.icons.accents.primary,
-                            borderless: true,
-                            foreground: false
-                        }}
-                        Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{item}</Text>}
-                        Check = {checkGroup[index]}
-                        onPress = {()=>{statusBarStyleSetting(item, index)}}
-                        BoxBorderRadius = {appStyle.borderRadius.additional}
-                        ColorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
-                    />
-                )
-            })}
-        </View>
+      <BoxsField
+        //  'one'>true || 'multiple'>false
+        isChoiceOne={true}
+        title = {Language.statusBarStyle}
+        //  'one'>index || 'multiple'>[indexs]
+        primaryValue = {statusBarValues.indexOf(initialValue)} 
+        groupSize = {statusBarValues.length}
+        onPress = {(activeIndex)=>{statusBarStyleSetting(activeIndex)}}
+        groupItems = {Object.values(Language.barStyles)}
+      />
     </Animated.View>
-    );
-};
+  )
+}
+
+const BoxsField = ({
+  isChoiceOne, //  'one'>true || 'multiple'>false
+  title,
+
+  primaryValue, //  'one'>index || 'multiple'>[indexs]
+  groupSize,
+
+  //groupValues,
+  groupItems,
+  Item: renderItem = false,
+  onPress,
+  
+  }, props) => {
+
+
+  const getGroup = (activeIndex) => {
+      const newGroup = new Array(groupSize);
+      for (let i = 0; i < newGroup.length; i++){newGroup[i] = (isChoiceOne? i == activeIndex : activeIndex.includes(i))}
+      return newGroup
+  }
+
+  const reGroup = (activateIndex, group) => {
+      const newGroup = [...group]
+      newGroup[activateIndex] = !group[activateIndex]
+      return newGroup
+  }
+  
+  const toIndexs = (group) => {
+      return group.map((item, index)=> item? index : -1).filter(item => item >= 0);
+  }
+
+  const [checkGroup, setCheckGroup] = useState(getGroup(primaryValue));
+
+  const checkBoxPress = (index) => {
+      const newGroup = isChoiceOne? getGroup(index) : reGroup(index, checkGroup)
+      onPress(isChoiceOne? index : toIndexs(newGroup))
+      setCheckGroup(newGroup);
+  }
+
+  const ripple = (color) => ({
+    color: `${color}20`,
+    borderless: true,
+    foreground: false
+  })
+
+  const brad = 15
+
+  return (
+      <View
+          props={props}
+
+      >
+          {title && <Text style = {[staticStyles.text, {color: '#000000', paddingLeft: 10}]}>
+              {title}
+          </Text>}
+          <View 
+              style = {[{
+                  //marginTop: 2,
+                  marginLeft: 30,
+                  width: '85%'
+              }]}
+          >
+              {groupItems.map((item, index)=>(
+              <BaseBox
+                  isCheckBox={!isChoiceOne}
+                  key = {'boxs_field_'+Math.random()}
+                  style = {{
+                      marginTop: index? 2 : 0,
+                      borderRadius: brad,
+                      backgroundColor: 'transparent'
+                  }}
+                  android_ripple={ripple('#000000')}
+                  Item = {!renderItem? <Text style = {[staticStyles.listText, {color: '#000000'}]}>{groupItems[index]}</Text> : renderItem(checkGroup[index], index)}
+                  check = {checkGroup[index]}
+                  onPress = {()=>{checkBoxPress(index)}}
+                  boxBorderRadius = {brad}
+                  colorsChange = {{true: '#000000', false: '#444444'}}
+              />
+              ))}
+          </View>
+      </View>
+  )
+}
+
 
 const CIRCLE_PICKER_SIZE = 30;
 const INTERNAL_PICKER_SIZE = CIRCLE_PICKER_SIZE  ;
+
 
 const staticStyles = StyleSheet.create({
   listText: {
@@ -171,6 +213,21 @@ const staticStyles = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.2)',
   },
   gradient: { height: sliderSize.height, width: sliderSize.width, borderRadius: sliderSize.height/2 },
+  listText: {
+    //paddingLeft: 10,
+    marginLeft: 5,
+    fontSize: 14, 
+    //fontVariant: ['small-caps'], 
+    fontWeight: '400', 
+    letterSpacing: 0.5
+  },
+  text: {
+    marginLeft: 10,
+    fontSize: 16, 
+    //fontVariant: ['small-caps'], 
+    fontWeight: '400', 
+    letterSpacing: 0.5
+},
 });
 
 export default ShemePicker;

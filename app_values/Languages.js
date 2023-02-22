@@ -79,6 +79,41 @@ const LanguageStoreRu = {
         selector: 'Выберете язык',
         engRu: ['Английский', 'Русский']
       },
+      PainterScreen: {
+        title: 'редактор цветов',
+        mod: 'режим',
+        themes: {light: 'светлая тема', dark: 'темная тема'},
+        isNew: 'Сохранить изменения для новой палитры и выйти?',
+        isNewActions: {y: 'Да', n: 'Нет', yn: 'Выйти без сохранения'},
+        saved: 'Палитра сохранена',
+        fullMod: {
+          title: 'полный',
+          statusBarStyle: 'Цвет символов строки состояния',
+          barStyles: {
+            auto: 'автоматический',
+            inverted: 'инвертированный',
+            light: 'светлый',
+            dark: 'темный'
+          }
+        },
+        easeMod: {
+          title: 'быстрый',
+          stages: {
+            hue: 'Оттенки',
+            saturation: 'Насыщенность',
+            lightness: 'Яркость',
+            almost: 'Почти всё готово!'
+          },
+          accept: 'Принять',
+          changeGradient: 'Изменить направление градиента',
+          changerText: 'Изменить цвет текста',
+          back: 'Отменить шаг',
+          clear: 'Сбросить всё'
+        }
+      },
+      stackTransition: {
+        loadPainter: "Переход к редактору...",
+      },
       StructureScreen: {
         typesSettings: {
           appearance: {
@@ -106,35 +141,37 @@ const LanguageStoreRu = {
         subCategorys: {
           globalProperties: 'общее',
           elements: 'элементы',
-          additionalFunctions: 'дополнительные',  
+          additionalFunctions: 'дополнительное',  
         },
 
         params: {
 
-          presets: 'пресеты',
+          presets: 'пресет',
           
           effects: "эффекты", 
 
-          thema: "тема", 
+          thema: "цвета", 
           borderRadius: "скругления", 
           navigationMenu: "меню навигации", 
           loadAnimation: "загрузка",
           lists: "ленты",
-          bobberButton:"плавающая кнопка",
+          bobberButton:"плавающие кнопки",
           modals: 'модальные окна',
           language: "язык",
           //"location", 
-          appFunctions:"функции",
+          appFunctions:"экраны",
           user: "пользователь",
           
           weather: "погода",
-          ohters: "делись"
+          ohters: "информация"
         }
       },
       Redactors: {
         themes: {
-          colorMode: "Цветовой режим",
-          colorsMods: {auto: 'Системный', light: 'Светлый', dark: 'Темный'}
+          colorMode: "Тема",
+          colorsMods: {auto: 'Системная', light: 'Светлая', dark: 'Темная'},
+          palette: "Палитра",
+          openPainter: "редактор"
         },
         fillets: {
           synhronous: "Синхронизация значений",
@@ -195,7 +232,7 @@ const LanguageStoreRu = {
           gradient: 'Градиент границы',
         },
         languages: {
-          thisLanguage: 'Использовать русский язык'
+          thisLanguage: 'Использовать русский'
         },
         weather: {
           used: 'Определять и использовать погоду',
@@ -333,6 +370,41 @@ const LanguageStoreEng = {
         selector: 'Select language',
         engRu: ['English', 'Russian']
       },
+      PainterScreen: {
+        title: 'color editor',
+        mod: 'mode',
+        themes: {light: 'light theme', dark: 'dark theme'},
+        isNew: 'Save changes to new palette and exit?',
+        isNewActions: {y: 'Yes', n: 'No', yn: 'Exit without saving'},
+        saved: 'Palette saved',
+        fullMod: {
+          title: 'full',
+          statusBarStyle: 'Color of status bar symbols',
+          barStyles: {
+            auto: 'automatic',
+            inverted: 'inverted',
+            light: 'light',
+            dark: 'dark'
+          }
+        },
+        easeMod: {
+          title: 'fast',
+          stages: {
+            hue: 'Hues',
+            saturation: 'Saturation',
+            lightness: 'Brightness',
+            almost: 'Almost done!'
+          },
+          accept: 'Accept',
+          changeGradient: 'Change gradient direction',
+          changerText: 'Change text color',
+          back: 'Undo step',
+          clear: 'Reset all'
+        }
+      },
+      stackTransition: {
+        loadPainter: "Going to the editor...",
+      },
       StructureScreen: {
         typesSettings: {
           appearance: {
@@ -383,7 +455,9 @@ const LanguageStoreEng = {
       Redactors: {
         themes: {
           colorMode: "Color mode",
-          colorsMods: {auto: 'Systemic', light: 'Light', dark: 'Dark'}
+          colorsMods: {auto: 'Systemic', light: 'Light', dark: 'Dark'},
+          palette: "Palette",
+          openPainter: "redactor"
         },
         fillets: {
           synhronous: "Value synchronization",

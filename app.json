@@ -19,7 +19,7 @@
       ]
     ],
     "extra": {
-      "WEATHER_API_KEY": ""
+      "WEATHER_API_KEY": "api_key"
     },
 
     "updates": {
@@ -35,7 +35,7 @@
     },
 
     "android": {
-      "userInterfaceStyle": "light",
+      "userInterfaceStyle": "automatic",
       "icon": "./assets/iconY.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/foreground_iconY.png",

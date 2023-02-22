@@ -73,7 +73,7 @@ const Classical = ({
         };
     };
 
-    const BLUR = false
+    const BLUR = true
 
     return (
         <View
@@ -84,8 +84,8 @@ const Classical = ({
                 },
                 BLUR? {} : {
                     borderTopWidth:1,
-                    borderColor: Theme.navigateBar.transparentGround,
-                    backgroundColor: Theme.navigateBar.grounds,
+                    borderColor: `${Theme.basics.neutrals.tertiary}25`,
+                    backgroundColor: Theme.basics.neutrals.secondary,
                 }]
             }
         >   
@@ -102,7 +102,7 @@ const Classical = ({
                 blurAmount = {10}
                 
                 //ANDROID_PROPS
-                overlayColor={`${Theme.navigateBar.grounds}90`}
+                overlayColor={`${Theme.basics.neutrals.secondary}90`}
                 //overlayColor={'transparent'}
                 //blurRadius	= {10}
                 //downsampleFactor = {10}
@@ -182,7 +182,7 @@ const Classical = ({
                             }
                         ]}
                         android_ripple = {appStyle.navigationMenu.rippleEffect? {
-                            color: `${Theme.navigateBar.icons.active}20`, 
+                            color: `${Theme.icons.accents.primary}20`, 
                             borderless: true,
                             foreground: false
                         } : false}
@@ -196,7 +196,7 @@ const Classical = ({
                                 }}
                                 entering={entering}
                             >
-                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Theme.navigateBar.icons.active}/>
+                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Theme.icons.accents.primary}/>
                                 {appStyle.navigationMenu.signatureIcons &&
                                 <Text
                                     style = {[
@@ -206,7 +206,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Theme.navigateBar.texts.active
+                                            color: Theme.icons.accents.primary
                                         }
                                     ]}
                                 >
@@ -223,7 +223,7 @@ const Classical = ({
                                     justifyContent: 'center',
                                 }}
                             >
-                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.navigateBar.icons.notActive}/>
+                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.icons.neutrals.secondary}/>
                                 {appStyle.navigationMenu.signatureIcons &&
                                 <Text
                                     style = {[
@@ -233,7 +233,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Theme.navigateBar.texts.notActive
+                                            color: Theme.icons.neutrals.secondary
                                         }
                                     ]}
                                 >

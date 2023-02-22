@@ -7,7 +7,7 @@ import {
     Pressable,
     TextInput, 
     FlatList, 
-    SectionList, 
+    SectionList,
     View, 
     Dimensions,
     ToastAndroid,
@@ -81,8 +81,6 @@ import AppFunctionsRedactor from "./redactors_settings/system/AppFunctionsRedact
 
 import Ohter from "./redactors_settings/ohterts";
 import StyleChangePreview from "./preview/StyleChangePreview";
-import { BlurView } from "@react-native-community/blur";
-import { LinearGradient } from 'expo-linear-gradient';
 
 import ColorSplash from "../../../../componets/StyleColorSplash";
 import Classical from "../../../../general_components/tab_bars/Classical";
@@ -273,9 +271,6 @@ for(let id = 0; id<STRUCTURE.customizer.length; id++){
 //<MaterialCommunityIcons name="check-bold" size={24} color="black" />
 
 
-//<MaterialCommunityIcons name="check-bold" size={24} color="black" />
-
-
 //<MaterialCommunityIcons name="keyboard-backspace" size={24} color="black" />
 
 const allStructurParams = [];
@@ -312,11 +307,6 @@ for (let el of structureCustomizer){
         allCategorys.push({category: el.category, indexSection: el.indexSection});
     //}
 }*/
-
-const ReanimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
-const ReanimatedSectionList = Reanimated.createAnimatedComponent(SectionList);
-const ReanimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
-
 
 const Settings = (props) => {
     //console.log(props.navigation.isFocused(), store.getState().hideMenu,props.hideMenu)
@@ -418,6 +408,8 @@ const Settings = (props) => {
 
     
     const animValueBobberButtonVisible = useSharedValue(1);//bottomBord
+    const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+    const bottomSheetModalRef = useRef(BottomSheetModal);
 
 
     const splashStart = (themeIndex) => {
@@ -488,30 +480,30 @@ const Settings = (props) => {
         
         applyAppStyle()
         //splashStart(previewAppStyle.theme, themesApp.indexOf(previewAppStyle.theme));
-    }  
-
-
-    const back = () => {
-        console.log('settings back', bottomSheetVisible , props.hideMenu)
+    }
+    
+    const backBurgerPress = () => {
         (!bottomSheetVisible && props.hideMenu)? props.r_setHideMenu(false) : null
         props.navigation.goBack()
+        console.log('settings back', bottomSheetVisible , props.hideMenu)
     }
 
-    const goToPalleteScreen = (index = 0) => {
-        ToastAndroid.show('LOAD', ToastAndroid.SHORT);   
+
+
+    const goToPalleteScreen = (index = 0, mod = 0) => {
+        ToastAndroid.show(Language.stackTransition.loadPainter, ToastAndroid.SHORT);   
         bottomSheetVisible? bottomSheetModalRef.current?.dismiss(): null;    
         (!bottomSheetVisible && !props.hideMenu)? props.r_setHideMenu(true) : null
         //console.log('settings to palette', bottomSheetVisible , props.hideMenu) 
-        props.navigation.navigate('palette', {themeIndex: index})
+        props.navigation.navigate('palette', {themeIndex: index, modIndex: mod})
         console.log('settings to palette', bottomSheetVisible , props.hideMenu)  
-        
     }
 
 
-    const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+    
     const previewHeight = (50+deviceHeight/2)+(appStyle.lists.proximity)
+    
 
-    const bottomSheetModalRef = useRef(BottomSheetModal);
     const snapPoints = useMemo(() => [previewHeight/3+30, previewHeight+30], []);
 
     const handlePresentModalPress = useCallback(() => {
@@ -550,11 +542,12 @@ const Settings = (props) => {
     
             goToPalleteScreen = {goToPalleteScreen}
     
-            backBurgerPress = {back}
+            backBurgerPress = {backBurgerPress}
     
             getNewAppStyleObject = {getNewAppStyleObject}
             getNewAppConfigObject = {getNewAppConfigObject}
-    
+
+            bottomBord={bottomBord}
             
             appConfig = {appConfig}
             LanguageAppIndex = {LanguageAppIndex}
@@ -680,12 +673,12 @@ const BobberButton = (props) => {
                 switch(item){
                     case "up": 
                         animStyle = dynamicStyleBobberUp;
-                        iconName = "arrow-collapse-up";
+                        iconName = "cellphone-cog";
                         pressFunction = upPress;
                         break;
                     case "down": 
                         animStyle = dynamicStyleBobberDown;
-                        iconName = "check-outline";
+                        iconName = "check-bold";
                         pressFunction = downPress;
                         break;
                 }
@@ -733,6 +726,15 @@ const BobberButton = (props) => {
 }
 
 //====================================================================================================================================
+import { BlurView } from "@react-native-community/blur";
+import { LinearGradient } from 'expo-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
+import { Ionicons } from '@expo/vector-icons';
+
+const ReanimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
+const ReanimatedSectionList = Reanimated.createAnimatedComponent(SectionList);
+const ReanimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
+
 const headerStickysHeight = 33
 const itemCategoryHeight = 45
 const selectorLineHeight = 35
@@ -761,6 +763,8 @@ const BasisList = (props) => {
         getNewAppStyleObject,
         getNewAppConfigObject,
 
+        bottomBord,
+
         appStyle,
         appConfig,
         LanguageAppIndex,
@@ -771,7 +775,8 @@ const BasisList = (props) => {
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen
 
-    const BLUR = false
+    const BLUR = true
+    const invertHeaderColors = true
 
     const headerStickysFullHeight = headerStickysHeight //+(2*appStyle.lists.proximity)
     const selectorLineHeightFull = itemCategoryHeight + selectorLineHeight
@@ -812,7 +817,8 @@ const BasisList = (props) => {
     const animValueCategorysScrolling = useSharedValue(0);
 
     const animValueScrollY = useSharedValue(0)
-
+    
+    const topButtonVisible = useSharedValue(0)
 
     const logg = (info) =>{
         console.log(info)
@@ -820,6 +826,7 @@ const BasisList = (props) => {
 
     const scrollHandlerFlatListParams = useAnimatedScrollHandler({
         onScroll: (e, ctx) => {
+            animValueCategorysScrolling.value = 0;
             animValueTranslateX.value = -(e.contentOffset.x)            
         }
     })
@@ -837,7 +844,7 @@ const BasisList = (props) => {
             }
             scrollTo(
                 flatCategorysListRef, //ref
-                to*(deviceWidth/2), //x offset
+                to*(deviceWidth), //x offset
                 0, //y offset
                 true //animate
             )
@@ -853,7 +860,7 @@ const BasisList = (props) => {
             animValueCategorysScrolling.value = 0;
         },
         onMomentumEnd: (e) => {
-            runOnJS(logg)(`momentum end ${e.contentOffset.x}`)
+            //runOnJS(logg)(`momentum end ${e.contentOffset.x}`)
             animValueScrollXCategorys.value = (e.contentOffset.x)
             animValueCategorysScrolling.value = 0.5;
             
@@ -869,15 +876,15 @@ const BasisList = (props) => {
         if(animValueCategorysScrolling.value >= 0.5){
             const categoryIntervals = derivedValues.value.categorys
 
-            const yetIndex = Math.floor((scroll/(deviceWidth/2)))
-            const yetScroll = yetIndex*(deviceWidth/2)
-            const toIndex = Math.floor(( (Math.max((scroll-yetScroll),0) )/ (deviceWidth/4)))
+            const yetIndex = Math.floor((scroll/(deviceWidth)))
+            const yetScroll = yetIndex*(deviceWidth)
+            const toIndex = Math.floor(( (Math.max((scroll-yetScroll),0) )/ (deviceWidth/2)))
 
             const fineIndex = Math.min(yetIndex+toIndex, (categoryIntervals.length-1))
-
+            runOnJS(logg)(`index category ${yetIndex+toIndex}`)
             scrollTo(
                 flatListRef, //ref
-                categoryIntervals[fineIndex], //x offset
+                categoryIntervals[fineIndex]+1, //x offset
                 0, //y offset
                 true //animate
             )
@@ -908,11 +915,13 @@ const BasisList = (props) => {
                 isUpScroll = (event.velocity.y).toFixed(4) < 0.0001;
             }
             isEnd = (event.layoutMeasurement.height + event.contentOffset.y) >= (event.contentSize.height - 5);
-            isStart = event.contentOffset.y > (headFullHeight);
-            const visibleBobber = ((isUpScroll || isEnd) && isStart)
+            isStart = event.contentOffset.y > (headFullHeight-selectorLineHeight-10);
+            const visibleBobber = ((isUpScroll ) && isStart)
 
             cancelAnimation(reaValueBobberButtonVisible);
             reaValueBobberButtonVisible.value = visibleBobber? 0 : 1//bottomBord
+            cancelAnimation(topButtonVisible);
+            topButtonVisible.value = isEnd? 1 : 0
 
             const useScroll = -Math.max(event.contentOffset.y, 0)
 
@@ -923,6 +932,7 @@ const BasisList = (props) => {
 
             cancelAnimation(animSelectorLine);
             animSelectorLine.value = selectLine
+            //runOnJS(logg)(`anim scrl ${selectLine}`)
             
         },
     })
@@ -1114,16 +1124,6 @@ const BasisList = (props) => {
         let itemIndex = 0;
         let sectionIndex = 0;
         if(type == 'params'){
-            /*
-            for(let i = 0; i<structureCustomizer.length; i++){               
-                for(let j = 0; j<structureCustomizer[i].data.length; j++){
-                    if(structureCustomizer[i].category === item.category && structureCustomizer[i].data[j].param === item.param){
-                        itemIndex = j;
-                        sectionIndex = i;
-                        break;
-                    }
-                }
-            } */
             itemIndex = item.indexInSection;
             sectionIndex = item.indexSection;
         } else {
@@ -1165,7 +1165,11 @@ const BasisList = (props) => {
             //console.log('lw',listWidths, listWidths.length)
             countDerivedValues()
         }
-    };
+    }
+
+    const topReturn = () => {
+        selectParametr(0, 0, '')
+    }
 
     //category updater
     const categoryStyle = useAnimatedStyle(()=>{
@@ -1212,6 +1216,57 @@ const BasisList = (props) => {
         }
     })
 
+    const maskCategoryHeight = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            height: interpolate(
+                animSelectorLine.value, 
+                [headerHeight-(Constants.statusBarHeight+1), 0],
+                [0, selectorLineHeightFull],
+                //extrapolation
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }   
+            ),
+        }
+    })
+    const maskParamsHeight = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+
+            height: interpolate(
+                animSelectorLine.value+selectorLineHeight-9, //9???
+                [0, headerHeight-(Constants.statusBarHeight+1)],
+
+                [selectorLineHeightFull, 0],
+                //extrapolation
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }   
+            ),
+        }
+    })
+
+    const maskIndicatorHeight = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+
+            height: interpolate(
+                animSelectorLine.value+selectorLineHeight+7.9, //9???
+                [0, headerHeight-(Constants.statusBarHeight+1)],
+
+                [selectorLineHeightFull, 0],
+                //extrapolation
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }   
+            ),
+        }
+    }) 
+
     const selectorLineColorHeight = useAnimatedStyle(()=>{
         const duration = 300
         return {
@@ -1247,16 +1302,12 @@ const BasisList = (props) => {
     const category = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            width: interpolate(
-                animSelectorLine.value, 
-                [headFullHeight, 0],
-                [deviceWidth, deviceWidth/2]  
-            ),
             paddingLeft: interpolate(
                 animSelectorLine.value,
-                [headFullHeight, 0], 
-                [deviceWidth/2-((Language.StructureScreen.typesSettings.appearance.type).length * 0.375 * staticStyles.AnimatedHeaderText.fontSize), 0]
+                [headerHeight-(Constants.statusBarHeight+1), 0], 
+                [0, deviceWidth/2-((Language.StructureScreen.typesSettings.appearance.type).length * 0.375 * staticStyles.AnimatedHeaderText.fontSize)]
             ),
+            
             opacity: interpolate(
                 animSelectorLine.value, 
                 [0.01, 0],
@@ -1264,6 +1315,34 @@ const BasisList = (props) => {
             ),
         }
     })
+    
+    const categorysText = useAnimatedStyle(()=>{
+        const duration = 300
+        return {
+            fontSize: interpolate(
+                animSelectorLine.value, 
+                [headerHeight-(Constants.statusBarHeight+1), 0], 
+                [25, 20],
+                //extrapolation
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }    
+            ),
+            letterSpacing: interpolate(
+                animSelectorLine.value, 
+                [headerHeight-(Constants.statusBarHeight+1), 0], 
+                [4, 0.5],
+                //extrapolation
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }    
+            ),
+            
+        }
+    })
+
 
     const type = useAnimatedStyle(()=>{
         const duration = 300
@@ -1286,6 +1365,14 @@ const BasisList = (props) => {
             ),
         }
     })    
+
+    const scrollTopButton = useAnimatedStyle(()=>{
+        return {
+            transform: [
+                {translateY: withTiming(topButtonVisible.value == 0? 0 : -(bottomBord-12), {duration: 400})}
+            ]
+        }
+    })
     
     
     const renderItem = ({item, index})=>{
@@ -1293,58 +1380,7 @@ const BasisList = (props) => {
         const redactorName = Language.StructureScreen.params[item.param]
         const icon = (item.icon != null? item.icon : "border-none-variant");
         //console.log(item, index)
-
-        
-        /*
-        presets 220.18182373046875
-        thema 380.6363525390625
-        borderRadius 220.18182373046875
-        effects 219.81817626953125
-        navigationMenu 475.9090881347656
-        lists 310
-        bobberButton 241.63636779785156
-        modals 220.18182373046875
-        appFunctions 220.18182373046875
-        loadAnimation 274.0909118652344
-        weather 316.5454406738281
-        ohters 219.81817626953125
-
-
-        ============================base<sub
-        presets 210
-        thema 343.81817626953125
-        borderRadius 210
-        effects 210
-        navigationMenu 438.7272644042969
-        lists 299.81817626953125
-        bobberButton 231.81817626953125
-        modals 210
-        appFunctions 210
-        loadAnimation 210
-        weather 306.7272644042969
-        ohters 210
-
-
-
-        =============================base
-        presets 210
-        thema 316.9090881347656
-        borderRadius 210
-        effects 210
-        navigationMenu 411.81817626953125
-        lists 300.18182373046875
-        bobberButton 231.81817626953125
-        modals 210
-        appFunctions 210
-        loadAnimation 210
-        weather 306.7272644042969
-        ohters 210
-
-
-
-        
-        */
-        
+       
         return (
             <Reanimated.View
                 key={String(item.param+index)}
@@ -1364,11 +1400,12 @@ const BasisList = (props) => {
             {item.subTitle &&
             <Text
                 style={[{
-                    height: 27,
+                    height: 35,
                     textAlign: 'center',
-                    color: Theme.texts.accents.secondary,
+                    //color: Theme.texts.accents.secondary,
+                    color: Theme.texts.neutrals.tertiary,
                     fontSize: 22,
-                    fontWeight: 'bold',
+                    fontWeight: '500',
                     letterSpacing: 4,
                     fontVariant: ['small-caps'],
                 }]}
@@ -1383,7 +1420,7 @@ const BasisList = (props) => {
                     dynamicStyleListItems,
                     {   
                         minHeight: item.fromCustom? 200 : 70,
-                        backgroundColor: Theme.basics.grounds.primary,   
+                        backgroundColor: Theme.basics.neutrals.secondary,   
                     }
                 ]}
                 
@@ -1407,20 +1444,20 @@ const BasisList = (props) => {
                     goToPalleteScreen = {goToPalleteScreen}
 
                     appStyle={appStyle}
-                    setAppStyle={setAppStyle}
-                    r_setAppStyle={r_setAppStyle}
+                    //setAppStyle={setAppStyle}
+                    //r_setAppStyle={r_setAppStyle}
 
-                    previewAppStyle={previewAppStyle}
-                    setPreviewAppStyle={setPreviewAppStyle}
+                    //previewAppStyle={previewAppStyle}
+                    //setPreviewAppStyle={setPreviewAppStyle}
 
                     previewAppStyleA={previewAppStyleA}
 
-                    getNewAppStyleObject={getNewAppStyleObject}
+                    //getNewAppStyleObject={getNewAppStyleObject}
                     
 
                     appConfig={appConfig}
                     r_setAppConfig={r_setAppConfig}
-                    getNewAppConfigObject={getNewAppConfigObject}
+                    //getNewAppConfigObject={getNewAppConfigObject}
 
                     ThemeColorsAppIndex={ThemeColorsAppIndex}
                     ThemeSchema={ThemeSchema}
@@ -1434,6 +1471,7 @@ const BasisList = (props) => {
     }
 
     return(<>
+        {/*HEADER PANEL*/}
         <Reanimated.View
             style={[
                 staticStyles.FlatListsArea,              
@@ -1443,7 +1481,7 @@ const BasisList = (props) => {
                     position: 'absolute',                    
                 },
                 BLUR? {} : {
-                    backgroundColor: Theme.basics.accents.primary,
+                    backgroundColor: invertHeaderColors? Theme.basics.neutrals.secondary : Theme.basics.accents.primary,
                 },
                 header
             ]}
@@ -1462,15 +1500,16 @@ const BasisList = (props) => {
                 blurAmount = {10}
                 
                 //ANDROID_PROPS
-                overlayColor={`${Theme.basics.accents.primary}90`}
+                overlayColor={`${invertHeaderColors? Theme.basics.neutrals.secondary : Theme.basics.accents.primary}90`}
                 //overlayColor={'transparent'}
                 //blurRadius	= {10}
                 //downsampleFactor = {10}
             />
             </View>}   
         </Reanimated.View>
-
-        <Reanimated.View 
+        
+        {/*HEADER SUBTITLE*/}
+        <View 
             style = {[staticStyles.SLtopBord,{ 
                 alignItems: 'center',
                 marginTop: (Constants.statusBarHeight+1),
@@ -1487,7 +1526,7 @@ const BasisList = (props) => {
             >
                 <ReanimatedTextInput     
                     editable = {false}
-                    style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: Theme.texts.neutrals.primary}]}
+                    style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}
                     animatedProps={categoryText}
                 />
             </Reanimated.View>
@@ -1500,12 +1539,13 @@ const BasisList = (props) => {
                     right: 0
                 }]}
             >
-                <Text style = {[staticStyles.AnimatedHeaderText, {color: Theme.texts.neutrals.primary}]}>
+                <Text style = {[staticStyles.AnimatedHeaderText, {color: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}>
                     {Language.app}
                 </Text>
             </Reanimated.View>
-        </Reanimated.View>
+        </View>
 
+        {/*HEADER TITLE*/}
         <View 
             style = {[staticStyles.SLtopBord,{ 
                 marginTop: (Constants.statusBarHeight+1),
@@ -1522,115 +1562,134 @@ const BasisList = (props) => {
                     flexDirection: 'row',                    
                 }}
             >
-                {appStyle.navigationMenu.type == 'not' &&
                 <BasePressable 
                     type="i"
-                    icon={{name: "backburger", size: 30, color: Theme.texts.neutrals.primary}}
+                    icon={{name: "backburger", size: 24, color: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}}
                     style={{
                         height: 45, 
                         width: 45, 
                         marginLeft: 15,
-                        paddingTop: 3,
+                        paddingTop: 4,
                         borderRadius: appStyle.borderRadius.additional
                     }}
                     onPress={backBurgerPress}
                     android_ripple={{
-                        color: Theme.texts.neutrals.primary,
+                        color: `${invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}20`,
                         borderless: true,
                         foreground: false
                     }}
-                />}
-                {appStyle.navigationMenu.type != 'not' && <View style={{height: 45, width: 45, marginLeft: 15,}}/>}
-                <Text style = {[staticStyles.AnimatedHeaderText, {color: Theme.texts.neutrals.primary}]}>
+                />
+                <Text style = {[staticStyles.AnimatedHeaderText, {color: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}>
                     {Language.HeaderTitle}
                 </Text>
             </View>
         </View>
 
+        {/*HEADER FREE SELECTOR*/}
         <Reanimated.View
             style = {[selectorLine, {
                 height: selectorLineHeightFull,
                 width: '100%',
                 justifyContent: 'flex-end',
+                alignItems: 'flex-end',
                 position: 'absolute',
                 top: ((Constants.statusBarHeight+1)),
                 zIndex: 1,
             }]}
         >
-            <Reanimated.View
-                style = {[selectorLineColorHeight, {
-                    backgroundColor: `${Theme.basics.accents.primary}${BLUR?'90':'ff'}`,
-                    width: '100%',
-                    position: 'absolute',
-                    bottom: 0
-                }]}
-            />
-
-            <View
-                style={{
-                    height: itemCategoryHeight,
-                    alignItems: 'flex-end'
-                }}
-            >
-                <Reanimated.View
-                    style={[category, {
-                        height: itemCategoryHeight,
-                        justifyContent: 'center',
-                        alignItems: 'flex-start',                    
-                    }]}
-                >
-                    <ReanimatedFlatList
-                        ref={flatCategorysListRef}
-                        onScroll={scrollHandlerFlatListCategorys}
-                        //decelerationRate={'fast'}
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                        style={{flex: 1 ,width: deviceWidth/2,}}
-                        snapToInterval={deviceWidth/2}
-                        getItemLayout={(data, index) => (
-                            {length: deviceWidth/2, offset: deviceWidth/2 * index, index: index}
-                        )}
-                        data={categorysCustomizer}
-                        keyExtractor={item => item}
-                        renderItem={({item, index})=> {
-                            return (
-                            <BasePressable
-                                key={String(item+index)}
-                                type={'t'}
-                                style={[{
-                                    width: deviceWidth/2,                            
-                                }]}
-                                styleItemContainer = {{
-                                    alignItems: 'center',
-                                    justifyContent: 'flex-start',
+            {/*HEADER CATEGORYS*/}
+            <ReanimatedFlatList
+                ref={flatCategorysListRef}
+                onScroll={scrollHandlerFlatListCategorys}
+                //decelerationRate={'fast'}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                style={{height: itemCategoryHeight, width: deviceWidth}}
+                snapToInterval={deviceWidth}
+                getItemLayout={(data, index) => (
+                    {length: deviceWidth, offset: deviceWidth * index, index: index}
+                )}
+                data={categorysCustomizer}
+                keyExtractor={item => item}
+                renderItem={({item, index})=> {
+                    return (
+                        <Pressable
+                            key={String(item+index)}
+                            onPress={()=>{selectParametr(item, index, 'categorys')}}
+                            style={{
+                                width: deviceWidth, 
+                                height: itemCategoryHeight,
+                            }}
+                        >
+                            <MaskedView
+                                androidRenderingMode = {'software'}
+                                style={{
+                                    flex: 1,
+                                    //width: deviceWidth/2, 
+                                    //height: itemCategoryHeight,
+                                    justifyContent: 'flex-start', 
+                                    backgroundColor: Theme.texts.accents.primary
                                 }}
-                                text={Language.StructureScreen.typesSettings[item].category}
-                                textStyle={[staticStyles.AnimatedHeaderText, {color: Theme.texts.neutrals.primary,}]}
-                                rippleColor={false}
-                                onPress={()=>{selectParametr(item, index, 'categorys')}}
-                            />
-                            )
-                        }}
-                    />
-                </Reanimated.View> 
-            </View>
-            
+                                maskElement={
+                            <Reanimated.View
+                                style={[category,{
+                                    // Transparent background because mask is based off alpha channel.
+                                    backgroundColor: 'transparent',
+                                    flex: 1,
+                                    justifyContent: 'center',
+                                    alignItems: 'center' 
+                                }]}                   
+                            >
+                                <Reanimated.Text 
+                                    style={[staticStyles.AnimatedHeaderText, categorysText,]}
+                                >
+                                    {Language.StructureScreen.typesSettings[item].category}
+                                </Reanimated.Text>
+                            </Reanimated.View>}>
+                            {/* COLOR*/}
+                            <Reanimated.View style={[maskCategoryHeight,{width: '100%', backgroundColor: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}/>  
+                            </MaskedView>
+                        </Pressable>
+                    )
+                }}
+            />
+ 
+
+
+            {/*HEADER PARAMS*/}
             <Reanimated.View
                 style={[{
                     height: selectorLineHeight,
                 }]}
             >
-                <Reanimated.View 
-                    style={[animStyleIndicatorLine, { 
-                        backgroundColor: Theme.icons.accents.quaternary,
+                <MaskedView
+                    androidRenderingMode = {'software'}
+                    style={{
                         position: 'absolute',
                         bottom: -0.1,
-                        height: 4,
-                        borderRadius: 5,
-                        borderBottomRightRadius: 0,
-                        borderBottomLeftRadius: 0,
-                    }]}  
-                />
+                        width: deviceWidth, 
+                        height: 3,
+                        justifyContent: 'flex-start', 
+                        backgroundColor: 'transparent'
+                    }}
+                    maskElement={
+                        <Reanimated.View 
+                            style={[animStyleIndicatorLine, { 
+                                backgroundColor: 'black',
+                                position: 'absolute',
+                                //bottom: -0.1,
+                                height: 3,
+                                borderRadius: 5,
+                                //borderBottomRightRadius: 0,
+                                //borderBottomLeftRadius: 0,
+                            }]}  
+                        />
+                    }
+                >   
+                    {/* COLOR*/}
+                    <Reanimated.View style={[maskIndicatorHeight,{width: '100%', backgroundColor: invertHeaderColors? Theme.icons.accents.primary : Theme.icons.accents.quaternary}]}/>  
+                </MaskedView>
+                
                 <ReanimatedFlatList
                     ref={flatListRef}
                     style={staticStyles.frontFL}
@@ -1649,29 +1708,58 @@ const BasisList = (props) => {
                     }}
                     renderItem={({item, index})=> {
                         return (
-                        <View
-                            key={String(item.param+index)}  
+                        <Pressable
+                            key={String(item+index)}
                             style={[staticStyles.frontFLArea]}
+                            onPress={()=>{selectParametr(item, index, "params")}}
                             onLayout={(event)=>{stacker(listWidths, setListWidths, (event.nativeEvent.layout.width+2*staticStyles.frontFLArea.marginHorizontal))}}
-                        >
-                            <BasePressable
-                                type={'t'}
-                                style={staticStyles.frontFLPressable}
-                                text={Language.StructureScreen.params[item.param]}
-                                textStyle={[staticStyles.frontFLText, {color: Theme.texts.neutrals.primary}]}
-                                rippleColor={false}
-                                onPress={()=>{selectParametr(item, index, "params")}}
-                            />
-                        </View>
+                        >   
+                            <View
+                                style={[staticStyles.frontFLPressable,{
+                                    backgroundColor: 'transparent',
+                                    height: selectorLineHeight, 
+                                }]}
+                            >
+                                <Text style={[staticStyles.frontFLText, {color: 'transparent'}]}>
+                                    {Language.StructureScreen.params[item.param]}
+                                </Text>
+                            </View>
+
+                            <MaskedView
+                                androidRenderingMode = {'software'}
+                                style={{
+                                    width: '100%',
+                                    position: 'absolute', 
+                                    height: selectorLineHeight,
+                                    justifyContent: 'flex-start', 
+                                    backgroundColor: Theme.texts.accents.tertiary
+                                }}
+                                maskElement={
+                            <View
+                                style={[staticStyles.frontFLPressable,{
+                                    backgroundColor: 'transparent',
+                                    height: selectorLineHeight, 
+                                }]}
+                            >
+                                <Text style={[staticStyles.frontFLText]}>
+                                    {Language.StructureScreen.params[item.param]}
+                                </Text>
+                            </View>}>
+                            {/* COLOR*/}
+                            <Reanimated.View style={[maskParamsHeight, {width: '100%', backgroundColor: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}/>  
+                            </MaskedView>
+                        </Pressable>
                         )
                     }}
                 />
             </Reanimated.View>
         </Reanimated.View>
 
+
+        {/*BODY*/}
         <ReanimatedSectionList
             ref={sectListRef}
-            contentOffset={{x: 0, y: (headHeightTop+itemCategoryHeight)}}
+            contentOffset={{x: 0, y: (headHeightTop+itemCategoryHeight+1)}}
             stickySectionHeadersEnabled={false}
             showsVerticalScrollIndicator={false}
             onScroll={scrollSectionsList}
@@ -1686,7 +1774,7 @@ const BasisList = (props) => {
                         //height: headHeight,
                         //maxHeight: headHeight,
                         width: '100%',
-                        backgroundColor: Theme.basics.grounds.secondary,
+                        backgroundColor: Theme.basics.neutrals.primary,
                         marginBottom: selectorLineHeightFull
                     }}
 
@@ -1717,7 +1805,7 @@ const BasisList = (props) => {
                         style = {[{
                             color: Theme.texts.accents.primary,
                             fontSize: 25,
-                            fontWeight: 'bold',
+                            fontWeight: '500',
                             letterSpacing: 4,
                             fontVariant: ['small-caps'],
                             //backgroundColor: 'blue'
@@ -1729,30 +1817,70 @@ const BasisList = (props) => {
                 )
             }}
             renderItem={renderItem}
-            ListFooterComponent = {()=>{
-                //let lastObject = listHeights[listHeights.length-1]
-                //lastObject = (lastObject == NaN || lastObject == undefined)? 200 : lastObject
-                return (
-                    <View style={{
-                            height: deviceHeight -200, //-headerHeight-selectorLineHeight
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
-                    >
+            ListFooterComponent = {
+                <View style={{
+                        height: deviceHeight -200, //-headerHeight-selectorLineHeight
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    <MaskedView
+                        style={{height: 35, width: 80, flexDirection: 'row', top: -30}}
+                        maskElement={
+                        <View
+                            style={{
+                                // Transparent background because mask is based off alpha channel.
+                                backgroundColor: 'transparent',
+                                flex: 1,
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                flexDirection: 'row'
+                            }}
+                        >
+                        <Ionicons name="logo-react" size={25} color="black" />
                         <Text 
                             style = {[{
-                                color: '#f010f0',
+                                //color: 'transparent',//,
                                 fontSize: 25,
                                 fontWeight: 'bold',
                                 letterSpacing: 1,
                                 fontVariant: ['small-caps'],
                                 opacity: .5
                             }]}
-                        >F1F</Text>
-                    </View>
-                )
-            }}
+                        >
+                            F1F
+                        </Text>
+                        </View>}
+                    >
+                    {/* COLORS */}
+                    <LinearGradient
+                        start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+                        style ={{
+                            flex: 1
+                        }}
+                        colors = {['#06bcee','#f010f0']}
+                    />
+                    </MaskedView>
+                </View>             
+            }
         />
+        <Reanimated.View
+            style={[scrollTopButton, {
+                position: 'absolute',
+                height: 40,
+                width: 40,
+                bottom: -40,
+                left: (deviceWidth-40)/2,
+                //backgroundColor: 'black'
+            }]}
+        >    
+            <BasePressable 
+                type={'i'}
+                style={{height: 40}}
+                icon={{name: 'format-align-top', size: 40, color: Theme.basics.neutrals.tertiary}}
+                onPress={topReturn}
+            />
+        </Reanimated.View>
     </>)
 
 
@@ -1781,7 +1909,7 @@ const staticStyles = StyleSheet.create({
     frontFLText: {
         fontSize: 16,
         //opacity: .9,
-        fontWeight: 'bold',
+        fontWeight: '500',
         fontVariant: ['small-caps'],
         //color:  'white'//ThemesColorsAppList[0].skyUpUpUp//
     },
@@ -1843,7 +1971,7 @@ const staticStyles = StyleSheet.create({
     },
     AnimatedHeaderText: {
         fontSize: 20,
-        fontWeight: 'bold',
+        fontWeight: '500',
         //fontStyle: 'italic',
         //color: 'white',
         //opacity: .90,

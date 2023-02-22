@@ -98,7 +98,7 @@ function AppDrawer(props) {
                 drawerPosition: appStyle.navigationMenu.drawerPosition === 'left'? 'left' : 'right',
                 swipeEdgeWidth: deviceWidth/2, //(lvl3.name =='SettingsStack'? deviceWidth/4 :) 
                 drawerStyle: {
-                    backgroundColor: Theme.basics.grounds.primary,
+                    backgroundColor: Theme.basics.neutrals.secondary,
                 },
                 header: ({ navigation, route }) => {
                     return (

@@ -19,6 +19,12 @@ import languagesAppList from "../../app_values/Languages";
 let deviceHeight = Dimensions.get('window').height
 let deviceWidth = Dimensions.get('window').width
 
+const ThemenavigateBar = {
+    grounds: '#ffffff',
+    transparentGround: '#00000020',
+    icons: {active: '#6b8e23', notActive: '#000000'},
+    texts: {active: '#6b8e23', notActive: '#000000'},
+}
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 const Hidden = ({
@@ -128,7 +134,7 @@ const Hidden = ({
                     
                     //width: size,
                     
-                    backgroundColor: Theme.navigateBar.transparentGround,
+                    backgroundColor: ThemenavigateBar.transparentGround,
                     borderRadius: appStyle.borderRadius.additional,
                     flexDirection: appStyle.navigationMenu.position.horizontal == 'center'?'row':'column',
                 }
@@ -205,7 +211,7 @@ const Hidden = ({
                                 //width: h
                             }
                         ]}
-                        android_ripple = {appStyle.navigationMenu.rippleEffect? {color: Theme.navigateBar.icons.active, borderless: true} : false}
+                        android_ripple = {appStyle.navigationMenu.rippleEffect? {color: ThemenavigateBar.icons.active, borderless: true} : false}
                     >
                         {isFocused && 
                             <Animated.View 
@@ -216,7 +222,7 @@ const Hidden = ({
                                 }}
                                 entering={entering}
                             >
-                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Theme.navigateBar.icons.active}/>
+                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {ThemenavigateBar.icons.active}/>
                             </Animated.View>        
                         }
                         {!isFocused && 
@@ -228,7 +234,7 @@ const Hidden = ({
                                     justifyContent: 'center',
                                 }}
                             >
-                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.navigateBar.icons.notActive}/>
+                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {ThemenavigateBar.icons.notActive}/>
                             </Animated.View>        
                         }
                     </AnimatedPressable>    

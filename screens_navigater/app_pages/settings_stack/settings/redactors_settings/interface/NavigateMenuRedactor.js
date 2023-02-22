@@ -30,15 +30,15 @@ import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu, dra
 
 export default NavigateMenuRedactor = ({
     appStyle,
-    setAppStyle,
-    r_setAppStyle,
+    //setAppStyle,
+    //r_setAppStyle,
 
-    previewAppStyle,
-    setPreviewAppStyle,
+    //previewAppStyle,
+    //setPreviewAppStyle,
 
     previewAppStyleA,
 
-    getNewAppStyleObject,
+    //getNewAppStyleObject,
 
     ThemeColorsAppIndex,
     ThemeSchema,

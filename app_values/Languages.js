@@ -94,6 +94,11 @@ const LanguageStoreRu = {
             inverted: 'инвертированный',
             light: 'светлый',
             dark: 'темный'
+          },
+          traceActions: {
+            lightGradient: 'Светлый градиент',
+            darkGradient: 'Темный градиент',
+            distributeValue: 'Распространить значение'
           }
         },
         easeMod: {
@@ -385,6 +390,11 @@ const LanguageStoreEng = {
             inverted: 'inverted',
             light: 'light',
             dark: 'dark'
+          },
+          traceActions: {
+            lightGradient: 'Light gradient',
+            darkGradient: 'Dark Gradient',
+            distributeValue: 'Distribute value'
           }
         },
         easeMod: {

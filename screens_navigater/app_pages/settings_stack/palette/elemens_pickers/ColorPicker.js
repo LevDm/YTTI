@@ -164,7 +164,7 @@ const ColorPicker = ({
 
   LanguageAppIndex,
 }) => {
-    const Language = languagesAppList[LanguageAppIndex]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.PainterScreen.fullMod.traceActions
 
     const logg = (t)=>{
       console.log(t)
@@ -720,9 +720,10 @@ const ColorPicker = ({
           {typeTrasing == 'accents' &&
           <BasePressable
             type = 't'
-            text='light gradient'
+            text={Language.lightGradient}
             textStyle={{
               fontSize: 10,
+              textAlign: 'center'
             }}
             style = {{
               flex: 1,
@@ -737,13 +738,14 @@ const ColorPicker = ({
           {typeTrasing != 'neutrals' &&
           <BasePressable
             type = 't'
-            text='Trace value'
+            text={Language.distributeValue}
             textStyle={{
               fontSize: 10,
-              color: 'white'
+              color: 'white',
+              textAlign: 'center'
             }}
             style = {{
-              flex: 1,
+              flex: 1.5,
               marginHorizontal: 10,
               backgroundColor: '#80808080',
               height: circlesSize,
@@ -755,9 +757,10 @@ const ColorPicker = ({
           {typeTrasing == 'accents' &&
           <BasePressable
             type = 't'
-            text='dark gradient'
+            text={Language.darkGradient}
             textStyle={{
               fontSize: 10,
+              textAlign: 'center'
             }}
             style = {{
               flex: 1,

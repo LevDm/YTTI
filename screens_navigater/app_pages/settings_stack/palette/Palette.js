@@ -621,7 +621,7 @@ const Palette = (props) => {
       show={shemePickerShow}
 
       onShemeChanged={onShemeChangedSecondary}
-      initialValue={ stateOpenedColor != undefined? (stateOpenedColor.value != undefined? stateOpenedColor.value : 'light') : 'light'}
+      initialValue={currentCustomTheme[stateOpenedColor? stateOpenedColor.trace[0] : 'light'].statusBar}
 
       LanguageAppIndex={LanguageAppIndex}
     />

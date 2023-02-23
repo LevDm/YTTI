@@ -135,7 +135,6 @@ export default WeatherRedactor = ({
         setDvcLocation(locationInfo)
     }
 
-
     const [netLocation, setNetLocation] = useState(null);
     const [netLocationMsg, setNetLocationMsg] = useState({code: 0, msg: 'not informations'});
 
@@ -584,8 +583,11 @@ export default WeatherRedactor = ({
                         //let select
                         let iconName
 
+                        let type
+
                         switch(index){
                             case 0:
+                                type = 'net'
                                 name = Language.network
                                 location = netLocation
                                 messages = netLocationMsg
@@ -593,6 +595,7 @@ export default WeatherRedactor = ({
                                 iconName = "ip-outline"
                                 break;
                             case 1:
+                                type = 'dvc'
                                 name = Language.device
                                 location = dvcLocation
                                 messages = dvcLocationMsg
@@ -684,7 +687,7 @@ export default WeatherRedactor = ({
                                             }
                                         ]}
                                     >
-                                        {`${messages.msg}`}
+                                        {Language.gettingState[type][`${messages.code}`]}
                                     </Text>
                                     }
                                 </Reanimated.View>
@@ -697,7 +700,6 @@ export default WeatherRedactor = ({
         </BaseModal> 
     </>)
 } 
-
 
 const staticStyles = StyleSheet.create({
 

@@ -256,6 +256,25 @@ const LanguageStoreRu = {
           device: 'Определено устройством',
           errorsDevice: {
             '0': 'Нет запроса',  
+          },
+          gettingState: {
+            dvc: {
+              '0':   'Нажми для получения информации',
+              '0.1': 'Ожидание разрешения',
+              '0.2': 'Отказ в разрешении определения местоположения',
+              '0.3': 'Определение геолокации',
+              '0.4': 'Геолокация определена',
+              '0.5': 'Определение населенного пункта',
+              '0.9': 'Данный населенный пункт уже добавлен',
+              '1':   'Вся информация получена',
+            },  
+            net: {
+              '0':   'Нет информации',
+              '0.1': 'Определение населенного пункта',
+              '0.7': 'Населенный пункт не определен, возможна ошибка доступа',
+              '0.9': 'Данный населенный пункт уже добавлен',
+              '1':   'Вся информация получена',
+            }   
           }
         },
         user: {
@@ -547,6 +566,25 @@ const LanguageStoreEng = {
           device: 'Determined by device',
           errorsDevice: {
             '0': 'No request',  
+          },
+          gettingState: {
+            dvc: {
+              '0': 'Click for info',
+              '0.1': 'Waiting for permission',
+              '0.2': 'Location permission denied',
+              '0.3': 'Geolocation detection',
+              '0.4': 'Geolocation determined',
+              '0.5': 'Locality definition',
+              '0.9': 'This location has already been added',
+              '1': 'All information received',
+            },
+            net: {
+              '0': 'No information',
+              '0.1': 'Locality definition',
+              '0.7': 'Locality not defined, access error possible',
+              '0.9': 'This location has already been added',
+              '1': 'All information received',
+            }
           }
         },
         user: {

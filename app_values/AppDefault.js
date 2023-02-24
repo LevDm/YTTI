@@ -72,16 +72,24 @@ export const defaultAppConfig = {
         welcome: true
     },
     splachScreenShow: true,
+    screenSubsequence: ['analytics', 'tasks', 'notes', 'settings'],
     appFunctions: {
         analytics: {
+            useId: 1,
             used: true
         },
         tasks: {
+            useId: 0,
             used: true
         },
         notes: {
+            useId: 2,
             used: true
         },
+        settings: {
+            useId: 3,
+            used: true
+        }
         //weather: true,
     },
     weather: {

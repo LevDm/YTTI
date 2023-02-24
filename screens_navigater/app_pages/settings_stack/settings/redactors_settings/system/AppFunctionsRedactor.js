@@ -25,6 +25,10 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
+import DraggableFlatList, {ScaleDecorator,} from "react-native-draggable-flatlist";
+
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import dataRedactor from "../../../../../../async_data_manager/data_redactor";
 
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
@@ -37,7 +41,9 @@ import {
 } from "../../../../../../general_components/base_components/BaseElements";
 
 
-import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
+import commonStaticStyles, { SwitchField, BoxsField, ripple } from "../CommonElements";
+
+
 
 export default LanguageRedactor = ({
     appStyle,
@@ -84,62 +90,125 @@ export default LanguageRedactor = ({
 
     const [checkGroup, setCheckGroup] = useState(getGroup())
 
-    const settingFunctions = (index) => {
-        const newGroup = getGroup(index)
-        const newAppConfig = getNewAppConfigObject();
-        Object.keys(newAppConfig.appFunctions).map((item, index)=>{
-            newAppConfig.appFunctions[item].used = newGroup[index]
-        })
+    const settingFunctions = (index, subsequence) => {
+        const newGroup = index != undefined? getGroup(index) : checkGroup
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));//getNewAppConfigObject();
+        let usedSubsequence = []
+        
+        if(subsequence){
+            newAppConfig.screenSubsequence = subsequence
+            subsequence.map((item, index)=>{
+                if(newGroup[Object.keys(newAppConfig.appFunctions).indexOf(item)]){
+                    usedSubsequence.push(item)
+                }
+            }) 
+        } else {
+            newAppConfig.screenSubsequence.map((item, index)=>{
+                if(newGroup[Object.keys(newAppConfig.appFunctions).indexOf(item)]){
+                    usedSubsequence.push(item)
+                }
+            }) 
+        }
+        if(usedSubsequence.length >= 1){
+            console.log('usedSubsequence', usedSubsequence)
+            Object.keys(newAppConfig.appFunctions).map((item, index)=>{
+                newAppConfig.appFunctions[item].used = newGroup[index]
+                !newGroup[index]? newAppConfig.appFunctions[item].useId = null : null
+                if(usedSubsequence && newGroup[index]){
+                    newAppConfig.appFunctions[item].useId = usedSubsequence.indexOf(item)
+                }
+            })
 
-        r_setAppConfig(newAppConfig);
-        dataRedactor("storedAppConfig", newAppConfig);
+            r_setAppConfig(newAppConfig);
+            dataRedactor("storedAppConfig", newAppConfig);
 
-        setCheckGroup(newGroup)
+            setCheckGroup(newGroup)
+        }
     }
 
+    const [data, setData] = useState(appConfig.screenSubsequence);
+
+    const endDrag = ({ data }) => {
+        console.log('funcs', data)
+        settingFunctions(undefined, data)
+        setData(data)
+    }
+
+    const renderItem = ({ item, getIndex, drag, isActive }) => {
+        const useIndex = getIndex()
+        const index = Object.keys(appConfig.appFunctions).indexOf(item)
+        console.log('funcs inex', index, useIndex)
+        const longPress = () => {
+            //console.log('funcs longpress', props)
+            drag()
+        }
+
+        return (
+            <ScaleDecorator>
+            <View 
+                style={{
+                    backgroundColor: '#00000001',
+                    borderRadius: appStyle.borderRadius.additional,
+                    marginLeft: 30,
+                    width: '85%',
+                }}
+            >
+            <Pressable
+                delayLongPress={300}
+                onLongPress={longPress}
+                disabled={isActive}
+                style={[
+                    { 
+                        height: 32,
+                        //marginLeft: 30,
+                        //width: '85%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        borderRadius: appStyle.borderRadius.additional,
+                        backgroundColor: isActive ? `${Theme.basics.neutrals.tertiary}10` : 'transparent',
+                    },
+                ]}
+              android_ripple={ripple(Theme.basics.neutrals.tertiary)}
+            >
+                <BaseBox
+                    key = {`functions_${item}`}
+                    isCheckBox={true}
+                    style = {{
+                        //flex: 4,
+                        width: '80%',
+                        //marginTop: index > 0 ? 4 : 0,
+                        backgroundColor: 'transparent',
+                        borderRadius: appStyle.borderRadius.additional,
+                    }}
+                    android_ripple={ripple(Theme.icons.accents.primary)}
+                    Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{item}</Text>}
+                    check = {checkGroup[index]}
+                    onPress = {()=>{settingFunctions(index)}}
+                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    colorsChange = {{
+                        true: Theme.icons.accents.primary, 
+                        false: Theme.icons.accents.quaternary
+                    }}
+                />
+                <MaterialCommunityIcons name="drag-horizontal-variant" size={26} color={Theme.icons.neutrals.secondary} />
+            </Pressable>
+            </View>
+            </ScaleDecorator>
+        )
+    }
 
     return (<>
         <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
             Funcs
         </Text>
-        <View
-            style = {{
-                //flex: 1,
-                //height: 94,
-                marginLeft: 20,
-                width: '60%',
-                //justifyContent: 'space-between',
-            }}
-        >
-            {Object.keys(appConfig.appFunctions).map((item, index)=>(
-            <BaseBox
-                key = {`functions_${item}`}
-                isCheckBox={true}
-                style = {{
-                    //flex: 4,
-                    marginTop: index > 0 ? 4 : 0,
-                    backgroundColor: 'transparent',
-                    borderRadius: appStyle.borderRadius.additional,
-                }}
-                android_ripple={{
-                    color: Theme.icons.accents.primary,
-                    borderless: true,
-                    foreground: false
-                }}
-                Item = {
-                    <Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>
-                        {item}
-                    </Text>
-                }
-                check = {checkGroup[index]}
-                onPress = {()=>{settingFunctions(index)}}
-                boxBorderRadius = {appStyle.borderRadius.additional}
-                colorsChange = {{
-                    true: Theme.icons.accents.primary, 
-                    false: Theme.icons.accents.quaternary
-                }}
-            />))}
-        </View>
+        <DraggableFlatList
+            data={data}
+            onDragEnd={endDrag}
+            keyExtractor={(item) => item}
+            renderItem={renderItem}
+        />
+
     </>)
 }
 

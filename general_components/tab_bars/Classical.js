@@ -116,15 +116,46 @@ const Classical = ({
                 }}
             >
             {state.routes.map((route, index) => {
-                const page = appConfig.appFunctions[route.name]
-                if(page && !page.used){
-                    console.log('cmenu page not used', route.name, page.used)
-                    return null
-                } else {
-                    console.log('cmenu page used',route.name, page, (page != undefined) && !page.used)
+
+                const routes =  {
+                    tasks : {name: "home"},
+                    notes : {name: "notes"},
+                    settings : {name: "settingsStack"},
+                    analytics : {name: "analytics"},
                 }
 
-                const isFocused = state.index === index;
+                let current 
+                let uses = new Array(Object.keys(appConfig.appFunctions).length)//['','','','']
+                Object.keys(appConfig.appFunctions).map((litem, lindex)=>{
+                    if(appConfig.appFunctions[litem].useId == index){
+                        current = litem
+                    } 
+                    if(appConfig.appFunctions[litem].used){
+                        uses[appConfig.appFunctions[litem].useId] = litem
+                    } 
+                })
+
+                const croute = routes[current]
+                const cpage = appConfig.appFunctions[current]
+
+                
+                //const page = appConfig.appFunctions[route.name]
+                //const isFocused = state.index === index;
+
+                
+
+
+                if(!routes[current]){
+                    //console.log('cmenu page not used', route.name, page.used)
+                    return null
+                } else {
+                    //console.log('cmenu page used',route.name, page, (page != undefined) && !page.used)
+                }
+
+                console.log('???', croute, cpage, 'focus', state.routes[state.index].name,'=',croute.name)
+                const cisFocused = state.routes[state.index].name === croute.name;
+
+
                 let size = 19;
                 size = (appStyle.navigationMenu.height-5-15)//(appStyle.navigationMenu.signatureIcons? 15 : 0)
                 size = (size > 32? 32 : size)
@@ -132,7 +163,7 @@ const Classical = ({
                 const iconsNames = {focus: '', notFocus: ''}
                 let screenName = ''
 
-                switch(route.name){
+                switch(croute.name){
                     case "home":
                         iconsNames.focus = 'home-edit';
                         iconsNames.notFocus = 'home-edit-outline';
@@ -167,9 +198,9 @@ const Classical = ({
                         }}
                     >
                     <Pressable
-                        disabled = {isFocused}
+                        disabled = {cisFocused}
                         onPress={()=>{
-                            navigation.navigate(route.name)
+                            navigation.navigate(croute.name)
                         }}
                         style={[
                                 {
@@ -187,7 +218,7 @@ const Classical = ({
                             foreground: false
                         } : false}
                     >
-                        {isFocused && 
+                        {cisFocused && 
                             <Animated.View 
                                 //exiting={exiting}
                                 style = {{
@@ -215,7 +246,7 @@ const Classical = ({
                                 }
                             </Animated.View>        
                         }
-                        {!isFocused && 
+                        {!cisFocused && 
                             <Animated.View
                                 exiting={exiting}
                                 style = {{

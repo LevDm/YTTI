@@ -619,6 +619,11 @@ const BobberButton = (props) => {
         ThemeSchema
     } = props
 
+    const BLUR = false
+    const invertHeaderColors = false
+    const shadows = true
+    const rippleEffect = 'none'
+
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     
     const dynamicStyleBobberUp = useAnimatedStyle(() => {
@@ -658,6 +663,12 @@ const BobberButton = (props) => {
         }
     })
 
+    const ripple = (color) => ({
+        color: `${color}20`,
+        borderless: true,
+        foreground: false
+    })
+
     return(
         <Reanimated.View 
             style = {[dynamicStyleBobberButton, {
@@ -691,17 +702,17 @@ const BobberButton = (props) => {
                             position: 'absolute',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            //borderRadius: appStyle.borderRadius.additional,
                         }]}
-                    >
-                        <BasePressable
-                            type={"i"}
-                            icon={{name: iconName, size: 24, color: Theme.icons.neutrals.primary}}
-                            style={{
+                    >   
+                        <View 
+                            style = {[{
                                 height: appStyle.functionButton.size,
                                 width: appStyle.functionButton.size,
                                 borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: Theme.basics.accents.secondary,
-
+                                position: 'absolute',
+                                backgroundColor: 'transparent'
+                            },shadows? {
                                 shadowColor: "#000",
                                 shadowOffset: {
                                     width: 0,
@@ -710,12 +721,42 @@ const BobberButton = (props) => {
                                 shadowOpacity: 0.25,
                                 shadowRadius: 4,
                                 elevation: 4,
-                            }}
-                            android_ripple={{
-                                color: Theme.icons.accents.quaternary,
-                                borderless: true,
-                                foreground: false
-                            }}
+                                } : {},
+                            ]}
+                        />
+                        {BLUR && 
+                        <View 
+                            style = {[StyleSheet.absoluteFillObject, {
+                                flex: 1,
+                                //specialty blur for android
+                                overflow: 'hidden',
+                                borderRadius: appStyle.borderRadius.additional,
+                            }]}
+                        >
+                        <BlurView
+                            style = {{flex: 1, }}
+                            blurType = {'light'}
+                            blurAmount = {10}
+                            
+                            //ANDROID_PROPS
+                            overlayColor={`${invertHeaderColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary}90`}
+                            //overlayColor={'transparent'}
+                            //blurRadius	= {10}
+                            //downsampleFactor = {10}
+                        />
+                        </View>}  
+                        <BasePressable
+                            type={"i"}
+                            icon={{name: iconName, size: 24, color: invertHeaderColors? Theme.icons.accents.secondary : Theme.icons.neutrals.primary}}
+                            style={[{
+                                height: appStyle.functionButton.size,
+                                width: appStyle.functionButton.size,
+                                borderRadius: appStyle.borderRadius.additional,
+                                backgroundColor: BLUR? 'transparent' : (invertHeaderColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary),
+                      
+                                },
+                            ]}
+                            android_ripple={rippleEffect != 'none'? ripple(Theme.icons.accents.quaternary) : false}
                             onPress={pressFunction}
                         />
                     </Reanimated.View>

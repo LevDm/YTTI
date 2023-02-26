@@ -420,12 +420,12 @@ export default ThemeRedacor = ({
                         themesColorsAppList[index]? {
                         gradient: [ThemeThisItem.basics.accents.primary,ThemeThisItem.basics.accents.secondary, ThemeThisItem.basics.accents.tertiary, ThemeThisItem.basics.accents.quaternary],
                         title: ThemeThisItem.texts.neutrals.primary,
-                        background: Theme.basics.neutrals.primary
+                        background: Theme.basics.neutrals.secondary
                         } : {
                         //not custom palette
-                        gradient: ['#00000060', '#0000000a'],
-                        subTitle: Theme.texts.neutrals.secondary,
-                        title: Theme.texts.neutrals.primary,
+                        gradient: ['#00000060','#00000040','#00000020','#0000000a'],
+                        subTitle: 'transparent', //,Theme.texts.neutrals.secondary,
+                        title: 'transparent',// Theme.texts.neutrals.primary,
                         background: 'transparent'  
                     }}
                         

@@ -183,7 +183,7 @@ export default function App() {
         hidden = {false}
         animated={true}
       />
-      {(appConfig.splachScreenShow && splashVisible) && <SplashY splashStart={splashStart} splashOut={splashOut}/>}
+      {(appConfig.splash.show && splashVisible) && <SplashY splashStart={splashStart} splashOut={splashOut}/>}
     </View>
     </Provider>
   );  

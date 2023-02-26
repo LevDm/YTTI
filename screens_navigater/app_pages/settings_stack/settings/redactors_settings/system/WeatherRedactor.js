@@ -440,7 +440,7 @@ export default WeatherRedactor = ({
                             //borderTopStartRadius
                             //borderStartWidth
                             //borderEndWidth
-                        }, staticStyles.shadow]}
+                        }, appStyle.effects.shadows? staticStyles.shadow : {}]}
                     >   
                         {(location && !addNewLocation) &&
                         <BaseBox
@@ -450,7 +450,7 @@ export default WeatherRedactor = ({
                                 backgroundColor: 'transparent',
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
-                            android_ripple={ripple(Theme.icons.accents.primary)}
+                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
                             Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{usersLocations[index].city}</Text>}
                             check = {checkGroup[index]}
                             onPress = {()=>{settingLocaion(index)}}
@@ -473,7 +473,7 @@ export default WeatherRedactor = ({
                                 backgroundColor: 'transparent',
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
-                            android_ripple={ripple(Theme.icons.accents.primary)}
+                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
                             onPress={()=>{openModal('replace', index)}}
                         />}
                         {((location && !addNewLocation) && true) && 
@@ -489,7 +489,7 @@ export default WeatherRedactor = ({
                                 backgroundColor: 'transparent',
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
-                            android_ripple={ripple(Theme.icons.accents.primary)}
+                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
                             onPress={()=>{editLocation('del', usersLocations[index])}}
                         />}
                         {(!location && addNewLocation) && 
@@ -513,7 +513,7 @@ export default WeatherRedactor = ({
                                 paddingLeft: 3
                                 //alignItems: 'flex-start',
                             }}
-                            android_ripple={ripple(Theme.icons.accents.primary)}
+                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
                             onPress={()=>{openModal('add', index)}}
                         />}
                     </View>)
@@ -525,7 +525,7 @@ export default WeatherRedactor = ({
             visible = {modalVisible}
             dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.basics.neutrals.tertiary}25`: false} 
             gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.primary : false}
-            blur={true}
+            blur={appStyle.effects.blur}
             outPress = {outsideModalPress}
             onShow = {onShow}
             modalStyle = {{
@@ -614,7 +614,8 @@ export default WeatherRedactor = ({
                                 backgroundColor: Theme.basics.neutrals.secondary,
                                 //justifyContent: 'center',
                                 alignItems: 'center'
-                            }, staticStyles.shadow]}
+                            }, 
+                            appStyle.effects.shadows? staticStyles.shadow : {}]}
                         >
                             <Pressable
                                 style = {{
@@ -624,11 +625,7 @@ export default WeatherRedactor = ({
                                     //padding: 5
                                 }}
                                 onPress={()=>{selected(item)}}
-                                android_ripple={{
-                                    color: Theme.basics.accents.primary,
-                                    borderless: true,
-                                    foreground: false
-                                }}
+                                android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.basics.accents.primary) : false}
                             >   
                                 <View
                                     style = {{

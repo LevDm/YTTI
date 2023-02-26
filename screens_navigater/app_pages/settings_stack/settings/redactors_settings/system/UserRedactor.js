@@ -61,7 +61,6 @@ export default UserRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.user
 
-    
     const [textInputValue, setTextInputValue] = useState(appConfig.user.name? appConfig.user.name : null)
 
     const exit = (text)=>{
@@ -73,19 +72,6 @@ export default UserRedactor = ({
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
     }
-
-    const [welcomeUsed, setWelcomeUsed] = useState(appConfig.user.welcome)
-
-    const welcomeUsedSetting = () => {
-        //let newAppConfig = getNewAppConfigObject();
-        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        newAppConfig.user.welcome = !welcomeUsed
-        r_setAppConfig(newAppConfig);
-        dataRedactor("storedAppConfig", newAppConfig);
-
-        setWelcomeUsed(!welcomeUsed)
-    }
-
 
     return (<>
     <View 
@@ -142,7 +128,7 @@ export default UserRedactor = ({
                 textProps: {
                     numberOfLines: 2,
                 },
-                android_ripple: ripple(Theme.icons.accents.primary),
+                android_ripple: appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false,
                 type: 'ti', 
                 icon: {
                     name: textInputValue? "account-box-outline" : "pencil-outline", 
@@ -151,39 +137,6 @@ export default UserRedactor = ({
                 }
             }}
         />
-    </View>
-    <View
-        style = {{
-            //flexDirection: 'row',
-            justifyContent: 'center',   
-            //alignItems: 'center',
-            height: 60,
-            //paddingLeft: !appConfig.splachScreenShow? 10 : 0
-        }}
-    >      
-        <SwitchField
-            text = {`${Language.welcome} ${Language.welcomeState[`${welcomeUsed}`]}`}
-            primeValue={welcomeUsed}
-            onChange={welcomeUsedSetting}
-            style={{
-                //height: 60,
-                //flex: 1
-            }}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />
-        {!appConfig.splachScreenShow && 
-        <View
-            style = {{
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                //left: -5,
-                backgroundColor: `${Theme.basics.neutrals.tertiary}25`,
-                borderRadius: appStyle.borderRadius.additional
-            }}
-        />}
     </View>
     </>)
 }

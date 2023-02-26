@@ -75,16 +75,16 @@ export default ListsRedactor = ({
         setFullWidth(!fullWidth)
     }
 
-    const [shadowUse, setShadowUse] = useState(appStyle.lists.shadow);
-    
-    const shadowChange = () =>{
+    const [invertColors, setInvertColors] = useState(appStyle.lists.invertColorsHeader)
+
+    const invertChange = () =>{
         //let newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.lists.shadow = !shadowUse;
+        newAppStyle.lists.invertColorsHeader = !invertColors;
         //setPreviewAppStyle(newAppStyle);
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
-        setShadowUse(!shadowUse)
+        setInvertColors(!invertColors)
     }
 
 
@@ -142,9 +142,9 @@ export default ListsRedactor = ({
             ThemeSchema = {ThemeSchema}
         />
         <SwitchField
-            text = {`${Language.shadows} ${Language.shadowsState[`${shadowUse}`]}`}
-            primeValue={shadowUse}
-            onChange={shadowChange}
+            text = {`${Language.invertColorsHeader} ${Language.invertColorsHeaderState[invertColors]}`}
+            primeValue={invertColors}
+            onChange={invertChange}
             style = {{
                 marginTop: 10
             }}

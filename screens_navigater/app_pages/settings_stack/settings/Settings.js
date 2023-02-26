@@ -67,6 +67,8 @@ import {
 } from "../../../../general_components/base_components/BaseElements";
 
 import ThemeRedacor from "./redactors_settings/interface/ThemeRedactor";
+import EffectsRedactor from "./redactors_settings/interface/EffectsRedactor";
+
 import BorderRadiusRedactor from "./redactors_settings/interface/BorderRadiusRedactor";
 import NavigateMenuRedactor from "./redactors_settings/interface/NavigateMenuRedactor";
 import LanguageRedactor from "./redactors_settings/system/LanguageRedactor";
@@ -127,7 +129,7 @@ const STRUCTURE = {
                         {
                             param: "effects",
                             icon:  "magic-staff",
-                            paramRedactorComponent: null
+                            paramRedactorComponent: EffectsRedactor
                         },
                     ]
                 },              
@@ -600,6 +602,11 @@ export default connect(mapStateToProps('SETTINGS_SCREEN'), mapDispatchToProps('S
 
 //====================================================================================================================================
 //====================================================================================================================================
+const ripple = (color) => ({
+    color: `${color}20`,
+    borderless: true,
+    foreground: false
+})
 //====================================================================================================================================
 
 const BobberButton = (props) => {
@@ -618,11 +625,6 @@ const BobberButton = (props) => {
         ThemeColorsAppIndex,
         ThemeSchema
     } = props
-
-    const BLUR = false
-    const invertHeaderColors = false
-    const shadows = true
-    const rippleEffect = 'none'
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     
@@ -661,12 +663,6 @@ const BobberButton = (props) => {
                 {translateY: withTiming((reaValueBobberButtonVisible.value == 0 && enabled)? 0 : bottomBord, {duration: durationTranslate})}
             ] 
         }
-    })
-
-    const ripple = (color) => ({
-        color: `${color}20`,
-        borderless: true,
-        foreground: false
     })
 
     return(
@@ -712,7 +708,7 @@ const BobberButton = (props) => {
                                 borderRadius: appStyle.borderRadius.additional,
                                 position: 'absolute',
                                 backgroundColor: 'transparent'
-                            },shadows? {
+                            }, appStyle.effects.shadows? {
                                 shadowColor: "#000",
                                 shadowOffset: {
                                     width: 0,
@@ -724,7 +720,7 @@ const BobberButton = (props) => {
                                 } : {},
                             ]}
                         />
-                        {BLUR && 
+                        {appStyle.effects.blur && 
                         <View 
                             style = {[StyleSheet.absoluteFillObject, {
                                 flex: 1,
@@ -739,7 +735,7 @@ const BobberButton = (props) => {
                             blurAmount = {10}
                             
                             //ANDROID_PROPS
-                            overlayColor={`${invertHeaderColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary}90`}
+                            overlayColor={`${appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary}90`}
                             //overlayColor={'transparent'}
                             //blurRadius	= {10}
                             //downsampleFactor = {10}
@@ -747,16 +743,16 @@ const BobberButton = (props) => {
                         </View>}  
                         <BasePressable
                             type={"i"}
-                            icon={{name: iconName, size: 24, color: invertHeaderColors? Theme.icons.accents.secondary : Theme.icons.neutrals.primary}}
+                            icon={{name: iconName, size: 24, color: appStyle.functionButton.invertColors? Theme.icons.accents.secondary : Theme.icons.neutrals.primary}}
                             style={[{
                                 height: appStyle.functionButton.size,
                                 width: appStyle.functionButton.size,
                                 borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: BLUR? 'transparent' : (invertHeaderColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary),
+                                backgroundColor: appStyle.effects.blur? 'transparent' : (appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary),
                       
                                 },
                             ]}
-                            android_ripple={rippleEffect != 'none'? ripple(Theme.icons.accents.quaternary) : false}
+                            android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.quaternary) : false}
                             onPress={pressFunction}
                         />
                     </Reanimated.View>
@@ -815,9 +811,6 @@ const BasisList = (props) => {
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen
-
-    const BLUR = true
-    const invertHeaderColors = true
 
     const headerStickysFullHeight = headerStickysHeight //+(2*appStyle.lists.proximity)
     const selectorLineHeightFull = itemCategoryHeight + selectorLineHeight
@@ -1457,7 +1450,7 @@ const BasisList = (props) => {
             
                 style={[
                     staticStyles.SLArea, 
-                    appStyle.lists.shadow? staticStyles.shadow : {},
+                    appStyle.effects.shadows? staticStyles.shadow : {},
                     dynamicStyleListItems,
                     {   
                         minHeight: item.fromCustom? 200 : 70,
@@ -1521,13 +1514,13 @@ const BasisList = (props) => {
                     zIndex: 1,
                     position: 'absolute',                    
                 },
-                BLUR? {} : {
-                    backgroundColor: invertHeaderColors? Theme.basics.neutrals.secondary : Theme.basics.accents.primary,
+                appStyle.effects.blur? {} : {
+                    backgroundColor: appStyle.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary,
                 },
                 header
             ]}
         >
-            {BLUR && 
+            {appStyle.effects.blur && 
             <View 
                 style = {[StyleSheet.absoluteFillObject, {
                     flex: 1,
@@ -1541,7 +1534,7 @@ const BasisList = (props) => {
                 blurAmount = {10}
                 
                 //ANDROID_PROPS
-                overlayColor={`${invertHeaderColors? Theme.basics.neutrals.secondary : Theme.basics.accents.primary}90`}
+                overlayColor={`${appStyle.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary}90`}
                 //overlayColor={'transparent'}
                 //blurRadius	= {10}
                 //downsampleFactor = {10}
@@ -1567,7 +1560,7 @@ const BasisList = (props) => {
             >
                 <ReanimatedTextInput     
                     editable = {false}
-                    style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}
+                    style = {[staticStyles.AnimatedHeaderText, categoryStyle, {color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}
                     animatedProps={categoryText}
                 />
             </Reanimated.View>
@@ -1580,7 +1573,7 @@ const BasisList = (props) => {
                     right: 0
                 }]}
             >
-                <Text style = {[staticStyles.AnimatedHeaderText, {color: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}>
+                <Text style = {[staticStyles.AnimatedHeaderText, {color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}>
                     {Language.app}
                 </Text>
             </Reanimated.View>
@@ -1605,7 +1598,7 @@ const BasisList = (props) => {
             >
                 <BasePressable 
                     type="i"
-                    icon={{name: "backburger", size: 24, color: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}}
+                    icon={{name: "backburger", size: 24, color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}}
                     style={{
                         height: 45, 
                         width: 45, 
@@ -1614,13 +1607,9 @@ const BasisList = (props) => {
                         borderRadius: appStyle.borderRadius.additional
                     }}
                     onPress={backBurgerPress}
-                    android_ripple={{
-                        color: `${invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}20`,
-                        borderless: true,
-                        foreground: false
-                    }}
+                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
                 />
-                <Text style = {[staticStyles.AnimatedHeaderText, {color: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}>
+                <Text style = {[staticStyles.AnimatedHeaderText, {color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}>
                     {Language.HeaderTitle}
                 </Text>
             </View>
@@ -1688,7 +1677,7 @@ const BasisList = (props) => {
                                 </Reanimated.Text>
                             </Reanimated.View>}>
                             {/* COLOR*/}
-                            <Reanimated.View style={[maskCategoryHeight,{width: '100%', backgroundColor: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}/>  
+                            <Reanimated.View style={[maskCategoryHeight,{width: '100%', backgroundColor: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}/>  
                             </MaskedView>
                         </Pressable>
                     )
@@ -1728,7 +1717,7 @@ const BasisList = (props) => {
                     }
                 >   
                     {/* COLOR*/}
-                    <Reanimated.View style={[maskIndicatorHeight,{width: '100%', backgroundColor: invertHeaderColors? Theme.icons.accents.primary : Theme.icons.accents.quaternary}]}/>  
+                    <Reanimated.View style={[maskIndicatorHeight,{width: '100%', backgroundColor: appStyle.lists.invertColorsHeader? Theme.icons.accents.primary : Theme.icons.accents.quaternary}]}/>  
                 </MaskedView>
                 
                 <ReanimatedFlatList
@@ -1787,7 +1776,7 @@ const BasisList = (props) => {
                                 </Text>
                             </View>}>
                             {/* COLOR*/}
-                            <Reanimated.View style={[maskParamsHeight, {width: '100%', backgroundColor: invertHeaderColors? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}/>  
+                            <Reanimated.View style={[maskParamsHeight, {width: '100%', backgroundColor: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}/>  
                             </MaskedView>
                         </Pressable>
                         )

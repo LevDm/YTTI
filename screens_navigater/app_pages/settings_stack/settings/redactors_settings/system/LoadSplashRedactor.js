@@ -38,29 +38,30 @@ export default LoadSplashRedactor = ({
     ThemeSchema,
     LanguageAppIndex  
 }) => {
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.loadAnimation
 
-    const [loadSplash, setLoadSplash] = useState(appConfig.splachScreenShow);
-    
+
+    const [loadSplash, setLoadSplash] = useState(appConfig.splash.show);
     const loadSplashShowSetting = () =>{
-        //let newAppStyle = getNewAppStyleObject('currentStyle');
-        //newAppStyle.splachLoadShow = (!loadSplash)
-        //setAppStyle(newAppStyle)
-        //dataRedactor("storedAppStyle", newAppStyle);
-        //r_setAppStyle(newAppStyle)
-        
-
-        //let newAppConfig = getNewAppConfigObject();
         const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        newAppConfig.splachScreenShow = (!loadSplash);
+        newAppConfig.splash.show = (!loadSplash);
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
         setLoadSplash(!loadSplash)
     }
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.loadAnimation
+    const [welcomeUsed, setWelcomeUsed] = useState(appConfig.splash.welcome)
+    const welcomeUsedSetting = () => {
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
+        newAppConfig.splash.welcome = !welcomeUsed
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
 
-    return (
+        setWelcomeUsed(!welcomeUsed)
+    }
+
+    return (<>
     <SwitchField
         text = {`${Language.show} ${Language.showState[`${loadSplash}`]}`}
         primeValue={loadSplash}
@@ -72,7 +73,40 @@ export default LoadSplashRedactor = ({
         ThemeColorsAppIndex = {ThemeColorsAppIndex}
         ThemeSchema = {ThemeSchema}
     />
-    )
+    <View
+        style = {{
+            //flexDirection: 'row',
+            justifyContent: 'center',   
+            //alignItems: 'center',
+            height: 60,
+            //paddingLeft: !appConfig.splachScreenShow? 10 : 0
+        }}
+    >      
+        <SwitchField
+            text = {`${Language.welcome} ${Language.welcomeState[`${welcomeUsed}`]}`}
+            primeValue={welcomeUsed}
+            onChange={welcomeUsedSetting}
+            style={{
+                //height: 60,
+                //flex: 1
+            }}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        {!appConfig.splash.show && 
+        <View
+            style = {{
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                //left: -5,
+                backgroundColor: `${Theme.basics.neutrals.tertiary}25`,
+                borderRadius: appStyle.borderRadius.additional
+            }}
+        />}
+    </View>
+    </>)
 }
 
 const staticStyles = StyleSheet.create({

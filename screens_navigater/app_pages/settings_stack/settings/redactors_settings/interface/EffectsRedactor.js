@@ -18,18 +18,12 @@ import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
+import { rippleValues } from "../../../../../../app_values/AppDefault";
 
-//const sizeButton = {min: 40, max: 70, step: 5}
-//const valuePosition = ['left','center','right']
-import { sizeButton, valuePosition } from "../../../../../../app_values/AppDefault";
+import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
-import commonStaticStyles, { SwitchField, SliderField, BoxsField } from "../CommonElements";
-
-export default ListsRedactor = ({
+export default EffectsRedactor = ({
     appStyle,
-    //setPreviewAppStyle,
-    //getNewAppStyleObject,
-
     previewAppStyleA,
 
     ThemeColorsAppIndex,
@@ -37,39 +31,39 @@ export default ListsRedactor = ({
     LanguageAppIndex  
 }) => {
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.bobberButton
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.effects
 
-    const [sliderValue, setSliderValue] = useState(appStyle.functionButton.size);
 
-    const positionButtonSetting = (index) => {
+    const rippleSetting = (index) => {
         //const newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.functionButton.position = valuePosition[index];
+        newAppStyle.effects.ripple = rippleValues[index];
         //setPreviewAppStyle(newAppStyle);
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     };
 
-    const settingSizeButton = (value, isComplete) =>{
-        //const newAppStyle = getNewAppStyleObject();
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        isComplete? setSliderValue(value) : null
-        newAppStyle.functionButton.size = Number(value);
-        //setPreviewAppStyle(newAppStyle);
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
-    }
 
-    const [invertColors, setInvertColors] = useState(appStyle.functionButton.invertColors)
-
-    const invertChange = () =>{
+    const [shadows, setShadows] = useState(appStyle.effects.shadows)
+    const shadowsChange = () =>{
         //let newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.functionButton.invertColors = !invertColors;
+        newAppStyle.effects.shadows = !shadows;
         //setPreviewAppStyle(newAppStyle);
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
-        setInvertColors(!invertColors)
+        setShadows(!shadows)
+    }
+
+    const [blur, setBlur] = useState(appStyle.effects.blur)
+    const blurChange = () =>{
+        //let newAppStyle = getNewAppStyleObject();
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        newAppStyle.effects.blur = !blur;
+        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
+        setBlur(!blur)
     }
 
     return (
@@ -81,39 +75,31 @@ export default ListsRedactor = ({
         <BoxsField
             //  'one'>true || 'multiple'>false
             isChoiceOne={true}
-            title = {Language.position}
+            title = {Language.ripple}
             //  'one'>index || 'multiple'>[indexs]
-            primaryValue = {valuePosition.indexOf(appStyle.functionButton.position)} 
-            groupSize = {valuePosition.length}
-            groupItems = {Language.positions}         
-            onPress = {(activeIndex)=>{positionButtonSetting(activeIndex)}}          
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />
-        <SliderField
-            viewProps={{
-                style: {
-                    marginTop: 10,
-                }
-            }}
-            
-            title = {Language.size}
-            signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-            minimumValue={sizeButton.min}
-            maximumValue={sizeButton.max}
-            step = {sizeButton.step}
-            value = {sliderValue}
-            onSlidingComplete = {(value)=>{settingSizeButton(value, true)}}
-            onValueChange = {(value)=>{settingSizeButton(value, false)}}
+            primaryValue = {rippleValues.indexOf(appStyle.effects.ripple)} 
+            groupSize = {rippleValues.length}
+            groupItems = {Language.ripples}         
+            onPress = {(activeIndex)=>{rippleSetting(activeIndex)}}          
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
         <SwitchField
-            text = {`${Language.invertColors} ${Language.invertColorsState[invertColors]}`}
-            primeValue={invertColors}
-            onChange={invertChange}
+            text = {`${Language.shadows} ${Language.shadowsState[shadows]}`}
+            primeValue={shadows}
+            onChange={shadowsChange}
+            style = {{
+                marginTop: 10
+            }}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        <SwitchField
+            text = {`${Language.blur} ${Language.blurState[blur]}`}
+            primeValue={blur}
+            onChange={blurChange}
             style = {{
                 marginTop: 10
             }}

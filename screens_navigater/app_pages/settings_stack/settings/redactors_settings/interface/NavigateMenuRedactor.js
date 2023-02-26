@@ -79,17 +79,6 @@ export default NavigateMenuRedactor = ({
         setSignature(!signature)
     }
 
-    const [rippleEffect, setRippleEffect] = useState(appStyle.navigationMenu.rippleEffect);
-    const rippleEffectChange = () =>{
-        //let newAppStyle = getNewAppStyleObject();
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.navigationMenu.rippleEffect = !rippleEffect;
-        //setPreviewAppStyle(newAppStyle);
-        cancelAnimation(previewAppStyleA);
-        previewAppStyleA.value = newAppStyle;
-        setRippleEffect(!rippleEffect)
-    }
-
     const [sliderValueVert, setSliderValueVert] = useState(appStyle.navigationMenu.position.vertical);
     const setPrewBasicVertPos = (value) => {
         //let newAppStyle = getNewAppStyleObject();
@@ -190,18 +179,9 @@ export default NavigateMenuRedactor = ({
     
     <View
         style = {[{
-            height: 215,
+            height: 165,
         }]}
-    >   
-        <SwitchField
-            text = {`${Language.rippleEffect} ${Language.rippleEffectState[rippleEffect]}`}
-            primeValue={rippleEffect}
-            onChange={rippleEffectChange}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />
-        
+    >           
         {previewMenuType == menuTypes[2] && 
         <Reanimated.View 
             //exiting={exiting} 

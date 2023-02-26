@@ -87,7 +87,6 @@ export const SwitchField = ({
     ThemeColorsAppIndex,
     ThemeSchema,
 }, props) => {
-
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
     return (
@@ -141,7 +140,7 @@ export const SwitchField = ({
                     {text}
                 </Text>
             }
-            android_ripple={ripple(Theme.icons.accents.primary)}
+            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
             trackStyle={{
                 borderRadius: appStyle.borderRadius.additional,
             }}
@@ -234,7 +233,7 @@ export const BoxsField = ({
                         borderRadius: appStyle.borderRadius.additional,
                         backgroundColor: 'transparent'
                     }}
-                    android_ripple={ripple(Theme.icons.accents.primary)}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
                     Item = {!renderItem? <Text style = {[commonStaticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{groupItems[index]}</Text> : renderItem(checkGroup[index], index)}
                     check = {checkGroup[index]}
                     onPress = {()=>{checkBoxPress(index)}}

@@ -169,7 +169,7 @@ export default LanguageRedactor = ({
                         backgroundColor: isActive ? `${Theme.basics.neutrals.tertiary}10` : 'transparent',
                     },
                 ]}
-              android_ripple={ripple(Theme.basics.neutrals.tertiary)}
+              android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.basics.neutrals.tertiary) : false}
             >
                 <BaseBox
                     key = {`functions_${item}`}
@@ -181,7 +181,7 @@ export default LanguageRedactor = ({
                         backgroundColor: 'transparent',
                         borderRadius: appStyle.borderRadius.additional,
                     }}
-                    android_ripple={ripple(Theme.icons.accents.primary)}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
                     Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{item}</Text>}
                     check = {checkGroup[index]}
                     onPress = {()=>{settingFunctions(index)}}
@@ -199,16 +199,12 @@ export default LanguageRedactor = ({
     }
 
     return (<>
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
-            Funcs
-        </Text>
         <DraggableFlatList
             data={data}
             onDragEnd={endDrag}
             keyExtractor={(item) => item}
             renderItem={renderItem}
         />
-
     </>)
 }
 

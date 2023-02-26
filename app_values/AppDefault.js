@@ -23,6 +23,8 @@ export const sizeButton = {min: 46, max: 64, step: 2}
 export const weatherTypes = ['lists', 'panel', 'widget']
 
 export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
+//effects
+export const rippleValues = ['all', 'some', 'none']
 
 //APPERANCE
 export const defaultAppStyle = {
@@ -35,22 +37,28 @@ export const defaultAppStyle = {
         basic: 12, 
         additional: 12
     },
+    effects: {
+        ripple: 'all',
+        blur: true,
+        shadows: false
+    },
     navigationMenu: {
         type: menuTypes[0],
         height: 50,
         position: {vertical: 0 , horizontal : 'right'},
         signatureIcons: true,
-        rippleEffect: true,
+        //rippleEffect: true,
         drawerPosition: 'right'
     },
     lists: {
         textSize: 14,
         proximity: 5,
-        shadow: true,
+        //shadow: true,
         fullWidth: false,
-        //horizontalProximity: 5,
+        invertColorsHeader: true,
     },
     functionButton: {
+        invertColors: true,
         position: 'right',
         size: 60,
     },
@@ -69,9 +77,11 @@ export const defaultAppConfig = {
     languageApp: 'en',
     user: {
         name: '',
+    },
+    splash: {
+        show: true,
         welcome: true
     },
-    splachScreenShow: true,
     screenSubsequence: ['analytics', 'tasks', 'notes', 'settings'],
     appFunctions: {
         analytics: {

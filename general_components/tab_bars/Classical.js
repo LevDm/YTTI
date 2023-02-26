@@ -73,7 +73,11 @@ const Classical = ({
         };
     };
 
-    const BLUR = true
+    const ripple = (color) => ({
+        color: `${color}20`,
+        borderless: true,
+        foreground: false
+    })
 
     return (
         <View
@@ -82,14 +86,14 @@ const Classical = ({
                     height: appStyle.navigationMenu.height,
                     width: deviceWidth,
                 },
-                BLUR? {} : {
+                appStyle.effects.blur? {} : {
                     borderTopWidth:1,
                     borderColor: `${Theme.basics.neutrals.tertiary}25`,
                     backgroundColor: Theme.basics.neutrals.secondary,
                 }]
             }
         >   
-            {BLUR && 
+            {appStyle.effects.blur && 
             <View 
                 style = {[StyleSheet.absoluteFillObject, {
                     //specialty blur for android
@@ -212,11 +216,7 @@ const Classical = ({
                                 //backgroundColor: 'transparent' 
                             }
                         ]}
-                        android_ripple = {appStyle.navigationMenu.rippleEffect? {
-                            color: `${Theme.icons.accents.primary}20`, 
-                            borderless: true,
-                            foreground: false
-                        } : false}
+                        android_ripple = {appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
                     >
                         {cisFocused && 
                             <Animated.View 

@@ -187,12 +187,18 @@ const LanguageStoreRu = {
           },
           slider: {min: "прямее", max: "круглее"}
         },
+        effects: {
+          ripple: 'Пульсации',
+          ripples: ['Все', 'Основные', 'Выключены'],
+          shadows: 'Тени элементов',
+          shadowsState: {true: "включены", false: "выключены"},
+          blur: 'Эффект матового стекла - прозрачности поверхностных элементов',
+          blurState: {true: "включены", false: "выключены"},
+        },
         navigationMenu: {
           type: "Тип меню",
           types: ["Классическое","Скрытое","Выдвижная панель"],
           menuParams: "Параметры меню",
-          rippleEffect: 'Эффект пульсации при нажатии',
-          rippleEffectState: {true: "включен", false: "выключен"},
           height: "Высота",
           slider: {min: "ниже", max: "выше"},
           signature: "Подписи иконок",
@@ -207,6 +213,8 @@ const LanguageStoreRu = {
           info: "...",
           show: "Показ анимации при запуске",
           showState: {true: "включен", false: "выключен"},
+          welcome: 'Приветствие на экране загрузки',
+          welcomeState: {true: "включено", false: "выключено"},
         },
         lists: {
           textSize: "Размер текста в элементах списка",
@@ -214,14 +222,16 @@ const LanguageStoreRu = {
           proximity: "Отступы между элементами списка",
           fullWidth: "Элементы списка занимают всю ширину экрана",
           fullWidthState: {true: "включено", false: "выключено"},
-          shadows: "Тени элементов списка",
-          shadowsState: {true: "включены", false: "выключены"},  
+          invertColorsHeader: 'Нейтральная палитра заголовка' ,
+          invertColorsHeaderState: {true: "включена", false: "выключена"},
         },
         bobberButton: {
           position: "Положение на экране",
           positions: ["Слева","По центру","Справа"],
           size: "Размер кнопки",
           slider: {min: "меньше", max: "больше"},
+          invertColors: 'Нейтральная палитра кнопки' ,
+          invertColorsState: {true: "включена", false: "выключена"},
         },
         modals: {
           horizontalProximity: 'Окно занимает всю ширину экрана',
@@ -280,8 +290,6 @@ const LanguageStoreRu = {
         user: {
           name: "Имя",
           accost: "Как к тебе обращаться?",
-          welcome: 'Приветствие на экране загрузки',
-          welcomeState: {true: "включено", false: "выключено"},
         }
       }
     },
@@ -497,12 +505,18 @@ const LanguageStoreEng = {
           },
           slider: {min: "straighter", max: "rounder"}
         },
+        effects: {
+          ripple: 'Ripple',
+          ripples: ['All', 'General', 'Off'],
+          shadows: 'Element Shadows',
+          shadowsState: {true: "on", false: "off"},
+          blur: 'Frosted glass effect - transparencies of the top elements',
+          blurState: {true: "on", false: "off"},
+        },
         navigationMenu: {
           type: "Type menu",
           types: ["Classical","Hidden", "Retractable panel"],
           menuParams: "Menu params",
-          rippleEffect: 'Ripple effect when pressed',
-          rippleEffectState: {true: "on", false: "off"},
           height: "Height",
           slider: {min: "up", max: "more"},
           signature: "Icons signature",
@@ -517,6 +531,8 @@ const LanguageStoreEng = {
           info: "...",
           show: "Animation on startup",
           showState: {true: "on", false: "off"},
+          welcome: 'Loading screen welcome',
+          welcomeState: {true: "on", false: "of"},
         },
         lists: {
           textSize: "Text size in list items",
@@ -524,14 +540,16 @@ const LanguageStoreEng = {
           proximity: "Spacing between list items",
           fullWidth: "List items take up the full width of the screen",
           fullWidthState: {true: "on", false: "off"},
-          shadows: "List item shadows",
-          shadowsState: {true: "on", false: "off"},  
+          invertColorsHeader: 'Neutral Header Palette' ,
+          invertColorsHeaderState: {true: "on", false: "off"},
         },
         bobberButton: {
           position: "Position on screen",
           positions: ["Left","Center","Right"],
           size: "Button size",
           slider: {min: "less", max: "more"},
+          invertColors: 'Neutral button palette' ,
+          invertColorsState: {true: "on", false: "off"},
         },
         modals: {
           horizontalProximity: 'Window takes up the full width of the screen',
@@ -590,8 +608,6 @@ const LanguageStoreEng = {
         user: {
           name: "Name",
           accost: "How to contact you?",
-          welcome: 'Loading screen welcome',
-          welcomeState: {true: "on", false: "of"},
         }
       }
     },

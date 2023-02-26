@@ -209,7 +209,7 @@ const SplashY = (props) => {
             />
             
 
-            {(appConfig.user.welcome) &&
+            {(appConfig.splash.welcome) &&
             <Animated.View
                 style = {[{
                     position: 'absolute',

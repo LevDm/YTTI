@@ -278,8 +278,12 @@ export default ThemeRedacor = ({
         console.log('custom theme create')
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         //let newAppStyle = getNewAppStyleObject('currentStyle')
-        newAppStyle.customTheme = themesColorsAppList[ThemeColorsAppIndex]
-        themesColorsAppList.splice(0,1,themesColorsAppList[ThemeColorsAppIndex])
+        const newTheme = JSON.parse(JSON.stringify(themesColorsAppList[ThemeColorsAppIndex]));
+        newTheme.light.theme = 'custom'
+        newTheme.dark.theme = 'custom'
+
+        newAppStyle.customTheme = newTheme
+        themesColorsAppList.splice(0,1,newTheme)
         //themesColorsAppList[0] = themesColorsAppList[2]
 
         //setAppStyle(newAppStyle);

@@ -42,7 +42,7 @@ import Reanimated, {
     runOnUI,
     Easing 
 } from 'react-native-reanimated';
-
+import Constants from 'expo-constants';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import * as Location from 'expo-location';
@@ -63,8 +63,6 @@ import {
 import commonStaticStyles, { SwitchField, BoxsField, ripple } from "../CommonElements";
 
 import { weatherTypes } from "../../../../../../app_values/AppDefault";
-
-import { WEATHER_API_KEY } from "../../../../../../app_values/AppDefault";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -126,7 +124,7 @@ export default WeatherRedactor = ({
         const lang = languagesAppList[LanguageAppIndex].language
 
         setDvcLocationMsg({code: 0.5, msg: 'request definition city'})
-        const API_CITY_URL = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&lang=${lang}&appid=${WEATHER_API_KEY}`);
+        const API_CITY_URL = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&lang=${lang}&appid=${Constants.manifest.extra.WEATHER_API_KEY}`);
         const dataCity = await API_CITY_URL.json();
 
         locationInfo.city = (dataCity.name).replace(/\u0301/g, ""); // replace removes the accent of a letter

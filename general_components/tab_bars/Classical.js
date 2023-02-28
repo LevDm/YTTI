@@ -156,7 +156,7 @@ const Classical = ({
                     //console.log('cmenu page used',route.name, page, (page != undefined) && !page.used)
                 }
 
-                console.log('???', croute, cpage, 'focus', state.routes[state.index].name,'=',croute.name)
+                //console.log('???', croute, cpage, 'focus', state.routes[state.index].name,'=',croute.name)
                 const cisFocused = state.routes[state.index].name === croute.name;
 
 
@@ -237,7 +237,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Theme.icons.accents.primary
+                                            color: Theme.texts.accents.primary
                                         }
                                     ]}
                                 >
@@ -264,7 +264,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Theme.icons.neutrals.secondary
+                                            color: Theme.texts.neutrals.secondary
                                         }
                                     ]}
                                 >

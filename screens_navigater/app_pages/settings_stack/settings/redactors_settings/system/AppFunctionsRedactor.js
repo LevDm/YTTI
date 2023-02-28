@@ -14,7 +14,8 @@ import {
     Switch, 
     ActivityIndicator, 
     TextInput,
-    Keyboard
+    Keyboard,
+    Vibration
 } from 'react-native';
 
 import Animated from "react-native-reanimated";
@@ -47,15 +48,11 @@ import commonStaticStyles, { SwitchField, BoxsField, ripple } from "../CommonEle
 
 export default LanguageRedactor = ({
     appStyle,
+    r_setAppStyle,
     //setAppStyle,
 
     appConfig,
     r_setAppConfig,
-
-    //r_setLanguageApp,
-    //getNewAppStyleObject,
-    getNewAppConfigObject,
-    //LanguageStore,
 
     ThemeColorsAppIndex,
     ThemeSchema,
@@ -109,7 +106,7 @@ export default LanguageRedactor = ({
                 }
             }) 
         }
-        if(usedSubsequence.length >= 1){
+        if((usedSubsequence.includes('settings') && usedSubsequence.length >= 2) || (!usedSubsequence.includes('settings') && usedSubsequence.length >= 1)){
             console.log('usedSubsequence', usedSubsequence)
             Object.keys(newAppConfig.appFunctions).map((item, index)=>{
                 newAppConfig.appFunctions[item].used = newGroup[index]
@@ -123,7 +120,17 @@ export default LanguageRedactor = ({
             dataRedactor("storedAppConfig", newAppConfig);
 
             setCheckGroup(newGroup)
+
+            if(usedSubsequence.length == 1 && appStyle.navigationMenu.type == 'classical'){menuDisplay(0)}
+            else if(usedSubsequence.length >= 1 && (appStyle.navigationMenu.type == 'classical' && appStyle.navigationMenu.height == 0)){menuDisplay(50)}
         }
+    }
+
+    const menuDisplay = (value) => {
+        const newAppStyle = JSON.parse(JSON.stringify(appStyle));
+        newAppStyle.navigationMenu.height = value
+        dataRedactor("storedAppStyle",newAppStyle);
+        r_setAppStyle(newAppStyle);
     }
 
     const [data, setData] = useState(appConfig.screenSubsequence);
@@ -140,6 +147,7 @@ export default LanguageRedactor = ({
         console.log('funcs inex', index, useIndex)
         const longPress = () => {
             //console.log('funcs longpress', props)
+            Vibration.vibrate([5,10])
             drag()
         }
 

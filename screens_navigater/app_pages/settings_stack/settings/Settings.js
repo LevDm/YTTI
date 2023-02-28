@@ -11,7 +11,8 @@ import {
     View, 
     Dimensions,
     ToastAndroid,
-    Keyboard 
+    Keyboard,
+    Vibration 
 } from 'react-native';
 
 import Svg, { Circle, Rect, Ellipse, Line } from "react-native-svg";
@@ -135,12 +136,7 @@ const STRUCTURE = {
                 },              
                 {
                     subCategory: "elements",
-                    data: [
-                        {
-                            param: "navigationMenu",
-                            icon:  "menu",
-                            paramRedactorComponent: NavigateMenuRedactor
-                        },
+                    data: [                   
                         {
                             param: "bobberButton",
                             icon:  "balloon",
@@ -151,12 +147,16 @@ const STRUCTURE = {
                             icon:  "view-list",
                             paramRedactorComponent: ListsRedactor
                         },
-                        
                         {
                             param: "modals",
                             icon:  "window-restore",
                             paramRedactorComponent: ModalsRedactor
                         },  
+                        {
+                            param: "navigationMenu",
+                            icon:  "menu",
+                            paramRedactorComponent: NavigateMenuRedactor
+                        },
                     ]
                 },                  
             ]
@@ -424,13 +424,21 @@ const Settings = (props) => {
     }
 
     const applyAppStyle = ()=>{
-        //let newAppStyle = previewAppStyle
-        //console.log('fine ',newAppStyle)
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        const equal = (JSON.stringify(appStyle) === JSON.stringify(newAppStyle))
+        if(!equal){
+            Vibration.vibrate([5,12,50,12])
+            const usedSubsequence = Object.values(appConfig.appFunctions).filter(item => item.used && true)
+            
+            if(usedSubsequence.length == 1 && newAppStyle.navigationMenu.type == 'classical'){
+                console.log('apply', usedSubsequence)
+                newAppStyle.navigationMenu.height = 0
+            }
 
-        setAppStyle(newAppStyle)
-        dataRedactor("storedAppStyle",newAppStyle);
-        props.r_setAppStyle(newAppStyle);
+            setAppStyle(newAppStyle)
+            dataRedactor("storedAppStyle",newAppStyle);
+            props.r_setAppStyle(newAppStyle);
+        }
     }
 
 
@@ -486,6 +494,7 @@ const Settings = (props) => {
     
     const backBurgerPress = () => {
         (!bottomSheetVisible && props.hideMenu)? props.r_setHideMenu(false) : null
+        Vibration.vibrate([5,8])
         props.navigation.goBack()
         console.log('settings back', bottomSheetVisible , props.hideMenu)
     }
@@ -1479,7 +1488,7 @@ const BasisList = (props) => {
 
                     appStyle={appStyle}
                     //setAppStyle={setAppStyle}
-                    //r_setAppStyle={r_setAppStyle}
+                    r_setAppStyle={r_setAppStyle}
 
                     //previewAppStyle={previewAppStyle}
                     //setPreviewAppStyle={setPreviewAppStyle}
@@ -1907,7 +1916,7 @@ const BasisList = (props) => {
             <BasePressable 
                 type={'i'}
                 style={{height: 40}}
-                icon={{name: 'format-align-top', size: 40, color: Theme.basics.neutrals.tertiary}}
+                icon={{name: 'format-align-top', size: 40, color: Theme.icons.neutrals.tertiary}}
                 onPress={topReturn}
             />
         </Reanimated.View>

@@ -19,13 +19,6 @@ import languagesAppList from "../../app_values/Languages";
 let deviceHeight = Dimensions.get('window').height
 let deviceWidth = Dimensions.get('window').width
 
-const ThemenavigateBar = {
-    grounds: '#ffffff',
-    transparentGround: '#00000020',
-    icons: {active: '#6b8e23', notActive: '#000000'},
-    texts: {active: '#6b8e23', notActive: '#000000'},
-}
-
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 const Hidden = ({
     state = {
@@ -125,6 +118,12 @@ const Hidden = ({
         }
     })
 
+    const ripple = (color) => ({
+        color: `${color}20`,
+        borderless: true,
+        foreground: false
+    })
+
     return (
         <Animated.View
             style = {[
@@ -134,7 +133,7 @@ const Hidden = ({
                     
                     //width: size,
                     
-                    backgroundColor: ThemenavigateBar.transparentGround,
+                    backgroundColor: `${Theme.basics.neutrals.tertiary}20`,
                     borderRadius: appStyle.borderRadius.additional,
                     flexDirection: appStyle.navigationMenu.position.horizontal == 'center'?'row':'column',
                 }
@@ -152,22 +151,33 @@ const Hidden = ({
             />}
             {open && <>
             {state.routes.map((route, index) => {
-                const page = appConfig.appFunctions[route.name]
-                if(page && !page.used){
-                    console.log('hmenu page not used', route.name, page.used)
-                    return null
-                } else {
-                    console.log('hmenu page used',route.name, page, (page != undefined) && !page.used)
+                const routes =  {
+                    tasks : {name: "home"},
+                    notes : {name: "notes"},
+                    settings : {name: "settingsStack"},
+                    analytics : {name: "analytics"},
                 }
+                let current 
+                let uses = new Array(Object.keys(appConfig.appFunctions).length)//['','','','']
+                Object.keys(appConfig.appFunctions).map((litem, lindex)=>{
+                    if(appConfig.appFunctions[litem].useId == index){
+                        current = litem
+                    } 
+                    if(appConfig.appFunctions[litem].used){
+                        uses[appConfig.appFunctions[litem].useId] = litem
+                    } 
+                })
+                const croute = routes[current]
+                const cpage = appConfig.appFunctions[current]
+                if(!routes[current]){return null} 
+                const cisFocused = state.routes[state.index].name === croute.name;
 
-                const isFocused = state.index === index;
+
                 let size = 30;
-
-
                 const iconsNames = {focus: '', notFocus: ''}
                 let screenName = ''
 
-                switch(route.name){
+                switch(croute.name){
                     case "home":
                         iconsNames.focus = 'home-edit';
                         iconsNames.notFocus = 'home-edit-outline';
@@ -195,10 +205,10 @@ const Hidden = ({
                 return (
                     <AnimatedPressable
                         key = {`${Math.random()}`}
-                        disabled = {isFocused}
+                        disabled = {cisFocused}
                         onPress={()=>{
                             //setOpen(false)
-                            navigation.navigate(route.name)
+                            navigation.navigate(croute.name)
                         }}
                         style={[
                             transitonIcons,
@@ -211,9 +221,9 @@ const Hidden = ({
                                 //width: h
                             }
                         ]}
-                        android_ripple = {appStyle.navigationMenu.rippleEffect? {color: ThemenavigateBar.icons.active, borderless: true} : false}
+                        android_ripple = {appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
                     >
-                        {isFocused && 
+                        {cisFocused && 
                             <Animated.View 
                                 //exiting={exiting}
                                 style = {{
@@ -222,10 +232,10 @@ const Hidden = ({
                                 }}
                                 entering={entering}
                             >
-                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {ThemenavigateBar.icons.active}/>
+                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Theme.icons.accents.primary}/>
                             </Animated.View>        
                         }
-                        {!isFocused && 
+                        {!cisFocused && 
                             <Animated.View
                                 //exiting={exiting}
                                 entering={entering}
@@ -234,7 +244,7 @@ const Hidden = ({
                                     justifyContent: 'center',
                                 }}
                             >
-                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {ThemenavigateBar.icons.notActive}/>
+                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.icons.neutrals.secondary}/>
                             </Animated.View>        
                         }
                     </AnimatedPressable>    

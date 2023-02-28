@@ -192,8 +192,8 @@ const LanguageStoreRu = {
           ripples: ['Все', 'Основные', 'Выключены'],
           shadows: 'Тени элементов',
           shadowsState: {true: "включены", false: "выключены"},
-          blur: 'Эффект матового стекла - прозрачности поверхностных элементов',
-          blurState: {true: "включены", false: "выключены"},
+          blur: 'Прозрачность поверхностных элементов',
+          blurState: {true: "включена", false: "выключена"},
         },
         navigationMenu: {
           type: "Тип меню",
@@ -510,7 +510,7 @@ const LanguageStoreEng = {
           ripples: ['All', 'General', 'Off'],
           shadows: 'Element Shadows',
           shadowsState: {true: "on", false: "off"},
-          blur: 'Frosted glass effect - transparencies of the top elements',
+          blur: 'Surface element transparency',
           blurState: {true: "on", false: "off"},
         },
         navigationMenu: {

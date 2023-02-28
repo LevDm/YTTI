@@ -128,6 +128,7 @@ const ThemeItem = ({
                 end={{x: 1, y: 1}}
                 locations={[.3,.6,.8,1]}
                 style={{
+                    position: 'absolute',
                     height: itemSize,
                     width: itemSize,
                     borderRadius: appStyle.borderRadius.additional,

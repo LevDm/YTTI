@@ -94,6 +94,8 @@ export default ListsRedactor = ({
             //marginBottom: 30,
         }}
     >
+        {false &&
+        // off <- 
         <SliderField
             title = {Language.textSize}
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}      
@@ -111,7 +113,7 @@ export default ListsRedactor = ({
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
-        />
+        />}
         <SliderField
             title = {Language.proximity}
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}

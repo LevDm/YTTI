@@ -158,7 +158,7 @@ const ThemeItem = ({
                 <View
                     style={{
                         height: itemSize/8,
-                        width: itemSize/3.1,
+                        width: itemSize/3.2,
                         position: 'absolute',
                         top: -outlineSize,
                         borderRadius: appStyle.borderRadius.additional,                       

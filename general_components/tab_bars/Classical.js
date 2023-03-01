@@ -254,7 +254,7 @@ const Classical = ({
                                     justifyContent: 'center',
                                 }}
                             >
-                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.icons.neutrals.secondary}/>
+                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.icons.neutrals.tertiary}/>
                                 {appStyle.navigationMenu.signatureIcons &&
                                 <Text
                                     style = {[
@@ -264,7 +264,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Theme.texts.neutrals.secondary
+                                            color: Theme.texts.neutrals.tertiary
                                         }
                                     ]}
                                 >

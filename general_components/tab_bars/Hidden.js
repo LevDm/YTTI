@@ -244,7 +244,7 @@ const Hidden = ({
                                     justifyContent: 'center',
                                 }}
                             >
-                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.icons.neutrals.secondary}/>
+                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.icons.neutrals.tertiary}/>
                             </Animated.View>        
                         }
                     </AnimatedPressable>    

@@ -137,7 +137,7 @@ export default function App() {
     prepare();
   }, []);
 
-  const styleStatusBar = (themesColorsAppList[themesApp.indexOf(appStyle.palette.theme)][ThemeSchema]).statusBar
+  const styleStatusBar = appStyle.palette.statusBar//(themesColorsAppList[themesApp.indexOf(appStyle.palette.theme)][ThemeSchema]).statusBar
   //console.log('styleStatusBar', styleStatusBar)
   
   const [splashVisible, setSplashVisible] = useState(true)

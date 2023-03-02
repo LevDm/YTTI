@@ -166,9 +166,7 @@ export default FullColorsPicker = (props) => {
             {!start && <Text style={{fontSize: 14, fontWeight: 'bold', color: textColor}} >{generals}:</Text>}
             {Object.keys(objColors).map((item, index)=>{
             if(typeof objColors[item] == 'string'){
-                if((item === 'scheme' || item === 'theme')){
-                return null
-                }
+                if((item === 'scheme' || item === 'theme' || item === 'statusBar')){return null}
                 return (
                 <View key = {`color_${generals? generals : ''}_${item}_${index}`}>
                     <ColorItem 

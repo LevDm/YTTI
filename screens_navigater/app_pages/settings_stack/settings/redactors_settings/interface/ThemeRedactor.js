@@ -56,8 +56,7 @@ import commonStaticStyles, { BoxsField } from "../CommonElements";
 const Reanimated_Pressable = Reanimated.createAnimatedComponent(Pressable)
 const R_ActivityIndicator = Reanimated.createAnimatedComponent(ActivityIndicator)
 
-const schemes = ['auto', 'light', 'dark'] 
-
+import { schemes, statusBarStyles } from "../../../../../../app_values/AppDefault";
 
 const ThemeItem = ({
     title,
@@ -308,9 +307,14 @@ export default ThemeRedacor = ({
 
     const shemaSetting = (index) => {
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        //let newAppStyle = getNewAppStyleObject();
         newAppStyle.palette.scheme = schemes[index]
-        //setPreviewAppStyle(newAppStyle)
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
+    }
+
+    const barSetting = (index) => {
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        newAppStyle.palette.statusBar = statusBarStyles[index]
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
@@ -330,6 +334,19 @@ export default ThemeRedacor = ({
             groupSize = {schemes.length}
             onPress = {(activeIndex)=>{shemaSetting(activeIndex)}}
             groupItems = {Object.values(Language.colorsMods)}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        <BoxsField
+            //  'one'>true || 'multiple'>false
+            isChoiceOne={true}
+            title = {Language.statusBarStyle}
+            //  'one'>index || 'multiple'>[indexs]
+            primaryValue = {statusBarStyles.indexOf(appStyle.palette.statusBar)} 
+            groupSize = {statusBarStyles.length}
+            onPress = {(activeIndex)=>{barSetting(activeIndex)}}
+            groupItems = {Object.values(Language.barStyles)}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}

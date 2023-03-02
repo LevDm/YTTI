@@ -5,6 +5,7 @@ import Constants from "expo-constants";
 export const deviceHeight = Dimensions.get('window').height
 export const deviceWidth = Dimensions.get('window').width
 export const statusBarHeight = Constants.statusBarHeight+1
+
 //fillets
 export const borderRadiusValues = {min: 0, max: 32, step: 1}
 //navigation menu
@@ -27,11 +28,16 @@ export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 export const rippleValues = ['all', 'some', 'none']
 export const shadowsValues = ['material', 'neomorphism', 'none']
 
+//colors
+export const schemes = ['auto', 'light', 'dark'] 
+export const statusBarStyles = ['auto','inverted','light','dark']
+
 //APPERANCE
 export const defaultAppStyle = {
     palette: {
         theme: "olive",
-        scheme: 'auto'
+        scheme: 'auto',
+        statusBar: 'light',//'auto','inverted' ,'light' ,'dark'
     },
     customTheme: undefined,
     borderRadius: {

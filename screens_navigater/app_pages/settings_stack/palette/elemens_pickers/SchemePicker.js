@@ -44,6 +44,9 @@ const interval_sl = [0, 100]
 const statusBarValues = ['auto','inverted','light','dark']
 
 const PICKER_AREA_HEIGHT = 270
+
+// NOT USE !!! TRANSITION STATUS BAR STYLE IN COLORS REDACTOR SETTINGS
+
 const ShemePicker = ({
   show,
   initialValue,

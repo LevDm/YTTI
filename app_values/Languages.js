@@ -175,6 +175,13 @@ const LanguageStoreRu = {
         themes: {
           colorMode: "Тема",
           colorsMods: {auto: 'Системная', light: 'Светлая', dark: 'Темная'},
+          statusBarStyle: 'Цвет символов строки состояния',
+          barStyles: {
+            auto: 'Aвтоматический',
+            inverted: 'Инвертированный',
+            light: 'Светлый',
+            dark: 'Tемный'
+          },
           palette: "Палитра",
           openPainter: "редактор"
         },
@@ -493,6 +500,13 @@ const LanguageStoreEng = {
         themes: {
           colorMode: "Color mode",
           colorsMods: {auto: 'Systemic', light: 'Light', dark: 'Dark'},
+          statusBarStyle: 'Color of status bar symbols',
+          barStyles: {
+            auto: 'Automatic',
+            inverted: 'Inverted',
+            light: 'Light',
+            dark: 'Dark'
+          },
           palette: "Palette",
           openPainter: "redactor"
         },

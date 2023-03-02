@@ -16,7 +16,7 @@ export const heightNavigateMenu = {min: 35, max: 65, step: 5}
 export const drawerPositions = ['left', 'right']
 //lists
 export const listsTextSize = {min: 10, max: 20, step: 1}
-export const listsProximity = {min: 1, max: 5, step: 1}
+export const listsProximity = {min: 0, max: 10, step: 1}
 //bobber button
 export const sizeButton = {min: 56, max: 74, step: 2}
 //export const valuePosition = ['left','center','right']

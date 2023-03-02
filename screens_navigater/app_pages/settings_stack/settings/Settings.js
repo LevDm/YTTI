@@ -1459,8 +1459,9 @@ const BasisList = (props) => {
                 <SkiaViewDisign 
                     borderRadius = {appStyle.borderRadius.basic}
                     backgroundColor = {Theme.basics.neutrals.secondary}
-                    shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: 2*appStyle.lists.proximity}}
+                    shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: appStyle.lists.proximity}}
                     shadowStyle = {appStyle.effects.shadows}
+                    adaptiveSizeForStyle={false}
                     innerShadow={{
                         used: true,
                         borderWidth: 2
@@ -1485,6 +1486,7 @@ const BasisList = (props) => {
                         width: '100%',
                         height: 25,
                         alignItems: 'center',
+                        //backgroundColor: '#ff000020'
                     }]}
                 >
                     <MaterialCommunityIcons name={icon} size={20} color={Theme.texts.neutrals.secondary} />
@@ -1998,7 +2000,7 @@ const staticStyles = StyleSheet.create({
         //justifyContent: 'space-around',
         //alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingVertical: 20,
+        paddingVertical: 15,
         //paddingBottom: 20
     },
     SLParamHeaderText: {

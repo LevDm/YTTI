@@ -61,7 +61,7 @@ const commonStaticStyles = StyleSheet.create({
     },
     switchText: {
         textAlign: 'justify', 
-        width: '80%',
+        width: '83%',
     },
     verticalLine: {
         height: 45,

@@ -707,32 +707,30 @@ const BobberButton = (props) => {
                             position: 'absolute',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            height: appStyle.functionButton.size ,
+                            width: appStyle.functionButton.size ,
+                            //backgroundColor: 'red'
                             //borderRadius: appStyle.borderRadius.additional,
                         }]}
                     >   
-                        <View 
-                            style = {[{
-                                height: appStyle.functionButton.size,
-                                width: appStyle.functionButton.size,
-                                borderRadius: appStyle.borderRadius.additional,
-                                position: 'absolute',
-                                backgroundColor: 'transparent'
-                            }, appStyle.effects.shadows? {
-                                shadowColor: "#000",
-                                shadowOffset: {
-                                    width: 0,
-                                    height: 2
-                                },
-                                shadowOpacity: 0.25,
-                                shadowRadius: 4,
-                                elevation: 4,
-                                } : {},
-                            ]}
+                        <SkiaViewDisign 
+                            borderRadius = {appStyle.borderRadius.additional}
+                            backgroundColor = {(appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary)}
+                            shadowMargin={{horizontal: 5, vertical: 5}}
+                            shadowStyle = {appStyle.effects.shadows}
+                            adaptiveSizeForStyle={false}
+                            innerShadow={{
+                                used: true,
+                                borderWidth: 0.5
+                            }}
                         />
                         {appStyle.effects.blur && 
                         <View 
                             style = {[StyleSheet.absoluteFillObject, {
-                                flex: 1,
+                                left: 5,
+                                top: 5,
+                                height: appStyle.functionButton.size-10,
+                                width: appStyle.functionButton.size-10,
                                 //specialty blur for android
                                 overflow: 'hidden',
                                 borderRadius: appStyle.borderRadius.additional,
@@ -754,10 +752,10 @@ const BobberButton = (props) => {
                             type={"i"}
                             icon={{name: iconName, size: 24, color: appStyle.functionButton.invertColors? Theme.icons.accents.secondary : Theme.icons.neutrals.primary}}
                             style={[{
-                                height: appStyle.functionButton.size,
-                                width: appStyle.functionButton.size,
+                                height: appStyle.functionButton.size-10,
+                                width: appStyle.functionButton.size-10,
                                 borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: appStyle.effects.blur? 'transparent' : (appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary),
+                                //backgroundColor: appStyle.effects.blur? 'transparent' : (appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary),
                       
                                 },
                             ]}
@@ -776,6 +774,8 @@ import { BlurView } from "@react-native-community/blur";
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Ionicons } from '@expo/vector-icons';
+
+import SkiaViewDisign from "../../../../general_components/base_components/SkiaViewDisign";
 
 const ReanimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
 const ReanimatedSectionList = Reanimated.createAnimatedComponent(SectionList);
@@ -1236,8 +1236,8 @@ const BasisList = (props) => {
     const dynamicStyleListItems = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            borderRadius: withTiming(appStyle.borderRadius.basic, {duration: duration}),
-            marginHorizontal: withTiming((appStyle.lists.fullWidth? 0 : 10), {duration: duration}),
+            //borderRadius: withTiming(appStyle.borderRadius.basic, {duration: duration}),
+            //marginHorizontal: withTiming((appStyle.lists.fullWidth? 0 : 10), {duration: duration}),
             marginVertical: withTiming(appStyle.lists.proximity, {duration: duration}),
         }
     })
@@ -1245,7 +1245,7 @@ const BasisList = (props) => {
     const dynamicStyleListItemsHeaders = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            paddingHorizontal:  withTiming((7 * appStyle.borderRadius.basic/32), {duration: duration}),
+            paddingHorizontal:  withTiming((12 * appStyle.borderRadius.basic/32), {duration: duration}),
         }
     })
 
@@ -1455,19 +1455,28 @@ const BasisList = (props) => {
             >
                 {Language.StructureScreen.subCategorys[item.subCategory]}
             </Text>}
-            <Reanimated.View
-            
+            <Reanimated.View style={dynamicStyleListItems}>
+                <SkiaViewDisign 
+                    borderRadius = {appStyle.borderRadius.basic}
+                    backgroundColor = {Theme.basics.neutrals.secondary}
+                    shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: 2*appStyle.lists.proximity}}
+                    shadowStyle = {appStyle.effects.shadows}
+                    innerShadow={{
+                        used: true,
+                        borderWidth: 2
+                    }}
+                />
+            <Reanimated.View          
                 style={[
                     staticStyles.SLArea, 
-                    appStyle.effects.shadows? staticStyles.shadow : {},
-                    dynamicStyleListItems,
+                    //appStyle.effects.shadows? staticStyles.shadow : {},
+                    ,
                     {   
                         minHeight: item.fromCustom? 200 : 70,
-                        backgroundColor: Theme.basics.neutrals.secondary,   
+                        //backgroundColor: Theme.basics.neutrals.secondary, 
                     }
-                ]}
-                
-            >   
+                ]}               
+            >                
                 <Reanimated.View
                     style={[ 
                         dynamicStyleListItemsHeaders, 
@@ -1508,6 +1517,7 @@ const BasisList = (props) => {
 
                     //
                 />}         
+            </Reanimated.View>
             </Reanimated.View>
             </Reanimated.View>
         )
@@ -1986,9 +1996,10 @@ const staticStyles = StyleSheet.create({
         minHeight: 70, 
         paddingHorizontal: 10,
         //justifyContent: 'space-around',
+        //alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingVertical: 5,
-        paddingBottom: 20
+        paddingVertical: 20,
+        //paddingBottom: 20
     },
     SLParamHeaderText: {
         marginLeft: 5,

@@ -42,6 +42,7 @@ const dataLoader = ()  => {
       if(styleData.customTheme){
         console.log('>>FINDED_CUSTOM_THEME')
         themesColorsAppList.splice(0,1, styleData.customTheme)
+        console.log(JSON.stringify(styleData.customTheme))
       }
 
       store.dispatch({type: 'SET_STYLE_APP', value: styleData})

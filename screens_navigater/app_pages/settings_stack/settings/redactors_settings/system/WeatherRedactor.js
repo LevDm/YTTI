@@ -60,6 +60,8 @@ import {
     BaseModal 
 } from "../../../../../../general_components/base_components/BaseElements";
 
+import SkiaViewDisign from "../../../../../../general_components/base_components/SkiaViewDisign";
+
 import commonStaticStyles, { SwitchField, BoxsField, ripple } from "../CommonElements";
 
 import { weatherTypes } from "../../../../../../app_values/AppDefault";
@@ -605,16 +607,34 @@ export default WeatherRedactor = ({
                         return (
                         <View
                             key={`location_area_modal_${item}`}
-                            style = {[{
+                            style = {{
                                 width: '45%',
                                 height: 150,
-                                borderRadius: appStyle.borderRadius.additional,
-                                backgroundColor: Theme.basics.neutrals.secondary,
-                                //justifyContent: 'center',
                                 alignItems: 'center'
-                            }, 
-                            appStyle.effects.shadows? staticStyles.shadow : {}]}
+                            }} 
+                            //appStyle.effects.shadows? staticStyles.shadow : {}]}
                         >
+                            <SkiaViewDisign 
+                                borderRadius = {appStyle.borderRadius.additional}
+                                backgroundColor = {Theme.basics.neutrals.secondary}
+                                shadowMargin={{horizontal: 5, vertical: 5}}
+                                shadowStyle = {appStyle.effects.shadows}
+                                innerShadow={{
+                                    used: true,
+                                    borderWidth: 1
+                                }}
+                            />
+                            <View
+                                style = {{
+                                    width: '100%',
+                                    height: '100%',
+                                    alignItems: 'center',
+                                    padding: 5,
+                                    borderRadius: appStyle.borderRadius.additional,
+                                    backgroundColor: '#00000001',
+                                }}
+                            >
+                            
                             <Pressable
                                 style = {{
                                     width: '100%',
@@ -688,6 +708,7 @@ export default WeatherRedactor = ({
                                 </Reanimated.View>
                                 }
                             </Pressable>
+                            </View>
                         </View>)
                     })}
                 </View>

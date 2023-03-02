@@ -589,9 +589,9 @@ const ColorPicker = ({
 
       let newL = 0  
       if(type=='light'){
-        newL = Math.min(HSLcolor.l +10, 100)
+        newL = Math.min(HSLcolor.l +4, 100)
       } else {
-        newL = Math.max(HSLcolor.l -10, 0)
+        newL = Math.max(HSLcolor.l -4, 0)
       }
       settingSlidersColor(HSLToHex(HSLcolor.h, HSLcolor.s, newL))
     }
@@ -679,7 +679,7 @@ const ColorPicker = ({
                 onPress={()=>{shift('light')}}
               />
             </Animated.View>
-            <Animated.View style={[ HS50Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}/>
+            <Animated.View style={[ HS50Lcolor, {height: circlesSize, width: 1.5*circlesSize,borderRadius: circlesSize/2}]}/>
             <Animated.View style={[ HS40Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}>
               <BasePressable
                 type='t'

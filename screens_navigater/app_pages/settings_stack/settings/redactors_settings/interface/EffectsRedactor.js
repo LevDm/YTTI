@@ -18,7 +18,7 @@ import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
-import { rippleValues } from "../../../../../../app_values/AppDefault";
+import { rippleValues, shadowsValues } from "../../../../../../app_values/AppDefault";
 
 import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
@@ -35,25 +35,18 @@ export default EffectsRedactor = ({
 
 
     const rippleSetting = (index) => {
-        //const newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.effects.ripple = rippleValues[index];
-        //setPreviewAppStyle(newAppStyle);
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
+    }
+
+    const shadowsSetting = (index) => {
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        newAppStyle.effects.shadows = shadowsValues[index];
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     };
-
-
-    const [shadows, setShadows] = useState(appStyle.effects.shadows)
-    const shadowsChange = () =>{
-        //let newAppStyle = getNewAppStyleObject();
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.effects.shadows = !shadows;
-        //setPreviewAppStyle(newAppStyle);
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
-        setShadows(!shadows)
-    }
 
     const [blur, setBlur] = useState(appStyle.effects.blur)
     const blurChange = () =>{
@@ -85,13 +78,15 @@ export default EffectsRedactor = ({
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
-        <SwitchField
-            text = {`${Language.shadows} ${Language.shadowsState[shadows]}`}
-            primeValue={shadows}
-            onChange={shadowsChange}
-            style = {{
-                marginTop: 10
-            }}
+        <BoxsField
+            //  'one'>true || 'multiple'>false
+            isChoiceOne={true}
+            title = {Language.shadows}
+            //  'one'>index || 'multiple'>[indexs]
+            primaryValue = {shadowsValues.indexOf(appStyle.effects.shadows)} 
+            groupSize = {shadowsValues.length}
+            groupItems = {Language.shadowsTypes}         
+            onPress = {(activeIndex)=>{shadowsSetting(activeIndex)}}          
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}

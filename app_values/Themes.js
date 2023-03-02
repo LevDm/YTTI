@@ -101,56 +101,13 @@ const Olive = {
     },
 }
 
-const Gold = {
-    theme: "gold",
-    scheme: 'light',
-    statusBar: 'dark',//'auto','inverted' ,'light' ,'dark'
-    basics: {
-        accents: {
-            primary: '#ffea98',
-            secondary: '#ffe474', 
-            tertiary:  '#ffdd4c',
-            quaternary: '#ffd700',
-        },
-        neutrals: {
-            primary: '#f5f5f5', 
-            secondary: '#ffffff', 
-            tertiary: '#000000',
-        },
-    },
-    texts: {
-        accents: {
-            primary: '#ffea98',
-            secondary: '#ffe474', 
-            tertiary:  '#ffdd4c',
-            quaternary: '#ffd700',
-        },
-        neutrals: {
-            primary: '#000', 
-            secondary: '#fff', 
-            tertiary: '#808080',
-        },
-    },
-    icons: {
-        accents: {
-            primary: '#ffea98',
-            secondary: '#ffe474', 
-            tertiary:  '#ffdd4c',
-            quaternary: '#ffd700',
-        },
-        neutrals: {
-            primary: '#000', 
-            secondary: '#fff', 
-            tertiary: '#808080',
-        },
-    },
-   
-    specials: {
-        fire: {
-            primary: '#f00',
-            secondary: '#a5a5a5',
-        },
-    },
+const MorpPinkBlue = {
+    "theme":"morpPinkBlue",
+    "scheme":"light","statusBar":"auto",
+    "basics":{"accents":{"primary":"#e896ff","secondary":"#cdb1f2","tertiary":"#93c7f2","quaternary":"#bfd8f9"},"neutrals":{"primary":"#ebf8ff","secondary":"#ebf8ff","tertiary":"#464646"}},
+    "texts":{"accents":{"primary":"#e896ff","secondary":"#cdb1f2","tertiary":"#93c7f2","quaternary":"#b7daf6"},"neutrals":{"primary":"#f6fbff","secondary":"#3e526b","tertiary":"#b4c9f5"}},
+    "icons":{"accents":{"primary":"#e896ff","secondary":"#cdb1f2","tertiary":"#93c7f2","quaternary":"#bfd8f9"},"neutrals":{"primary":"#f6fbff","secondary":"#37485e","tertiary":"#b4c9f5"}},
+    "specials":{"fire":{"primary":"#f00","secondary":"#a5a5a5"}}
 }
 
 import nightThemesColorsAppList from "./ThemesNight"
@@ -166,11 +123,10 @@ const themesColorsAppList = [
         dark: nightThemesColorsAppList[1]
     },
     {
-        light: Gold,
+        light: MorpPinkBlue,
         dark: nightThemesColorsAppList[2]
     }, 
 ]
 
-const themesColorsAppList0 = [Emerald, Olive, Gold]
 export default themesColorsAppList;
-export const themesApp = ["custom","emerald", "olive", "gold"]; 
+export const themesApp = ["custom","emerald", "olive", "morpPinkBlue"]; 

@@ -17,7 +17,7 @@ export const drawerPositions = ['left', 'right']
 export const listsTextSize = {min: 10, max: 20, step: 1}
 export const listsProximity = {min: 1, max: 5, step: 1}
 //bobber button
-export const sizeButton = {min: 46, max: 64, step: 2}
+export const sizeButton = {min: 56, max: 74, step: 2}
 //export const valuePosition = ['left','center','right']
 
 export const weatherTypes = ['lists', 'panel', 'widget']
@@ -25,6 +25,7 @@ export const weatherTypes = ['lists', 'panel', 'widget']
 export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 //effects
 export const rippleValues = ['all', 'some', 'none']
+export const shadowsValues = ['material', 'neomorphism', 'none']
 
 //APPERANCE
 export const defaultAppStyle = {
@@ -39,8 +40,8 @@ export const defaultAppStyle = {
     },
     effects: {
         ripple: 'all',
+        shadows: 'material',
         blur: true,
-        shadows: false
     },
     navigationMenu: {
         type: menuTypes[0],

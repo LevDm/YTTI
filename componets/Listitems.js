@@ -11,8 +11,8 @@ import ModalItems from "./ModalItems";
 import WeatherList from "./weather/WeatherList";
 import { LinearGradient } from 'expo-linear-gradient';
 
-import ThemeColorsAppList from "./../styles/ColorsApp"
-const ColorsApp = ThemeColorsAppList[0]
+import themeColorsAppList from "../app_values/Themes";
+const ColorsApp = themeColorsAppList[1]
 
 let deviceHeight = Dimensions.get('screen').height
 let deviceWidth = Dimensions.get('window').width

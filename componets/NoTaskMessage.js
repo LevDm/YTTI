@@ -1,7 +1,7 @@
 import React, {useState, useRef} from "react";
 import { StyleSheet, Text, View, Dimensions} from "react-native";
-import ThemeColorsAppList from "./../styles/ColorsApp"
-const ColorsApp = ThemeColorsAppList[0]
+import themeColorsAppList from "../app_values/Themes";
+const ColorsApp = themeColorsAppList[1]
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 const deviceHeigt = Dimensions.get('window').height

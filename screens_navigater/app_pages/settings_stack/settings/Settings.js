@@ -15,9 +15,6 @@ import {
     Vibration 
 } from 'react-native';
 
-import Svg, { Circle, Rect, Ellipse, Line } from "react-native-svg";
-
-//import {default as Reanimated} from 'react-native-reanimated';
 import Reanimated, {
     useSharedValue, 
     useAnimatedStyle, 
@@ -81,16 +78,12 @@ import ListsRedactor from "./redactors_settings/interface/ListsRedactor";
 import FunctionButtonRedactor from "./redactors_settings/interface/FunctionButtonRedactor";
 import ModalsRedactor from "./redactors_settings/interface/ModalsRedactor";
 
-import LoadSplashRedactor  from "./redactors_settings/system/LoadSplashRedactor";
+import LoadSplashRedactor  from "./redactors_settings/functions/LoadSplashRedactor";
 import UserRedactor from "./redactors_settings/system/UserRedactor";
-import WeatherRedactor from "./redactors_settings/system/WeatherRedactor";
-import AppFunctionsRedactor from "./redactors_settings/system/AppFunctionsRedactor";
+import WeatherRedactor from "./redactors_settings/functions/WeatherRedactor";
+import AppFunctionsRedactor from "./redactors_settings/functions/AppFunctionsRedactor";
 
-import Ohter from "./redactors_settings/ohterts";
 import StyleChangePreview from "./preview/StyleChangePreview";
-
-import ColorSplash from "../../../../componets/StyleColorSplash";
-import Classical from "../../../../general_components/tab_bars/Classical";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -419,7 +412,7 @@ const Settings = (props) => {
 
 
     
-    const animValueBobberButtonVisible = useSharedValue(1);//bottomBord
+    const animValueBobberButtonVisible = useSharedValue(0);//bottomBord
     const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
     const bottomSheetModalRef = useRef(BottomSheetModal);
 

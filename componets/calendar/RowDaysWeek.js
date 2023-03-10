@@ -1,7 +1,7 @@
 import React from "react";
 import { Text,View, StyleSheet } from 'react-native';
-import ThemeColorsAppList from "./../../styles/ColorsApp";
-const ColorsApp = ThemeColorsAppList[0]
+import themeColorsAppList from "../../app_values/Themes";
+const ColorsApp = themeColorsAppList[1]
 const RowDaysWeek = ({LanguageStore}) => {
 
     return (

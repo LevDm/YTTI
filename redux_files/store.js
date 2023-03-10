@@ -1,62 +1,12 @@
 import { createStore } from 'redux';
-//import baseTasksList from '../base_value/base_value'
-import ThemesColorsAppList from '../styles/ColorsApp';
-
-const types = ["classical","classical_animated","hidden"]
 
 import { defaultAppStyle, defaultAppConfig } from '../app_values/AppDefault';
-
-const appStyle = {
-    theme: "emerald",
-    borderRadius: {
-        basic: 12, 
-        additional: 12
-    },
-    statusBar: {
-        style: 'auto', 
-        hidden: false,
-        backgroundColor: ThemesColorsAppList[0].statusBar
-    },
-    navigationMenu: {
-        type: types[0],
-        height: 50,
-        position: {vertical: 0 , horizontal : 'right'},
-        signatureIcons: true
-    },
-    splachLoadShow: true,
-    lists: {
-        textSize: 14,
-        proximity: 5,
-        shadow: true,
-        fullWidth: false
-    },
-    functionButton: {
-        position: 'right',
-        size: 60,
-    }
-}
-
-const appConfig = {
-    languageApp: 'en',
-    userName: '',
-    location: {},
-    appFunctions: {
-        analitic: true,
-        task: true,
-
-        weather: true,
-    } 
-
-}
-
 
 const initialState = {
     //DEFAULT SETTINGS
     loadStatusTasks: false,
     loadStatusStyle: false,
     loadStatusConfig: false,
-
-    loadStatusLanguage: false,
 
     tasks: [],
     appStyle: defaultAppStyle,
@@ -101,11 +51,6 @@ const reducer = (state=initialState, action) => {
         case 'SET_LOAD_STATUS_TASKS_APP': {
             console.log('>'+action.type+'_'+String(action.value).toUpperCase())
             initialState.loadStatusTasks = action.value
-            return initialState
-        }
-        case 'SET_LOAD_STATUS_LANGUAGE_APP': {
-            console.log('>'+action.type+'_'+String(action.value).toUpperCase())
-            initialState.loadStatusLanguage = action.value
             return initialState
         }
         case 'SET_LOAD_STATUS_STYLE_APP': {

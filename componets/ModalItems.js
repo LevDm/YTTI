@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 import { Animated, StyleSheet, Modal, TextInput, Text, View, TouchableOpacity, Pressable } from "react-native";
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import ThemeColorsAppList from "./../styles/ColorsApp"
-const ColorsApp = ThemeColorsAppList[0]
+import themeColorsAppList from "../app_values/Themes";
+const ColorsApp = themeColorsAppList[1]
 
 const ModalItems = ({
     itemModalVisible, 

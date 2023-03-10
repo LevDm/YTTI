@@ -16,8 +16,8 @@ import {
 } from 'react-native-reanimated';
 
 
-import LanguagesAppList, {languagesApp} from "../../../../../../language/language";
-import ThemesColorsAppList, {themesApp} from "../../../../../../styles/ColorsApp";
+import languagesAppList, {languagesApp} from "../../../../../../app_values/Languages";
+import themesColorsAppList, {themesApp} from "../../../../../../app_values/Themes";
 
 
 import { BasePressable } from "../../../../../../general_components/base_components/BaseElements";
@@ -118,7 +118,7 @@ export const Phone = (props) => {
                     //top: 1,
                     borderColor: 'black',
                     
-                    backgroundColor: ThemesColorsAppList[0].ground,
+                    backgroundColor: themesColorsAppList[0].ground,
                     alignItems: 'center',
                     borderWidth: 5,
                 }]}
@@ -340,7 +340,7 @@ export default Preview = (props) => {
                     style = {[animStyleScale2,{
                         borderTopLeftRadius: 30,
                         borderTopRightRadius: 30,
-                        backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].sky,
+                        backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].sky,
                         position: 'absolute',
                         zIndex: 1,
                         //opacity: 0.5,
@@ -354,7 +354,7 @@ export default Preview = (props) => {
                             borderTopLeftRadius: 25,
                             borderTopRightRadius: 25,
                             paddingHorizontal: 20,
-                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].sky,
+                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].sky,
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             flexDirection: 'row',
@@ -390,7 +390,7 @@ export default Preview = (props) => {
                             style = {[{
                                 paddingRight: 20,
                                 flex: 1,
-                                backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].sky,
+                                backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].sky,
                                 alignItems: 'flex-end',
                                 justifyContent: 'center'
                             }]}
@@ -399,7 +399,7 @@ export default Preview = (props) => {
                             style = {{
                                 height: 20,
                                 width: 100,
-                                backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark, 
+                                backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark, 
                                 borderRadius: 14,
                             }}
                             >
@@ -410,7 +410,7 @@ export default Preview = (props) => {
                             style = {[{
                                 paddingLeft: 20,
                                 flex: 1,
-                                backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].skyUp,
+                                backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].skyUp,
                                 alignItems: 'flex-start',
                                 justifyContent: 'center'
                             }]}
@@ -419,7 +419,7 @@ export default Preview = (props) => {
                             style = {{
                                 height: 20,
                                 width: 100,
-                                backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark, 
+                                backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark, 
                                 borderRadius: 14,
                             }}
                             />
@@ -429,7 +429,7 @@ export default Preview = (props) => {
                         style = {[{
                             height: 35,
                             width: deviceWidth,
-                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].skyUp,
+                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].skyUp,
         
                             paddingHorizontal: 5,
                             flexDirection: 'row',
@@ -445,7 +445,7 @@ export default Preview = (props) => {
 
                                             height: 16,
                                             width: 60,
-                                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolLight, 
+                                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolLight, 
                                             opacity: item === 1? 1 : .7,
                                             borderRadius: 14,
                                         }}
@@ -460,7 +460,7 @@ export default Preview = (props) => {
                     key = {String('body')}
                     scrollEnabled = {false}
                     style = {[animStyleBody,{
-                        backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].ground,
+                        backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].ground,
                         //bottom: 30,
                         width: deviceWidth,
                         position: 'absolute'
@@ -506,7 +506,7 @@ export default Preview = (props) => {
                                         style = {{
                                             height: 16,
                                             width: '100%',
-                                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
+                                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
                                             borderRadius: 14,
                                         }}
                                         />
@@ -515,7 +515,7 @@ export default Preview = (props) => {
                                             height: 16,
                                             top: 2,
                                             width: '100%',
-                                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
+                                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
                                             borderRadius: 14,
                                         }}
                                         />
@@ -524,7 +524,7 @@ export default Preview = (props) => {
                                             height: 16,
                                             top: 4,
                                             width: '100%',
-                                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
+                                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
                                             borderRadius: 14,
                                         }}
                                         />
@@ -533,7 +533,7 @@ export default Preview = (props) => {
                                             height: 16,
                                             top: 6,
                                             width: '100%',
-                                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
+                                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
                                             borderRadius: 14,
                                         }}
                                         />
@@ -555,10 +555,10 @@ export default Preview = (props) => {
                                             width: 28,
                                             position: 'absolute',
                                             left: 0,
-                                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolNeutral,
+                                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolNeutral,
                                             borderRadius: 14,
                                             borderWidth: 2,
-                                            borderColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
+                                            borderColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
                                         }}
                                         /> 
                                         <View
@@ -566,7 +566,7 @@ export default Preview = (props) => {
 
                                             height: 10,
                                             width: 90,
-                                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolNeutral,
+                                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolNeutral,
                                             borderRadius: 14,
                                         }}
                                         /> 
@@ -613,10 +613,10 @@ export default Preview = (props) => {
                                         style = {{
                                             height: 28,
                                             width: 28,
-                                            backgroundColor: item === 1 ? ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark : '',
+                                            backgroundColor: item === 1 ? themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark : '',
                                             borderRadius: 14,
                                             borderWidth: 2,
-                                            borderColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
+                                            borderColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
                                         }}
                                     /> 
                                     <View
@@ -624,7 +624,7 @@ export default Preview = (props) => {
                                             height: 10,
                                             width: 50,
                                             top: 5,
-                                            backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
+                                            backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].symbolDark,
                                             borderRadius: 14,
                                         }}
                                     /> 
@@ -636,7 +636,7 @@ export default Preview = (props) => {
                 <Reanimated.View
                     key = {String('funcbutton')}
                     style = {[animStyleBodyButton,{
-                        backgroundColor: ThemesColorsAppList[PreviewThemeColorsAppIndex].sky,
+                        backgroundColor: themesColorsAppList[PreviewThemeColorsAppIndex].sky,
                         position: 'absolute',
                         shadowColor: "#000",
                         shadowOffset: {

@@ -4,8 +4,8 @@ import {Text, Pressable, Animated, ActivityIndicator, View, Image,Dimensions, St
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ThemeColorsAppList from "./../../styles/ColorsApp";
-const ColorsApp = ThemeColorsAppList[0]
+import themeColorsAppList from "../../app_values/Themes";
+const ColorsApp = themeColorsAppList[1]
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 

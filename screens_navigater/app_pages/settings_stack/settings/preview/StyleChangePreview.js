@@ -3,10 +3,11 @@ import React, {useState, useRef, useEffect} from "react";
 import {StyleSheet, Animated, Text,Pressable, ScrollView,FlatList, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
-import LanguagesAppList, {languagesApp} from "../../../../../language/language";
-import ThemesColorsAppList, {themesApp} from "../../../../../styles/ColorsApp";
+import languagesAppList, {languagesApp} from "../../../../../app_values/Languages";
+import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
+
+
 import dataRedactor from "../../../../../async_data_manager/data_redactor";
-import ColorSplash from "../../../../../componets/StyleColorSplash";
 
 import {
     BottomSheetModal,

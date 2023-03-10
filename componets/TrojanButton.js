@@ -4,8 +4,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import AnimatPointerText from "./AnimatPointerText"; 
 
-import ThemeColorsAppList from "./../styles/ColorsApp"
-const ColorsApp = ThemeColorsAppList[0]
+import themeColorsAppList from "../app_values/Themes";
+const ColorsApp = themeColorsAppList[1]
 
 const TrojanButton = ({trojanButtonVisible, handleClearTasks, setInputModalVisible,pointerVisible,LanguageStore }) => {
 

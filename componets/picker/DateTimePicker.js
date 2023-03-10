@@ -3,8 +3,8 @@ import React, {useState, useRef} from "react";
 import {Text,StyleSheet, Pressable, Animated, View, Modal, Dimensions, FlatList, SafeAreaView, TouchableOpacity} from 'react-native';
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ThemeColorsAppList from "./../../styles/ColorsApp";
-const ColorsApp = ThemeColorsAppList[0]
+import themeColorsAppList from "../../app_values/Themes";
+const ColorsApp = themeColorsAppList[1]
 import Piker from "./Piker";
 
 const DateTimePicker = ({

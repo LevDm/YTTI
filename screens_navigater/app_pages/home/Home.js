@@ -12,10 +12,8 @@ import mapStateToProps from "../../../redux_files/stateToProps";
 import mapDispatchToProps from "../../../redux_files/dispatchToProps";
 import store from "../../../redux_files/store";
 
-//import LanguageStor from "../language/language";
-
-import ThemesColorsAppList, {themesApp} from "../../../styles/ColorsApp";
-import LanguagesAppList, {languagesApp} from "../../../language/language";
+import themesColorsAppList, {themesApp} from "../../../app_values/Themes";
+import languagesAppList, {languagesApp} from "../../../app_values/Languages";
 
 
 const Home = (props) => {
@@ -176,7 +174,7 @@ const Home = (props) => {
                 tasks = {tasks}
                 keyboardVisible = {keyboardVisible}
 
-                LanguageStore = {LanguagesAppList[LanguageAppIndex]}
+                LanguageStore = {languagesAppList[LanguageAppIndex]}
             />
 
             <ListItems
@@ -191,7 +189,7 @@ const Home = (props) => {
                 fixed = {fixed}
                 setFixed = {setFixed}
 
-                LanguageStore = {LanguagesAppList[LanguageAppIndex]}
+                LanguageStore = {languagesAppList[LanguageAppIndex]}
             />
 
             {!keyboardVisible && <>
@@ -200,7 +198,7 @@ const Home = (props) => {
                 handleClearTasks = {handleClearTasks}
                 trojanButtonVisible = {trojanButtonVisible}
                 pointerVisible = {pointerVisible}
-                LanguageStore = {LanguagesAppList[LanguageAppIndex]}
+                LanguageStore = {languagesAppList[LanguageAppIndex]}
             />
             </>}
         </>

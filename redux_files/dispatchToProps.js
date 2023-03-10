@@ -18,12 +18,6 @@ function mapDispatchToProps(component) {
                 r_setHideMenu: (value) => dispatch({type: 'SET_MENU_HIDE', value: value}),
             };
         };   
-        case "TABS_NAVIGATER": return function(dispatch) {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
-            return {
-                r_setAppStyle: (value) => dispatch({type: 'SET_STYLE_APP', value: value})
-            };
-        };
         case "NAVIGATER": return function(dispatch) {
             console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
             return {

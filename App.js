@@ -37,7 +37,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [loadStatusTasks, setLoadStatusTasks] = useState(false);
-  const [loadStatusLanguage, setLoadStatusLanguage] = useState(false);
   const [loadStatusStyle, setLoadStatusStyle] = useState(false);
   const [loadStatusConfig, setLoadStatusConfig] = useState(false);
 
@@ -55,10 +54,7 @@ export default function App() {
     if (jstore.loadStatusTasks) {
       if (!loadStatusTasks){setLoadStatusTasks(true)}
     }
-    
-    if (jstore.loadStatusLanguage) {
-      if (!loadStatusLanguage){setLoadStatusLanguage(true)}
-    }  
+   
 
     if (jstore.loadStatusStyle) {
       if (!loadStatusStyle){
@@ -112,14 +108,14 @@ export default function App() {
   */
 
   useEffect(() => {
-    if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !appIsReady){
+    if(loadStatusTasks && loadStatusConfig && loadStatusStyle && !appIsReady){
     //if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !ready){
       console.log('>APP_ALL_DATA_LOADED_' + (new Date().getTime() - start) + 'ms' )
       //if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
       //setReady(true);
       setAppIsReady(true)
     }
-  }, [loadStatusTasks, loadStatusLanguage, loadStatusConfig, loadStatusStyle]);
+  }, [loadStatusTasks, loadStatusConfig, loadStatusStyle]);
   
 
   useEffect(() => {

@@ -2,8 +2,6 @@ import React, {useState, useEffect, useRef} from "react";
 
 import {Text, Pressable, Animated, View,Button, Platform, Image, Dimensions, FlatList, SafeAreaView, TouchableOpacity, StyleSheet} from 'react-native';
 
-
-import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 
@@ -40,36 +38,9 @@ const Analytic = () => {
   }, []);
   ///
 
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      console.log(location)
-    })();
-  }, []);
-
-  let text = 'Waiting..';
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-    
-  }
-
   return (
-    <View style = {{backgroundColor: 'red', flex: 1}}>
-      {location != null &&
-      <Text>{location.coords.latitude},{location.coords.longitude}</Text>
-      }
+    <View style = {{flex: 1}}>
+
       <View
         style={{
           flex: 1,

@@ -21,8 +21,6 @@ import Animated, {
     Easing, 
     useAnimatedProps
 } from 'react-native-reanimated';
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import IconAnimate from "./IconAnimate";
 
 import themesColorsAppList, {themesApp} from "../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../app_values/Languages";

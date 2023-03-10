@@ -8,8 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import NetInfo from '@react-native-community/netinfo';
-import ThemeColorsAppList from "./../../styles/ColorsApp";
-const ColorsApp = ThemeColorsAppList[0]
+import themeColorsAppList from "../../app_values/Themes";
+const ColorsApp = themeColorsAppList[1]
 import { BasePressable } from "../../general_components/base_components/BaseElements";
 import WeatherItem from "./WeatherItem";
 

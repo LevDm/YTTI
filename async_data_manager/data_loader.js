@@ -21,17 +21,6 @@ const dataLoader = ()  => {
     }   
   }).catch((error) => console.log(error));
 
-  AsyncStorage.getItem("storedLanguageSettings").then(data =>{
-    if (data !== null){
-      console.log('>>LOAD_LANGUAGE_'+JSON.parse(data))
-      store.dispatch({type: 'SET_LANGUAGE_APP', value: JSON.parse(data)})
-      store.dispatch({type: 'SET_LOAD_STATUS_LANGUAGE_APP', value: true})
-    } else {
-      console.log('>>NOT_DATA_LANGUGE_LOAD_'+data)
-      store.dispatch({type: 'SET_LOAD_STATUS_LANGUAGE_APP', value: true})
-    }
-  }).catch((error) => console.log(error));
-
   AsyncStorage.getItem("storedAppStyle").then(data =>{
     //data = String(null) //hard-reset
     if (data !== String(null) && data !== null){

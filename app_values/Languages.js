@@ -157,6 +157,8 @@ const LanguageStoreRu = {
 
           thema: "цвета", 
           borderRadius: "скругления", 
+
+          selectors: 'переключатели',
           navigationMenu: "меню навигации", 
           loadAnimation: "загрузка",
           lists: "ленты",
@@ -172,6 +174,9 @@ const LanguageStoreRu = {
         }
       },
       Redactors: {
+        presets: {
+          appAs: 'Дизайн интерфейса данного приложения'
+        },
         themes: {
           colorMode: "Тема",
           colorsMods: {auto: 'Системная', light: 'Светлая', dark: 'Темная'},
@@ -198,9 +203,15 @@ const LanguageStoreRu = {
           ripple: 'Пульсации',
           ripples: ['Все', 'Основные', 'Выключены'],
           shadows: 'Тени элементов',
-          shadowsTypes: ['Стандартные', 'Неоморфические', 'Выключены'],
+          shadowsTypes: ['Стандартные', 'Основные стандартные','Полные','Неоморфические', 'Выключены'],
           blur: 'Прозрачность поверхностных элементов',
           blurState: {true: "включена", false: "выключена"},
+          warningBlur: '! В активном состоянии данный параметр может вызвать проблемы с производительностью'
+        },
+        selectors: {
+          switchs: 'Тумблеры',
+          checkBoxs: 'Флажки множественного выбора',
+          radioButtons: 'Флажки одинарного выбора'
         },
         navigationMenu: {
           type: "Тип меню",
@@ -214,7 +225,12 @@ const LanguageStoreRu = {
           horizontalPosition: "Горизонтальное положение",
           horizontalPositions: ["Слева","По центру","Справа"],
           horizontalPositionDrawer: "Панель выдвигается",
-          horizontalPositionsDrawer: ["Слева","Справа"]
+          horizontalPositionsDrawer: ["Слева","Справа"],
+          accentsType: 'Способ акцентирования',
+          accentsTypes: {
+            coloring: 'Окраска',
+            filling: 'Заполнение иконок',
+          }
         },
         loadAnimation: {
           info: "...",
@@ -239,6 +255,8 @@ const LanguageStoreRu = {
           slider: {min: "меньше", max: "больше"},
           invertColors: 'Нейтральная палитра кнопки' ,
           invertColorsState: {true: "включена", false: "выключена"},
+          outline: 'Контур кнопки',
+          outlineState: {true: "включен", false: "выключен"},
         },
         modals: {
           horizontalProximity: 'Окно занимает всю ширину экрана',
@@ -480,6 +498,7 @@ const LanguageStoreEng = {
           borderRadius: "fillets",
           effects: "effects", 
 
+          selectors: 'selectors',
           navigationMenu: "navigation menu", 
           loadAnimation: "loading animation",
           lists: "lists",
@@ -497,6 +516,9 @@ const LanguageStoreEng = {
         }
       },
       Redactors: {
+        presets: {
+          appAs: 'Interface design of this application'
+        },
         themes: {
           colorMode: "Color mode",
           colorsMods: {auto: 'Systemic', light: 'Light', dark: 'Dark'},
@@ -523,9 +545,15 @@ const LanguageStoreEng = {
           ripple: 'Ripple',
           ripples: ['All', 'General', 'Off'],
           shadows: 'Element Shadows',
-          shadowsTypes: ['Standard', 'Neomorphic', 'Off'],
+          shadowsTypes: ['Standard', 'Standard basic', 'Full','Neomorphic', 'Off'],
           blur: 'Surface element transparency',
           blurState: {true: "on", false: "off"},
+          warningBlur: '! If enabled, this setting may cause performance issues'
+        },
+        selectors: {
+          switches: 'Toggles', 
+          checkBox: 'Multiple select checkboxes', 
+          radioButtons: 'Single select checkboxes'
         },
         navigationMenu: {
           type: "Type menu",
@@ -539,7 +567,12 @@ const LanguageStoreEng = {
           horizontalPosition: "Horizontal position",
           horizontalPositions: ["Left","Center","Right"],
           horizontalPositionDrawer: "Panel slides out",
-          horizontalPositionsDrawer: ["Left","Right"]
+          horizontalPositionsDrawer: ["Left","Right"],
+          accentsType: 'Accent Method',
+          accentsTypes: {
+            coloring: 'Coloring',
+            filling: 'Filling icons',
+          }
         },
         loadAnimation: {
           info: "...",
@@ -564,6 +597,8 @@ const LanguageStoreEng = {
           slider: {min: "less", max: "more"},
           invertColors: 'Neutral button palette' ,
           invertColorsState: {true: "on", false: "off"},
+          outline: 'Button outline',
+          outlineState: {true: "on", false: "off"},
         },
         modals: {
           horizontalProximity: 'Window takes up the full width of the screen',

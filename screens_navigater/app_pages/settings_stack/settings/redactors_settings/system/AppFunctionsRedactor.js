@@ -177,7 +177,7 @@ export default LanguageRedactor = ({
                         backgroundColor: isActive ? `${Theme.basics.neutrals.tertiary}10` : 'transparent',
                     },
                 ]}
-              android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.basics.neutrals.tertiary) : false}
+                android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.basics.neutrals.tertiary) : false}
             >
                 <BaseBox
                     key = {`functions_${item}`}
@@ -189,14 +189,16 @@ export default LanguageRedactor = ({
                         backgroundColor: 'transparent',
                         borderRadius: appStyle.borderRadius.additional,
                     }}
-                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
                     Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{item}</Text>}
                     check = {checkGroup[index]}
                     onPress = {()=>{settingFunctions(index)}}
                     boxBorderRadius = {appStyle.borderRadius.additional}
-                    colorsChange = {{
-                        true: Theme.icons.accents.primary, 
-                        false: Theme.icons.accents.quaternary
+                    disignType = {appStyle.selectorsDisign.checkBox}
+                    colors={{
+                        background: Theme.basics.neutrals.secondary,
+                        primary: Theme.icons.accents.secondary,
+                        secondary: Theme.icons.accents.quaternary,
                     }}
                 />
                 <MaterialCommunityIcons name="drag-horizontal-variant" size={26} color={Theme.icons.neutrals.secondary} />

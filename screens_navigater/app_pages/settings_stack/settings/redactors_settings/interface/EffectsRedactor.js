@@ -37,6 +37,7 @@ export default EffectsRedactor = ({
     const rippleSetting = (index) => {
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.effects.ripple = rippleValues[index];
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
@@ -44,19 +45,21 @@ export default EffectsRedactor = ({
     const shadowsSetting = (index) => {
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.effects.shadows = shadowsValues[index];
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
-    };
+    }
 
     const [blur, setBlur] = useState(appStyle.effects.blur)
-    const blurChange = () =>{
+    const blurChange = (value) =>{
         //let newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.effects.blur = !blur;
+        newAppStyle.effects.blur = value;//!blur;
+        newAppStyle.presetUsed = 'YTAT-custom';
         //setPreviewAppStyle(newAppStyle);
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
-        setBlur(!blur)
+        //setBlur(!blur)
     }
 
     return (
@@ -92,8 +95,9 @@ export default EffectsRedactor = ({
             ThemeSchema = {ThemeSchema}
         />
         <SwitchField
-            text = {`${Language.blur} ${Language.blurState[blur]}`}
-            primeValue={blur}
+            textTitle = {Language.blur}
+            textStates = {Language.blurState}
+            primeValue={appStyle.effects.blur}
             onChange={blurChange}
             style = {{
                 marginTop: 10
@@ -102,6 +106,16 @@ export default EffectsRedactor = ({
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
+        <Text 
+            style={{
+                color: Theme.texts.neutrals.tertiary,
+                fontSize: 10,
+                width: '85%',
+                marginLeft: 30
+            }}
+        >
+           {Language.warningBlur}
+        </Text>
     </View>)
 }
 

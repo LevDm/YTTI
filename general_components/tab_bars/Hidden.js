@@ -133,7 +133,7 @@ const Hidden = ({
                     
                     //width: size,
                     
-                    backgroundColor: `${Theme.basics.neutrals.tertiary}20`,
+                    backgroundColor: `${Theme.specials.separator}20`,
                     borderRadius: appStyle.borderRadius.additional,
                     flexDirection: appStyle.navigationMenu.position.horizontal == 'center'?'row':'column',
                 }

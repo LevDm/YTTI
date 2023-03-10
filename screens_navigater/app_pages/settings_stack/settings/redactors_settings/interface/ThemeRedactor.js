@@ -62,7 +62,7 @@ const ThemeItem = ({
     title,
 
     primaryCheck,
-    secondaryCheck,
+    //secondaryCheck,
 
     onPress,
     onLongPress,
@@ -72,7 +72,8 @@ const ThemeItem = ({
     colors, //= {{
         //gradient: [ThemeThisItem.basics.accents.primary, ThemeThisItem.basics.accents.quaternary],
         //title: ThemeThisItem.texts.neutrals.primary,
-        //BackgroundColor: Theme.basics.neutrals.primary
+        //backgroundColor: Theme.basics.neutrals.primary\
+        //selector
     //}}
     itemSize,
     outlineSize,
@@ -131,6 +132,8 @@ const ThemeItem = ({
                     height: itemSize,
                     width: itemSize,
                     borderRadius: appStyle.borderRadius.additional,
+                    backgroundColor: colors.gradient.includes(colors.background)? 'black' : 'transparent',
+                    opacity: colors.gradient.includes(colors.background)? 0.9 : 1
                 }}
             />
             {false && 
@@ -148,25 +151,12 @@ const ThemeItem = ({
                     height: itemSize-(2*outlineSize),//-(8)+1.5,
                     width: itemSize-(2*outlineSize),
                     position: 'absolute',
-                    alignItems: 'center',
+                    //alignItems: 'center',
                     borderRadius: appStyle.borderRadius.additional -2,
                     borderWidth:  outlineSize,
                     borderColor: primaryCheck? colors.background: 'transparent',
                 }}
-            >
-                <View
-                    style={{
-                        height: itemSize/8,
-                        width: itemSize/3.2,
-                        position: 'absolute',
-                        top: -outlineSize,
-                        borderRadius: appStyle.borderRadius.additional,                       
-                        borderWidth:  secondaryCheck? outlineSize : 0,
-                        borderColor: colors.background,
-                        backgroundColor: secondaryCheck? 'transparent' : colors.background
-                    }}
-                />   
-            </View>
+            />
          
             <MaterialCommunityIcons 
                 name="format-color-text" 
@@ -210,6 +200,11 @@ export default ThemeRedacor = ({
     LanguageAppIndex  
 }) => {
     const [previewThemeIndex, setPreviewThemeIndex] = useState(ThemeColorsAppIndex)
+
+    useEffect(()=>{
+        previewThemeIndex != ThemeColorsAppIndex? setPreviewThemeIndex(ThemeColorsAppIndex) : null
+    }, [ThemeColorsAppIndex])
+
     const [schema, setSchema] = useState(appStyle.palette.scheme)
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
@@ -250,6 +245,7 @@ export default ThemeRedacor = ({
             //let newAppStyle = getNewAppStyleObject();
             
             newAppStyle.palette.theme = themesApp[themeIndex]
+            newAppStyle.presetUsed = 'YTAT-custom';
             //setPreviewAppStyle(newAppStyle)
             cancelAnimation(previewAppStyleA)
             previewAppStyleA.value = newAppStyle
@@ -262,6 +258,7 @@ export default ThemeRedacor = ({
                 console.log('custom theme ok')
                 //let newAppStyle = getNewAppStyleObject();
                 newAppStyle.palette.theme = themesApp[themeIndex]
+                newAppStyle.presetUsed = 'YTAT-custom';
                 //setPreviewAppStyle(newAppStyle)
                 cancelAnimation(previewAppStyleA)
                 previewAppStyleA.value = newAppStyle
@@ -370,13 +367,13 @@ export default ThemeRedacor = ({
             ref = {flatListRef}
             style={{        
                 width: 5*itemSize,
-                height: itemSize,
+                height: itemSize+10,
             }}
             horizontal = {true}
             showsHorizontalScrollIndicator = {false}
             decelerationRate = {'fast'}
             contentContainerStyle = {{
-                paddingRight: itemSize,
+                //paddingRight: itemSize,
             }}
             snapToInterval={itemSize}
             getItemLayout={(data, index) => (
@@ -433,8 +430,8 @@ export default ThemeRedacor = ({
                     onPress = {()=>{pressItem(index)}}
                     onLongPress = {()=>{longPressItem(index)}}
 
-                    primaryCheck = {index === ThemeColorsAppIndex}
-                    secondaryCheck = {index === previewThemeIndex}//themesApp.indexOf(previewAppStyle.palette.theme)
+                    primaryCheck = {index === previewThemeIndex}//{index === ThemeColorsAppIndex}
+                    //secondaryCheck = {index === previewThemeIndex}
                    
                     appStyle = {appStyle}
                                     
@@ -442,13 +439,15 @@ export default ThemeRedacor = ({
                         themesColorsAppList[index]? {
                         gradient: [ThemeThisItem.basics.accents.primary,ThemeThisItem.basics.accents.secondary, ThemeThisItem.basics.accents.tertiary, ThemeThisItem.basics.accents.quaternary],
                         title: ThemeThisItem.texts.neutrals.primary,
-                        background: Theme.basics.neutrals.secondary
+                        background: Theme.basics.neutrals.secondary,
+                        selector: Theme.texts.neutrals.secondary,
                         } : {
                         //not custom palette
                         gradient: ['#00000060','#00000040','#00000020','#0000000a'],
                         subTitle: 'transparent', //,Theme.texts.neutrals.secondary,
                         title: 'transparent',// Theme.texts.neutrals.primary,
-                        background: 'transparent'  
+                        background: 'transparent',
+                        selector: 'transparent',  
                     }}
                         
                     itemSize={itemSize}

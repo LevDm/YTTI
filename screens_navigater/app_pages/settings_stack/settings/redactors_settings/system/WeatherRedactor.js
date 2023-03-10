@@ -69,6 +69,8 @@ import { weatherTypes } from "../../../../../../app_values/AppDefault";
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
+const horizontalProximity = 10
+
 export default WeatherRedactor = ({
     appStyle,
 
@@ -330,17 +332,12 @@ export default WeatherRedactor = ({
         setModalVisible(true)
     }
 
-    const [weatherUsed, setWeatherUsed] = useState(appConfig.weather.used)
-
-    const weatherUsedSetting = () => {
+    const weatherUsedSetting = (value) => {
         console.log('switch use weather')
-        //let newAppConfig = getNewAppConfigObject();
         const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        newAppConfig.weather.used = !weatherUsed
+        newAppConfig.weather.used = value;//!weatherUsed
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
-
-        setWeatherUsed(!weatherUsed)
     }
 
     const getCheckBoxGroup = (type) => {
@@ -367,8 +364,10 @@ export default WeatherRedactor = ({
 
     return (<>
         <SwitchField
-            text = {`${Language.used} ${Language.usedState[`${weatherUsed}`]}`}
-            primeValue={weatherUsed}
+            textTitle = {Language.used}
+            textStates = {Language.usedState}
+            //text = {`${Language.used} ${Language.usedState[`${weatherUsed}`]}`}
+            primeValue={appConfig.weather.used}
             onChange={weatherUsedSetting}
             style={{
                 //height: 60
@@ -396,7 +395,8 @@ export default WeatherRedactor = ({
         <View
             style = {{
                 flex: 1,
-                height: 75,
+                height: 60,
+                paddingBottom: 10,
                 marginLeft: 30,
                 width: '85%',
                 justifyContent: 'space-between',
@@ -433,8 +433,8 @@ export default WeatherRedactor = ({
                         key = {`user_location_${index}`}
                         style = {[{
                             flexDirection: 'row',
-                            marginTop: 7,
-                            height: 30,
+                            marginTop: index != 0? 6 : 0,
+                            height: 22,
                             width: '100%',
                             justifyContent: 'space-between',
                             //borderTopStartRadius
@@ -450,14 +450,16 @@ export default WeatherRedactor = ({
                                 backgroundColor: 'transparent',
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
-                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
+                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
                             Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{usersLocations[index].city}</Text>}
                             check = {checkGroup[index]}
                             onPress = {()=>{settingLocaion(index)}}
                             boxBorderRadius = {appStyle.borderRadius.additional}
-                            colorsChange = {{
-                                true: Theme.icons.accents.primary, 
-                                false: Theme.icons.accents.quaternary
+                            disignType = {appStyle.selectorsDisign.checkBox}
+                            colors={{
+                                background: Theme.basics.neutrals.secondary,
+                                primary: Theme.icons.accents.secondary,
+                                secondary: Theme.icons.accents.quaternary,
                             }}
                         />}
                         {(location && !addNewLocation) && 
@@ -466,14 +468,14 @@ export default WeatherRedactor = ({
                             icon={{
                                 name: "dots-horizontal", 
                                 size: 25, 
-                                color: Theme.icons.accents.primary
+                                color: Theme.icons.neutrals.secondary
                             }}
                             style = {{
                                 flex: 1,
                                 backgroundColor: 'transparent',
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
-                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
+                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.neutrals.secondary) : false}
                             onPress={()=>{openModal('replace', index)}}
                         />}
                         {((location && !addNewLocation) && true) && 
@@ -481,15 +483,15 @@ export default WeatherRedactor = ({
                             type="i"
                             icon={{
                                 name: "delete", 
-                                size: 25, 
-                                color: Theme.icons.accents.primary
+                                size: 20, 
+                                color: Theme.icons.neutrals.secondary
                             }}
                             style = {{
                                 flex: 1,
                                 backgroundColor: 'transparent',
                                 borderRadius: appStyle.borderRadius.additional,
                             }}
-                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
+                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.neutrals.secondary) : false}
                             onPress={()=>{editLocation('del', usersLocations[index])}}
                         />}
                         {(!location && addNewLocation) && 
@@ -497,8 +499,8 @@ export default WeatherRedactor = ({
                             type="i"
                             icon={{
                                 name: "map-marker-plus-outline", 
-                                size: 25, 
-                                color: Theme.icons.accents.primary
+                                size: 20, 
+                                color: Theme.icons.accents.secondary
                             }}
                             style = {{
                                 flex: 1,
@@ -513,7 +515,7 @@ export default WeatherRedactor = ({
                                 paddingLeft: 3
                                 //alignItems: 'flex-start',
                             }}
-                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
+                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
                             onPress={()=>{openModal('add', index)}}
                         />}
                     </View>)
@@ -523,18 +525,18 @@ export default WeatherRedactor = ({
         <BaseModal
             animationType = {'fade'}
             visible = {modalVisible}
-            dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.basics.neutrals.tertiary}25`: false} 
-            gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.primary : false}
+            dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
+            gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.quaternary : false}
             blur={appStyle.effects.blur}
             outPress = {outsideModalPress}
             onShow = {onShow}
             modalStyle = {{
-                width: deviceWidth - 2*appStyle.modals.horizontalProximity,
-                left: appStyle.modals.horizontalProximity,
+                width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
+                left: appStyle.modals.fullWidth? 0 : horizontalProximity,
                 height: 250
             }}
             style={{
-                backgroundColor: Theme.basics.neutrals.primary,
+                backgroundColor: Theme.basics.neutrals.quaternary,
                 borderTopLeftRadius: appStyle.borderRadius.additional,
                 borderTopRightRadius: appStyle.borderRadius.additional,
                 borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
@@ -544,7 +546,7 @@ export default WeatherRedactor = ({
                 //borderRightWidth: 0,
                 //borderLeftWidth: appStyle.modals.highlightMethods.outline? (appStyle.modals.horizontalProximity? 1 : 0) : 0,
                 //borderRightWidth: appStyle.modals.highlightMethods.outline? (appStyle.modals.horizontalProximity? 1 : 0) : 0,
-                borderColor: Theme.icons.accents.primary,
+                borderColor: Theme.basics.accents.tertiary,
                 flex: 1,
                 //width: deviceWidth-2*appStyle.modals.horizontalProximity,
             }}
@@ -617,6 +619,7 @@ export default WeatherRedactor = ({
                             <SkiaViewDisign 
                                 borderRadius = {appStyle.borderRadius.additional}
                                 backgroundColor = {Theme.basics.neutrals.secondary}
+                                shadowColors = {Theme.specials.shadow}
                                 shadowMargin={{horizontal: 5, vertical: 5}}
                                 shadowStyle = {appStyle.effects.shadows}
                                 innerShadow={{
@@ -643,7 +646,7 @@ export default WeatherRedactor = ({
                                     //padding: 5
                                 }}
                                 onPress={()=>{selected(item)}}
-                                android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.basics.accents.primary) : false}
+                                android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.basics.accents.secondary) : false}
                             >   
                                 <View
                                     style = {{
@@ -685,7 +688,7 @@ export default WeatherRedactor = ({
                                         borderRadius: appStyle.borderRadius.additional,
                                         borderTopLeftRadius: 0,
                                         borderTopRightRadius: 0,
-                                        backgroundColor: Theme.basics.accents.primary,
+                                        backgroundColor: Theme.basics.accents.secondary,
                                         justifyContent: 'center',
                                         alignItems: 'center'
                                     }}

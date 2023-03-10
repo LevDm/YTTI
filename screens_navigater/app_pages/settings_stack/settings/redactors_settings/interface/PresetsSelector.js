@@ -3,7 +3,8 @@ import React, {useState, useRef, useEffect, memo} from "react";
 import {
     StyleSheet, 
     Text, 
-    Pressable, 
+    Pressable,
+    Image, 
     ScrollView,
     FlatList, 
     Animated, 
@@ -41,9 +42,6 @@ const deviceWidth = Dimensions.get('window').width
 //<MaterialCommunityIcons name="theme-light-dark" size={24} color="black" />
 
 import dataRedactor from "../../../../../../async_data_manager/data_redactor";
-
-import ColorShemeSwitch from "../../../../../../general_components/ColorShemeSwitch";
-
 import { 
     BasePressable,
     BaseBox,
@@ -57,51 +55,37 @@ const Reanimated_Pressable = Reanimated.createAnimatedComponent(Pressable)
 
 const schemes = ['auto', 'light', 'dark'] 
 
-const presets = [
-    {
-        name: 'vk',
-        imageSource: '',
-    },
-    {
-        name: 'vk',
-        imageSource: '',
-    },
-    {
-        name: 'tg',
-        imageSource: '',
-    },
-    {
-        name: 'ig',
-        imageSource: '',
-    },
-    {
-        name: 'ws',
-        imageSource: '',
-    },
-]
+import presets, {presetsNames} from "../../../../../../app_values/AppDesigns";
 
-
-const ThemeItem = ({
-    title,
+const PresetItem = ({
+    preset,
 
     primaryCheck,
-    secondaryCheck,
 
     onPress,
     onLongPress,
 
-    pressDissable,
-
-    colors, //= {{
-        //gradient: [ThemeThisItem.basics.accents.primary, ThemeThisItem.basics.accents.quaternary],
-        //title: ThemeThisItem.texts.neutrals.primary,
-        //BackgroundColor: Theme.basics.neutrals.primary
-    //}}
     itemSize,
     outlineSize,
+    backgroundColor = 'white',
 
     appStyle,
 },props) => {
+
+    const {
+        name,
+        imageSource,
+        imageLowScale,
+        options,
+    } = preset
+
+    const presetTheme = options? themesColorsAppList[themesApp.indexOf(options.palette.theme)].light : undefined
+
+    const colors = {
+        gradient: presetTheme? Object.values(presetTheme.basics.accents) : ['#00000060','#00000040','#00000020','#0000000a'],
+        title: presetTheme? presetTheme.texts.neutrals.primary : 'white',
+        background: backgroundColor 
+    }
 
     const longPressed = useSharedValue(0)
 
@@ -112,7 +96,7 @@ const ThemeItem = ({
                     scale: interpolate(
                         longPressed.value,
                         [0, 1],
-                        [.95, .85]
+                        [.95, .9]
                     )
                 }
             ]
@@ -125,7 +109,7 @@ const ThemeItem = ({
     return (
         <Reanimated_Pressable
             key = {props.key}
-            disabled = {pressDissable} 
+            disabled = {primaryCheck} 
             style={[{
                 height: itemSize,
                 width: itemSize,
@@ -142,7 +126,7 @@ const ThemeItem = ({
             }}
             onPress={onPress}
             delayLongPress={duration}
-            onLongPress={onLongPress}
+            //onLongPress={onLongPress}
         >   
             <LinearGradient
                 colors={colors.gradient}
@@ -154,16 +138,29 @@ const ThemeItem = ({
                     height: itemSize,
                     width: itemSize,
                     borderRadius: appStyle.borderRadius.additional,
+                    backgroundColor: colors.gradient.includes(colors.background)? 'black' : 'transparent',
+                    opacity: colors.gradient.includes(colors.background)? 0.9 : 1
                 }}
             />
+
+            <Image
+                source={imageSource}
+                style={{
+                    position: 'absolute',
+                    height: itemSize/imageLowScale,
+                    width: itemSize/imageLowScale,
+                    borderRadius: appStyle.borderRadius.additional,
+                }}
+            />
+
             {false && 
             <Text 
                 style={[staticStyles.themeName, {
-                    color: colors.title,
+                    color: 'red',
                     position: 'absolute',
                 }]}
             >
-                {title}
+                {name}
             </Text>}
 
             <View
@@ -176,46 +173,12 @@ const ThemeItem = ({
                     borderWidth:  outlineSize,
                     borderColor: primaryCheck? colors.background: 'transparent',
                 }}
-            >
-                <View
-                    style={{
-                        height: itemSize/8,
-                        width: itemSize/3.1,
-                        position: 'absolute',
-                        top: -outlineSize,
-                        borderRadius: appStyle.borderRadius.additional,                       
-                        borderWidth:  secondaryCheck? outlineSize : 0,
-                        borderColor: colors.background,
-                        backgroundColor: secondaryCheck? 'transparent' : colors.background
-                    }}
-                />   
-            </View>
-         
-            <MaterialCommunityIcons 
-                name="format-color-text" 
-                size={25} 
-                color={colors.subTitle}
-                style={{
-                    position: 'absolute',
-                    top: (itemSize/2-12)+3,
-                    left: (itemSize/2-12)+3
-                }}
-            />
-            <MaterialCommunityIcons 
-                name="format-color-text" 
-                size={25} 
-                color={colors.title}
-                style={{
-                    position: 'absolute',
-                    bottom: (itemSize/2-12)+3,
-                    right: (itemSize/2-12)+3
-                }}
             />
         </Reanimated_Pressable>
     )
 }
 
-export default Presets = ({
+export default PresetsSelector = ({
     goToPalleteScreen,
 
     appStyle,
@@ -229,107 +192,63 @@ export default Presets = ({
     ThemeSchema,
     LanguageAppIndex  
 }) => {
-    const [previewThemeIndex, setPreviewThemeIndex] = useState(ThemeColorsAppIndex)
-    const [schema, setSchema] = useState(appStyle.palette.scheme)
-
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.themes
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.presets
+
+    const [previewIndex, setPreviewIndex] = useState(presetsNames.indexOf(appStyle.presetUsed))
+
+    useEffect(()=>{
+        console.log('ue',appStyle.presetUsed)
+        const newIndex = presetsNames.indexOf(appStyle.presetUsed)
+        newIndex != previewIndex? setPreviewIndex(newIndex) : null
+    }, [appStyle])
+
+    //console.log('PRESET:', presetsNames[previewIndex])
 
     const flatListRef = useRef()
-    const scrollX = React.useRef(new Animated.Value(0)).current;
-    const [chosenThemeIndex, setChosenThemeIndex] = useState(themesApp.indexOf(appStyle.palette.theme))
 
-    const itemSize = 72
+    const itemSize = 82
     const outlineSize = 2
 
     const pressItem = (index) => {
-        console.log('THEME PressItem', index)
-        if(previewThemeIndex != index){
-            changeThema(index)
-            flatListRef.current.scrollToIndex({index: index})
+        console.log('preset PressItem', index, presetsNames[index])
+        if(index == 0 || presets[index].options){
+            const newAppStyle = (index == 0? appStyle : presets[index].options)
+            newAppStyle.customTheme = appStyle.customTheme
+            newAppStyle.presetUsed = presetsNames[index]
+            
+            cancelAnimation(previewAppStyleA)
+            previewAppStyleA.value = newAppStyle
+            
+            setPreviewIndex(index)
         }
     }
 
     const longPressItem = (index) => {
         Vibration.vibrate([5,10])
-        console.log('THEME longPressItem')    
-        if(index == 0 && themesColorsAppList[0]==null){
-            console.log('not custom theme for redactors')
-        } else {
-            goToPalleteScreen(index, 1)
-        }
-    }
-
-    
-
-    const changeThema = (themeIndex)=>{
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        if(themeIndex != 0){
-            newAppStyle.palette.theme = themesApp[themeIndex]
-            cancelAnimation(previewAppStyleA)
-            previewAppStyleA.value = newAppStyle
-            setPreviewThemeIndex(themeIndex)
-        } else {
-            if(!themesColorsAppList[0]){
-                console.log('not custom theme')
-            } else {
-                console.log('custom theme ok')
-                newAppStyle.palette.theme = themesApp[themeIndex]
-                cancelAnimation(previewAppStyleA)
-                previewAppStyleA.value = newAppStyle
-                setPreviewThemeIndex(themeIndex)
-            }
-        }
+        console.log('preset longPressItem', index)    
     }
     
 
-    const createCustomTheme = ()=>{
-        console.log('custom theme create')
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        const newTheme = JSON.parse(JSON.stringify(themesColorsAppList[ThemeColorsAppIndex]));
-        newTheme.light.theme = 'custom'
-        newTheme.dark.theme = 'custom'
+    const dropPreset = ()=>{
+        console.log('grop screen')
 
-        newAppStyle.customTheme = newTheme
-        themesColorsAppList.splice(0,1,newTheme)
-
-        goToPalleteScreen(previewThemeIndex, 0)
     }
 
-    const shemaSetting = (index) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.palette.scheme = schemes[index]
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
-    }
-    
 
     return (
     <View
         style={{
         }}
     >   
-        <BoxsField
-            //  'one'>true || 'multiple'>false
-            isChoiceOne={true}
-            title = {Language.colorMode}
-            //  'one'>index || 'multiple'>[indexs]
-            primaryValue = {schemes.indexOf(appStyle.palette.scheme)} 
-            groupSize = {schemes.length}
-            onPress = {(activeIndex)=>{shemaSetting(activeIndex)}}
-            groupItems = {Object.values(Language.colorsMods)}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />
         <Text
             style = {[staticStyles.text, {
                 color: Theme.texts.neutrals.secondary,
-                paddingLeft: 10,
-                marginTop: 10,
+                paddingLeft: 2,
+                //marginTop: 10,
             }]}
         >
-            {Language.palette}
+            {Language.appAs}
         </Text> 
         <View
             style={{  
@@ -339,22 +258,23 @@ export default Presets = ({
         >
         <FlatList
             ref = {flatListRef}
-            style={{        
-                width: 5*itemSize,
+            style={{
+                marginTop: 5,        
+                width: 4*itemSize,
                 height: itemSize,
             }}
             horizontal = {true}
             showsHorizontalScrollIndicator = {false}
             decelerationRate = {'fast'}
             contentContainerStyle = {{
-                paddingRight: itemSize,
+                //paddingRight: itemSize,
             }}
             snapToInterval={itemSize}
             getItemLayout={(data, index) => (
                 {length: itemSize, offset: itemSize * index, index: index}
             )}
-            initialScrollIndex = {ThemeColorsAppIndex}
-            data = {themesApp}         
+            initialScrollIndex = {Math.min(presets.length-1, previewIndex+1)}
+            data = {presets}         
             keyExtractor={(item, index) => {
                 return item + index
             }}
@@ -370,57 +290,34 @@ export default Presets = ({
                         borderWidth:  outlineSize,
                         borderColor: Theme.texts.neutrals.secondary,
                         transform: [{scale: .95}],
-                        paddingTop: 6
+                        //paddingTop: 6
                     }}
-                    onPress={createCustomTheme}
+                    onPress={dropPreset}
                 >
-                    <MaterialCommunityIcons name="palette-advanced" size={35} color={Theme.texts.neutrals.secondary} />
-                    <Text
-                        style = {{
-                            top: -5,
-                            color: Theme.texts.neutrals.secondary,
-                            fontSize: 10,
-                            fontWeight: 'bold',
-                            letterSpacing: 0,
-                            fontVariant: ['small-caps'],
-                        }}
-                    >
-                        {Language.openPainter}
-                    </Text>
+                    <MaterialCommunityIcons name="nfc" size={35} color={Theme.texts.neutrals.secondary} />
                 </Pressable>
             }
             renderItem={({item, index})=>{
-                const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
-                const schemaThisItem = 'light'
-                const ThemeThisItem = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem] : Theme
-                const title = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem].theme : item
+
                 return (
-                <ThemeItem
-                    key = {String(`theme_selector_${item+index}`)} 
-                    title = {title}
+                <PresetItem
+                    key = {String(`theme_selector_${item.name+index}`)} 
 
-                    pressDissable = {themesColorsAppList[index]? false : true}
-                    
+                    preset={index == 0? {
+                        name: item.name,
+                        imageSource: item.imageSource,
+                        imageLowScale: item.imageLowScale,
+                        options: appStyle 
+                    }: item}
+
                     onPress = {()=>{pressItem(index)}}
-                    onLongPress = {()=>{longPressItem(index)}}
+                    //onLongPress = {()=>{longPressItem(index)}}
 
-                    primaryCheck = {index === ThemeColorsAppIndex}
-                    secondaryCheck = {index === previewThemeIndex}//themesApp.indexOf(previewAppStyle.palette.theme)
+                    primaryCheck = {index == previewIndex}//{(JSON.stringify(index == 0? appStyle : item.options) === JSON.stringify(previewAppStyleA.value))}
+
+                    backgroundColor = {Theme.basics.neutrals.secondary}
                    
-                    appStyle = {appStyle}
-                                    
-                    colors = {
-                        themesColorsAppList[index]? {
-                        gradient: [ThemeThisItem.basics.accents.primary,ThemeThisItem.basics.accents.secondary, ThemeThisItem.basics.accents.tertiary, ThemeThisItem.basics.accents.quaternary],
-                        title: ThemeThisItem.texts.neutrals.primary,
-                        background: Theme.basics.neutrals.secondary
-                        } : {
-                        //not custom palette
-                        gradient: ['#00000060','#00000040','#00000020','#0000000a'],
-                        subTitle: 'transparent', //,Theme.texts.neutrals.secondary,
-                        title: 'transparent',// Theme.texts.neutrals.primary,
-                        background: 'transparent'  
-                    }}
+                    appStyle = {appStyle}   
                         
                     itemSize={itemSize}
                     outlineSize={outlineSize}

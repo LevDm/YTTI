@@ -230,45 +230,60 @@ export const BaseSlider = ({
     )
 }
 
+import { Ionicons } from '@expo/vector-icons';
+
 export const BaseBox = ({
     isCheckBox = false,
     //outerRing = true,
     Item = <Text>Text</Text>,
     boxBorderRadius = 12,
+    disignType = 'type_2',
+    shadow = {
+        style: 'material',
+        colors: Theme.specials.shadow
+    },
+    colors={
+        background: Theme.basics.neutrals.secondary,
+        primary: Theme.icons.accents.secondary,
+        secondary: Theme.icons.accents.quaternary,
+        //tertiary: Theme.icons.accents.quaternary,
+        //quaternary: Theme.icons.neutrals.tertiary,
+    },
     style = {},
-    size = 24,
-    rippleColor = '#00000080',
-    colorsChange = {true: Theme.icons.neutrals.primary, false: Theme.icons.neutrals.secondary},
-    check = false,
+    size = 22,
+    check : checkValue = false,
     onLongPress,
     onPress,
     android_ripple,    
 }, props) => {
 
+    //const disignType = 'type_1'
+    //const [checkValue, setCheckValue] = useState(check)
+
     const duration = 300
 
     const dynamicStylePrimaryBox = useAnimatedStyle(()=>{
-        const borderWidthValue = (isCheckBox || check)? 2 : 0
+        //const borderWidthValue = (isCheckBox || check)? 2 : 2
         return {
-            borderWidth: withTiming(borderWidthValue, {duration: duration}), 
+            //borderWidth: withTiming(borderWidthValue, {duration: duration}), 
             borderRadius: withTiming(boxBorderRadius, {duration: duration}),
-            borderColor: withTiming((check? colorsChange.true : colorsChange.false), {duration: duration}),
+            borderColor: withTiming((checkValue? colors.primary : isCheckBox? colors.primary : disignType == 'type_2'? colors.secondary : 'transparent' ), {duration: duration}),
         }
-    }, [check,boxBorderRadius, colorsChange])
+    }, [checkValue, boxBorderRadius, colors])
 
     const dynamicStyleSecondaryBox = useAnimatedStyle(()=>{
-        const margimValue = (isCheckBox || check)? 2 : 4
+        //const margimValue = ((isCheckBox || check)? 2 : 4) -2
         return {
-            margin: withTiming(margimValue , {duration: duration}), 
-            borderRadius: withTiming((boxBorderRadius-4), {duration: duration}),
-            backgroundColor: withTiming(
-
-                (check? colorsChange.true : isCheckBox? 'transparent' : colorsChange.false) , 
-                {duration: duration}
-            )
+            borderRadius: withTiming(boxBorderRadius-(disignType == 'type_2'? 0 : 4), {duration: duration}),
+            backgroundColor: withTiming((checkValue? colors.primary : isCheckBox? 'transparent': disignType == 'type_2'? 'transparent' : colors.secondary  ), {duration: duration}),
         }
-    }, [check, boxBorderRadius, colorsChange])
+    }, [checkValue, boxBorderRadius, colors])
 
+    const boxPress = () => {
+        //setCheckValue(!checkValue)
+        onPress()
+    }
+  
     return (
         <View
             props = {props}
@@ -281,7 +296,7 @@ export const BaseBox = ({
             ]}
         >
             <Pressable
-                disabled = {!isCheckBox && check}
+                disabled = {!isCheckBox && checkValue}
                 style = {{
                     flex: 1,
                     flexDirection: 'row',
@@ -295,58 +310,106 @@ export const BaseBox = ({
             >
                 <Animated.View
                     style = {[{
-                        minHeight: size,
-                        minWidth: size,
-                        justifyContent: "center",
-                        alignContent: 'center'
-                    }, dynamicStylePrimaryBox]}
+                        height: size,
+                        width: size,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }]}
                 >
                     <Animated.View
                         style = {[{
-                            flex: 1,
+                            //flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height:  (disignType == 'type_2'&& checkValue? size : size - (isCheckBox? 8 : checkValue? 11 : 6)),
+                            width:  (disignType == 'type_2'&& checkValue? size : size - (isCheckBox? 8 : checkValue? 11 : 6)),
                         }, dynamicStyleSecondaryBox]}
+                    >
+                        <Ionicons name="checkmark" size={size-8} color={(disignType == 'type_2' && checkValue && isCheckBox)? colors.background : 'transparent'}/>
+                        <View position={'absolute'} width={(size-1)/2} height={(size-1)/2} borderRadius={boxBorderRadius-6} backgroundColor={(disignType == 'type_2' && checkValue && !isCheckBox)? colors.background : 'transparent'} /> 
+                    </Animated.View>
+                    <Animated.View 
+                        style = {[{
+                            position: 'absolute',
+                            height: size,
+                            width: size,
+                            borderWidth: 2
+                        }, dynamicStylePrimaryBox]}
                     />
                 </Animated.View>
                 {Item}
             </Pressable>
         </View>
-    );
-};
+    )
+}
 
-
+import SkiaViewDisign from "./SkiaViewDisign";
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 export const BaseSwitch = ({
     Item = <Text>Text</Text>,
+    disignType = 'type_1',
+    shadow = {
+        style: 'material',
+        colors: Theme.specials.shadow
+    },
     separator,
     separatorStyle,
+    borderRadius = 3,
     trackStyle = {},
     thumbStyle = {},
     style = {},
     size = 24,
     primeValue = false,
-    colors = {track: {true: 'green', false: 'grey'}, thumb: {true: 'green', false: 'blue'} },
+    colors = {
+        track: {true: 'green', false: 'grey'}, thumb: {true: 'green', false: 'blue'}, 
+        background: Theme.basics.neutrals.secondary,
+        primary: Theme.icons.accents.secondary,
+        secondary: Theme.icons.accents.tertiary,
+        tertiary: Theme.icons.accents.quaternary,
+        quaternary: Theme.icons.neutrals.tertiary,
+        //separator:  Theme.specials.separator
+    },
     onChange,
     duration = 200,
     android_ripple
 }, props) => {
+    //const disignType = 'type_3'
 
     const [switchValue, setSwitchValue] = useState(primeValue);
 
+    useEffect(()=>{
+        primeValue != switchValue? setSwitchValue(primeValue) : null
+    },[primeValue])
+
     const dynamicStyleTrack = useAnimatedStyle(()=>{
         return {    
-            backgroundColor: withTiming((switchValue? colors.track.true : colors.track.false), {duration: duration}),
+            //backgroundColor: withTiming((switchValue? colors.primary: colors.tertiary), {duration: duration}),
+
         }
-    },[switchValue, colors])
+    },[switchValue, colors, borderRadius, disignType])
     
 
     const dynamicStyleTrumb = useAnimatedStyle(()=>{
+
         return {
-            backgroundColor: withTiming((!switchValue? colors.thumb.true : colors.thumb.false), {duration: duration}),
+            //backgroundColor: withTiming(colors.background, {duration: duration}),
+            //borderColor: withTiming((switchValue? colors.primary : colors.tertiary), {duration: duration}),
+
             transform: [
-                {translateX: withTiming((size*(!switchValue? -0.5 : 0.7)), {duration: duration})}
+                {translateX: withTiming(
+                    disignType == 'type_3'? (size*(!switchValue? 0.2 : 1.3)) : (size*(!switchValue? -0.5 : 0.7)),
+
+                    {duration: duration}
+                )}
             ],
+
         }
-    },[switchValue, colors])
+    },[switchValue, colors, borderRadius, disignType])
+
+    const onPress = () => {
+        setSwitchValue(!switchValue)
+        if(onChange != undefined){onChange()};
+    }
 
     return (
         <Pressable
@@ -354,33 +417,68 @@ export const BaseSwitch = ({
             style = {[{
                 minHeight: size,
                 minWidth: size*2,
-                //flex: 1,
-                //backgroundColor: 'red',
                 justifyContent: 'center',
                 alignItems: 'center',
             }, style]}
             android_ripple = {android_ripple? android_ripple : {}}
-            onPress = {()=>{
-                setSwitchValue(!switchValue)
-                if(onChange != undefined){onChange()};
-            }}
+            onPress = {onPress}
         >
         <Animated.View
             style = {[{
-                height: size*0.7,
-                width: size*1.2,
                 justifyContent: 'center',
-                marginRight: size/2,
-            }, trackStyle, dynamicStyleTrack]}
+
+                height: (disignType == 'type_3'? size : (size*0.7))+4,
+                width: (disignType == 'type_3'? 2*size : (size*1.2))+4,
+                marginRight: disignType == 'type_3'? size/4 : size/2,
+            }, dynamicStyleTrack]}
         >
+            <SkiaViewDisign
+                isGeneralObject = {true}
+                borderRadius = {borderRadius}
+                backgroundColor = {switchValue? (disignType != 'type_2'? colors.primary : colors.secondary) : colors.tertiary}
+                shadowColors = {shadow.colors}
+                shadowMargin={{horizontal: 2, vertical: 2}}
+                shadowStyle = {shadow.style}
+                adaptiveSizeForStyle={false}
+                innerShadow={{
+                    used: true,
+                    borderWidth: 1
+                }}
+            />
             <Animated.View
                 style = {[{
-                    height: size,
-                    width: size,
-                    //opacity: .3,
-                    position: 'absolute' 
-                }, thumbStyle, dynamicStyleTrumb]}
-            />
+                    position: 'absolute',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: (disignType == 'type_3'? size*0.5 : size)+4,
+                    width: (disignType == 'type_3'? size*0.5 : size)+4,
+                    backgroundColor: 'transparent'
+                    //borderWidth: size/9,
+                }, dynamicStyleTrumb]}
+            >
+                <SkiaViewDisign
+                    isGeneralObject = {true}
+                    borderRadius = {borderRadius - (disignType == 'type_3'? 6 : 0)}
+                    backgroundColor = {disignType == 'type_3'? colors.background: switchValue? colors.primary : colors.quaternary} //(disignType == 'type_1'? colors.tertiary: colors.quaternary)}
+                    shadowColors = {shadow.colors}
+                    shadowMargin={{horizontal: 2, vertical: 2}}
+                    shadowStyle = {shadow.style}
+                    adaptiveSizeForStyle={false}
+                    innerShadow={{
+                        used: true,
+                        borderWidth: 0
+                    }}
+                />
+                <Animated.View
+                    style = {[{
+                        position: 'absolute',
+                        borderRadius: borderRadius-2,
+                        height: size*(0.78),
+                        width: size*(0.78),
+                        backgroundColor: disignType == 'type_1'? colors.background : 'transparent'
+                    }]}
+                />
+            </Animated.View>
         </Animated.View>
         {separator && <View style={separatorStyle}/>}
         {Item}

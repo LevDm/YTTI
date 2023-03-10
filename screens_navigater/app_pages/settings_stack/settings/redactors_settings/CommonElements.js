@@ -81,6 +81,8 @@ export const SwitchField = ({
     primeValue,
     onChange,
     text,
+    textTitle,
+    textStates,
     viewProps,
     style,
     appStyle,
@@ -89,39 +91,47 @@ export const SwitchField = ({
 }, props) => {
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
+    const [switchValue, setSwitchValue] = useState(primeValue)
+
+    //console.log(switchValue, primeValue, textStates)
+
+    useEffect(()=>{
+        primeValue != switchValue? setSwitchValue(primeValue) : null
+    },[primeValue])
+
+    const onPress = () => {
+        setSwitchValue(!switchValue)
+        onChange(!switchValue)
+    }
+
     return (
         <View
-            //props={props}
             {...viewProps}
             style = {[{
                 backgroundColor: "transparent", 
                 marginHorizontal: 5,
                 marginRight: 15,
                 paddingVertical: 2.5,
-                //paddingRight: 10, 
-                //paddingLeft: 10, 
                 borderRadius: appStyle.borderRadius.additional,
             }, style]}
         >
         <BaseSwitch
             size={22}
+            disignType = {appStyle.selectorsDisign.switch}
             style = {[{
-                //flex: 1,
                 justifyContent: 'space-between',
                 flexDirection: 'row-reverse',           
                 alignItems: 'center',
                 alignContent: 'center',
-                //marginLeft: 10,
                 paddingHorizontal: 5,
-                //paddingRight: 10
-                
-                //backgroundColor: 'red',
             }]}
             separator = {true}
             separatorStyle = {{
-                backgroundColor: Theme.icons.accents.tertiary,
-                height: 45,//'90%',
-                width: 1.5,
+                backgroundColor: `${Theme.specials.separator}40`,
+                height: 35,//'90%',
+                width: 1,
+                borderRadius: 0.5,
+                marginLeft: 4,
                 marginRight: 10
             }}
             Item = {
@@ -136,31 +146,26 @@ export const SwitchField = ({
                             color: Theme.texts.neutrals.secondary
                         }
                     ]}
+                    //
                 >
-                    {text}
+                    {textTitle} {textStates[switchValue]}
                 </Text>
             }
-            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
-            trackStyle={{
-                borderRadius: appStyle.borderRadius.additional,
-            }}
-            thumbStyle = {{
-                borderRadius: appStyle.borderRadius.additional,
-                borderWidth: 2.4,
-                borderColor:  Theme.icons.accents[primeValue?"primary":"quaternary"]
-            }}
+            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
+            borderRadius={appStyle.borderRadius.additional}
             colors={{
-                track: { 
-                    false: Theme.icons.accents.quaternary, 
-                    true: Theme.icons.accents.primary
-                },
-                thumb: { 
-                    false: Theme.basics.neutrals.secondary,//Theme.icons.accents.quaternary, 
-                    true: Theme.basics.neutrals.secondary,//Theme.icons.accents.primary, 
-                }
+                background: Theme.basics.neutrals.secondary,
+                primary: Theme.icons.accents.secondary,
+                secondary: Theme.icons.accents.tertiary,
+                tertiary: Theme.icons.neutrals.tertiary,
+                quaternary: Theme.icons.neutrals.quaternary,
             }}
-            primeValue={primeValue}
-            onChange={onChange}
+            shadow = {{
+                style: appStyle.effects.shadows,
+                colors: Theme.specials.shadow
+            }}
+            primeValue={switchValue}
+            onChange={onPress}
         />
         </View>
     )
@@ -203,6 +208,11 @@ export const BoxsField = ({
 
     const [checkGroup, setCheckGroup] = useState(getGroup(primaryValue));
 
+    useEffect(()=>{
+        const newGroup = getGroup(primaryValue)
+        JSON.stringify(checkGroup) != JSON.stringify(newGroup)? setCheckGroup(newGroup) : null
+    }, [primaryValue])
+
     const checkBoxPress = (index) => {
         const newGroup = isChoiceOne? getGroup(index) : reGroup(index, checkGroup)
         onPress(isChoiceOne? index : toIndexs(newGroup))
@@ -233,12 +243,30 @@ export const BoxsField = ({
                         borderRadius: appStyle.borderRadius.additional,
                         backgroundColor: 'transparent'
                     }}
-                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false}
-                    Item = {!renderItem? <Text style = {[commonStaticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{groupItems[index]}</Text> : renderItem(checkGroup[index], index)}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
+                    Item = {
+                        !renderItem? 
+                            <Text style = {[commonStaticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{groupItems[index]}</Text> 
+                        : 
+                            renderItem(checkGroup[index], index)
+                    }
                     check = {checkGroup[index]}
                     onPress = {()=>{checkBoxPress(index)}}
                     boxBorderRadius = {appStyle.borderRadius.additional}
-                    colorsChange = {{true: Theme.icons.accents.primary, false: Theme.icons.accents.quaternary}}
+                    disignType = {isChoiceOne? appStyle.selectorsDisign.radioButton : appStyle.selectorsDisign.checkBox}
+                    colors={{
+                        background: Theme.basics.neutrals.secondary,
+                        primary: Theme.icons.accents.secondary,
+                        secondary: Theme.icons.neutrals.tertiary,
+                        //tertiary: Theme.icons.accents.quaternary,
+                        //quaternary: Theme.icons.neutrals.tertiary,
+                    }}
+                    /*
+                    shadow = {{
+                        style: appStyle.effects.shadows,
+                        colors: Theme.specials.shadow
+                    }}
+                    */
                 />
                 ))}
             </View>
@@ -265,6 +293,12 @@ export const SliderField = ({
     ThemeColorsAppIndex,
     ThemeSchema,
 }, props) => {
+
+    const [sliderValue, setSliderValue] = useState(value);
+
+    useEffect(()=>{
+        sliderValue != value? setSliderValue(value) : null
+    }, [value])
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     return (
@@ -307,9 +341,9 @@ export const SliderField = ({
                     }}
                     minimumTrackTintColor = {Theme.icons.accents.tertiary}
                     maximumTrackTintColor = {Theme.icons.accents.quaternary}
-                    thumbTintColor = {Theme.icons.accents.primary}
+                    thumbTintColor = {Theme.icons.accents.secondary}
 
-                    value = {value}
+                    value = {sliderValue}
                     maximumValue = {maximumValue}
                     minimumValue = {minimumValue}
                     step = {step}

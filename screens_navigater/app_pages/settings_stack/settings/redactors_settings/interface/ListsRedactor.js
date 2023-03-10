@@ -39,52 +39,28 @@ export default ListsRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.lists
 
-
-    const [sliderTextSizeValue, setSliderTextSizeValue] = useState(appStyle.lists.textSize);
-
-    const setPrewTextSize = (value) => {
-        //let newAppStyle = getNewAppStyleObject();
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.lists.textSize = Number(value);
-        //setPreviewAppStyle(newAppStyle);
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
-    }
-
-    const [sliderProximityValue, setSliderProximityValue] = useState(appStyle.lists.proximity);
-
     const setPrewProximity = (value) => {
-        //let newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.lists.proximity = Number(value);
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
-
-
-    const [fullWidth, setFullWidth] = useState(appStyle.lists.fullWidth);
     
-    const fullWidthChange = () =>{
-        //let newAppStyle = getNewAppStyleObject();
+    const fullWidthChange = (value) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.lists.fullWidth = !fullWidth;
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.lists.fullWidth = value;//!fullWidth;
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
-        setFullWidth(!fullWidth)
     }
 
-    const [invertColors, setInvertColors] = useState(appStyle.lists.invertColorsHeader)
-
-    const invertChange = () =>{
-        //let newAppStyle = getNewAppStyleObject();
+    const invertChange = (value) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.lists.invertColorsHeader = !invertColors;
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.lists.invertColorsHeader = value;//!invertColors;
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
-        setInvertColors(!invertColors)
     }
 
 
@@ -94,47 +70,24 @@ export default ListsRedactor = ({
             //marginBottom: 30,
         }}
     >
-        {false &&
-        // off <- 
-        <SliderField
-            title = {Language.textSize}
-            signaturesText = {{left: Language.slider.min, right: Language.slider.max}}      
-            minimumValue={listsTextSize.min}
-            maximumValue={listsTextSize.max}
-            step = {listsTextSize.step}
-            value = {sliderTextSizeValue}
-            onSlidingComplete = {(value)=>{                 
-                setSliderTextSizeValue(value);
-                setPrewTextSize(value);
-            }}
-            onValueChange = {(value)=>{              
-                setPrewTextSize(value);
-            }}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />}
         <SliderField
             title = {Language.proximity}
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             minimumValue={listsProximity.min}
             maximumValue={listsProximity.max}
             step = {listsProximity.step}
-            value = {sliderProximityValue}
-            onSlidingComplete = {(value)=>{                 
-                setSliderProximityValue(value);
-                setPrewProximity(value);
-            }}
-            onValueChange = {(value)=>{              
-                setPrewProximity(value);
-            }}
+            value = {appStyle.lists.proximity}
+            onSlidingComplete = {setPrewProximity}
+            onValueChange = {setPrewProximity}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
         <SwitchField
-            text = {`${Language.fullWidth} ${Language.fullWidthState[`${fullWidth}`]}`}
-            primeValue={fullWidth}
+            textTitle = {Language.fullWidth}
+            textStates = {Language.fullWidthState}
+            //text = {`${Language.fullWidth} ${Language.fullWidthState[`${fullWidth}`]}`}
+            primeValue={appStyle.lists.fullWidth}
             onChange={fullWidthChange}
             style = {{
                 marginTop: 10
@@ -144,8 +97,10 @@ export default ListsRedactor = ({
             ThemeSchema = {ThemeSchema}
         />
         <SwitchField
-            text = {`${Language.invertColorsHeader} ${Language.invertColorsHeaderState[invertColors]}`}
-            primeValue={invertColors}
+            textTitle = {Language.invertColorsHeader}
+            textStates = {Language.invertColorsHeaderState}
+            //text = {`${Language.invertColorsHeader} ${Language.invertColorsHeaderState[invertColors]}`}
+            primeValue={appStyle.lists.invertColorsHeader}
             onChange={invertChange}
             style = {{
                 marginTop: 10

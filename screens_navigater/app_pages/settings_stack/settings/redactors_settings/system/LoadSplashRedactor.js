@@ -41,30 +41,26 @@ export default LoadSplashRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.loadAnimation
 
-
-    const [loadSplash, setLoadSplash] = useState(appConfig.splash.show);
-    const loadSplashShowSetting = () =>{
+    const loadSplashShowSetting = (value) =>{
         const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        newAppConfig.splash.show = (!loadSplash);
+        newAppConfig.splash.show = value;//(!loadSplash);
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
-        setLoadSplash(!loadSplash)
     }
 
-    const [welcomeUsed, setWelcomeUsed] = useState(appConfig.splash.welcome)
-    const welcomeUsedSetting = () => {
+    const welcomeUsedSetting = (value) => {
         const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        newAppConfig.splash.welcome = !welcomeUsed
+        newAppConfig.splash.welcome = value;// !welcomeUsed
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
-
-        setWelcomeUsed(!welcomeUsed)
     }
 
     return (<>
     <SwitchField
-        text = {`${Language.show} ${Language.showState[`${loadSplash}`]}`}
-        primeValue={loadSplash}
+        textTitle = {Language.show}
+        textStates = {Language.showState}
+        //text = {`${Language.show} ${Language.showState[`${loadSplash}`]}`}
+        primeValue={appConfig.splash.show}
         onChange={loadSplashShowSetting}
         style={{
             //height: 60
@@ -83,8 +79,10 @@ export default LoadSplashRedactor = ({
         }}
     >      
         <SwitchField
-            text = {`${Language.welcome} ${Language.welcomeState[`${welcomeUsed}`]}`}
-            primeValue={welcomeUsed}
+            textTitle = {Language.welcome}
+            textStates = {Language.welcomeState}
+            //text = {`${Language.welcome} ${Language.welcomeState[`${welcomeUsed}`]}`}
+            primeValue={appConfig.splash.welcome}
             onChange={welcomeUsedSetting}
             style={{
                 //height: 60,

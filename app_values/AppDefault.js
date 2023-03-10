@@ -7,18 +7,20 @@ export const deviceWidth = Dimensions.get('window').width
 export const statusBarHeight = Constants.statusBarHeight+1
 
 //fillets
-export const borderRadiusValues = {min: 0, max: 32, step: 1}
+export const borderRadiusValues = {min: 0, max: 36, step: 1}
 //navigation menu
 export const menuTypes = ['classical','hidden', 'not'];
 export const positionNavigateMenu = {min: -150, max: 150, step: 10}
 export const valuePosition = ['left','center','right']
-export const heightNavigateMenu = {min: 35, max: 65, step: 5}
+export const heightNavigateMenu = {min: 35, max: 65, step: 2}
 export const drawerPositions = ['left', 'right']
+export const accentsType = ['filling', 'coloring']
 //lists
 export const listsTextSize = {min: 10, max: 20, step: 1}
-export const listsProximity = {min: 0, max: 10, step: 1}
+export const listsProximity = {min: 0, max: 10, step: 0.25}
+export const listsHorizontalProximity = {'true': 0, 'false': 5}
 //bobber button
-export const sizeButton = {min: 56, max: 74, step: 2}
+export const sizeButton = {min: 56, max: 72, step: 2}
 //export const valuePosition = ['left','center','right']
 
 export const weatherTypes = ['lists', 'panel', 'widget']
@@ -26,20 +28,26 @@ export const weatherTypes = ['lists', 'panel', 'widget']
 export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 //effects
 export const rippleValues = ['all', 'some', 'none']
-export const shadowsValues = ['material', 'neomorphism', 'none']
+export const shadowsValues = ['material', 'materialSome', 'full','neomorphism', 'none']
 
 //colors
 export const schemes = ['auto', 'light', 'dark'] 
 export const statusBarStyles = ['auto','inverted','light','dark']
 
+//selectorsStyle:
+export const switchDisign = ['type_1', 'type_2', 'type_3',]
+export const checkBoxDisign = ['type_1', 'type_2',]
+export const radioButtonDisign = ['type_1', 'type_2',]
+//modals
+
 //APPERANCE
 export const defaultAppStyle = {
+    presetUsed: 'YTAT-custom',
     palette: {
         theme: "olive",
         scheme: 'auto',
-        statusBar: 'light',//'auto','inverted' ,'light' ,'dark'
+        statusBar: 'light',
     },
-    customTheme: undefined,
     borderRadius: {
         basic: 12, 
         additional: 12
@@ -49,34 +57,43 @@ export const defaultAppStyle = {
         shadows: 'material',
         blur: true,
     },
+    selectorsDisign: {
+        switch: 'type_3',
+        checkBox: 'type_2',
+        radioButton: 'type_2',
+    },
     navigationMenu: {
         type: menuTypes[0],
         height: 50,
         position: {vertical: 0 , horizontal : 'right'},
         signatureIcons: true,
-        //rippleEffect: true,
-        drawerPosition: 'right'
+        drawerPosition: 'right',
+        accentsType: {
+            filling: false,
+            coloring: false
+        }
     },
     lists: {
         textSize: 14,
         proximity: 5,
-        //shadow: true,
         fullWidth: false,
         invertColorsHeader: true,
     },
     functionButton: {
         invertColors: true,
         position: 'right',
+        outline: false,
         size: 60,
     },
     modals: {
-        horizontalProximity: 5,
+        fullWidth: false,
         highlightMethods: {
             outline: false,
             dimOutDark: false,
             gradient: false,
         }
-    }
+    },
+    customTheme: undefined,
 }
 
 //CONFIGURATION

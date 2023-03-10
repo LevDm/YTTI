@@ -48,25 +48,25 @@ export default BorderRadiusRedactor = ({
     const [sliderValueBasic, setSliderValueBasic] = useState(appStyle.borderRadius.basic);
     const [sliderValueAdditional, setSliderValueAdditional] = useState(appStyle.borderRadius.additional);
 
-    const [synchronousSlider, setSynchronousSlider] = useState(false);//appStyle.borderRadius.basic == appStyle.borderRadius.additional
-    const change = () =>{
-        setSliderValueAdditional(sliderValueBasic)
-        setSynchronousSlider(!synchronousSlider)     
-    }
+    useEffect(()=>{
+        sliderValueBasic != appStyle.borderRadius.basic? setSliderValueBasic(appStyle.borderRadius.basic) : null
+        sliderValueAdditional != appStyle.borderRadius.additional? setSliderValueAdditional(appStyle.borderRadius.additional) : null
+    }, [appStyle])
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.fillets
 
     const settingBorderRadius = (type, value, isComplete) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        if(type == "basic" || synchronousSlider){
-            isComplete? setSliderValueBasic(value) : null
+        if(type == "basic" ){
+            //isComplete? setSliderValueBasic(value) : null
             newAppStyle.borderRadius.basic = Number(value);
         }
-        if(type == "additional" || synchronousSlider){
-            isComplete? setSliderValueAdditional(value) : null
+        if(type == "additional"){
+            //isComplete? setSliderValueAdditional(value) : null
             newAppStyle.borderRadius.additional = Number(value);
         }
+        newAppStyle.presetUsed = 'YTAT-custom';
         
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
@@ -88,15 +88,6 @@ export default BorderRadiusRedactor = ({
                 //marginBottom: 30,
             }}
         >
-            {false && 
-            <SwitchField
-                text = {`${Language.synhronous} ${Language.synhronousState[`${synchronousSlider}`]}`}
-                primeValue={synchronousSlider}
-                onChange={change}
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            />}
             {['basic','additional'].map((item, index)=>(
             <SliderField
                 key = {String('slider'+item)}
@@ -108,7 +99,7 @@ export default BorderRadiusRedactor = ({
                 minimumValue={borderRadiusValues.min}
                 maximumValue={borderRadiusValues.max}
                 step = {borderRadiusValues.step}
-                value = {item === 'basic'? sliderValueBasic : sliderValueAdditional}
+                value = {item === 'basic'? appStyle.borderRadius.basic : appStyle.borderRadius.additional}
                 onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
                 onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
 

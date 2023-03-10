@@ -67,8 +67,12 @@ import {
     BaseSwitch 
 } from "../../../../general_components/base_components/BaseElements";
 
+import PresetsSelector from "./redactors_settings/interface/PresetsSelector";
+
 import ThemeRedacor from "./redactors_settings/interface/ThemeRedactor";
 import EffectsRedactor from "./redactors_settings/interface/EffectsRedactor";
+
+import SelectorsRedactor from "./redactors_settings/interface/SelectorsRedactor";
 
 import BorderRadiusRedactor from "./redactors_settings/interface/BorderRadiusRedactor";
 import NavigateMenuRedactor from "./redactors_settings/interface/NavigateMenuRedactor";
@@ -112,7 +116,7 @@ const STRUCTURE = {
                 {
                     param: "presets",
                     icon:  "storefront" ,
-                    paramRedactorComponent: null
+                    paramRedactorComponent: PresetsSelector
                 },
                 {
                     subCategory: "globalProperties",
@@ -137,6 +141,12 @@ const STRUCTURE = {
                 {
                     subCategory: "elements",
                     data: [                   
+                        
+                        {
+                            param: "selectors",
+                            icon:  "gesture-tap-box",
+                            paramRedactorComponent: SelectorsRedactor
+                        },
                         {
                             param: "bobberButton",
                             icon:  "balloon",
@@ -709,13 +719,16 @@ const BobberButton = (props) => {
                             justifyContent: 'center',
                             height: appStyle.functionButton.size ,
                             width: appStyle.functionButton.size ,
+                            
                             //backgroundColor: 'red'
                             //borderRadius: appStyle.borderRadius.additional,
                         }]}
-                    >   
-                        <SkiaViewDisign 
+                    >        
+                        <SkiaViewDisign
+                            isGeneralObject={true} 
                             borderRadius = {appStyle.borderRadius.additional}
-                            backgroundColor = {(appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary)}
+                            backgroundColor = {(appStyle.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary)}
+                            shadowColors = {Theme.specials.shadow}
                             shadowMargin={{horizontal: 5, vertical: 5}}
                             shadowStyle = {appStyle.effects.shadows}
                             adaptiveSizeForStyle={false}
@@ -742,15 +755,25 @@ const BobberButton = (props) => {
                             blurAmount = {10}
                             
                             //ANDROID_PROPS
-                            overlayColor={`${appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary}90`}
+                            overlayColor={`${appStyle.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary}90`}
                             //overlayColor={'transparent'}
                             //blurRadius	= {10}
                             //downsampleFactor = {10}
                         />
                         </View>}  
+                        <View 
+                            style={{
+                                position: 'absolute',
+                                height: appStyle.functionButton.size -10,
+                                width: appStyle.functionButton.size -10,
+                                borderWidth: appStyle.functionButton.outline? 0.5 : 0,
+                                borderColor: `${Theme.specials.separator}20`,
+                                borderRadius: appStyle.borderRadius.additional
+                            }}
+                        />
                         <BasePressable
                             type={"i"}
-                            icon={{name: iconName, size: 24, color: appStyle.functionButton.invertColors? Theme.icons.accents.secondary : Theme.icons.neutrals.primary}}
+                            icon={{name: iconName, size: 24, color: appStyle.functionButton.invertColors? Theme.icons.accents.primary : Theme.icons.neutrals.primary}}
                             style={[{
                                 height: appStyle.functionButton.size-10,
                                 width: appStyle.functionButton.size-10,
@@ -759,7 +782,7 @@ const BobberButton = (props) => {
                       
                                 },
                             ]}
-                            android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.quaternary) : false}
+                            android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
                             onPress={pressFunction}
                         />
                     </Reanimated.View>
@@ -774,6 +797,7 @@ import { BlurView } from "@react-native-community/blur";
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { Ionicons } from '@expo/vector-icons';
+import * as Application from 'expo-application';
 
 import SkiaViewDisign from "../../../../general_components/base_components/SkiaViewDisign";
 
@@ -1412,7 +1436,7 @@ const BasisList = (props) => {
     const scrollTopButton = useAnimatedStyle(()=>{
         return {
             transform: [
-                {translateY: withTiming(topButtonVisible.value == 0? 0 : -(bottomBord-12), {duration: 400})}
+                {translateY: withTiming(topButtonVisible.value == 0? 0 : -(bottomBord-32), {duration: 400})}
             ]
         }
     })
@@ -1459,6 +1483,7 @@ const BasisList = (props) => {
                 <SkiaViewDisign 
                     borderRadius = {appStyle.borderRadius.basic}
                     backgroundColor = {Theme.basics.neutrals.secondary}
+                    shadowColors = {Theme.specials.shadow}
                     shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: appStyle.lists.proximity}}
                     shadowStyle = {appStyle.effects.shadows}
                     adaptiveSizeForStyle={false}
@@ -1533,7 +1558,9 @@ const BasisList = (props) => {
                 {   
                     top: 0,
                     zIndex: 1,
-                    position: 'absolute',                    
+                    position: 'absolute',
+                    borderColor: appStyle.effects.blur? 'transparent' : `${Theme.specials.separator}25`,
+                    borderBottomWidth: 0.4                    
                 },
                 appStyle.effects.blur? {} : {
                     backgroundColor: appStyle.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary,
@@ -1717,9 +1744,9 @@ const BasisList = (props) => {
                     androidRenderingMode = {'software'}
                     style={{
                         position: 'absolute',
-                        bottom: -0.1,
+                        bottom: -0.4,
                         width: deviceWidth, 
-                        height: 3,
+                        height: 2.5,
                         justifyContent: 'flex-start', 
                         backgroundColor: 'transparent'
                     }}
@@ -1729,8 +1756,11 @@ const BasisList = (props) => {
                                 backgroundColor: 'black',
                                 position: 'absolute',
                                 //bottom: -0.1,
-                                height: 3,
-                                borderRadius: 5,
+                                height: 2.5,
+                                borderRadius: 1,
+                                //transform: [
+                                //    {translateY: 0}
+                                //]
                                 //borderBottomRightRadius: 0,
                                 //borderBottomLeftRadius: 0,
                             }]}  
@@ -1738,7 +1768,7 @@ const BasisList = (props) => {
                     }
                 >   
                     {/* COLOR*/}
-                    <Reanimated.View style={[maskIndicatorHeight,{width: '100%', backgroundColor: appStyle.lists.invertColorsHeader? Theme.icons.accents.primary : Theme.icons.accents.quaternary}]}/>  
+                    <Reanimated.View style={[maskIndicatorHeight,{width: '100%', backgroundColor: appStyle.lists.invertColorsHeader? Theme.basics.accents.primary : Theme.basics.accents.quaternary}]}/>  
                 </MaskedView>
                 
                 <ReanimatedFlatList
@@ -1874,9 +1904,23 @@ const BasisList = (props) => {
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}
-                >
+                >   
+                    <Text 
+                        style = {[{
+                            //color: 'transparent',//,
+                            fontSize: 11,
+                            fontWeight: 'bold',
+                            //fontStyle: 'italic',
+                            bottom: 25,
+                            letterSpacing: 1.2,
+                            fontVariant: ['small-caps'],
+                            color: 'black'
+                        }]}
+                    >
+                        YTAT {Application.nativeApplicationVersion}
+                    </Text>
                     <MaskedView
-                        style={{height: 35, width: 80, flexDirection: 'row', top: -30}}
+                        style={{height: 20, width: 250, flexDirection: 'row', top: -30}}
                         maskElement={
                         <View
                             style={{
@@ -1888,24 +1932,26 @@ const BasisList = (props) => {
                                 flexDirection: 'row'
                             }}
                         >
-                        <Ionicons name="logo-react" size={25} color="black" />
+                        <Ionicons name="logo-react" size={12} color="black" />
                         <Text 
                             style = {[{
                                 //color: 'transparent',//,
-                                fontSize: 25,
+                                fontSize: 12,
                                 fontWeight: 'bold',
+                                fontStyle: 'italic',
                                 letterSpacing: 1,
                                 fontVariant: ['small-caps'],
                                 opacity: .5
                             }]}
                         >
-                            F1F
+                            F1F<Text style={{fontSize: 9, left: -10}}>.INTERFACES</Text>
                         </Text>
                         </View>}
                     >
                     {/* COLORS */}
                     <LinearGradient
                         start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+
                         style ={{
                             flex: 1
                         }}

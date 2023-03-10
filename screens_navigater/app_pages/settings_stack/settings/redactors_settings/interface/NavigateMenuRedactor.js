@@ -49,72 +49,66 @@ export default NavigateMenuRedactor = ({
 
     const [previewMenuType, setPreviewMenuType] = useState(appStyle.navigationMenu.type)
 
+    useEffect(()=>{
+        appStyle.navigationMenu.type != previewMenuType? setPreviewMenuType(appStyle.navigationMenu.type) : null
+    },[appStyle])
+
     const checkBoxPress = (activeIndex) => {
         const type = menuTypes[activeIndex]
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        //let newAppStyle = getNewAppStyleObject();
         if(type == "hidden" || type =="not"){
             newAppStyle.navigationMenu.height = 0
         } else {
             //console.log('new select class')
             newAppStyle.navigationMenu.height = 50
-            setSliderValueMenuHeight(50)
+            //setSliderValueMenuHeight(50)
         }
         newAppStyle.navigationMenu.type = type
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA);
         previewAppStyleA.value = newAppStyle;
 
         setPreviewMenuType(type)
     };
 
-    const [signature, setSignature] = useState(appStyle.navigationMenu.signatureIcons);
-    const signatureChange = () =>{
-        //let newAppStyle = getNewAppStyleObject();
+    const signatureChange = (value) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.navigationMenu.signatureIcons = !signature;
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.navigationMenu.signatureIcons = value;//!signature;
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA);
         previewAppStyleA.value = newAppStyle;
-        setSignature(!signature)
     }
 
-    const [sliderValueVert, setSliderValueVert] = useState(appStyle.navigationMenu.position.vertical);
     const setPrewBasicVertPos = (value) => {
-        //let newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.position.vertical = Number(value);
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA);
         previewAppStyleA.value = newAppStyle;
     }
 
-    const [sliderValueMenuHeight, setSliderValueMenuHeight] = useState(appStyle.navigationMenu.height);
     const setPrewBasicMenuHeight = (value) => {
-        //let newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.height = Number(value);
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA);
         previewAppStyleA.value = newAppStyle;
     }
 
     const horizontalPositionSetting = (index) => {
         const positionType = valuePosition[index]
-        //let newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.position.horizontal = positionType
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA);
         previewAppStyleA.value = newAppStyle;
     };
 
     const drawerPositionSetting = (index) => {
-        const drawerPosition =  drawerPositions[index]
-        //let newAppStyle = getNewAppStyleObject();
+        const drawerPosition =  drawerPositions[index]     
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.navigationMenu.drawerPosition = drawerPosition
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA);
         previewAppStyleA.value = newAppStyle;
     };
@@ -153,6 +147,18 @@ export default NavigateMenuRedactor = ({
         };
     };
 
+    const accents = Object.keys(appStyle.navigationMenu.accentsType) // 
+    const accentsGroup =  Object.values(appStyle.navigationMenu.accentsType) // 
+    const toIndexs = (group) => group.map((item, index)=> item? index : -1).filter(item => item >= 0);
+
+    const settingAccents = (indexs) => {
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        //newAppStyle.navigationMenu.accentsType = {'filling': false, 'coloring': false}
+        for (let i = 0; i < accents.length; i++){newAppStyle.navigationMenu.accentsType[accents[i]] = indexs.includes(i)}            
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
+    }
+
     return (
     <View 
         style ={{
@@ -173,13 +179,13 @@ export default NavigateMenuRedactor = ({
         ThemeSchema = {ThemeSchema}
     />
 
-    <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 15, paddingLeft: 10}]}>
+    <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 10, paddingLeft: 10}]}>
         {Language.menuParams}
     </Text>
     
     <View
         style = {[{
-            height: 165,
+            height: 180,
         }]}
     >           
         {previewMenuType == menuTypes[2] && 
@@ -208,20 +214,15 @@ export default NavigateMenuRedactor = ({
             entering={entering}
         >
             <SliderField
-                style = {{marginTop: 15}}
+                style = {{marginTop: 10}}
                 title = {Language.verticalPosition}
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
                 minimumValue={positionNavigateMenu.min}
                 maximumValue={positionNavigateMenu.max}
                 step = {positionNavigateMenu.step}
-                value = {sliderValueVert}
-                onSlidingComplete = {(value)=>{                 
-                    setSliderValueVert(value);
-                    setPrewBasicVertPos(value);
-                }}
-                onValueChange = {(value)=>{              
-                    setPrewBasicVertPos(value);
-                }}
+                value = {appStyle.navigationMenu.position.vertical}
+                onSlidingComplete = {setPrewBasicVertPos}
+                onValueChange = {setPrewBasicVertPos}
                 appStyle = {appStyle}
                 ThemeColorsAppIndex = {ThemeColorsAppIndex}
                 ThemeSchema = {ThemeSchema}
@@ -259,33 +260,45 @@ export default NavigateMenuRedactor = ({
                 minimumValue={heightNavigateMenu.min}
                 maximumValue={heightNavigateMenu.max}
                 step = {heightNavigateMenu.step}
-                value = {sliderValueMenuHeight}
-                onSlidingComplete = {(value)=>{                 
-                    setSliderValueMenuHeight(value);
-                    setPrewBasicMenuHeight(value);
-                }}
-                onValueChange = {(value)=>{              
-                    setPrewBasicMenuHeight(value);
-                }}
+                value = {appStyle.navigationMenu.height}
+                onSlidingComplete = {setPrewBasicMenuHeight}
+                onValueChange = {setPrewBasicMenuHeight}
                 appStyle = {appStyle}
                 ThemeColorsAppIndex = {ThemeColorsAppIndex}
                 ThemeSchema = {ThemeSchema}
             />
-        </Reanimated.View>}
-
-        {previewMenuType == menuTypes[0] && 
-        <Reanimated.View 
-            //exiting={exiting} 
-            entering={entering}
-        >
             <SwitchField
-                text = {`${Language.signature} ${Language.signatureState[signature]}`}
-                primeValue={signature}
+                textTitle = {Language.signature}
+                textStates = {Language.signatureState}
+                //text = {`${Language.signature} ${Language.signatureState[signature]}`}
+                primeValue={appStyle.navigationMenu.signatureIcons}
                 onChange={signatureChange}
                 appStyle = {appStyle}
                 ThemeColorsAppIndex = {ThemeColorsAppIndex}
                 ThemeSchema = {ThemeSchema}
             />
+
+        </Reanimated.View>}
+
+        {(previewMenuType == menuTypes[0] || previewMenuType == menuTypes[2]) &&  
+        <Reanimated.View 
+            //exiting={exiting} 
+            entering={entering}
+            //style = {{height: 80}}
+        >
+        <BoxsField
+            //  'one'>true || 'multiple'>false
+            isChoiceOne={false}
+            title = {Language.accentsType}
+            //  'one'>index || 'multiple'>[indexs]
+            primaryValue = {toIndexs(accentsGroup)}
+            groupSize = {accents.length}
+            groupItems = {Object.values(Language.accentsTypes)}        
+            onPress = {(activeIndexs)=>{settingAccents(activeIndexs)}}          
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
         </Reanimated.View>}
     </View>
     </View>)

@@ -39,37 +39,45 @@ export default ListsRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.bobberButton
 
-    const [sliderValue, setSliderValue] = useState(appStyle.functionButton.size);
+    //const [sliderValue, setSliderValue] = useState(appStyle.functionButton.size);
 
     const positionButtonSetting = (index) => {
-        //const newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.functionButton.position = valuePosition[index];
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     };
 
     const settingSizeButton = (value, isComplete) =>{
-        //const newAppStyle = getNewAppStyleObject();
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        isComplete? setSliderValue(value) : null
+        //isComplete? setSliderValue(value) : null
         newAppStyle.functionButton.size = Number(value);
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
 
-    const [invertColors, setInvertColors] = useState(appStyle.functionButton.invertColors)
+    //const [invertColors, setInvertColors] = useState(appStyle.functionButton.invertColors)
 
-    const invertChange = () =>{
-        //let newAppStyle = getNewAppStyleObject();
+    const invertChange = (value) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.functionButton.invertColors = !invertColors;
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.functionButton.invertColors = value;//!invertColors;
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
-        setInvertColors(!invertColors)
+        //setInvertColors(!invertColors)
+    }
+
+    //const [outline, setOutline] = useState(appStyle.functionButton.outline)
+
+    const outlineChange = (value) =>{
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        newAppStyle.functionButton.outline = value;// !outline;
+        newAppStyle.presetUsed = 'YTAT-custom';
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
+        //setOutline(!outline)
     }
 
     return (
@@ -103,7 +111,7 @@ export default ListsRedactor = ({
             minimumValue={sizeButton.min}
             maximumValue={sizeButton.max}
             step = {sizeButton.step}
-            value = {sliderValue}
+            value = {appStyle.functionButton.size}
             onSlidingComplete = {(value)=>{settingSizeButton(value, true)}}
             onValueChange = {(value)=>{settingSizeButton(value, false)}}
             appStyle = {appStyle}
@@ -111,9 +119,24 @@ export default ListsRedactor = ({
             ThemeSchema = {ThemeSchema}
         />
         <SwitchField
-            text = {`${Language.invertColors} ${Language.invertColorsState[invertColors]}`}
-            primeValue={invertColors}
+            textTitle = {Language.invertColors}
+            textStates = {Language.invertColorsState}
+            //text = {`${Language.invertColors} ${Language.invertColorsState[invertColors]}`}
+            primeValue={appStyle.functionButton.invertColors}
             onChange={invertChange}
+            style = {{
+                marginTop: 10
+            }}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        <SwitchField
+            textTitle = {Language.outline}
+            textStates = {Language.outlineState}
+            //text = {`${Language.outline} ${Language.outlineState[outline]}`}
+            primeValue={appStyle.functionButton.outline}
+            onChange={outlineChange}
             style = {{
                 marginTop: 10
             }}

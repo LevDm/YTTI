@@ -2,7 +2,7 @@
   "expo": {
     "name": "YTAT",
     "slug": "YTAT",
-    "version": "1.0.0",
+    "version": "1.0-beta",
     "orientation": "portrait",
     "plugins": [
       [

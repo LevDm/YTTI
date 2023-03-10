@@ -133,7 +133,7 @@ export default UserRedactor = ({
                 icon: {
                     name: textInputValue? "account-box-outline" : "pencil-outline", 
                     size: 25, 
-                    color: textInputValue? Theme.icons.accents.primary : Theme.texts.neutrals.tertiary
+                    color: textInputValue? Theme.icons.accents.secondary : Theme.texts.neutrals.tertiary
                 }
             }}
         />

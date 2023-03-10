@@ -212,8 +212,9 @@ const Palette = (props) => {
     const equal = (JSON.stringify(appStyle.customTheme) === JSON.stringify(saveObject))
     if(!equal){
       const newAppStyle = JSON.parse(JSON.stringify(appStyle));
-      newAppStyle.customTheme = saveObject
-      newAppStyle.palette.theme = 'custom'
+      newAppStyle.customTheme = saveObject;
+      newAppStyle.palette.theme = 'custom';
+      newAppStyle.presetUsed = 'YTAT-custom';
       themesColorsAppList.splice(0,1,saveObject)
       props.r_setAppStyle(newAppStyle);
       dataRedactor("storedAppStyle",newAppStyle);

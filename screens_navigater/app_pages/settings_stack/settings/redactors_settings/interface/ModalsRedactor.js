@@ -27,9 +27,11 @@ import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 //const borderRadiusValues = {min: 0, max: 32, step: 1}
 //import { borderRadiusValues } from "../../../../../app_values/AppDefault";
 
+import { modalsHorizontalProximity } from "../../../../../../app_values/AppDefault";
+
 export default ModalsRedactor = ({
     appStyle,
-
+ 
     //setPreviewAppStyle,
     //getNewAppStyleObject,
 
@@ -39,9 +41,6 @@ export default ModalsRedactor = ({
     ThemeSchema,
     LanguageAppIndex   
 }) => {
-
-    const [ horizontalProximity, setHorizontalProximity ] = useState(appStyle.modals.horizontalProximity == 0? true : false)
-
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.modals
 
@@ -51,34 +50,32 @@ export default ModalsRedactor = ({
         return group.map((item, index)=> item? index : -1).filter(item => item >= 0);
     }
 
-    const items = [Language.outline, Language.dimOutDark, Language.gradient]
+    const items = [Language.dimOutDark, Language.gradient, Language.outline, ]
     
-    const changeHorizontalProximity = () => {
-        //const newAppStyle = getNewAppStyleObject();
+    const changeHorizontalProximity = (value) => { 
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.modals.horizontalProximity = !horizontalProximity? 0 : 5
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.modals.fullWidth = value;
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
-
-        setHorizontalProximity(!horizontalProximity)
     }
 
-    const settingMethods = (indexs) => {
-        //const newAppStyle = getNewAppStyleObject();
+    const settingMethods = (indexs) => {   
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         for (let i = 0; i < params.length; i++){
             newAppStyle.modals.highlightMethods[params[i]] = indexs.includes(i)
         }            
-        //setPreviewAppStyle(newAppStyle);
+        newAppStyle.presetUsed = 'YTAT-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
 
     return (<>
         <SwitchField
-            text = {`${Language[`horizontalProximity`]} ${Language[`horizontalProximityState`][`${horizontalProximity}`]}`}
-            primeValue={horizontalProximity}
+            textTitle = {Language.horizontalProximity}
+            textStates = {Language.horizontalProximityState}
+            //text = {`${Language[`horizontalProximity`]} ${Language[`horizontalProximityState`][`${horizontalProximity}`]}`}
+            primeValue={appStyle.modals.fullWidth}
             onChange={changeHorizontalProximity}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}

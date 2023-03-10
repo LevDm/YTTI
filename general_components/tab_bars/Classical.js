@@ -87,9 +87,9 @@ const Classical = ({
                     width: deviceWidth,
                 },
                 appStyle.effects.blur? {} : {
-                    borderTopWidth:1,
-                    borderColor: `${Theme.basics.neutrals.tertiary}25`,
-                    backgroundColor: Theme.basics.neutrals.secondary,
+                    borderTopWidth: 0.4,
+                    borderColor: `${Theme.specials.separator}25`,
+                    backgroundColor: Theme.basics.neutrals.tertiary,
                 }]
             }
         >   
@@ -106,7 +106,7 @@ const Classical = ({
                 blurAmount = {10}
                 
                 //ANDROID_PROPS
-                overlayColor={`${Theme.basics.neutrals.secondary}90`}
+                overlayColor={`${Theme.basics.neutrals.tertiary}90`}
                 //overlayColor={'transparent'}
                 //blurRadius	= {10}
                 //downsampleFactor = {10}
@@ -227,7 +227,11 @@ const Classical = ({
                                 }}
                                 entering={entering}
                             >
-                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Theme.icons.accents.primary}/>
+                                <MaterialCommunityIcons 
+                                    name={appStyle.navigationMenu.accentsType.filling? iconsNames.focus : iconsNames.notFocus} 
+                                    size={size} 
+                                    color = {appStyle.navigationMenu.accentsType.coloring? Theme.icons.accents.primary : Theme.icons.neutrals.secondary}
+                                />
                                 {appStyle.navigationMenu.signatureIcons &&
                                 <Text
                                     style = {[
@@ -237,7 +241,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Theme.texts.accents.primary
+                                            color: appStyle.navigationMenu.accentsType.coloring? Theme.texts.accents.primary : Theme.texts.neutrals.secondary
                                         }
                                     ]}
                                 >
@@ -254,7 +258,11 @@ const Classical = ({
                                     justifyContent: 'center',
                                 }}
                             >
-                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.icons.neutrals.tertiary}/>
+                                <MaterialCommunityIcons 
+                                    name={iconsNames.notFocus} 
+                                    size={size} 
+                                    color = {appStyle.navigationMenu.accentsType.coloring? Theme.icons.neutrals.tertiary : Theme.icons.neutrals.secondary}
+                                />
                                 {appStyle.navigationMenu.signatureIcons &&
                                 <Text
                                     style = {[
@@ -264,7 +272,7 @@ const Classical = ({
                                             textAlign: 'center',
                                             fontVariant: ['small-caps'],
                                             fontWeight: '600',
-                                            color: Theme.texts.neutrals.tertiary
+                                            color: appStyle.navigationMenu.accentsType.coloring? Theme.texts.neutrals.tertiary : Theme.texts.neutrals.secondary
                                         }
                                     ]}
                                 >

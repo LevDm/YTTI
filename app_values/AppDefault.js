@@ -1,11 +1,3 @@
-import { Dimensions } from 'react-native';
-import Constants from "expo-constants";
-
-//CONSTANS
-export const deviceHeight = Dimensions.get('window').height
-export const deviceWidth = Dimensions.get('window').width
-export const statusBarHeight = Constants.statusBarHeight+1
-
 //fillets
 export const borderRadiusValues = {min: 0, max: 36, step: 1}
 //navigation menu
@@ -23,7 +15,7 @@ export const listsHorizontalProximity = {'true': 0, 'false': 5}
 export const sizeButton = {min: 56, max: 72, step: 2}
 //export const valuePosition = ['left','center','right']
 
-export const weatherTypes = ['lists', 'panel', 'widget']
+export const weatherTypes = ['lists', 'panel', 'widget', 'off']
 
 export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 //effects
@@ -40,60 +32,12 @@ export const checkBoxDisign = ['type_1', 'type_2',]
 export const radioButtonDisign = ['type_1', 'type_2',]
 //modals
 
+import { stock } from './AppDesigns';
 //APPERANCE
 export const defaultAppStyle = {
     presetUsed: 'YTAT-custom',
-    palette: {
-        theme: "olive",
-        scheme: 'auto',
-        statusBar: 'light',
-    },
-    borderRadius: {
-        basic: 12, 
-        additional: 12
-    },
-    effects: {
-        ripple: 'all',
-        shadows: 'material',
-        blur: true,
-    },
-    selectorsDisign: {
-        switch: 'type_3',
-        checkBox: 'type_2',
-        radioButton: 'type_2',
-    },
-    navigationMenu: {
-        type: menuTypes[0],
-        height: 50,
-        position: {vertical: 0 , horizontal : 'right'},
-        signatureIcons: true,
-        drawerPosition: 'right',
-        accentsType: {
-            filling: false,
-            coloring: false
-        }
-    },
-    lists: {
-        textSize: 14,
-        proximity: 5,
-        fullWidth: false,
-        invertColorsHeader: true,
-    },
-    functionButton: {
-        invertColors: true,
-        position: 'right',
-        outline: false,
-        size: 60,
-    },
-    modals: {
-        fullWidth: false,
-        highlightMethods: {
-            outline: false,
-            dimOutDark: false,
-            gradient: false,
-        }
-    },
     customTheme: undefined,
+    ...stock
 }
 
 //CONFIGURATION
@@ -106,9 +50,13 @@ export const defaultAppConfig = {
         show: true,
         welcome: true
     },
-    screenSubsequence: ['analytics', 'tasks', 'notes', 'settings'],
+    screenSubsequence: ['tasks', 'timetable', 'notes', 'analytics', 'settings'],
     appFunctions: {
         analytics: {
+            useId: 2,
+            used: true
+        },
+        timetable: {
             useId: 1,
             used: true
         },
@@ -117,18 +65,16 @@ export const defaultAppConfig = {
             used: true
         },
         notes: {
-            useId: 2,
+            useId: 3,
             used: true
         },
         settings: {
-            useId: 3,
+            useId: 4,
             used: true
         }
-        //weather: true,
     },
     weather: {
-        used: false,
-        type: weatherTypes[0],
+        type: weatherTypes[1],
         locationInfo: [
             //{
             //    used: bool
@@ -154,3 +100,27 @@ export const defaultAppConfig = {
 
 //THEMES
 // of "./Themes";
+
+const weatherIconsPatch = '../assets/openWeather/'
+
+export const ICONS_SET = { 
+    '01d': require(weatherIconsPatch+'01d.png'),
+    '02d': require(weatherIconsPatch+'02d.png'),
+    '03d': require(weatherIconsPatch+'03d.png'),
+    '04d': require(weatherIconsPatch+'04dn.png'),
+    '09d': require(weatherIconsPatch+'09dn.png'),
+    '10d': require(weatherIconsPatch+'10d.png'),
+    '11d': require(weatherIconsPatch+'11dn.png'),
+    '13d': require(weatherIconsPatch+'09dn.png'),
+    '50d': require(weatherIconsPatch+'04dn.png'),
+
+    '01n': require(weatherIconsPatch+'01n.png'),
+    '02n': require(weatherIconsPatch+'02n.png'),
+    '03n': require(weatherIconsPatch+'03n.png'),
+    '04n': require(weatherIconsPatch+'04dn.png'),
+    '09n': require(weatherIconsPatch+'09dn.png'),
+    '10n': require(weatherIconsPatch+'10n.png'),
+    '11n': require(weatherIconsPatch+'11dn.png'),
+    '13n': require(weatherIconsPatch+'09dn.png'),
+    '50n': require(weatherIconsPatch+'04dn.png'),
+}

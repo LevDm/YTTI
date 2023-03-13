@@ -1,10 +1,16 @@
 import React, { useRef, useState } from "react";
-import { Animated, StyleSheet, Modal, TextInput, Text, View, TouchableOpacity, Pressable } from "react-native";
+import { Animated, StyleSheet, Modal, TextInput, Text, View, TouchableOpacity, Pressable, Dimensions } from "react-native";
+import Constants from "expo-constants";
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const statusBarHeight = Constants.statusBarHeight+1
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import themeColorsAppList from "../app_values/Themes";
-const ColorsApp = themeColorsAppList[1]
+import themesColorsAppList from "../app_values/Themes";
+import languagesAppList from "../app_values/Languages";
+
 import DateTimePicker from "../componets/picker/DateTimePicker";
+
+import { BaseWindow } from "../general_components/base_components/BaseElements";
 
 const ModalInput = ({
     InputModalVisible, 
@@ -18,9 +24,15 @@ const ModalInput = ({
     tasks,
     keyboardVisible,
 
-    LanguageStore
-
+    appStyle,
+    appConfig,
+    ThemeColorsAppIndex,
+    ThemeSchema,
+    LanguageAppIndex,
     }) => {
+
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const LanguageStore = languagesAppList[LanguageAppIndex]
         
     const [timePickerModalVisible, setTimePickerModalVisible] = useState(false);
     const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
@@ -130,19 +142,34 @@ const ModalInput = ({
         setInFireValue(null);
     }
 
+    const horizontalProximity = 10
 
     return (
         <> 
-            <Modal 
-                animationType = "fade"
-                transparent = {true}
+
+            <BaseWindow
+                animationType="fade"
                 visible = {InputModalVisible}
-                onRequestClose = {handleCloseModal}
-                //style = {{position: 'absolute'}}
+                dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
+                gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.quaternary : false}
+                blur={appStyle.effects.blur}
+                outPress = {handleCloseModal}
+                //onShow = {onShow}
+                modalStyle = {{
+                    width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
+                    left: appStyle.modals.fullWidth? 0 : horizontalProximity,
+                }}
+                style={{
+                    backgroundColor: Theme.basics.neutrals.quaternary,
+                    borderTopLeftRadius: appStyle.borderRadius.additional,
+                    borderTopRightRadius: appStyle.borderRadius.additional,
+                    borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
+                    borderColor: Theme.basics.accents.tertiary,
+                    flex: 1,
+                }}
             >
-                <View style = {styles.ModalContainer}>
-                    
-                    <View style = {[styles.ModalView,{height: keyboardVisible?'80%':'50%'}]}> 
+   
+                    <View style = {[styles.ModalView,{height: '50%'}]}> 
                         <View style = {styles.ModalIcon}>
                             <Text style = {styles.HeaderTitle}>{LanguageStore.ModalInput.title}</Text> 
                         </View>
@@ -153,8 +180,8 @@ const ModalInput = ({
 
                         <TextInput style = {styles.StyledInput}
                             placeholder = {LanguageStore.ModalInput.placeholderInputArea}
-                            placeholderTextColor = {ColorsApp.symbolNeutral}//{Colors.alternative}
-                            selectionColor = {ColorsApp.symbolDark}//'black'//{Colors.secondary}
+                            placeholderTextColor = {Theme.texts.neutrals.tertiary}//{Colors.alternative}
+                            selectionColor = {Theme.texts.neutrals.secondary}//'black'//{Colors.secondary}
                             autoFocus = {false}
                             onChangeText = {(text) => setTaskInputValue(text)}
                             value = {String(taskInputValue)}
@@ -171,7 +198,7 @@ const ModalInput = ({
                                 //marginTop: 10,
                                 width: 300,
                                 height: 50,
-                                backgroundColor: ColorsApp.skyUpUp,//Colors.tertiary,
+                                backgroundColor: Theme.basics.accents.quaternary,//Colors.tertiary,
                                 padding: 10,
                                 borderRadius: 12,
                             }}
@@ -182,7 +209,7 @@ const ModalInput = ({
                                 }}
                             >
                                 <Text 
-                                    style = {toTimeValue == null?{fontSize: 16,letterSpacing: 1,color: ColorsApp.symbolNeutral}:{fontSize: 16,letterSpacing: 1,color: ColorsApp.symbolDark}}
+                                    style = {toTimeValue == null?{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.tertiary}:{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.secondary}}
                                 >
                                     {toTimeValue == null?LanguageStore.ModalInput.placeholderTimeArea:toTimeValue}
                                 </Text>
@@ -193,7 +220,7 @@ const ModalInput = ({
                                 marginTop: 5,
                                 width: 300,
                                 height: 50,
-                                backgroundColor: ColorsApp.skyUpUp,//Colors.tertiary,
+                                backgroundColor: Theme.basics.accents.quaternary,//Colors.tertiary,
                                 padding: 10,
                                 borderRadius: 12,
                             }}
@@ -204,7 +231,7 @@ const ModalInput = ({
                                 }}
                             >
                                 <Text 
-                                    style = {toDateValue == null?{fontSize: 16,letterSpacing: 1,color: ColorsApp.symbolNeutral}:{fontSize: 16,letterSpacing: 1,color: ColorsApp.symbolDark}}
+                                    style = {toDateValue == null?{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.tertiary}:{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.secondary}}
                                 >
                                    {toDateValue == null?LanguageStore.ModalInput.placeholderDateArea:toDateValue}
                                 </Text>
@@ -221,7 +248,7 @@ const ModalInput = ({
                                 //marginTop: 10,
                                 width: 300,
                                 height: 50,
-                                backgroundColor: ColorsApp.skyUpUp,//Colors.tertiary,
+                                backgroundColor: Theme.basics.accents.quaternary,//Colors.tertiary,
                                 padding: 10,
                                 borderRadius: 12,
                             }}
@@ -232,33 +259,21 @@ const ModalInput = ({
                                 }}
                             >
                                 <Text 
-                                    style = {inFireValue == null?{fontSize: 16,letterSpacing: 1,color: ColorsApp.symbolNeutral}:{fontSize: 16,letterSpacing: 1,color: ColorsApp.symbolDark}}
+                                    style = {inFireValue == null?{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.tertiary}:{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.secondary}}
                                 >
                                    {inFireValue == null?LanguageStore.ModalInput.placeholderDeadlineTargetArea:inFireValue}
                                 </Text>
                             </Pressable>
                         </View>
                         </View>
-                    </View>
-                    <View style = {[styles.ModalActionGroup,{marginBottom: keyboardVisible?10:'58%'}]}>
                         <Pressable 
-                            android_ripple = {{color: ColorsApp.sky,borderless: true}} 
-                            style = {styles.ModalAction} 
-                            onPress = {handleCloseModal}
-                        >
-                            <MaterialCommunityIcons name = "close" size = {28} color = {ColorsApp.symbolDark}/>
-                        </Pressable>
-
-                        <Pressable 
-                            android_ripple = {{color: ColorsApp.sky,borderless: true}} 
                             style = {styles.ModalAction} 
                             onPress = {handleSubmit}
                         >
-                            <MaterialCommunityIcons name = "check" size = {28} color = {ColorsApp.symbolDark}/>
+                            <MaterialCommunityIcons name = "check" size = {28} color = {Theme.icons.neutrals.secondary}/>
                         </Pressable>
                     </View>
-                </View> 
-            </Modal>
+            </BaseWindow>
 
             <DateTimePicker
                 dateTimePickerModalVisible = {timePickerModalVisible} 
@@ -295,11 +310,11 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end', 
         alignItems: 'center', 
         flex: 1,
-        backgroundColor: ColorsApp.shadowBlack,//'rgba(0, 0, 0, 0.4235)',
+        //backgroundColor: 'rgba(0, 0, 0, 0.4235)',
     },
     ModalView: {
-        backgroundColor: ColorsApp.skyUp,//Colors.primaryUp,
-        width: '98%',
+        //backgroundColor: 'red',//Theme.skyUp,//Colors.primaryUp,
+        //width: '98%',
         height: '50%',
         borderRadius: 12,
         borderBottomLeftRadius: 0,
@@ -324,7 +339,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
-        backgroundColor: ColorsApp.skyUp,
+        backgroundColor: 'blue',//Theme.skyUp,
         flexDirection: 'row',
         justifyContent: 'space-around', 
         //marginBottom: keyboardVisible?10:'58%'
@@ -332,11 +347,11 @@ const styles = StyleSheet.create({
     StyledInput: {
         width: 300,
         height: 50,
-        backgroundColor: ColorsApp.skyUpUp,//Colors.tertiary,
+        backgroundColor: 'lightblue',//Theme.skyUpUp,//Colors.tertiary,
         padding: 10,
         fontSize: 16, 
         borderRadius: 12,
-        color: ColorsApp.symbolDark,//'black',//Colors.secondary,
+        color: 'black',//Colors.secondary,
         letterSpacing: 1,
     },
     ModalIcon: {
@@ -350,7 +365,7 @@ const styles = StyleSheet.create({
     HeaderTitle: {
         fontSize: 30, 
         fontWeight: 'bold',
-        color: ColorsApp.symbolDark,//Colors.tertiary, 
+        color: 'black',//Theme.symbolDark,//Colors.tertiary, 
         letterSpacing: 2, 
         fontStyle: 'italic'
     },

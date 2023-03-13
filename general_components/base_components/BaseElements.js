@@ -14,11 +14,12 @@ import {
     Modal,
     Keyboard,
     TextInput,
+    Dimensions
 } from 'react-native';
 
 import Slider from "@react-native-community/slider";
 
-import Animated, {
+import Reanimated, {
     useSharedValue, 
     useAnimatedStyle, 
     withTiming, 
@@ -39,6 +40,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
 import languagesAppList, {languagesApp} from "../../app_values/Languages";
 import themesColorsAppList, {themesApp} from "../../app_values/Themes";
@@ -99,7 +102,7 @@ export const BasePressable = ({
     })
 
     return (
-        <Animated.View 
+        <Reanimated.View 
             style = {[
                 style,
                 dynamicStyle, 
@@ -158,11 +161,11 @@ export const BasePressable = ({
                     }
                 </View>
             </Pressable>
-        </Animated.View>               
+        </Reanimated.View>               
     )
 }
 
-const AnimatedSlider = Animated.createAnimatedComponent(Slider)
+const AnimatedSlider = Reanimated.createAnimatedComponent(Slider)
 export const BaseSlider = ({
     signaturesText = {left: 'left bord',right: 'right bord'},
     signaturesStyle = {},
@@ -308,7 +311,7 @@ export const BaseBox = ({
                 onLongPress = {onLongPress}
                 onPress={onPress}
             >
-                <Animated.View
+                <Reanimated.View
                     style = {[{
                         height: size,
                         width: size,
@@ -316,7 +319,7 @@ export const BaseBox = ({
                         alignItems: 'center'
                     }]}
                 >
-                    <Animated.View
+                    <Reanimated.View
                         style = {[{
                             //flex: 1,
                             justifyContent: 'center',
@@ -327,8 +330,8 @@ export const BaseBox = ({
                     >
                         <Ionicons name="checkmark" size={size-8} color={(disignType == 'type_2' && checkValue && isCheckBox)? colors.background : 'transparent'}/>
                         <View position={'absolute'} width={(size-1)/2} height={(size-1)/2} borderRadius={boxBorderRadius-6} backgroundColor={(disignType == 'type_2' && checkValue && !isCheckBox)? colors.background : 'transparent'} /> 
-                    </Animated.View>
-                    <Animated.View 
+                    </Reanimated.View>
+                    <Reanimated.View 
                         style = {[{
                             position: 'absolute',
                             height: size,
@@ -336,7 +339,7 @@ export const BaseBox = ({
                             borderWidth: 2
                         }, dynamicStylePrimaryBox]}
                     />
-                </Animated.View>
+                </Reanimated.View>
                 {Item}
             </Pressable>
         </View>
@@ -344,7 +347,7 @@ export const BaseBox = ({
 }
 
 import SkiaViewDisign from "./SkiaViewDisign";
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const AnimatedPressable = Reanimated.createAnimatedComponent(Pressable)
 export const BaseSwitch = ({
     Item = <Text>Text</Text>,
     disignType = 'type_1',
@@ -423,7 +426,7 @@ export const BaseSwitch = ({
             android_ripple = {android_ripple? android_ripple : {}}
             onPress = {onPress}
         >
-        <Animated.View
+        <Reanimated.View
             style = {[{
                 justifyContent: 'center',
 
@@ -445,7 +448,7 @@ export const BaseSwitch = ({
                     borderWidth: 1
                 }}
             />
-            <Animated.View
+            <Reanimated.View
                 style = {[{
                     position: 'absolute',
                     justifyContent: 'center',
@@ -469,7 +472,7 @@ export const BaseSwitch = ({
                         borderWidth: 0
                     }}
                 />
-                <Animated.View
+                <Reanimated.View
                     style = {[{
                         position: 'absolute',
                         borderRadius: borderRadius-2,
@@ -478,8 +481,8 @@ export const BaseSwitch = ({
                         backgroundColor: disignType == 'type_1'? colors.background : 'transparent'
                     }]}
                 />
-            </Animated.View>
-        </Animated.View>
+            </Reanimated.View>
+        </Reanimated.View>
         {separator && <View style={separatorStyle}/>}
         {Item}
         </Pressable>
@@ -662,6 +665,109 @@ export const BaseModal = ({
     )
 }
 
+
+export const BaseWindow = ({
+    animationType = 'fade',
+    visible = false,
+    transparent,
+    onShow,
+
+    outPress,
+
+    style,
+    modalStyle,
+    thumbStyle,
+    snapHeights,
+    dimOut, //color
+    gradient,
+    blur = false,
+    children
+    }) => {
+
+    const slide = useAnimatedStyle(()=>{
+        return {
+            transform: [
+                {translateY: withTiming(interpolate(
+                    visible,
+                    [true, false],
+                    [0, deviceHeight]
+                ), {duration: 300})}
+            ]
+        }
+    }, [visible])
+
+    return(
+        <Modal
+            visible={visible}
+            animationType = {animationType}
+            transparent= {true}
+            statusBarTranslucent = {true}
+            onShow={onShow}
+        >   
+            <Pressable
+                flex = {1}
+                style={{
+                    backgroundColor: dimOut? dimOut : 'transparent'
+                }}
+                onPress={outPress}
+            />
+            <Reanimated.View
+                style = {[{
+                    minHeight: 100,
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%',
+                }, modalStyle, slide]}
+            >   
+            <View         
+                style={style}
+                backgroundColor={blur? 'transparent' : style.backgroundColor}
+            >
+                {blur && 
+                <View 
+                    style = {[StyleSheet.absoluteFillObject, {
+                        top: 0,
+                        height: '100%',
+                        width: '100%',
+                        borderTopLeftRadius: style.borderTopLeftRadius - (gradient? 1 : 0),
+                        borderTopRightRadius: style.borderTopRightRadius - (gradient? 1 : 0),
+                        //specialty blur for android
+                        overflow: 'hidden',
+                    }]}
+                >
+                <BlurView
+                    style = {{
+                        flex: 1, 
+                    }}
+                    blurType = {'light'}
+                    blurAmount = {10}
+                    
+                    //ANDROID_PROPS
+                    overlayColor={`${style.backgroundColor}90`}
+                    //overlayColor={'transparent'}
+                    //blurRadius	= {10}
+                    //downsampleFactor = {10}
+                />
+                </View>}
+                <LinearGradient
+                    colors={[gradient? gradient : 'transparent', 'transparent']}
+                    style={{
+                        position: 'absolute',
+                        //top: -25,
+                        top: 0,
+                        opacity: .25,
+                        height: 100,
+                        width: '100%',
+                        borderTopLeftRadius: style.borderTopLeftRadius - (gradient? 1 : 0),
+                        borderTopRightRadius: style.borderTopRightRadius - (gradient? 1 : 0),
+                    }}
+                />  
+                {children}
+            </View>
+            </Reanimated.View>
+        </Modal>
+    )
+}
 
 
 const staticStyles = StyleSheet.create({

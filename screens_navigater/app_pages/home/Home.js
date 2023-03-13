@@ -184,7 +184,11 @@ const Home = (props) => {
                 tasks = {tasks}
                 keyboardVisible = {keyboardVisible}
 
-                LanguageStore = {languagesAppList[LanguageAppIndex]}
+                appStyle={appStyle}
+                appConfig={appConfig}
+                ThemeColorsAppIndex={ThemeColorsAppIndex}
+                ThemeSchema = {ThemeSchema}
+                LanguageAppIndex = {LanguageAppIndex}
             />
 
             <ListItems

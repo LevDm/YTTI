@@ -44,7 +44,9 @@ add
     ...
     <item name="android:windowIsTranslucent">true</item>
 </style>
-============================================================================================================
-YTAT\android\app\src\main\res\values\colors.xml
 add
-<item name="android:colorEdgeEffect">#606060</item>
+<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+  ...
+  <item name="android:colorEdgeEffect">#606060</item>
+<style>
+============================================================================================================

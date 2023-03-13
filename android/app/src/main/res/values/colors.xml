@@ -4,5 +4,4 @@
   <color name="colorPrimary">#505050</color>
   <color name="colorPrimaryDark">#000000</color>
   <color name="navigationBarColor">#00000080</color>
-  <item name="android:colorEdgeEffect">#606060</item>
 </resources>

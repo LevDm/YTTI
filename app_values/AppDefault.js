@@ -15,7 +15,7 @@ export const listsHorizontalProximity = {'true': 0, 'false': 5}
 export const sizeButton = {min: 56, max: 72, step: 2}
 //export const valuePosition = ['left','center','right']
 
-export const weatherTypes = ['lists', 'panel', 'widget', 'off']
+export const weatherTypes = ['panel', 'lists',  'widget', 'off']
 
 export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 //effects
@@ -74,7 +74,7 @@ export const defaultAppConfig = {
         }
     },
     weather: {
-        type: weatherTypes[1],
+        type: weatherTypes[0],
         locationInfo: [
             //{
             //    used: bool

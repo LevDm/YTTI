@@ -1,4 +1,4 @@
-package com.F1F.YTAT.newarchitecture;
+package com.F1F.YTTI.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -20,9 +20,9 @@ import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.F1F.YTAT.BuildConfig;
-import com.F1F.YTAT.newarchitecture.components.MainComponentsRegistry;
-import com.F1F.YTAT.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.F1F.YTTI.BuildConfig;
+import com.F1F.YTTI.newarchitecture.components.MainComponentsRegistry;
+import com.F1F.YTTI.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

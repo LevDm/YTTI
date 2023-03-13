@@ -1,4 +1,4 @@
-package com.F1F.YTAT.newarchitecture.components;
+package com.F1F.YTTI.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

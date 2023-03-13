@@ -161,7 +161,7 @@ const LanguageStoreRu = {
           selectors: 'переключатели',
           navigationMenu: "меню навигации", 
           loadAnimation: "загрузка",
-          lists: "ленты",
+          lists: "экраны",
           bobberButton:"плавающие кнопки",
           modals: 'модальные окна',
           language: "язык",
@@ -277,9 +277,9 @@ const LanguageStoreRu = {
         weather: {
           type: 'Тип отображения погоды',
           types: {
+            panel: 'В панеле',
             lists: 'В списках', 
             widget: 'Виджет', 
-            panel: 'В панеле',
             off: 'Выключена'
           },
           locations: 'Используемые местоположения',
@@ -631,9 +631,9 @@ const LanguageStoreEng = {
         weather: {
           type: 'Weather display type',
           types: {
+            panel: 'In panel',
             lists: 'In lists', 
             widget: 'Widget', 
-            panel: 'In panel',
             off: 'Off'
           },
           locations: 'Used Locations',

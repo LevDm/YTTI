@@ -1909,7 +1909,7 @@ const BasisList = (props) => {
                             color: 'black'
                         }]}
                     >
-                        YTAT {Application.nativeApplicationVersion}
+                        YTTI {Application.nativeApplicationVersion}
                     </Text>
                     <MaskedView
                         style={{height: 20, width: 250, flexDirection: 'row', top: -30}}

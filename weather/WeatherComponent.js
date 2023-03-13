@@ -116,6 +116,12 @@ const WeatherComponent = (props) => {
   //console.log(weatherData)
 
   const last = (weatherData && selectCity)? Math.floor((new Date().getTime()-weatherData[selectCity].lastUpdate)/(60*1000)) : 0
+
+  const ripple = (color) => ({
+    color: `${color}20`,
+    borderless: true,
+    foreground: false
+})
   
   return (
     <View
@@ -148,9 +154,16 @@ const WeatherComponent = (props) => {
         {appConfig.weather.locationInfo.map((item, index)=>{
           if(!item.used){return null}
           return (
-            <Pressable
+            <View
               key={`${item.city}_${index}`}
-              onPress={()=>{setSelectCity(item.city)}}
+              style={{
+                borderRadius: appStyle.borderRadius.additional,
+                backgroundColor: '#00000001', 
+              }}
+            >
+            <Pressable
+              onPress={()=>{if(selectCity != item.city){setSelectCity(item.city)}}}
+              android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.texts.neutrals.secondary ) : false}
             >
               <Text 
                 style = {{
@@ -158,6 +171,7 @@ const WeatherComponent = (props) => {
                   fontWeight: '400', 
                   fontVariant: ['small-caps'],
                   letterSpacing: 0.7, 
+                  paddingHorizontal: 3,
                   textDecorationLine: selectCity == item.city? 'underline' : 'none',
                   color: Theme.texts.neutrals.secondary 
                 }}
@@ -166,6 +180,7 @@ const WeatherComponent = (props) => {
                 {(item.city).toLowerCase()}
               </Text>
             </Pressable>
+            </View>
           )
         })}
       </View>

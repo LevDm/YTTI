@@ -128,7 +128,7 @@ export const stock = {
     "borderRadius": {"additional": 36, "basic": 0}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "materialSome"}, 
     "functionButton": {"invertColors": true, "outline": false, "position": "right", "size": 70},
-    "lists": {"fullWidth": true, "invertColorsHeader": false, "proximity": 2.75, "textSize": 14},
+    "lists": {"fullWidth": true, "invertColorsHeader": true, "proximity": 2.75, "textSize": 14},
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}},
     "navigationMenu": {
         "accentsType": {"coloring": true, "filling": true},

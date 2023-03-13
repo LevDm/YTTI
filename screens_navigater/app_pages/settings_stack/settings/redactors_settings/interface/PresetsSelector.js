@@ -125,8 +125,8 @@ const PresetItem = ({
                 longPressed.value = withTiming(0, {duration: duration/10})
             }}
             onPress={onPress}
-            delayLongPress={duration}
-            //onLongPress={onLongPress}
+            delayLongPress={duration+100}
+            onLongPress={onLongPress}
         >   
             <LinearGradient
                 colors={colors.gradient}
@@ -186,7 +186,7 @@ export default PresetsSelector = ({
     previewAppStyleA,
 
     //setAppStyle,
-    //r_setAppStyle,
+    r_setAppStyle,
 
     ThemeColorsAppIndex,
     ThemeSchema,
@@ -225,8 +225,15 @@ export default PresetsSelector = ({
     }
 
     const longPressItem = (index) => {
-        Vibration.vibrate([5,10])
-        console.log('preset longPressItem', index)    
+        Vibration.vibrate([5,10, 20, 10, 20, 10])
+        console.log('preset longPressItem', index)
+        if(index == 0 || presets[index].options){
+            const newAppStyle = (index == 0? appStyle : presets[index].options)
+            newAppStyle.customTheme = appStyle.customTheme
+            newAppStyle.presetUsed = presetsNames[index]
+            r_setAppStyle(newAppStyle)
+        }
+
     }
     
 
@@ -311,7 +318,7 @@ export default PresetsSelector = ({
                     }: item}
 
                     onPress = {()=>{pressItem(index)}}
-                    //onLongPress = {()=>{longPressItem(index)}}
+                    onLongPress = {()=>{longPressItem(index)}}
 
                     primaryCheck = {index == previewIndex}//{(JSON.stringify(index == 0? appStyle : item.options) === JSON.stringify(previewAppStyleA.value))}
 

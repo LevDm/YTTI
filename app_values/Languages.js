@@ -275,13 +275,12 @@ const LanguageStoreRu = {
           thisLanguage: 'Использовать русский'
         },
         weather: {
-          used: 'Определять и использовать погоду',
-          usedState: {true: "включено", false: "выключено"},
-          type: 'Тип отображеня погоды',
+          type: 'Тип отображения погоды',
           types: {
             lists: 'В списках', 
             widget: 'Виджет', 
-            panel: 'В панеле'
+            panel: 'В панеле',
+            off: 'Выключена'
           },
           locations: 'Используемые местоположения',
           add: 'Добавление нового местоположения',
@@ -330,20 +329,33 @@ const LanguageStoreRu = {
     AnalyticsScreen: {
       HeaderTitle: 'аналитика',
     },
+    NotesScreen: {
+      HeaderTitle: 'заметки',
+    },
+    TimetableScreen: {
+      HeaderTitle: 'расписание',
+    },
     Weather: {
-      actualWeather: 'Актуальная погода',
+      actualWeather: 'погода',
+      feelsLike: 'ощущается как',
+      windFrom: ['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'],
+      calm: 'штиль',
+      loadingData: 'Загрузка данных',
+      netConnectError: 'Ошибка подключения сети',
+      lastUpdate: 'Последнее обновление',
+      min: 'мин.',
+      hour: 'ч.',
+      ago: 'назад',
+      dataSource: 'Источник'
+      /*
       country: 'Страна',
       area: 'Область',
       city: 'Город',
       today: 'Сегодня',
       morrow: 'Завтра',
       now: 'Сейчас',
-      feelsLike: 'Ощущается как',
-      windFrom: ['С','СВ','В','ЮВ','Ю','ЮЗ','З','СЗ'],
       ms: 'м/с',
-      calm: 'штиль',
-      loadingData: 'Загрузка данных',
-      netConnectError: 'Ошибка подключения сети'
+      */
     }
 }
   
@@ -421,8 +433,8 @@ const LanguageStoreEng = {
       from: 'From'
     },
     SettingsScreen: {
-      HeaderTitle: 'settings for',
-      app: 'app',
+      HeaderTitle: 'settings',
+      app: 'for app',
       LanguageSettings: {
         selector: 'Select language',
         engRu: ['English', 'Russian']
@@ -617,13 +629,12 @@ const LanguageStoreEng = {
           thisLanguage: 'Use English'
         },
         weather: {
-          used: 'Detect and use weather',
-          usedState: {true: "on", false: "of"},
           type: 'Weather display type',
           types: {
             lists: 'In lists', 
             widget: 'Widget', 
-            panel: 'In panel'
+            panel: 'In panel',
+            off: 'Off'
           },
           locations: 'Used Locations',
           add: 'Adding a new location',
@@ -672,20 +683,33 @@ const LanguageStoreEng = {
     AnalyticsScreen: {
       HeaderTitle: 'analytics',
     },
+    NotesScreen: {
+      HeaderTitle: 'notes',
+    },
+    TimetableScreen: {
+      HeaderTitle: 'timetable',
+    },
     Weather: {
-      actualWeather: 'Actual weather',
+      actualWeather: 'weather',
+      feelsLike: 'feels like',
+      windFrom: ['N','NE','E','SE','S','SW','W','NW'],
+      calm: 'calm',
+      loadingData: 'Loading data',
+      netConnectError: 'Network connection error',
+      lastUpdate: 'Last updated',
+      min: 'min.',
+      hour: 'h.',
+      ago: 'ago',
+      dataSource: 'Data source'
+      /*
       country: 'Country',
       area: 'Area',
       city: 'City',
       today: 'Today',
       morrow: 'Morrow',
       now: 'Now',
-      feelsLike: 'Feels like',
-      windFrom: ['N','NE','E','SE','S','SW','W','NW'],
       ms: 'm/s',
-      calm: 'calm',
-      loadingData: 'Loading data',
-      netConnectError: 'Network connection error'
+      */
     }
 }
 

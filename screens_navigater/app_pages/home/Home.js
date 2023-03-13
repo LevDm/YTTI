@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Keyboard } from "react-native";
+import { Keyboard, Appearance } from "react-native";
 // components
 import ListItems from "../../../componets/Listitems";
 import ModalInput from "../../../componets/ModalInput";
@@ -18,52 +18,62 @@ import languagesAppList, {languagesApp} from "../../../app_values/Languages";
 
 const Home = (props) => {
  
-    //const [LanguageStore, setLanguageStore] = useState(LanguageStor[0])
-    //const [tasks, setTasks] = useState(baseTasksList);
 
-    //console.log('props home= ',props)
     const [tasks, setTasks] = useState(props.tasks);
-    //const [language, setLanguage] = useState(props.languageApp == 'RU'?1:0])
-    //const [LanguageStore, setLanguageStore] = useState(LanguageStor[props.languageApp == 'RU'?1:0])
     
-    const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
-    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.theme));//LanguagesAppList[LanguageAppIndex]
+    const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
+    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
+
     const [appStyle, setAppStyle] = useState(props.appStyle);
-    
+    const [appConfig, setAppConfig] = useState(props.appConfig);
+    const [hideMenu, setHideMenu] = useState(props.hideMenu);
+
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
+
     store.subscribe(() => {
-        let jstore = store.getState();
+        const jstore = store.getState();
 
-        if(LanguageAppIndex != languagesApp.indexOf(jstore.languageApp)){
-            setLanguageAppIndex(languagesApp.indexOf(jstore.languageApp))
+        if(LanguageAppIndex != languagesApp.indexOf(jstore.appConfig.languageApp)){
+            setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
         }
 
-        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.theme)){
-            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.theme));
+        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
+            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
         }
 
-        if (appStyle != jstore.appStyle) {
+        if(ThemeSchema != jstore.appStyle.palette.scheme){
+            setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
+        }
+
+        if (appStyle != jstore.appStyle){
             setAppStyle(jstore.appStyle);
         }
+
+        if (appConfig != jstore.appConfig){
+            setAppConfig(jstore.appConfig);
+        }
+
+        if(hideMenu != jstore.hideMenu){
+            setHideMenu(jstore.hideMenu)
+        }
+    })
+    
+    const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
+    useEffect(()=>{
+        if(listenerColorSheme){
+            if(appStyle.palette.scheme == 'auto' && listenerColorSheme != ThemeSchema){
+                console.log('drawer accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
+                setThemeSchema(listenerColorSheme)
+            }
+        }
+    },[listenerColorSheme])
+    
+    Appearance.addChangeListener(({colorScheme})=>{
+        setListinerColorScheme(colorScheme)
     })
 
-    /*
-    const loadData = () => {
-        
-        AsyncStorage.getItem("storedTasks").then(data =>{
-            if (data !== null){setTasks(JSON.parse(data));}
-            //setLoad(0);
-        }).catch((error) => console.log(error));
-
-        AsyncStorage.getItem("storedLanguageSettings").then(data =>{
-            //if (data !== null){setLanguageStore(JSON.parse(data)=='RU'? LanguageStor[1]:LanguageStor[0])}
-            //setLoad(1);
-        }).catch((error) => console.log(error));
-        setLoad(false)
-        
-    }
-    */
-  
-    //if (tasks.length == 2 && load) {loadData();} 
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex]
 
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     useEffect(() => {

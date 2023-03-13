@@ -8,7 +8,7 @@ import Calendar from "./calendar/Calendar";
 import NoTasksMessage from "./NoTaskMessage"
 import ModalItems from "./ModalItems";
 
-import WeatherList from "./weather/WeatherList";
+import WeatherList from "../weather/WeatherComponent";
 import { LinearGradient } from 'expo-linear-gradient';
 
 import themeColorsAppList from "../app_values/Themes";

@@ -14,6 +14,9 @@ import {
     Keyboard,
     Vibration 
 } from 'react-native';
+import Constants from "expo-constants";
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const statusBarHeight = Constants.statusBarHeight+1
 
 import Reanimated, {
     useSharedValue, 
@@ -35,7 +38,6 @@ import Reanimated, {
     Easing,
     Extrapolation 
 } from 'react-native-reanimated';
-import Constants from "expo-constants";
 
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 //import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -84,9 +86,6 @@ import WeatherRedactor from "./redactors_settings/functions/WeatherRedactor";
 import AppFunctionsRedactor from "./redactors_settings/functions/AppFunctionsRedactor";
 
 import StyleChangePreview from "./preview/StyleChangePreview";
-
-const deviceHeight = Dimensions.get('window').height
-const deviceWidth = Dimensions.get('window').width
 
 const STRUCTURE = {
     settingsData: [
@@ -801,7 +800,7 @@ const ReanimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 const headerStickysHeight = 33
 const itemCategoryHeight = 45
 const selectorLineHeight = 35
-const headerHeight = (Constants.statusBarHeight+1)+itemCategoryHeight//+selectorLineHeight
+const headerHeight = statusBarHeight+itemCategoryHeight//+selectorLineHeight
 const packHeight = 100
 
 const BasisList = (props) => {
@@ -1281,7 +1280,7 @@ const BasisList = (props) => {
         return {
             height: interpolate(
                 animSelectorLine.value, 
-                [headerHeight-(Constants.statusBarHeight+1), 0],
+                [headerHeight-statusBarHeight, 0],
                 [0, selectorLineHeightFull],
                 //extrapolation
                 {
@@ -1297,7 +1296,7 @@ const BasisList = (props) => {
 
             height: interpolate(
                 animSelectorLine.value+selectorLineHeight-9, //9???
-                [0, headerHeight-(Constants.statusBarHeight+1)],
+                [0, headerHeight-statusBarHeight],
 
                 [selectorLineHeightFull, 0],
                 //extrapolation
@@ -1315,7 +1314,7 @@ const BasisList = (props) => {
 
             height: interpolate(
                 animSelectorLine.value+selectorLineHeight+7.9, //9???
-                [0, headerHeight-(Constants.statusBarHeight+1)],
+                [0, headerHeight-statusBarHeight],
 
                 [selectorLineHeightFull, 0],
                 //extrapolation
@@ -1332,7 +1331,7 @@ const BasisList = (props) => {
         return {
             height: interpolate(
                 animSelectorLine.value, 
-                [headerHeight-(Constants.statusBarHeight+1), 0],
+                [headerHeight-statusBarHeight, 0],
                 [selectorLineHeightFull, 0],
                 //extrapolation
                 {
@@ -1348,7 +1347,7 @@ const BasisList = (props) => {
         return {
             height: interpolate(
                 animSelectorLine.value, 
-                [headerHeight-(Constants.statusBarHeight+1), 0],
+                [headerHeight-statusBarHeight, 0],
                 [headerHeight, headerHeight+selectorLineHeight],
                 //extrapolation
                 {
@@ -1364,7 +1363,7 @@ const BasisList = (props) => {
         return {
             paddingLeft: interpolate(
                 animSelectorLine.value,
-                [headerHeight-(Constants.statusBarHeight+1), 0], 
+                [headerHeight-statusBarHeight, 0], 
                 [0, deviceWidth/2-((Language.StructureScreen.typesSettings.appearance.type).length * 0.375 * staticStyles.AnimatedHeaderText.fontSize)]
             ),
             
@@ -1381,7 +1380,7 @@ const BasisList = (props) => {
         return {
             fontSize: interpolate(
                 animSelectorLine.value, 
-                [headerHeight-(Constants.statusBarHeight+1), 0], 
+                [headerHeight-statusBarHeight, 0], 
                 [25, 20],
                 //extrapolation
                 {
@@ -1391,7 +1390,7 @@ const BasisList = (props) => {
             ),
             letterSpacing: interpolate(
                 animSelectorLine.value, 
-                [headerHeight-(Constants.statusBarHeight+1), 0], 
+                [headerHeight-statusBarHeight, 0], 
                 [4, 0.5],
                 //extrapolation
                 {
@@ -1587,7 +1586,7 @@ const BasisList = (props) => {
         <View 
             style = {[staticStyles.SLtopBord,{ 
                 alignItems: 'center',
-                marginTop: (Constants.statusBarHeight+1),
+                marginTop: statusBarHeight,
                 position: 'absolute',
                 height: itemCategoryHeight,
                 right: 0,
@@ -1623,7 +1622,7 @@ const BasisList = (props) => {
         {/*HEADER TITLE*/}
         <View 
             style = {[staticStyles.SLtopBord,{ 
-                marginTop: (Constants.statusBarHeight+1),
+                marginTop: statusBarHeight,
                 position: 'absolute',
                 height: itemCategoryHeight,
                 left: 0,
@@ -1664,7 +1663,7 @@ const BasisList = (props) => {
                 justifyContent: 'flex-end',
                 alignItems: 'flex-end',
                 position: 'absolute',
-                top: ((Constants.statusBarHeight+1)),
+                top: statusBarHeight,
                 zIndex: 1,
             }]}
         >

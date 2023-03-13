@@ -25,6 +25,7 @@ const Hidden = ({
         index: 0, 
         routes: [
             {name: "home"},
+            {name: "timetable"},
             {name: "notes"},
             {name: "settingsStack"},
             {name: "analytics"},
@@ -153,9 +154,10 @@ const Hidden = ({
             {state.routes.map((route, index) => {
                 const routes =  {
                     tasks : {name: "home"},
+                    timetable: {name: "timetable"},
                     notes : {name: "notes"},
-                    settings : {name: "settingsStack"},
                     analytics : {name: "analytics"},
+                    settings : {name: "settingsStack"},
                 }
                 let current 
                 let uses = new Array(Object.keys(appConfig.appFunctions).length)//['','','','']
@@ -194,6 +196,18 @@ const Hidden = ({
                         iconsNames.focus = 'cog'; 
                         iconsNames.notFocus = 'cog-outline';
                         screenName = Language.SettingsScreen.HeaderTitle;
+                        break;
+
+                    case "notes":
+                        iconsNames.focus = 'note-edit'; 
+                        iconsNames.notFocus = 'note-edit-outline';
+                        screenName = Language.NotesScreen.HeaderTitle;
+                        break;
+
+                    case "timetable":
+                        iconsNames.focus = 'timetable'; 
+                        iconsNames.notFocus = 'timetable';
+                        screenName = Language.TimetableScreen.HeaderTitle;
                         break;
 
                     default:

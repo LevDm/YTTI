@@ -1,6 +1,8 @@
 import React, {useRef, useState, useEffect} from "react";
 import { StyleSheet, View, Pressable, Dimensions, Appearance, Text } from "react-native";
 import Constants from "expo-constants";
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const statusBarHeight = Constants.statusBarHeight+1
 
 import Animated, {
     useSharedValue, 
@@ -29,7 +31,6 @@ import { connect } from "react-redux";
 import store from "../../redux_files/store"
 import mapDispatchToProps from "../../redux_files/dispatchToProps";
 import mapStateToProps from "../../redux_files/stateToProps";
-
 
 const screen = Dimensions.get('screen')
 const widthScreen = screen.width
@@ -152,6 +153,8 @@ const SplashY = (props) => {
         }
     },[props.splashStart])
 
+    const iconColor = Theme.icons.neutrals.primary
+
     return (
         <Animated.View
             style = {[StyleSheet.absoluteFill,{
@@ -167,21 +170,22 @@ const SplashY = (props) => {
                     
                 },bg]}
             >
-
             <Animated.View
-                style = {[{position: 'absolute'}]}
+                style = {[{position: 'absolute'},]}
             >                
-                {false &&
-                <Svg width={290/screen.scale} height={345/screen.scale} viewBox="0 -55 290 345" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <Circle cx="30" cy="30" r="30" fill="white"/>
-                <Circle cx="260" cy="30" r="30" fill="white"/>
-                <Circle cx="145" cy="260" r="30" fill="white"/>
-                <Circle cx="145" cy="144" r="30" fill="white"/>
-                <Rect x="115" y="259" width="115" height="60" transform="rotate(-90 115 259)" fill="white"/>
-                <Rect x="124" y="123.502" width="161.93" height="60" transform="rotate(-45 124 123.502)" fill="white"/>
-                <Rect x="51.4264" y="9" width="161.93" height="60" transform="rotate(45 51.4264 9)" fill="white"/>
-                </Svg>}
-          
+                <Svg width={148} height={148} viewBox="0 0 148 148" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <Circle cx="35.6666" cy="45.6667" r="10" fill={iconColor}/>
+                <Circle cx="112.333" cy="45.6667" r="10" fill={iconColor}/>
+                <Circle cx="74" cy="122.333" r="10" fill={iconColor}/>
+                <Circle cx="74" cy="83.6667" r="10" fill={iconColor}/>
+                <Rect x="64" y="122" width="38.3333" height="20" transform="rotate(-90 64 122)" fill={iconColor}/>
+                <Rect x="67" y="76.834" width="53.9767" height="20" transform="rotate(-45 67 76.834)" fill={iconColor}/>
+                <Rect x="42.8087" y="38.6667" width="53.9767" height="20" transform="rotate(45 42.8087 38.6667)" fill={iconColor}/>
+                </Svg>
+            </Animated.View>
+            <Animated.View
+                style = {[{position: 'absolute'}, circle]}
+            >                
                 <Svg width={148} height={148} viewBox="0 0 148 148" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <Circle cx="35.6666" cy="45.6667" r="10" fill="white"/>
                 <Circle cx="112.333" cy="45.6667" r="10" fill="white"/>
@@ -191,8 +195,9 @@ const SplashY = (props) => {
                 <Rect x="67" y="76.834" width="53.9767" height="20" transform="rotate(-45 67 76.834)" fill="white"/>
                 <Rect x="42.8087" y="38.6667" width="53.9767" height="20" transform="rotate(45 42.8087 38.6667)" fill="white"/>
                 </Svg>
-
             </Animated.View>
+
+            
 
             <Animated.View
                 style = {[  
@@ -217,7 +222,7 @@ const SplashY = (props) => {
             <Text
                 style = {{
                     
-                    color: 'white',
+                    color: Theme.texts.neutrals.primary,
                     fontSize: 30,
                 }}
             >

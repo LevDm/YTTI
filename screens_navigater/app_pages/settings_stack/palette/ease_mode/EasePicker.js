@@ -13,6 +13,9 @@ import {
     ToastAndroid,
     Keyboard 
 } from 'react-native';
+import Constants from "expo-constants";
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const statusBarHeight = Constants.statusBarHeight+1
 
 import Reanimated, {
     useSharedValue, 
@@ -34,7 +37,6 @@ import Reanimated, {
     Easing,
     Extrapolation 
 } from 'react-native-reanimated';
-import Constants from "expo-constants";
 
 import {
     Canvas,
@@ -55,10 +57,6 @@ import languagesAppList from "../../../../../app_values/Languages";
 const Reanimated_Pressable = Reanimated.createAnimatedComponent(Pressable);
 const Reanimated_TextInput = Reanimated.createAnimatedComponent(TextInput);
 const Reanimated_Text = Reanimated.createAnimatedComponent(Text);
-
-
-const deviceHeight = Dimensions.get('window').height
-const deviceWidth = Dimensions.get('window').width
 
 const col = 5
 const row = 9

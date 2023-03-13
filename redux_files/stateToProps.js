@@ -41,6 +41,17 @@ function mapStateToProps(component) {
                 };
             }
         }
+        case "WEATHER_C": {
+            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            return function(state) {
+                return {
+                    appStyle: state.appStyle,
+                    appConfig: state.appConfig,
+                    weatherData: state.weatherData
+                    //hideMenu: state.hideMenu
+                };
+            }
+        }
         case "SPLASH": {
             console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
             return function(state) {

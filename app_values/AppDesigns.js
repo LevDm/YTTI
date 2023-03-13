@@ -1,5 +1,5 @@
 
-const instagram = {
+export const instagram = {
     "borderRadius": {"additional": 12, "basic": 0}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "none"}, 
     "functionButton": {"invertColors": false, "outline": true, "position": "right", "size": 64}, 
@@ -17,7 +17,7 @@ const instagram = {
     "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}
 }
 
-const vk = {
+export const vk = {
     "borderRadius": {"additional": 35, "basic": 22}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "materialSome"}, 
     "functionButton": {"invertColors": true, "outline": false, "position": "right", "size": 70}, 
@@ -35,7 +35,7 @@ const vk = {
     "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}
 }
 
-const tincoff = {
+export const tincoff = {
     "borderRadius": {"additional": 26, "basic": 28}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "full"}, 
     "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 62}, 
@@ -53,7 +53,7 @@ const tincoff = {
     "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}
 }
 
-const whatsapp = {
+export const whatsapp = {
     "borderRadius": {"additional": 29, "basic": 0}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "materialSome"}, 
     "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 68}, 
@@ -71,7 +71,7 @@ const whatsapp = {
     "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}
 }
 
-const telegram = {
+export const telegram = {
     "borderRadius": {"additional": 31, "basic": 0}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "none"},
     "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70}, 
@@ -89,7 +89,7 @@ const telegram = {
     "selectorsDisign": {"checkBox": "type_1", "radioButton": "type_1", "switch": "type_1"}
 }
 
-const pbNeomorphism = {
+export const pbNeomorphism = {
     "borderRadius": {"additional": 9, "basic": 18}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "neomorphism"}, 
     "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70}, "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 10, "textSize": 14}, 
@@ -106,7 +106,7 @@ const pbNeomorphism = {
     "selectorsDisign": {"checkBox": "type_1", "radioButton": "type_2", "switch": "type_3"}
 }
 
-const oliveBook = {
+export const oliveBook = {
     "borderRadius": {"additional": 29, "basic": 16}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "neomorphism"}, 
     "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 68}, 
@@ -124,7 +124,7 @@ const oliveBook = {
     "selectorsDisign": {"checkBox": "type_1", "radioButton": "type_1", "switch": "type_3"}
 }
 
-const stock = {
+export const stock = {
     "borderRadius": {"additional": 36, "basic": 0}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "materialSome"}, 
     "functionButton": {"invertColors": true, "outline": false, "position": "right", "size": 70},
@@ -142,7 +142,7 @@ const stock = {
     "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_3"}
 }
 
-const greenFun = {
+export const greenFun = {
     "borderRadius": {"additional": 10, "basic": 0}, 
     "effects": {"blur": true, "ripple": "all", "shadows": "neomorphism"}, 
     "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70}, 
@@ -160,7 +160,7 @@ const greenFun = {
     "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_1"}
 }
 
-const extra =  {
+export const extra =  {
     "borderRadius": {"additional": 36, "basic": 36}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "neomorphism"}, 
     "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70}, 

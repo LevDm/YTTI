@@ -71,17 +71,18 @@ export default ColorSchemeSwitch = ({
         <Pressable
             style = {[{
                 flexDirection: 'row',
-                alignItems: 'center',
+                //alignItems: 'center',
                 padding: 2
             },pressableStyle]}
             onPress={switching}
         >
             <View
                 style = {{
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    //justifyContent: 'center',
+                    //alignItems: 'center',
                     height: sizeIcon,
-                    width: sizeIcon
+                    width: sizeIcon,
+                    //backgroundColor: 'red'
                 }}
             >
                 {scheme == 'auto' &&
@@ -89,6 +90,7 @@ export default ColorSchemeSwitch = ({
                     entering={entering}
                     exiting={exiting}
                 >
+                <Text style={[staticStyles.letter, {color: colorIcon}]}>A</Text>
                 <Svg width={sizeIcon} height={sizeIcon} viewBox="0 0 36 43" fill="none" xmlns="http://www.w3.org/2000/Svg">
                 <Rect x="1.5" y="21.5" width="13" height="20" rx="1.5" fill="url(#paint0_linear_401_109)" stroke={colorIcon} strokeWidth="3"/>
                 <Rect x="17" y="8" width="15" height="7" rx="2" stroke={colorIcon} strokeWidth="2"/>
@@ -122,7 +124,8 @@ export default ColorSchemeSwitch = ({
                 <Animated.View
                     entering={entering}
                     exiting={exiting}
-                >         
+                >
+                <Text style={[staticStyles.letter, {color: colorIcon}]}>D</Text>         
                 <Svg width={sizeIcon} height={sizeIcon} viewBox="0 0 36 43" fill="none" xmlns="http://www.w3.org/2000/Svg">
                 <Rect x="1.5" y="21.5" width="13" height="20" rx="1.5" fill={`${colorIcon}40`} stroke={colorIcon} strokeWidth="3"/>
                 <Rect x="17" y="8" width="15" height="7" rx="2" stroke={colorIcon} strokeWidth="2"/>
@@ -146,7 +149,8 @@ export default ColorSchemeSwitch = ({
                 <Animated.View
                     entering={entering}
                     exiting={exiting}
-                > 
+                >
+                <Text style={[staticStyles.letter, {color: colorIcon}]}>L</Text> 
                 <Svg width={sizeIcon} height={sizeIcon} viewBox="0 0 36 43" fill="none" xmlns="http://www.w3.org/2000/Svg">
                 <Rect x="1.5" y="21.5" width="13" height="20" rx="1.5" stroke={colorIcon} strokeWidth="3"/>
                 <Rect x="17" y="8" width="15" height="7" rx="2" stroke={colorIcon} strokeWidth="2"/>
@@ -180,3 +184,14 @@ export default ColorSchemeSwitch = ({
         
     )
 }
+
+const staticStyles = StyleSheet.create({
+    letter: {
+        position: 'absolute',
+        top: -4,
+        left: 2,
+        fontSize: 13,
+        fontWeight: 'bold',
+        fontVariant: ['small-caps']
+    }
+})

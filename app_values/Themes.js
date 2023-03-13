@@ -385,16 +385,16 @@ const defaultApp_l =  {
     "scheme":"light",
     "statusBar":"auto",
     "basics":{
-        "accents":{"primary":"#ebebeb","secondary":"#303030","tertiary":"#1a1a1a","quaternary":"#444444"},
+        "accents":{"primary":"#000000","secondary":"#303030","tertiary":"#1a1a1a","quaternary":"#555555"},
         "neutrals":{"primary":"#f3f3f3","secondary":"#ffffff","tertiary":"#ffffff","quaternary":"#ffffff"}
     },
     "texts":{
         "accents":{"primary":"#000000","secondary":"#303030","tertiary":"#1a1a1a","quaternary":"#444444"},
-        "neutrals":{"primary":"#000000","secondary":"#000000","tertiary":"#CECECE","quaternary":"#F1F1F1"}
+        "neutrals":{"primary":"#ffffff","secondary":"#000000","tertiary":"#CECECE","quaternary":"#F1F1F1"}
     },
     "icons":{
         "accents":{"primary":"#000000","secondary":"#303030","tertiary":"#1a1a1a","quaternary":"#444444"},
-        "neutrals":{"primary":"#000000","secondary":"#000000","tertiary":"#CECECE","quaternary":"#F1F1F1"}
+        "neutrals":{"primary":"#ffffff","secondary":"#000000","tertiary":"#CECECE","quaternary":"#F1F1F1"}
     },
     "specials":{
         "fire":{"primary":"#000000","secondary":"#a5a5a5"},
@@ -408,16 +408,16 @@ const defaultApp_d =  {
     "scheme":"dark",
     "statusBar":"auto",
     "basics":{
-        "accents":{"primary":"#141414","secondary":"#2d2d2d","tertiary":"#474747","quaternary":"#606060"},
-        "neutrals":{"primary":"#000000","secondary":"#0a0a0a","tertiary":"#141414","quaternary":"#2a2a2a"}
+        "accents":{"primary":"#1a1a1a","secondary":"#2d2d2d","tertiary":"#303030","quaternary":"#555555"},
+        "neutrals":{"primary":"#000000","secondary":"#0a0a0a","tertiary":"#141414","quaternary":"#3a3a3a"}
     },
     "texts":{
         "accents":{"primary":"#ffffff","secondary":"#f3f3f3","tertiary":"#ececec","quaternary":"#606060"},
-        "neutrals":{"primary":"#ffffff","secondary":"#ffffff","tertiary":"#4D4D4D","quaternary":"#E8E8E8"}
+        "neutrals":{"primary":"#ffffff","secondary":"#ffffff","tertiary":"#666666","quaternary":"#E8E8E8"}
     },
     "icons":{
         "accents":{"primary":"#ffffff","secondary":"#f3f3f3","tertiary":"#ececec","quaternary":"#606060"},
-        "neutrals":{"primary":"#ffffff","secondary":"#ffffff","tertiary":"#4D4D4D","quaternary":"#E8E8E8"}
+        "neutrals":{"primary":"#ffffff","secondary":"#ffffff","tertiary":"#666666","quaternary":"#E8E8E8"}
     },
     "specials":{
         "fire":{"primary":"#ffffff","secondary":"#a5a5a5"},
@@ -531,5 +531,5 @@ const themesColorsAppList = [
 ]
 
 export default themesColorsAppList;
-export const themesApp = themesColorsAppList.map((item)=>item? item.title : 'custom')
+export const themesApp = themesColorsAppList.map((item, index)=>index!=0? item.title : 'custom')
 //export const themesApp = ["custom","stock","greenFun", "oliveBook", "morpPinkBlue", "vk", "instagram", "tinkoff", "whatsapp", "telegram"]; 

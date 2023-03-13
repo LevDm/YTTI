@@ -3,9 +3,15 @@ import {
     Text,
     ScrollView,
     Pressable,
+    Dimensions,
     View, 
 } from 'react-native';
 
+import Constants from "expo-constants";
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const statusBarHeight = Constants.statusBarHeight+1
+//const deviceWidth  = Dimensions.get('window').width;
+//const deviceHeight  = Dimensions.get('window').height;
 import Reanimated, {
     useSharedValue, 
     useAnimatedStyle, 
@@ -28,7 +34,7 @@ import Reanimated, {
 } from 'react-native-reanimated';
 
 
-import { deviceWidth, deviceHeight } from "../../../../../app_values/AppDefault";
+//import { deviceWidth, deviceHeight } from "../../../../../app_values/AppDefault";
 import { BasePressable } from "../../../../../general_components/base_components/BaseElements";
 
 
@@ -150,6 +156,8 @@ export default FullColorsPicker = (props) => {
         currentCustomTheme,
     } = props
 
+    //console.log(currentCustomTheme)
+
     const renderColors = (objColors, generals = false, start = false, trace = []) => {
     //let newTrace = [...trace, item]
     //generals? newTrace.push(generals) : null
@@ -206,7 +214,7 @@ export default FullColorsPicker = (props) => {
           }}
         >
         {Object.keys(currentCustomTheme).map((item, index)=>{
-
+            if(item == 'title'){return null}
           return (
             <View
               key = {`theme_oject_${item}_${new Date().getTime()}`}         
@@ -216,7 +224,7 @@ export default FullColorsPicker = (props) => {
                 paddingLeft: 10,
                 paddingRight: 20,
                 paddingBottom: PICKER_AREA_HEIGHT,
-                backgroundColor: ['white', 'black'][index]// themesColorsAppList[ThemeColorsAppIndex][item].basics.grounds.secondary
+                backgroundColor: {light: 'white', dark: 'black'}[item]// themesColorsAppList[ThemeColorsAppIndex][item].basics.grounds.secondary
               }}
             >
               {renderColors(currentCustomTheme[item], item, true)}

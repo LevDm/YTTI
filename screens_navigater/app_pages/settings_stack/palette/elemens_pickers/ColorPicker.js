@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, TextInput, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Dimensions } from 'react-native';
+import Constants from "expo-constants";
+
+const statusBarHeight = Constants.statusBarHeight+1
+
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -23,7 +27,8 @@ import Animated, {
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 import { LinearGradient, LinearGradientProps } from 'expo-linear-gradient';
-import { deviceHeight, deviceWidth } from '../../../../../app_values/AppDefault';
+//import { deviceHeight, deviceWidth } from '../../../../../app_values/AppDefault';
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
 import themesColorsAppList, {themesApp} from '../../../../../app_values/Themes';
 import languagesAppList, {languagesApp} from "../../../../../app_values/Languages";
@@ -139,6 +144,8 @@ export function HSLToHex(h,s,l) {
 
   return "#" + r + g + b;
 }
+
+
 const start={ x: 0, y: 0 }
 const end={ x: 1, y: 0 }
 
@@ -153,6 +160,12 @@ const interval_h = [0, 360]
 const interval_sl = [0, 100]
 
 const PICKER_AREA_HEIGHT = 270
+
+const CIRCLE_PICKER_SIZE = 30;
+const INTERNAL_PICKER_SIZE = CIRCLE_PICKER_SIZE  ;
+
+console.log('dw========================================', deviceWidth, deviceHeight)
+
 const ColorPicker = ({
   show,
   initialValue,
@@ -855,9 +868,6 @@ const ColorPicker = ({
       </Animated.View>
     );
 };
-
-const CIRCLE_PICKER_SIZE = 30;
-const INTERNAL_PICKER_SIZE = CIRCLE_PICKER_SIZE  ;
 
 const staticStyles = StyleSheet.create({
   picker: {

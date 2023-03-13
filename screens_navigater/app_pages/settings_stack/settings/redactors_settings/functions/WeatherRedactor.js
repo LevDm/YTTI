@@ -18,6 +18,7 @@ import {
     Modal,
     Button, 
     Dimensions, 
+    Vibration,
     Switch, 
     ActivityIndicator
 } from 'react-native';
@@ -65,6 +66,9 @@ import SkiaViewDisign from "../../../../../../general_components/base_components
 import commonStaticStyles, { SwitchField, BoxsField, ripple } from "../CommonElements";
 
 import { weatherTypes } from "../../../../../../app_values/AppDefault";
+
+import DraggableFlatList, {ScaleDecorator,} from "react-native-draggable-flatlist";
+
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -121,7 +125,7 @@ export default WeatherRedactor = ({
     const cityDefinition = async (coords) => {
         const locationInfo = {
             from: 'dvc',
-            used: false,
+            used: true,
             coords: coords,
             city: null
         };
@@ -143,7 +147,7 @@ export default WeatherRedactor = ({
     const netLocationRequire = async () => {
         const locationInfo = {
             from: 'net',
-            used: false,
+            used: true,
             coords: null,
             city: null
         };
@@ -218,6 +222,7 @@ export default WeatherRedactor = ({
 
         if(type == 'add'){
             newAppConfig.weather.locationInfo.push(location);
+
         }
         if(type == 'replace'){
             newAppConfig.weather.locationInfo[openedModal.callindex] = location;
@@ -233,10 +238,14 @@ export default WeatherRedactor = ({
             newAppConfig.weather.locationInfo = newLocations;
         }
 
+        //const sub = []
+        //for(let item of newAppConfig.weather.locationInfo){ item.used? sub.push(item.city) : null}
+        //newAppConfig.weather.locationSubsequence = sub
+
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
 
-        setCheckGroup(getGroup(-1, true))
+        //setCheckGroup(getGroup(-1, true))
     }
 
     const selected = (type) => {
@@ -263,31 +272,11 @@ export default WeatherRedactor = ({
             setModalVisible(false)
         }
     }
-    
 
-    const getGroup = (changeIndex = -1, updateConfig = false) => {
-        let group = []
-        if(checkGroup && !updateConfig){
-            checkGroup.map((item, index)=>{
-                if(changeIndex != -1){
-                    group.push(changeIndex == index? !item : item)
-                } else {
-                    group.push(item)
-                }
-            })
-        } else {
-            appConfig.weather.locationInfo.map((item, index)=>{
-                if(changeIndex != -1){
-                    group.push(changeIndex == index? !item.used : item.used)
-                } else {
-                    group.push(item.used)
-                }
-            })
-        }
-        return group
-    };
 
-    const [ modalVisible, setModalVisible ] = useState(false)
+    const [ modalVisible, setModalVisible ] = useState(false);
+    const [openedModal, setOpenedModal] = useState({callindex: -1, type: ''})
+
 
     const onShow = () => {
         const connected = getNetConnectInfo()
@@ -296,11 +285,11 @@ export default WeatherRedactor = ({
         }
 
         if(netLocation){
-            //controlLocations('net', ipLocation.coords)
+            controlLocations('net', netLocation.coords)
         }
 
         if(dvcLocation){
-            //controlLocations('dvc', deviceLocation.coords)
+            controlLocations('dvc', dvcLocation.coords)
         }
     }
     
@@ -308,21 +297,26 @@ export default WeatherRedactor = ({
         setModalVisible(false)
     }
 
-    const [checkGroup, setCheckGroup] = useState(getGroup())
-    const [openedModal, setOpenedModal] = useState({callindex: -1, type: ''})
+    
 
-    const settingLocaion = (index) => {
+    const settingLocaion = (index, value) => {
         //console.log('setting for', index, !checkGroup[index])
-        const newGroup = getGroup(index)
+        //const newGroup = getGroup(index)
         const newAppConfig = JSON.parse(JSON.stringify(appConfig));
         //let newAppConfig = getNewAppConfigObject();
-        for(let i = 0; i < checkGroup.length; i++){
-            newAppConfig.weather.locationInfo[i].used = newGroup[i];
-        }
+        //for(let i = 0; i < checkGroup.length; i++){
+        //    newAppConfig.weather.locationInfo[i].used = newGroup[i];
+        //}
+        newAppConfig.weather.locationInfo[index].used = value
+
+        //const sub = []
+        //for(let item of newAppConfig.weather.locationInfo){ item.used? sub.push(item.city) : null}
+        //newAppConfig.weather.locationSubsequence = sub
+
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
 
-        setCheckGroup(newGroup)
+        //setCheckGroup(newGroup)
     }
 
     const openModal = (type, index) => {
@@ -330,14 +324,6 @@ export default WeatherRedactor = ({
         console.log('modal open', type, index)
         setOpenedModal({callindex: index, type: type})
         setModalVisible(true)
-    }
-
-    const weatherUsedSetting = (value) => {
-        console.log('switch use weather')
-        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        newAppConfig.weather.used = value;//!weatherUsed
-        r_setAppConfig(newAppConfig);
-        dataRedactor("storedAppConfig", newAppConfig);
     }
 
     const getCheckBoxGroup = (type) => {
@@ -362,20 +348,124 @@ export default WeatherRedactor = ({
         //setCheckBoxGroup(getCheckBoxGroup(item))
     }
 
+    const [data, setData] = useState(appConfig.weather.locationInfo);
+    useEffect(()=>{
+        JSON.stringify(data) != JSON.stringify(appConfig.weather.locationInfo)? setData(appConfig.weather.locationInfo) : null
+    }, [appConfig])
+
+    const endDrag = ({ data }) => {
+        
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
+        const sub = []
+        for(let item of data){ item.used? sub.push(item.city) : null}
+        newAppConfig.weather.locationSubsequence = sub
+        newAppConfig.weather.locationInfo = data
+        console.log('funcs', data, sub)
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+        setData(data)
+    }
+
+    const renderItem = ({ item, getIndex, drag = undefined, isActive = false }) => {
+        
+        if(appConfig.weather.locationInfo.length == 0){return null}
+        const useIndex = getIndex()
+        const usersLocations = appConfig.weather.locationInfo
+        //console.log('funcs item', item, usersLocations)
+        const citys = usersLocations.map((item, index)=>item.city)
+        const index = citys.indexOf(item.city) //getIndex()//Object.keys(usersLocations).indexOf(item)
+        //console.log('funcs inex', index, useIndex)
+        const longPress = () => {
+            //console.log('funcs longpress', props)
+            Vibration.vibrate([5,10])
+            drag? drag() : null
+        }
+        return (
+        <ScaleDecorator>
+            <View 
+                style={{
+                    backgroundColor: '#00000001',
+                    borderRadius: appStyle.borderRadius.additional,
+                    marginLeft: 30,
+                    width: '85%',
+                }}
+            >
+                <Pressable
+                    delayLongPress={300}
+                    onLongPress={longPress}
+                    disabled={isActive}
+                    style={[
+                        { 
+                            height: 30,
+                            //marginLeft: 30,
+                            //width: '85%',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flexDirection: 'row',
+                            borderRadius: appStyle.borderRadius.additional,
+                            backgroundColor: isActive ? `${Theme.basics.neutrals.tertiary}10` : 'transparent',
+                        },
+                    ]}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.basics.neutrals.tertiary) : false}
+                >
+                <BaseBox
+                    isCheckBox={true}
+                    style = {{
+                        flex: 4,
+                        backgroundColor: 'transparent',
+                        borderRadius: appStyle.borderRadius.additional,
+                    }}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
+                    Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{usersLocations[index].city}</Text>}
+                    check = {usersLocations[index].used}
+                    onPress = {()=>{settingLocaion(index, !usersLocations[index].used)}}
+                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    disignType = {appStyle.selectorsDisign.checkBox}
+                    colors={{
+                        background: Theme.basics.neutrals.secondary,
+                        primary: Theme.icons.accents.secondary,
+                        secondary: Theme.icons.accents.quaternary,
+                    }}
+                />
+                <BasePressable
+                    type="i"
+                    icon={{
+                        name: "dots-horizontal", 
+                        size: 25, 
+                        color: Theme.icons.neutrals.secondary
+                    }}
+                    style = {{
+                        flex: 1,
+                        backgroundColor: 'transparent',
+                        borderRadius: appStyle.borderRadius.additional,
+                    }}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.neutrals.secondary) : false}
+                    onPress={()=>{openModal('replace', index)}}
+                />
+                {true && 
+                <BasePressable
+                    type="i"
+                    icon={{
+                        name: "delete", 
+                        size: 20, 
+                        color: Theme.icons.neutrals.secondary
+                    }}
+                    style = {{
+                        flex: 1,
+                        backgroundColor: 'transparent',
+                        borderRadius: appStyle.borderRadius.additional,
+                    }}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.neutrals.secondary) : false}
+                    onPress={()=>{editLocation('del', usersLocations[index])}}
+                />}
+                <MaterialCommunityIcons name="drag-horizontal-variant" size={26} color={Theme.icons.neutrals.secondary} />
+                </Pressable>
+            </View>
+        </ScaleDecorator>
+        )
+    }
+
     return (<>
-        <SwitchField
-            textTitle = {Language.used}
-            textStates = {Language.usedState}
-            //text = {`${Language.used} ${Language.usedState[`${weatherUsed}`]}`}
-            primeValue={appConfig.weather.used}
-            onChange={weatherUsedSetting}
-            style={{
-                //height: 60
-            }}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />
         <BoxsField
             //  'one'>true || 'multiple'>false
             isChoiceOne={true}
@@ -394,133 +484,47 @@ export default WeatherRedactor = ({
         </Text>
         <View
             style = {{
-                flex: 1,
                 height: 60,
-                paddingBottom: 10,
-                marginLeft: 30,
-                width: '85%',
-                justifyContent: 'space-between',
             }}
         >
-            {[1,2].map((item, index)=>{
-
-                let location = true
-                let addNewLocation = false
-                const usersLocations = appConfig.weather.locationInfo//['',]
-
-                if(usersLocations.length == 0){
-                    if(index === 0){
-                        addNewLocation = true
-                        location = false
-                    } else if(index === 1){
-                        addNewLocation = false
-                        location = false
-                    }
-                } 
-
-                if(usersLocations.length == 1){
-                    if(index === 0){
-                        addNewLocation = false
-                        location = true
-                    } else if(index === 1){
-                        addNewLocation = true
-                        location = false
-                    }
-                }
-                
-                return (
-                    <View
-                        key = {`user_location_${index}`}
-                        style = {[{
-                            flexDirection: 'row',
-                            marginTop: index != 0? 6 : 0,
-                            height: 22,
-                            width: '100%',
-                            justifyContent: 'space-between',
-                            //borderTopStartRadius
-                            //borderStartWidth
-                            //borderEndWidth
-                        }, appStyle.effects.shadows? staticStyles.shadow : {}]}
-                    >   
-                        {(location && !addNewLocation) &&
-                        <BaseBox
-                            isCheckBox={true}
-                            style = {{
-                                flex: 4,
-                                backgroundColor: 'transparent',
-                                borderRadius: appStyle.borderRadius.additional,
-                            }}
-                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
-                            Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{usersLocations[index].city}</Text>}
-                            check = {checkGroup[index]}
-                            onPress = {()=>{settingLocaion(index)}}
-                            boxBorderRadius = {appStyle.borderRadius.additional}
-                            disignType = {appStyle.selectorsDisign.checkBox}
-                            colors={{
-                                background: Theme.basics.neutrals.secondary,
-                                primary: Theme.icons.accents.secondary,
-                                secondary: Theme.icons.accents.quaternary,
-                            }}
-                        />}
-                        {(location && !addNewLocation) && 
-                        <BasePressable
-                            type="i"
-                            icon={{
-                                name: "dots-horizontal", 
-                                size: 25, 
-                                color: Theme.icons.neutrals.secondary
-                            }}
-                            style = {{
-                                flex: 1,
-                                backgroundColor: 'transparent',
-                                borderRadius: appStyle.borderRadius.additional,
-                            }}
-                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.neutrals.secondary) : false}
-                            onPress={()=>{openModal('replace', index)}}
-                        />}
-                        {((location && !addNewLocation) && true) && 
-                        <BasePressable
-                            type="i"
-                            icon={{
-                                name: "delete", 
-                                size: 20, 
-                                color: Theme.icons.neutrals.secondary
-                            }}
-                            style = {{
-                                flex: 1,
-                                backgroundColor: 'transparent',
-                                borderRadius: appStyle.borderRadius.additional,
-                            }}
-                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.neutrals.secondary) : false}
-                            onPress={()=>{editLocation('del', usersLocations[index])}}
-                        />}
-                        {(!location && addNewLocation) && 
-                        <BasePressable
-                            type="i"
-                            icon={{
-                                name: "map-marker-plus-outline", 
-                                size: 20, 
-                                color: Theme.icons.accents.secondary
-                            }}
-                            style = {{
-                                flex: 1,
-                                backgroundColor: 'transparent',
-                                
-                                //borderColor: Theme.icons.accents.primary,
-                                //borderWidth: 2,
-                                borderRadius: appStyle.borderRadius.additional
-                            }}
-                            styleItemContainer={{
-                                justifyContent: 'flex-start',
-                                paddingLeft: 3
-                                //alignItems: 'flex-start',
-                            }}
-                            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
-                            onPress={()=>{openModal('add', index)}}
-                        />}
-                    </View>)
-                })}
+        <DraggableFlatList
+            data={data}
+            onDragEnd={endDrag}
+            keyExtractor={(item) => JSON.stringify(item.coords)}
+            renderItem={renderItem}
+        />
+        {appConfig.weather.locationInfo.length < 2 && 
+            <View
+                style = {{
+                    height: 22,
+                    paddingBottom: 10,
+                    marginLeft: 30,
+                    width: '85%',
+                    justifyContent: 'space-between',
+                }}
+            >
+            <BasePressable
+                type="i"
+                icon={{
+                    name: "map-marker-plus-outline", 
+                    size: 20, 
+                    color: Theme.icons.accents.secondary
+                }}
+                style = {{
+                    flex: 1,
+                    backgroundColor: 'transparent',
+                    borderRadius: appStyle.borderRadius.additional
+                }}
+                styleItemContainer={{
+                    justifyContent: 'flex-start',
+                    paddingLeft: 3
+                }}
+                android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
+                onPress={()=>{openModal('add', Math.max(appConfig.weather.locationInfo.length-1, 0))}}
+            /></View>
+        }
         </View>
+       
         
         <BaseModal
             animationType = {'fade'}

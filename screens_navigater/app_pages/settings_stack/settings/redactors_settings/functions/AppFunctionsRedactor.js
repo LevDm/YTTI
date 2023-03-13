@@ -141,18 +141,18 @@ export default LanguageRedactor = ({
         setData(data)
     }
 
-    const renderItem = ({ item, getIndex, drag, isActive }) => {
-        const useIndex = getIndex()
+    const renderItem = ({ item, drag = undefined, isActive = false }) => {
+        //const useIndex = getIndex()
         const index = Object.keys(appConfig.appFunctions).indexOf(item)
-        console.log('funcs inex', index, useIndex)
+        //console.log('funcs inex', index, useIndex)
         const longPress = () => {
             //console.log('funcs longpress', props)
             Vibration.vibrate([5,10])
-            drag()
+            drag? drag() : null
         }
-
+        if(item == 'settings'){return null}
         return (
-            <ScaleDecorator>
+        <ScaleDecorator>
             <View 
                 style={{
                     backgroundColor: '#00000001',
@@ -215,6 +215,52 @@ export default LanguageRedactor = ({
             keyExtractor={(item) => item}
             renderItem={renderItem}
         />
+        <View 
+            style={{
+                backgroundColor: '#00000001',
+                borderRadius: appStyle.borderRadius.additional,
+                marginLeft: 30,
+                width: '85%',
+            }}
+        >
+            <View
+                style={[
+                    { 
+                        height: 32,
+                        //marginLeft: 30,
+                        //width: '85%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        borderRadius: appStyle.borderRadius.additional,
+                        backgroundColor: 'transparent',
+                    },
+                ]}
+                
+            >
+                <BaseBox
+                    isCheckBox={true}
+                    style = {{
+                        //flex: 4,
+                        width: '80%',
+                        //marginTop: index > 0 ? 4 : 0,
+                        backgroundColor: 'transparent',
+                        borderRadius: appStyle.borderRadius.additional,
+                    }}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
+                    Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{'settings'}</Text>}
+                    check = {checkGroup[Object.keys(appConfig.appFunctions).indexOf('settings')]}
+                    onPress = {()=>{settingFunctions(Object.keys(appConfig.appFunctions).indexOf('settings'))}}
+                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    disignType = {appStyle.selectorsDisign.checkBox}
+                    colors={{
+                        background: Theme.basics.neutrals.secondary,
+                        primary: Theme.icons.accents.secondary,
+                        secondary: Theme.icons.accents.quaternary,
+                    }}
+                />
+            </View>
+        </View>
     </>)
 }
 

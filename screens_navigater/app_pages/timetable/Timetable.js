@@ -11,10 +11,10 @@ import {
 } from 'react-native';
 
 import Constants from "expo-constants";
-const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const {deviceHeight, deviceWidth }= Dimensions.get('window')
 const statusBarHeight = Constants.statusBarHeight+1
 
-export default Notes = (props) => {
+export default Timetable = (props) => {
 
   return (
     <View style = {{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>

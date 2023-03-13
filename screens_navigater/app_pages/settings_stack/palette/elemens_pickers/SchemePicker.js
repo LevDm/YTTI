@@ -1,5 +1,10 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, TextInput, Keyboard } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Keyboard, Dimensions } from 'react-native';
+
+import Constants from "expo-constants";
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const statusBarHeight = Constants.statusBarHeight+1
+
 import {
   PanGestureHandler,
   PanGestureHandlerGestureEvent,
@@ -21,7 +26,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { LinearGradient, LinearGradientProps } from 'expo-linear-gradient';
-import { deviceHeight, deviceWidth } from '../../../../../app_values/AppDefault';
+//import { deviceHeight, deviceWidth } from '../../../../../app_values/AppDefault';
 
 import themesColorsAppList, {themesApp} from '../../../../../app_values/Themes';
 import languagesAppList, {languagesApp} from "../../../../../app_values/Languages";

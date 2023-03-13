@@ -18,14 +18,14 @@ import { BlurView } from "@react-native-community/blur";
 import themesColorsAppList from "../../app_values/Themes";
 import languagesAppList from "../../app_values/Languages";
 
-let deviceHeight = Dimensions.get('window').height
-let deviceWidth = Dimensions.get('window').width
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
 const Classical = ({
     state = {
         index: 0, 
         routes: [
             {name: "home"},
+            {name: "timetable"},
             {name: "notes"},
             {name: "settingsStack"},
             {name: "analytics"},
@@ -123,9 +123,10 @@ const Classical = ({
 
                 const routes =  {
                     tasks : {name: "home"},
+                    timetable: {name: "timetable"},
                     notes : {name: "notes"},
-                    settings : {name: "settingsStack"},
                     analytics : {name: "analytics"},
+                    settings : {name: "settingsStack"},
                 }
 
                 let current 
@@ -185,6 +186,18 @@ const Classical = ({
                         iconsNames.notFocus = 'cog-outline';
                         screenName = Language.SettingsScreen.HeaderTitle;
                         break;
+                    
+                    case "notes":
+                        iconsNames.focus = 'note-edit'; 
+                        iconsNames.notFocus = 'note-edit-outline';
+                        screenName = Language.NotesScreen.HeaderTitle;
+                        break;
+
+                    case "timetable":
+                        iconsNames.focus = 'timetable'; 
+                        iconsNames.notFocus = 'timetable';
+                        screenName = Language.TimetableScreen.HeaderTitle;
+                        break;
 
                     default:
                         iconsNames.focus = "border-none-variant"
@@ -218,69 +231,36 @@ const Classical = ({
                         ]}
                         android_ripple = {appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
                     >
-                        {cisFocused && 
-                            <Animated.View 
-                                //exiting={exiting}
-                                style = {{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                                entering={entering}
+                        <Animated.View 
+                            //exiting={exiting}
+                            style = {{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                            //entering={entering}
+                        >
+                            <MaterialCommunityIcons 
+                                name={appStyle.navigationMenu.accentsType.filling && cisFocused? iconsNames.focus : iconsNames.notFocus} 
+                                size={size} 
+                                color = {appStyle.navigationMenu.accentsType.coloring && cisFocused? Theme.icons.accents.primary : Theme.icons.neutrals.secondary}
+                            />
+                            {appStyle.navigationMenu.signatureIcons &&
+                            <Text
+                                style = {[
+                                    {
+                                        fontSize: 10,
+                                        width: '100%',
+                                        textAlign: 'center',
+                                        fontVariant: ['small-caps'],
+                                        fontWeight: '600',
+                                        color: appStyle.navigationMenu.accentsType.coloring && cisFocused? Theme.texts.accents.primary : Theme.texts.neutrals.secondary
+                                    }
+                                ]}
                             >
-                                <MaterialCommunityIcons 
-                                    name={appStyle.navigationMenu.accentsType.filling? iconsNames.focus : iconsNames.notFocus} 
-                                    size={size} 
-                                    color = {appStyle.navigationMenu.accentsType.coloring? Theme.icons.accents.primary : Theme.icons.neutrals.secondary}
-                                />
-                                {appStyle.navigationMenu.signatureIcons &&
-                                <Text
-                                    style = {[
-                                        {
-                                            fontSize: 10,
-                                            width: '100%',
-                                            textAlign: 'center',
-                                            fontVariant: ['small-caps'],
-                                            fontWeight: '600',
-                                            color: appStyle.navigationMenu.accentsType.coloring? Theme.texts.accents.primary : Theme.texts.neutrals.secondary
-                                        }
-                                    ]}
-                                >
-                                    {screenName}
-                                </Text>
-                                }
-                            </Animated.View>        
-                        }
-                        {!cisFocused && 
-                            <Animated.View
-                                exiting={exiting}
-                                style = {{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <MaterialCommunityIcons 
-                                    name={iconsNames.notFocus} 
-                                    size={size} 
-                                    color = {appStyle.navigationMenu.accentsType.coloring? Theme.icons.neutrals.tertiary : Theme.icons.neutrals.secondary}
-                                />
-                                {appStyle.navigationMenu.signatureIcons &&
-                                <Text
-                                    style = {[
-                                        {
-                                            fontSize: 10,
-                                            width: '100%',
-                                            textAlign: 'center',
-                                            fontVariant: ['small-caps'],
-                                            fontWeight: '600',
-                                            color: appStyle.navigationMenu.accentsType.coloring? Theme.texts.neutrals.tertiary : Theme.texts.neutrals.secondary
-                                        }
-                                    ]}
-                                >
-                                    {screenName}
-                                </Text>
-                                }
-                            </Animated.View>        
-                        }
+                                {screenName}
+                            </Text>
+                            }
+                        </Animated.View>        
                     </Pressable>    
                     </View>
                 )

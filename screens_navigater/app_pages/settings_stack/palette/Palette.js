@@ -27,6 +27,10 @@ import Reanimated, {
   runOnJS
 } from 'react-native-reanimated';
 
+import Constants from "expo-constants";
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const statusBarHeight = Constants.statusBarHeight+1
+
 import { LinearGradient } from "expo-linear-gradient";
 
 import dataRedactor from "../../../../async_data_manager/data_redactor";
@@ -40,10 +44,6 @@ import { BasePressable, BaseTextInput } from "../../../../general_components/bas
 
 import themesColorsAppList, { themesApp } from "../../../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../../../app_values/Languages";
-import { deviceHeight, deviceWidth } from "../../../../app_values/AppDefault";
-
-
-import { statusBarHeight } from "../../../../app_values/AppDefault";
 
 import ColorPicker, { hexToHSL, HSLToHex } from "./elemens_pickers/ColorPicker";
 import ShemePicker from "./elemens_pickers/SchemePicker";
@@ -55,10 +55,8 @@ import FullPalettePicker from "./full_mod/FullPalettePicker";
 const Reanimated_TextInput = Reanimated.createAnimatedComponent(TextInput);
 
 const BACKGROUND_COLOR = 'rgba(0,0,0,0.9)';
-const { width } = Dimensions.get('window');
-
-const CIRCLE_SIZE = width * 0.3;
-const PICKER_WIDTH = width * 0.9;
+const CIRCLE_SIZE = deviceWidth * 0.3;
+const PICKER_WIDTH = deviceWidth * 0.9;
 
 const easeUpdate = (copiedObject, pathList, newValue) => {
   const shemes = ['light', 'dark']

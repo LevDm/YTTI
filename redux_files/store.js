@@ -12,8 +12,10 @@ const initialState = {
     appStyle: defaultAppStyle,
     appConfig: defaultAppConfig,
 
-    languageApp: 'en',
-    splash: false,
+    weatherData: undefined,
+
+    //languageApp: 'en',
+    //splash: false,
     hideMenu: false
 }
 
@@ -24,11 +26,6 @@ const reducer = (state=initialState, action) => {
             initialState.tasks = action.value
             return initialState
         }
-        case 'SET_LANGUAGE_APP': {
-            console.log('>'+action.type+'_'+(action.value).toUpperCase())
-            initialState.languageApp = action.value
-            return initialState
-        }
         case 'SET_STYLE_APP': {
             console.log('>'+action.type)
             initialState.appStyle =  initialState.loadStatusStyle? action.value : Object.assign(initialState.appStyle, action.value)
@@ -37,6 +34,11 @@ const reducer = (state=initialState, action) => {
         case 'SET_CONFIG_APP': {
             console.log('>'+action.type)
             initialState.appConfig = initialState.loadStatusConfig? action.value : Object.assign(initialState.appConfig, action.value)
+            return initialState
+        }
+        case 'SET_WEATHER_DATA': {
+            console.log('>'+action.type)
+            initialState.weatherData = action.value
             return initialState
         }
 

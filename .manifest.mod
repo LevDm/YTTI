@@ -44,3 +44,7 @@ add
     ...
     <item name="android:windowIsTranslucent">true</item>
 </style>
+============================================================================================================
+YTAT\android\app\src\main\res\values\colors.xml
+add
+<item name="android:colorEdgeEffect">#606060</item>

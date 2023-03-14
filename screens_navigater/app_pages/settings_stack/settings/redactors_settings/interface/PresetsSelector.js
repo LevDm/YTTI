@@ -232,6 +232,7 @@ export default PresetsSelector = ({
             newAppStyle.customTheme = appStyle.customTheme
             newAppStyle.presetUsed = presetsNames[index]
             r_setAppStyle(newAppStyle)
+            dataRedactor("storedAppStyle",newAppStyle);
         }
 
     }

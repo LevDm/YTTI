@@ -357,7 +357,7 @@ const oliveBook_l = {
     }
 }
 const oliveBook_d = {
-    "theme":"OleveBook",
+    "theme":"oliveBook",
     "scheme":"dark",
     "statusBar":"auto",
     "basics": {

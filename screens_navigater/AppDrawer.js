@@ -151,8 +151,13 @@ function AppDrawer(props) {
                         LanguageAppIndex={LanguageAppIndex}
                     />
                   );
-                }
+                },
+                sceneContainerStyle: {
+                    backgroundColor: Theme.basics.neutrals.primary
+                },
             }}
+            
+            
         >
             <Drawer.Screen name="home" component={Home} />
             <Drawer.Screen name="timetable" component={Timetable} />
@@ -239,7 +244,7 @@ function CustomDrawerContent(props) {
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
-    const drawerHeaderHeight = 80
+    const drawerHeaderHeight = 77
 
     //console.log(props)
     return (
@@ -254,7 +259,7 @@ function CustomDrawerContent(props) {
                 style={{
                     height: (statusBarHeight+3)+drawerHeaderHeight,
                     width: '100%',
-                    backgroundColor: Theme.basics.accents.primary,
+                    backgroundColor: appStyle.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary,
                     //justifyContent: 'center',
                     //alignItems: appStyle.navigationMenu.drawerPosition == 'left'? 'flex-end' : 'flex-start',
                     paddingHorizontal: 10,
@@ -264,7 +269,7 @@ function CustomDrawerContent(props) {
                 <View
                     style={{
                         flex: 1,
-                        backgroundColor: Theme.basics.accents.primary,
+                        //backgroundColor: Theme.basics.accents.primary,
                         justifyContent: 'center',
                         alignItems: appStyle.navigationMenu.drawerPosition == 'left'? 'flex-end' : 'flex-start',
                         //paddingHorizontal: 10
@@ -277,7 +282,7 @@ function CustomDrawerContent(props) {
 
             <View
                 style={{
-                    height: 530,
+                    height: 480,
                     width: '100%',
                     //backgroundColor: '#66666630'
                 }}
@@ -285,7 +290,7 @@ function CustomDrawerContent(props) {
                 {(appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0) && <WeatherComponent/>}
             </View>
             {appStyle.navigationMenu.type == 'not' && <CustomDrawerItemList {...props} />}
-            {(appStyle.navigationMenu.type != 'not' && !appConfig.appFunctions.settings.used) && <LeadingToSettings {...props} /> }
+            {(!appConfig.appFunctions.settings.used) && <LeadingToSettings {...props} /> }
    
         </View>
     )

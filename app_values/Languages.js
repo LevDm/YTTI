@@ -325,6 +325,7 @@ const LanguageStoreRu = {
     },
     TasksScreen: {
       HeaderTitle: 'задачи',
+      filtration: {today: 'на сегодня', all: 'все'}
     },
     AnalyticsScreen: {
       HeaderTitle: 'аналитика',
@@ -679,6 +680,7 @@ const LanguageStoreEng = {
     },
     TasksScreen: {
       HeaderTitle: 'tasks',
+      filtration: {today: 'for today', all: 'all'}
     },
     AnalyticsScreen: {
       HeaderTitle: 'analytics',

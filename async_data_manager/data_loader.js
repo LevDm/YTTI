@@ -66,7 +66,7 @@ export default dataLoader;
 
 import Constants from 'expo-constants';
 
-const WeatherAPI = async (appConfig, load = true) => {
+export const WeatherAPI = async (appConfig, load = true) => {
   const UPDATE_FREQUENCY = 1 //hours 8
   const DATA_VOLUME = 23
   const {

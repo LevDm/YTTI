@@ -143,8 +143,11 @@ const WeatherComponent = (props) => {
       </View>
       {!weatherData  && 
       <View style = {{alignItems: 'center'}}>
-        <ActivityIndicator size={50} color={Theme.symbolDark}/>
-        <Text>{netConnectInfo?Language.loadingData:Language.netConnectError}</Text>
+        <ActivityIndicator size={50} color={Theme.icons.accents.primary}/>
+        <Text
+          color = {Theme.texts.accents.primary}
+        >
+          {netConnectInfo?Language.loadingData:Language.netConnectError}</Text>
       </View>
       }
 

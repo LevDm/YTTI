@@ -866,9 +866,7 @@ const BasisList = (props) => {
         categorys: []
     })
     
-    const animValueWidthLine = useSharedValue(
-        ((Language.StructureScreen.params[allStructurParams[0].param]).length) * (staticStyles.frontFLText.fontSize * 0.75) + 10
-    )
+    const animValueWidthLine = useSharedValue(0) //((Language.StructureScreen.params[allStructurParams[0].param]).length) * (staticStyles.frontFLText.fontSize * 0.75) + 10)
     
     const animValueMarginLeft = useSharedValue(0);
     const animValueTranslateX = useSharedValue(0);

@@ -69,6 +69,7 @@ import { weatherTypes } from "../../../../../../app_values/AppDefault";
 
 import DraggableFlatList, {ScaleDecorator,} from "react-native-draggable-flatlist";
 
+import { WeatherAPI } from "../../../../../../async_data_manager/data_loader";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -241,6 +242,9 @@ export default WeatherRedactor = ({
         //const sub = []
         //for(let item of newAppConfig.weather.locationInfo){ item.used? sub.push(item.city) : null}
         //newAppConfig.weather.locationSubsequence = sub
+
+        //LOAD || UPDATE DATA WEATHER
+        WeatherAPI(newAppConfig)
 
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);

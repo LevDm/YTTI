@@ -5,6 +5,7 @@ import {
     Dimensions,
     StyleSheet,
     View,
+    ScrollView,
     Text,
     FlatList,
     Modal,
@@ -73,9 +74,6 @@ import languagesAppList, {languagesApp} from "../../../app_values/Languages";
 
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 const statusBarHeight = Constants.statusBarHeight+1
-
-const ColorsApp = themesColorsAppList[1]['light']
-
 
 const Home = (props) => {
  
@@ -206,10 +204,14 @@ const Home = (props) => {
         }).catch((error) => console.log(error));
     }
 
-    const handleDeleteTask = (rowKey) => {
+    const handleDeleteTask = (rowKey, some = false) => {
+        console.log('DELETED_TASKS', rowKey)
         const newTasks = [...tasks];
-        const taskIndex = tasks.findIndex((task) => task.key === rowKey);
-        newTasks.splice(taskIndex, 1);
+        for(const row of (some? rowKey : [rowKey])){
+            console.log(row)
+            newTasks.splice(tasks.findIndex((task) => task.key === row), 1);
+        }
+
         AsyncStorage.setItem("storedTasks", JSON.stringify(newTasks)).then(() => {
             setTasks(newTasks);
         }).catch((error) => console.log(error));
@@ -267,11 +269,11 @@ const Home = (props) => {
                 setTrojanButtonVisible = {setTrojanButtonVisible}
                 setPointerVisible = {setPointerVisible}
 
+                clearAllTasks = { handleClearTasks}
+
                 calendarHeigt = {calendarHeigt}
                 fixed = {fixed}
                 setFixed = {setFixed}
-
-                LanguageStore = {languagesAppList[LanguageAppIndex]}
 
                 reaValueBobberButtonVisible = {animValueBobberButtonVisible}
 
@@ -478,11 +480,11 @@ const BobberButton = (props) => {
 }
 
 //====================================================================================================================================
-const headerPanel = 45
-const headerParams = 35
+const headerPanel = 55
+const headerParams = 30
 const headerFullHeight = statusBarHeight+headerPanel+headerParams
 
-const listItemHeight = 100
+const listItemHeight = 110
 
 const Reanimated_SwipeList = Reanimated.createAnimatedComponent(SwipeListView)
 const Reanimated_FlatList = Reanimated.createAnimatedComponent(FlatList)
@@ -494,7 +496,8 @@ const ListItems = (props) => {
     setTrojanButtonVisible,
     setPointerVisible,
 
-    LanguageStore,
+    clearAllTasks,
+
     reaValueBobberButtonVisible,
 
 
@@ -512,21 +515,53 @@ const ListItems = (props) => {
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].TasksScreen
 
-    //для стилизации текущей строки списка задач
-    const nullRow = {key: null, ref: null, toValue: null}
-    const [swipedRow, setSwipedRow] = useState(nullRow);
-    const [swipeDirections, setSwipeDirections] = useState(0);
-
+    const [swipedRow, setSwipedRow] = useState(null);
     const [itemModalVisible, setItemModalVisible] = useState(false);
-
-    //const [calendarHeigt, setCalendarHeigt] = useState(null);
     
-    //const [fixed, setFixed] = useState(false);
+    const [ changesTask, setChangesTask ] = useState([])
+
+    const categorys = ['today', 'all']
+    const [category, setCategory] = useState(0)
+
+    const changeCategory = (item, index) => {
+        console.log('set',item, indicatorLine.value)
+        setCategory(index)
+    }
+
+    const taskLongPress = (key) =>{
+        Vibration.vibrate([5,8])
+        setChangesTask([key, ...changesTask])
+    }
+
+    const taskPress = (key) =>{
+        if(changesTask.length > 0){
+            let newChangesTask// = changesTask.includes(key)? changesTask.filter(item=>item != key) : [key, ...changesTask]
+            if(changesTask.includes(key)){
+                Vibration.vibrate([5,3, 30, 3])
+                newChangesTask = changesTask.filter(item=>item != key)                           
+            } else {
+                Vibration.vibrate([5,8])
+                newChangesTask = [key, ...changesTask]
+            }
+            setChangesTask(newChangesTask)
+        } else {
+            setSwipedRow(key);
+            setItemModalVisible(true)
+        }
+    }
+
+    const changesCheck = () => {
+
+    }
+
+    const changesDelete = () => {
+        handleDeleteTask(changesTask, true)
+        setChangesTask([])
+    }
+
 
 
     const headerShort = useSharedValue(headerFullHeight)
-
-    const scrollY = useSharedValue(0)
 
     const onScrollList = useAnimatedScrollHandler({
         onScroll: (event, ctx) => {
@@ -548,32 +583,41 @@ const ListItems = (props) => {
             isStart = contentOffset.y < 0.05//(statusBarHeight*0);
             const visibleBobber = ((isUpScroll) || isStart || isEnd)
 
-            cancelAnimation(reaValueBobberButtonVisible);
-            reaValueBobberButtonVisible.value = visibleBobber? 0 : 1
+            
+            if(reaValueBobberButtonVisible.value != (visibleBobber? 0 : 1)){
+                cancelAnimation(reaValueBobberButtonVisible);
+                reaValueBobberButtonVisible.value = visibleBobber? 0 : 1
+            }
+            
 
             const shortHeight = headerFullHeight-headerPanel
 
-            headerShort.value = isStart? headerFullHeight : Math.min( Math.max((headerShort.value-(6*velocity.y)), shortHeight) , headerFullHeight)
+            
+            const newShortHeight = isStart? headerFullHeight : Math.min( Math.max((headerShort.value-(6*velocity.y)), shortHeight) , headerFullHeight)
 
-            scrollY.value = contentOffset.y
+            if(headerShort.value != newShortHeight){
+                cancelAnimation(headerShort)
+                headerShort.value = newShortHeight
+            }
+
         }
     })
 
     const dynamicHeader = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            
-            height: headerShort.value,/* interpolate(
-                scrollY.value, 
-                [, 1],
-                [headerFullHeight, headerFullHeight-headerPanel],
-                //extrapolation
-                {
-                    extrapolateLeft: Extrapolation.CLAMP,
-                    extrapolateRight: Extrapolation.CLAMP
-                }  
-            ), 
-            */
+            transform: [
+                {translateY: interpolate(
+                    headerShort.value, 
+                    [headerFullHeight-headerPanel, headerFullHeight],
+                    [-headerPanel, 0],
+                    //extrapolation
+                    {
+                        extrapolateLeft: Extrapolation.CLAMP,
+                        extrapolateRight: Extrapolation.CLAMP
+                    })
+                }
+            ],
         }
     })
 
@@ -618,29 +662,40 @@ const ListItems = (props) => {
         }
     })
 
-    const categorys = ['today', 'all']
-    const [category, setCategory] = useState(0)
-
+    
     const indicatorLine = useSharedValue({widths: [], left: []})
-
     const animStyleIndicatorLine = useAnimatedStyle(() => {
-        const duration = 350; //(deviceWidth*category) + indicatorLine.value.left[category]
-        //console.log(indicatorLine.value)
+        const duration = 350; 
         return {
             width: withTiming(indicatorLine.value.widths.length>0? indicatorLine.value.widths[category] : 0, {duration: duration-20}),
             left: withTiming(indicatorLine.value.left.length>0? ((0.5*deviceWidth*category) + indicatorLine.value.left[category]) : 0, {duration: duration, easing: Easing.bezier(0.45, 0, 0.55, 1)}),
-            //transform: [
-            //    {translateX: animValueTranslateX.value}
-            //] 
         }
     }, [indicatorLine, category])
 
-    const changeCategory = (item, index) => {
-        console.log('set',item, indicatorLine.value)
-        setCategory(index)
+    
+
+    const currentDate = new Date();
+
+    const tingDuration = 300
+    const entering = (targetValues) => {
+        'worklet';
+        const animations = {
+          opacity: withTiming(1, { duration: tingDuration }),
+          transform: [
+            {scale: withTiming(1, { duration: tingDuration })}
+          ]
+        };
+        const initialValues = {
+          opacity: 0,
+          transform: [
+            {scale: .97}
+          ]
+        };
+        return {
+          initialValues,
+          animations,
+        };
     }
-
-
  
     return (
         <>
@@ -653,6 +708,7 @@ const ListItems = (props) => {
                     borderColor: appStyle.effects.blur? 'transparent' : `${Theme.specials.separator}25`,
                     borderBottomWidth: 0.4,
                     width: deviceWidth,
+                    height: headerFullHeight,
                     alignItems: 'flex-end'                    
                 },
                 appStyle.effects.blur? {} : {
@@ -703,18 +759,21 @@ const ListItems = (props) => {
                     color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
                 }}
                 style={[{
-                    height: 45, 
-                    width: 45, 
-                    paddingTop: 4,
-                    borderRadius: appStyle.borderRadius.additional
-                }, appStyle.navigationMenu.drawerPosition == 'left'? {marginLeft: 15,} : {marginRight: 15}]}
+                        height: 45, 
+                        width: 45, 
+                        paddingTop: 4,
+                        borderRadius: appStyle.borderRadius.additional,
+                        marginHorizontal: 15
+                    }, 
+                    //appStyle.navigationMenu.drawerPosition == 'left'? {marginLeft: 15,} : {marginRight: 15}
+                ]}
                 onPress={menuPress}
                 android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
             />
             <Text 
                 style = {[{
                     flex: 1,
-                    textAlign: 'center',
+                    textAlign: 'left',
                     fontSize: 20,
                     fontWeight: '500',
                     letterSpacing: 0.5,
@@ -724,6 +783,55 @@ const ListItems = (props) => {
             >
                 {Language.HeaderTitle}
             </Text>
+            {changesTask.length == 0 &&
+            //WEATHER
+            <Reanimated.View
+                entering={entering}
+                style={{
+                    height: 55,
+                    width: 180,
+                    backgroundColor: 'red'
+                }}
+            >
+
+            </Reanimated.View>}
+            {changesTask.length > 0 &&
+            <Reanimated.View
+                entering={entering}
+                style={{
+                    flexDirection: 'row',
+                    //backgroundColor: 'red'
+                }}
+            >
+                <BasePressable
+                    type="i"
+                    style={{
+                        width: 80
+                    }}
+                    icon = {{
+                        name: 'check',
+                        size: 22,
+                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+                    }}
+                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+                    onPress = {changesCheck}
+                />
+                <BasePressable
+                    type="i"
+                    style={{
+                        width: 80
+                    }}
+                    icon = {{
+                        name: 'delete',
+                        size: 22,
+                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+                    }}
+                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+                    onPress = {changesDelete}
+                    onLongPress = {clearAllTasks}
+                />
+
+            </Reanimated.View>}
         </Reanimated.View>
 
         <Reanimated.View
@@ -763,8 +871,6 @@ const ListItems = (props) => {
                                     //backgroundColor: 'red'
                                 }}
                                 onLayout={(event)=>{
-                                    //const copy = indicatorLine.value? JSON.parse(JSON.stringify(indicatorLine.value)) : {widths: [], left: []}
-                                    console.log(event.nativeEvent.layout)
                                     indicatorLine.value.widths[index] = event.nativeEvent.layout.width+10
                                     indicatorLine.value.left[index] = event.nativeEvent.layout.x-5
                                     //
@@ -790,7 +896,7 @@ const ListItems = (props) => {
                 }]}
             />
         </Reanimated.View>
-        <Reanimated_SwipeList
+        <Reanimated_FlatList
             data = {tasks}
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={{
@@ -799,45 +905,54 @@ const ListItems = (props) => {
             }}
             onScroll = {onScrollList}
             showsVerticalScrollIndicator = {false}
-            style = {{flex: 1, 
+            style = {{
+                flex: 1, 
                 paddingBottom: 10, 
                 marginBottom: 0, 
             }}
-            renderItem = {(data) => {
+            renderItem = {({index, item }) => {
+                const {
+                    key,
+                    date,
+                    fireTarget,
+                    title,
+                    toDate,
+                    toTime,
+                } = item
+                
+                const taskDate = new Date(
+                    parseInt(toDate.substr(6,10)),
+                    parseInt(toDate.substr(3,5))-1,
+                    parseInt(toDate.substr(0,2)),
+
+                    parseInt(toTime.substr(0,2)),
+                    parseInt(toTime.substr(3,5))
+                );
+
+                const TODAY = taskDate.getDate() == currentDate.getDate() && taskDate.getMonth() == currentDate.getMonth() && taskDate.getFullYear() == currentDate.getFullYear()
+                //TODAY 
+                if( category == 0 && !TODAY){ return null}
                 
                 let timeInFire = 'none';
 
-                let toDate = new Date(
-                    parseInt(data.item.toDate.substr(6,10)),
-                    parseInt(data.item.toDate.substr(3,5))-1,
-                    parseInt(data.item.toDate.substr(0,2)),
+                let burnProgress = 0
 
-                    parseInt(data.item.toTime.substr(0,2)),
-                    parseInt(data.item.toTime.substr(3,5))
-                );
-
-                let thisDate = new Date();
-
-                let across = (toDate - thisDate)/3600000
+                let across = (taskDate - currentDate)/3600000
 
                 if(across >= 0 && across <= 24){ // 
                     timeInFire = 'soon';
                 }
-                if(across >= 0 && across <= 1+parseInt(data.item.fireTarget)){ // 
+                if(across >= 0 && across <= 1+parseInt(fireTarget)){ // 
                     timeInFire = 'soonBurn';
+                    //burnProgress = 1-across
                 }
-                if(across >= 0 && across <= parseInt(data.item.fireTarget)){
+                if(across >= 0 && across <= parseInt(fireTarget)){
                     timeInFire = 'burn';
+                    burnProgress = Math.min(Math.max((1-across), 0), 1)
                 }
-                if(across < 0){ //
+                if(across < 0){ //1
                     timeInFire = 'burnOut';
                 }
-                //<Text style = {styles.TaskDate}>{LanguageStore.ListItems.from}: {data.item.date}</Text>
-
-                let numberLinesInText = Math.round( (data.item.title).length / (((deviceWidth-10)-20)/(16*0.6)) )+1
-                //console.log(numberLinesInText)
-                
-                //console.log(data)
       
                 return (
                     <View 
@@ -845,6 +960,7 @@ const ListItems = (props) => {
                             height: listItemHeight,
                             width: deviceWidth,
                             marginVertical: appStyle.lists.proximity,
+                            backgroundColor: '#00000001'
                         }]}
                     >
                         <SkiaViewDisign 
@@ -862,92 +978,137 @@ const ListItems = (props) => {
                         <View 
                             style = {[{
                                 flex: 1,
-                                paddingHorizontal: 10,
-                                justifyContent: 'flex-end',
-                                paddingVertical: 15,
+                                marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
+                                marginVertical:  appStyle.lists.proximity,
+                                borderRadius: appStyle.borderRadius.basic,
+                                backgroundColor: '#00000001'
                             }]}
-                        >   
+                        >
                         <Pressable 
-                            style = {{flex: 1}}
-                            android_ripple = {{color: ColorsApp.sky,borderless: true}}
+                            style = {{
+                                flex: 1,
+                                paddingHorizontal: 10,
+                                paddingTop: 5,
+                                paddingBottom: appStyle.borderRadius.basic * (15/35),
+                            }}
+                            android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.basics.accents.quaternary) : false}
                             unstable_pressDelay = {300}
-                            onLongPress = {() => {}}
-                            onPress = {() => {}}
+                            onLongPress = {() => {taskLongPress(key)}}
+                            onPress = {() => {taskPress(key)}}
                             //backgroundColor = 'red'
                         >   
-                            <View margin = {10} marginBottom = {38} flex = {1}>
-                                <Text numberOfLines = {numberLinesInText} style = {styles.TaskText}>{data.item.title}</Text> 
-                            </View>
-                        </Pressable>
-                            <Text style = {[styles.TaskDate,{textDecorationLine: timeInFire == 'burnOut'?'line-through':'none',color: timeInFire == 'burn'?'red':ColorsApp.symbolNeutral}]}>{LanguageStore.ListItems.to}: {data.item.toDate} {data.item.toTime}</Text>
-                        {timeInFire != 'none' &&
-                            <View style = {{position: 'absolute', bottom: 10, left: 20}}>
+                            <View
+                                style = {{
+                                    flexDirection: 'row',
+                                    //backgroundColor: 'red',
+                                    justifyContent: 'flex-end',
+                                    alignItems: 'center'
+                                }}
+                            >
                                 <MaterialCommunityIcons 
-                                    name = {timeInFire == 'burnOut'?"timer-off-outline":"timer-outline"} 
-                                    size={30} 
-                                    color={timeInFire == 'soon'?'grey':"black"} 
+                                    style={{
+                                        position: 'absolute',
+                                        left: 0,
+                                        borderRadius: appStyle.borderRadius.additional,
+                                        padding: 2,
+                                        backgroundColor: changesTask.includes(key)? Theme.icons.accents.primary : 'transparent'
+                                    }}
+                                    name = {'check'} 
+                                    size={12} 
+                                    color={Theme.basics.neutrals.secondary} 
                                 />
-                                <View style = {{position: 'absolute', bottom: 10, left: -7}}>
-                                    {(timeInFire != 'soon' && timeInFire != 'soonBurn')  &&
-                                    <MaterialCommunityIcons name="fire" size={25} color = {timeInFire == 'burn'?'red':'grey'}/>
-                                    }
-                                </View>
+                                <Text 
+                                    style = {[styles.TaskDate,{
+                                        textDecorationLine: timeInFire == 'burnOut'?'line-through':'none',
+                                        color: Theme.texts.neutrals.tertiary
+                                    }]}
+                                >
+                                    {Language.listItems.to}: {toTime}  {toDate} 
+                                </Text>
+                                {timeInFire != 'none' &&
+                                <View style = {{marginLeft: 10}}>
+
+                                    <MaterialCommunityIcons 
+                                        name = {timeInFire == 'burnOut'?"timer-off-outline":"timer-outline"} 
+                                        size={20} 
+                                        color={Theme.icons.neutrals.tertiary} 
+                                    />
+                                    
+                                    <MaskedView
+                                        androidRenderingMode = {'software'}
+                                        style={{
+                                            width: 16, 
+                                            height: 16,
+                                            position: 'absolute', 
+                                            bottom: 6, 
+                                            left: -5,
+                                            justifyContent: 'flex-end', 
+                                            backgroundColor: timeInFire == 'burnOut'? 'transparent' : Theme.specials.fire.secondary
+                                        }}
+                                        maskElement={<MaterialCommunityIcons //timeInFire == 'burn'?Theme.specials.fire.primary:Theme.specials.fire.secondary
+                                            name="fire" 
+                                            size={16} 
+                                            color = {'black'}
+                                        />}
+                                    >
+                                    {/* COLOR*/}
+                                    <View 
+                                        style={[{
+                                            width: 16,
+                                            height: 16*burnProgress,
+                                            backgroundColor: Theme.specials.fire.primary
+                                        }]}
+                                    />  
+                                    </MaskedView>
+                                </View>}                 
+                            </View> 
+                            <View flex = {1}>
+                                <Text 
+                                    numberOfLines = {3} 
+                                    style = {[styles.TaskText, {color: Theme.texts.neutrals.secondary}]}
+                                >
+                                    {title}
+                                </Text> 
                             </View>
-                        }
-                        </View>
+                        </Pressable> 
+                        </View>                                    
                     </View>
                 )
-                          
             }}
-
-            
-            renderHiddenItem = {(data, rowMap) => {
-                return (
+            ListHeaderComponent={
+                <View 
+                    style = {[{
+                        height: listItemHeight,
+                        width: deviceWidth,
+                        marginVertical: appStyle.lists.proximity,
+                        backgroundColor: '#00000001'
+                    }]}
+                >
+                    <SkiaViewDisign 
+                        borderRadius = {appStyle.borderRadius.basic}
+                        backgroundColor = {Theme.basics.accents.quaternary}
+                        shadowColors = {Theme.specials.shadow}
+                        shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: appStyle.lists.proximity}}
+                        shadowStyle = {appStyle.effects.shadows}
+                        adaptiveSizeForStyle={false}
+                        innerShadow={{
+                            used: true,
+                            borderWidth: 2
+                        }}
+                    />
                     <View 
                         style = {[{
-                            //marginVertical: 15,
-                            top: appStyle.lists.proximity+1,
-                            marginVertical: appStyle.lists.proximity,
-                            //marginHorizontal: 10,
+                            flex: 1,
+                            marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
+                            marginVertical:  appStyle.lists.proximity,
                             borderRadius: appStyle.borderRadius.basic,
-                            height: listItemHeight-2*(1+appStyle.lists.proximity),
-                            left: appStyle.lists.fullWidth? 0 : 11,
-                            width: deviceWidth-(appStyle.lists.fullWidth? 0 : 22),
-                            marginVertical: appStyle.lists.proximity,
-                            backgroundColor: Theme.basics.accents.quaternary
+                            backgroundColor: '#00000001'
                         }]}
-                    />
-                )
-            }}
-
-            onRowOpen = {(rowKey, rowMap, toValue) => {
-                const rowSate = {
-                    key: rowKey, 
-                    ref: rowMap[rowKey], 
-                    toValue: toValue
-                }
-                console.log(rowKey)
-                setSwipedRow(rowSate);
-                setItemModalVisible(true)
-            }}
-
-            onRowClose = {() => {
-                setSwipedRow(nullRow);
-            }}
-
-            previewRowKey = {"1"}
-            previewOpenDelay = {800}
-            {...appStyle.navigationMenu.drawerPosition == 'left'? {
-                rightOpenValue: -70,
-                stopRightSwipe: -70,  
-                previewOpenValue: -70,
-                disableRightSwipe: true
-            } : {
-                disableLeftSwipe: true,
-                leftOpenValue: 70,
-                stopLeftSwipe: 70,
-                previewOpenValue: 70,
-            }}            
+                    >
+                        
+                    </View>
+                </View>
+            }
         />
         <ModalItems
             itemModalVisible = {itemModalVisible}
@@ -991,17 +1152,28 @@ const ModalItems = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].TasksScreen
     
-
-    const nullRow = {key: null, ref: null, toValue: null}
-
     const handleCloseModal = () => {
-        swipedRow.ref.closeRow()
+        //swipedRow.ref.closeRow()
         setItemModalVisible(false);
-        setSwipedRow(nullRow);
+        setSwipedRow(null);
     }
 
+    const openedTask = tasks[tasks.findIndex((task) => task.key === swipedRow)]
 
-    const taskIndexInList =  tasks.findIndex((task) => task.key === swipedRow.key);
+    const checkTask = () => {
+        //handleDeleteTask(openedTask? openedTask.key : undefined);
+        handleCloseModal()
+    }
+
+    const deleteTask = () => {
+        handleDeleteTask(openedTask? openedTask.key : undefined);
+        handleCloseModal()
+    }
+
+    const editTask = () => {
+        handleTriggerEdit(openedTask)
+        handleCloseModal()
+    }
 
     const horizontalProximity = 10
 
@@ -1027,28 +1199,89 @@ const ModalItems = ({
                     flex: 1,
                 }}
             > 
-                <View style = {[styles.ModalView,{height: 180}]}>
-                <View >
-                    <TouchableOpacity style = {styles.HiddenButton}>
-                        <MaterialCommunityIcons name="check" size={25} color = {ColorsApp.symbolLight}  />
-                    </TouchableOpacity>
-                    <TouchableOpacity style = {styles.HiddenButton} 
-                        onPress = {() => {
-                            handleTriggerEdit(tasks[taskIndexInList])
-                            handleCloseModal()
-                            }}
-                        >
-                        <MaterialCommunityIcons name="pencil" size={25} color = {ColorsApp.symbolLight} />
-                    </TouchableOpacity>     
-                    <TouchableOpacity style = {styles.HiddenButton} 
-                        onPress = {() => {
-                            handleDeleteTask(tasks[taskIndexInList].key);
-                            handleCloseModal()
-                            }}
-                        >
-                        <MaterialCommunityIcons name="delete" size={25} color = {ColorsApp.symbolLight} />
-                    </TouchableOpacity>
-                                
+                <View style = {[styles.ModalView,{height: 250}]}>
+                <ScrollView
+                    style = {{
+                        height: 200
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontSize: 15,
+                            color: Theme.texts.neutrals.secondary
+                        }}
+                        
+                    >
+                        {openedTask? openedTask.title : ''}
+                    </Text>
+                </ScrollView>
+                <View 
+                    style ={{
+                        flexDirection: 'row',
+                        height: 50
+                    }}
+                >
+                    <BasePressable
+                        type="ti"
+                        text={Language.taskAction['done']}
+                        textStyle={{
+                            fontSize: 12,
+                            color: Theme.texts.neutrals.secondary
+                        }}
+                        style={{
+                            width: '32%',
+                            borderRadius: appStyle.borderRadius.additional
+                        }}
+                        direction={'row-reverse'}
+                        icon = {{
+                            name: 'check',
+                            size: 22,
+                            color:Theme.texts.neutrals.secondary 
+                        }}
+                        android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
+                        onPress = {checkTask}
+                        
+                    />
+                    <BasePressable
+                        type="ti"
+                        text={Language.taskAction['edit']}
+                        textStyle={{
+                            fontSize: 12,
+                            color: Theme.texts.neutrals.secondary
+                        }}
+                        style={{
+                            width: '32%',
+                            borderRadius: appStyle.borderRadius.additional
+                        }}
+                        direction={'row-reverse'}
+                        icon = {{
+                            name: "pencil",
+                            size: 22,
+                            color:Theme.texts.neutrals.secondary 
+                        }}
+                        android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
+                        onPress = {editTask}                
+                    />
+                    <BasePressable
+                        type="ti"
+                        text={Language.taskAction['delete']}
+                        textStyle={{
+                            fontSize: 12,
+                            color: Theme.texts.neutrals.secondary
+                        }}
+                        style={{
+                            width: '32%',
+                            borderRadius: appStyle.borderRadius.additional
+                        }}
+                        direction={'row-reverse'}
+                        icon = {{
+                            name: 'delete',
+                            size: 22,
+                            color:Theme.texts.neutrals.secondary 
+                        }}
+                        android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
+                        onPress = {deleteTask}
+                    />
                 </View>
                 </View>  
             </BaseWindow>
@@ -1078,7 +1311,7 @@ const ModalInput = ({
     }) => {
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const LanguageStore = languagesAppList[LanguageAppIndex]
+    const Language = languagesAppList[LanguageAppIndex].TasksScreen
         
     const [timePickerModalVisible, setTimePickerModalVisible] = useState(false);
     const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
@@ -1213,110 +1446,155 @@ const ModalInput = ({
                     flex: 1,
                 }}
             >
-                <View style = {[styles.ModalView,{height: '50%'}]}> 
-                    <View style = {styles.ModalIcon}>
-                        <Text style = {styles.HeaderTitle}>{LanguageStore.ModalInput.title}</Text> 
-                    </View>
-
-                    <View style = {styles.ModalText}>
-                    <Text style = {{fontSize: 16}}>{LanguageStore.ModalInput.text}:</Text>
-                    
-
-                    <TextInput style = {styles.StyledInput}
-                        placeholder = {LanguageStore.ModalInput.placeholderInputArea}
-                        placeholderTextColor = {Theme.texts.neutrals.tertiary}//{Colors.alternative}
-                        selectionColor = {Theme.texts.neutrals.secondary}//'black'//{Colors.secondary}
-                        autoFocus = {false}
-                        onChangeText = {(text) => setTaskInputValue(text)}
-                        value = {String(taskInputValue)}
-                        //onSubmitEditing = {handleSubmit}
-                    />
-                    </View>
-
-                    <View style = {styles.ModalText}>
-                    <Text style = {{fontSize: 16}}>{LanguageStore.ModalInput.to}:</Text>
-                    
-
+                <ScrollView 
+                    style = {[{height: (deviceHeight*0.6)-50}]}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                        paddingHorizontal: 10,
+                        paddingTop: 10,
+                        paddingBottom: 300,
+                        alignItems :'center'
+                    }}
+                > 
                     <View
                         style = {{
-                            //marginTop: 10,
-                            width: 300,
-                            height: 50,
-                            backgroundColor: Theme.basics.accents.quaternary,//Colors.tertiary,
-                            padding: 10,
-                            borderRadius: 12,
+                            width: 320,
+                            minHeight: 250,
                         }}
                     >
-                        <Pressable
+                        <SkiaViewDisign 
+                            borderRadius = {appStyle.borderRadius.additional}
+                            backgroundColor = {Theme.basics.neutrals.secondary}
+                            shadowColors = {Theme.specials.shadow}
+                            shadowMargin={{horizontal: 10, vertical: 10}}
+                            shadowStyle = {appStyle.effects.shadows}
+                            adaptiveSizeForStyle={false}
+                            innerShadow={{
+                                used: true,
+                                borderWidth: 2
+                            }}
+                        />
+                        <TextInput 
+                            style = {{
+                                width: 300,
+                                margin: 10,
+                                minHeight: 230,
+                                textAlignVertical: 'top',
+                                //backgroundColor: Theme.basics.neutrals.secondary,
+                                padding: 10,
+                                fontSize: 16, 
+                                borderRadius: appStyle.borderRadius.additional,
+                                color: Theme.texts.neutrals.secondary,
+                                letterSpacing: 1,
+                            }}
+                            multiline
+                            placeholder = {Language.modalInput.placeholderInputArea}
+                            placeholderTextColor = {Theme.texts.neutrals.tertiary}//{Colors.alternative}
+                            selectionColor = {Theme.texts.neutrals.tertiary}//'black'//{Colors.secondary}
+                            autoFocus = {false}
+                            onChangeText = {(text) => setTaskInputValue(text)}
+                            value = {String(taskInputValue)}
+                            //onSubmitEditing = {handleSubmit}
+                        />
+                    
+                    </View>
+                    
+                    
+                    <View style = {[styles.ModalText, {flexDirection: 'row', width: 300, alignItems: 'center', justifyContent: 'space-between'}]}>                     
+                        <Text 
+                            style = {{fontSize: 16, color: Theme.texts.neutrals.secondary}}
+                        >
+                            {Language.modalInput.to}:
+                        </Text>
+
+                        <BasePressable
+                            type="t"
+                            text={toTimeValue == null?Language.modalInput.placeholderTimeArea:toTimeValue}
+                            textStyle={{
+                                fontSize: 14,
+                                color: Theme.texts.neutrals.primary
+                            }}
+                            style={{
+                                width: 120,
+                                height: 40,
+                                backgroundColor: Theme.basics.accents.quaternary,
+                                borderRadius: appStyle.borderRadius.additional
+                            }}
+                            android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
                             onPress = {()=>{
                                 setTimePickerModalVisible(true)
                             }}
-                        >
-                            <Text 
-                                style = {toTimeValue == null?{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.tertiary}:{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.secondary}}
-                            >
-                                {toTimeValue == null?LanguageStore.ModalInput.placeholderTimeArea:toTimeValue}
-                            </Text>
-                        </Pressable>
-                    </View>
-                    <View
-                        style = {{
-                            marginTop: 5,
-                            width: 300,
-                            height: 50,
-                            backgroundColor: Theme.basics.accents.quaternary,//Colors.tertiary,
-                            padding: 10,
-                            borderRadius: 12,
-                        }}
-                    >
-                        <Pressable
+                        />
+
+                        <BasePressable
+                            type="t"
+                            text={toDateValue == null?Language.modalInput.placeholderDateArea:toDateValue}
+                            textStyle={{
+                                fontSize: 14,
+                                color: Theme.texts.neutrals.primary
+                            }}
+                            style={{
+                                width: 120,
+                                height: 40,
+                                backgroundColor: Theme.basics.accents.quaternary,
+                                borderRadius: appStyle.borderRadius.additional
+                            }}
+                            android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
                             onPress = {()=>{
                                 setDatePickerModalVisible(true)
                             }}
+                        />
+                    </View>
+
+                    <View style = {[styles.ModalText, {width: 300,}]}>
+                        <Text 
+                            style = {{fontSize: 16, color: Theme.texts.neutrals.secondary}}
                         >
-                            <Text 
-                                style = {toDateValue == null?{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.tertiary}:{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.secondary}}
-                            >
-                                {toDateValue == null?LanguageStore.ModalInput.placeholderDateArea:toDateValue}
-                            </Text>
-                        </Pressable>
-                    </View>
-                    </View>
-
-                    <View style = {styles.ModalText}>
-                    <Text style = {{fontSize: 16}}>{LanguageStore.ModalInput.deadlineTarget}:</Text>
-                    
-
-                    <View
-                        style = {{
-                            //marginTop: 10,
-                            width: 300,
-                            height: 50,
-                            backgroundColor: Theme.basics.accents.quaternary,//Colors.tertiary,
-                            padding: 10,
-                            borderRadius: 12,
-                        }}
-                    >
-                        <Pressable
+                            {Language.modalInput.deadlineTarget}:
+                        </Text>
+                        
+                        <BasePressable
+                            type="t"
+                            text={inFireValue == null?Language.modalInput.placeholderDeadlineTargetArea:inFireValue}
+                            textStyle={{
+                                fontSize: 14,
+                                color: Theme.texts.neutrals.primary
+                            }}
+                            style={{
+                                width: 300,
+                                height: 40,
+                                backgroundColor: Theme.basics.accents.quaternary,
+                                borderRadius: appStyle.borderRadius.additional
+                            }}
+                            android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
                             onPress = {()=>{
                                 setTimerPickerModalVisible(true)
                             }}
-                        >
-                            <Text 
-                                style = {inFireValue == null?{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.tertiary}:{fontSize: 16,letterSpacing: 1,color: Theme.texts.neutrals.secondary}}
-                            >
-                                {inFireValue == null?LanguageStore.ModalInput.placeholderDeadlineTargetArea:inFireValue}
-                            </Text>
-                        </Pressable>
+                        />
+
                     </View>
-                    </View>
-                    <Pressable 
-                        style = {styles.ModalAction} 
-                        onPress = {handleSubmit}
-                    >
-                        <MaterialCommunityIcons name = "check" size = {28} color = {Theme.icons.neutrals.secondary}/>
-                    </Pressable>
-                </View>
+                </ScrollView>
+                <BasePressable
+                    type="ti"
+                    text={Language.taskAction[taskInputValue == ''? 'add' : 'edit']}
+                    textStyle={{
+                        fontSize: 14,
+                        color: Theme.texts.neutrals.secondary
+                    }}
+                    style={{
+                        height: 50,
+                        width: '100%',
+                        borderRadius: appStyle.borderRadius.additional
+                    }}
+                    direction={'row-reverse'}
+                    icon = {{
+                        name: taskInputValue == ''? "playlist-plus" : 'pencil',
+                        size: 28,
+                        color: Theme.texts.neutrals.secondary
+                    }}
+                    android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
+                    onPress = {handleSubmit}
+                />
             </BaseWindow>
 
             <DateTimePicker
@@ -1324,7 +1602,7 @@ const ModalInput = ({
                 setDateTimePickerModalVisible = {setTimePickerModalVisible}
                 typePicker = {'time'}
                 setToValues = {setToValues}
-                LanguageStore = {LanguageStore}
+                LanguageStore = {languagesAppList[LanguageAppIndex]}
             />
 
             <DateTimePicker 
@@ -1332,7 +1610,7 @@ const ModalInput = ({
                 setDateTimePickerModalVisible = {setDatePickerModalVisible}
                 typePicker = {'date'}
                 setToValues = {setToValues}
-                LanguageStore = {LanguageStore}      
+                LanguageStore = {languagesAppList[LanguageAppIndex]}      
             />
 
             <DateTimePicker 
@@ -1340,7 +1618,7 @@ const ModalInput = ({
                 setDateTimePickerModalVisible = {setTimerPickerModalVisible}
                 typePicker = {'timer'}
                 setToValues = {setInFireValue}
-                LanguageStore = {LanguageStore}      
+                LanguageStore = {languagesAppList[LanguageAppIndex]}      
             />
         </>
     );
@@ -1421,11 +1699,11 @@ const styles = StyleSheet.create({
     TaskDate: {
         fontSize: 10,
         //marginTop: 18, 
-        letterSpacing: 1, 
+        //letterSpacing: 1, 
         //color: ColorsApp.symbolNeutral,
-        textAlign: 'right',
+       // textAlign: 'right',
         textTransform: 'uppercase',
-        position: 'absolute', bottom: 13, right: 25
+        //position: 'absolute', bottom: 13, right: 25
     },
     
     ModalContainer: {
@@ -1476,12 +1754,14 @@ const styles = StyleSheet.create({
     },
     StyledInput: {
         width: 300,
-        height: 50,
+        minHeight: 250,
+        textAlignVertical :'top',
+        //height: 50,
         backgroundColor: "green",//ColorsApp.skyUpUp,//Colors.tertiary,
         padding: 10,
         fontSize: 16, 
         borderRadius: 12,
-        color: "green",//ColorsApp.symbolDark,//'black',//Colors.secondary,
+        color: "red",//ColorsApp.symbolDark,//'black',//Colors.secondary,
         letterSpacing: 1,
     },
     ModalIcon: {

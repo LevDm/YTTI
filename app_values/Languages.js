@@ -43,35 +43,6 @@ const LanguageStoreRu = {
         'Вс' 
       ],
     },
-    Pointer: {
-      ClickAdd: 'Нажми, чтобы добавить задачу',
-    },
-    NoTaskMessage: {
-      NoTasks: 'У тебя нет задачь? - Повезло тебе!',
-    },
-    TrojanButton: {
-      ALL: 'Всё',
-    },
-    DeleteAlert: {
-      Warning: 'Предупреждение',
-      DeleteAll: 'Удалить ВСЕ задачи?',
-      Cancel: 'Отмена',
-      Ok: 'Да',
-    },
-    ModalInput: {
-      title: 'Редактор задачь',
-      text: 'Текст задачи',
-      placeholderInputArea: "Твоя задача ...",
-      to: 'До',
-      placeholderTimeArea: "Время окончания",
-      placeholderDateArea: "Дата окончания",
-      deadlineTarget: 'Задача начнет гореть за',
-      placeholderDeadlineTargetArea: "Время до пожара",
-    },
-    ListItems: {
-      to: 'До',
-      from: 'От'
-    },
     SettingsScreen: {
       HeaderTitle: 'настройки',
       app: 'приложения',
@@ -325,7 +296,41 @@ const LanguageStoreRu = {
     },
     TasksScreen: {
       HeaderTitle: 'задачи',
-      filtration: {today: 'на сегодня', all: 'все'}
+      filtration: {today: 'на сегодня', all: 'все'},
+      taskAction: {
+        delete: 'Удалить',
+        edit: 'Редактировать',
+        done: 'Выполнено',
+        add: 'Добавить'
+      },
+      pointer: {
+        ClickAdd: 'Нажми, чтобы добавить задачу',
+      },
+      noTaskMessage: {
+        NoTasks: 'У тебя нет задачь? - Повезло тебе!',
+      },
+      deleteAlert: {
+        Warning: 'Предупреждение',
+        DeleteAll: 'Удалить ВСЕ задачи?',
+        Cancel: 'Отмена',
+        Ok: 'Да',
+      },
+      modalInput: {
+        title: 'Редактор задачь',
+        text: 'Текст задачи',
+        placeholderInputArea: "Твоя задача ...",
+        to: 'До',
+        placeholderTimeArea: "Время",
+        placeholderDateArea: "Дата",
+        deadlineTarget: 'Задача начнет гореть за',
+        placeholderDeadlineTargetArea: "Время до пожара",
+      },
+      listItems: {
+        to: 'До',
+        from: 'От'
+      },
+      
+
     },
     AnalyticsScreen: {
       HeaderTitle: 'аналитика',
@@ -403,35 +408,6 @@ const LanguageStoreEng = {
         'Sat' ,
         'Sun' 
       ],
-    },
-    Pointer: {
-      ClickAdd: 'Click to add a task',
-    },
-    NoTaskMessage: {
-      NoTasks: 'You have no tasks? - Lucky you!',
-    },
-    TrojanButton: {
-      ALL: 'All',
-    },
-    DeleteAlert: {
-      Warning: 'Warning',
-      DeleteAll: 'Delete ALL tasks?',
-      Cancel: 'Cancel',
-      Ok: 'Ok',
-    },
-    ModalInput: {
-      title: 'Task redactor',
-      text: 'Text task',
-      placeholderInputArea: "Text of your task",
-      to: 'To',
-      placeholderTimeArea: "Time end",
-      placeholderDateArea: "Date end",
-      deadlineTarget: 'Task burn',
-      placeholderDeadlineTargetArea: "Time to fire",
-    },
-    ListItems: {
-      to: 'To',
-      from: 'From'
     },
     SettingsScreen: {
       HeaderTitle: 'settings',
@@ -680,7 +656,39 @@ const LanguageStoreEng = {
     },
     TasksScreen: {
       HeaderTitle: 'tasks',
-      filtration: {today: 'for today', all: 'all'}
+      filtration: {today: 'for today', all: 'all'},
+      taskAction: {
+        delete: 'delete',
+        edit: 'Edit',
+        done: 'Done',
+        add: 'Add'
+      },
+      pointer: {
+        ClickAdd: 'Click to add a task',
+      },
+      noTaskMessage: {
+        NoTasks: 'You have no tasks? - Lucky you!',
+      },
+      deleteAlert: {
+        Warning: 'Warning',
+        DeleteAll: 'Delete ALL tasks?',
+        Cancel: 'Cancel',
+        Ok: 'Ok',
+      },
+      modalInput: {
+        title: 'Task redactor',
+        text: 'Text task',
+        placeholderInputArea: "Text of your task",
+        to: 'To',
+        placeholderTimeArea: "Time",
+        placeholderDateArea: "Date",
+        deadlineTarget: 'Task burn',
+        placeholderDeadlineTargetArea: "Time to fire",
+      },
+      listItems: {
+        to: 'To',
+        from: 'From'
+      },
     },
     AnalyticsScreen: {
       HeaderTitle: 'analytics',

@@ -799,14 +799,33 @@ const ListItems = (props) => {
             <Reanimated.View
                 entering={entering}
                 style={{
-                    flexDirection: 'row',
+                    flexDirection:  appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
                     //backgroundColor: 'red'
                 }}
             >
+                <View
+                    style={{
+                        width: 25,
+                        height: 25,
+                        backgroundColor: Theme.basics.accents.quaternary,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: appStyle.borderRadius.additional
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontSize: 15,
+                            color: Theme.texts.neutrals.primary
+                        }}
+                    >
+                        {changesTask.length}
+                    </Text>
+                </View>
                 <BasePressable
                     type="i"
                     style={{
-                        width: 80
+                        width: 70
                     }}
                     icon = {{
                         name: 'check',
@@ -819,7 +838,7 @@ const ListItems = (props) => {
                 <BasePressable
                     type="i"
                     style={{
-                        width: 80
+                        width: 70
                     }}
                     icon = {{
                         name: 'delete',

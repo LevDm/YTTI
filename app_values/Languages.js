@@ -324,6 +324,10 @@ const LanguageStoreRu = {
         placeholderDateArea: "Дата",
         deadlineTarget: 'Задача начнет гореть за',
         placeholderDeadlineTargetArea: "Время до пожара",
+        deadline: {
+          title: 'Отслежевание дедлайна (ч.)',
+          placeholder: 'Сразу',
+        }
       },
       listItems: {
         to: 'До',
@@ -684,6 +688,10 @@ const LanguageStoreEng = {
         placeholderDateArea: "Date",
         deadlineTarget: 'Task burn',
         placeholderDeadlineTargetArea: "Time to fire",
+        deadline: {
+          title: 'Deadline Tracker (h.)',
+          placeholder: 'Immediately',
+        }
       },
       listItems: {
         to: 'To',

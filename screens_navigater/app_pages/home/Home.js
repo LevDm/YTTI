@@ -174,15 +174,15 @@ const Home = (props) => {
         })
     }
 
-    const taskSort = (a, b) => {
-        const getCompareParam = (item) => {
-            const time = item.toTime.split(':')
-            const date = item.toDate.split('.')
-            return new Date(date[2], date[1], date[0], time[1], time[0]).getTime()
-        }
+    const buildDate = (item) => {
+        const time = item.toTime.split(':')
+        const date = item.toDate.split('.')
+        return new Date(date[2], date[1], date[0], time[1], time[0])
+    }
 
-        const a_c = getCompareParam(a)
-        const b_c = getCompareParam(b)
+    const taskSort = (a, b) => {
+        const a_c = buildDate(a).getTime()
+        const b_c = buildDate(b).getTime()
 
         if ( a_c < b_c){
             return -1;
@@ -249,13 +249,25 @@ const Home = (props) => {
                 newFireTarget = '1'
             }
 
+            const t = newToTime.split(':')
+            const d = newToDate.split('.')
+
+            const to = new Date(date.source)
+            //to.setHours(])
+            to.setUTCHours(t[0], t[1], 59, 999)
+            to.setUTCDate(d[0])
+            //to.setMinutes()
+            //to.setDate(d[0])
+            to.setMonth(d[1]-1)
+            to.setFullYear(d[2])
+
             const newTask = {
                 title: newTitle,
                 toTime: newToTime,
                 toDate: newToDate,
                 fireTarget: newFireTarget,
-                date: date.source,
-                dateString: date.string,
+                date: to,
+                dateString: to.toDateString(),
                 key: `${keyNewTask}`
                 //key: `${(tasks[tasks.length-1] && parseInt(tasks[tasks.length-1].key) ) }`
             }
@@ -1049,8 +1061,10 @@ const ListItems = (props) => {
                 } = item
                 
                 const taskDate = new Date(date)
-
-                const TODAY = taskDate.getDate() == currentDate.day && taskDate.getMonth() == parseInt(currentDate.month)-1 && taskDate.getFullYear() == currentDate.year
+                console.log(key, toDate, currentDate.formatDate)
+               
+                //const TODAY = taskDate.getDate() == (currentDate.day-1) && taskDate.getMonth() == parseInt(currentDate.month)-1 && taskDate.getFullYear() == currentDate.year
+                const TODAY = toDate == currentDate.formatDate
                 //TODAY 
                 if( category == 0 && !TODAY){ return null}
                 
@@ -1058,7 +1072,9 @@ const ListItems = (props) => {
 
                 let burnProgress = 0
 
-                let across = (taskDate - currentDate)/3600000
+                let across = (taskDate - currentDate.source)/3600000
+
+                console.log(taskDate.getTime() - currentDate.source.getTime())
 
                 if(across >= 0 && across <= 24){ // 
                     timeInFire = 'soon';
@@ -1072,7 +1088,7 @@ const ListItems = (props) => {
                     timeInFire = 'burnOut';
                 }
 
-                console.log(across, fireTarget, burnProgress,(fireTarget-across)/fireTarget)
+                //console.log(across, fireTarget, burnProgress,(fireTarget-across)/fireTarget)
 
                 return (
                     <View 

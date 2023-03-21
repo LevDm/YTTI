@@ -1028,6 +1028,8 @@ const ListItems = (props) => {
             </Pressable>
         </View>
     )
+
+    const horizontalProximityModal = 10
  
     return (
         <>
@@ -1308,8 +1310,8 @@ const ListItems = (props) => {
             outPress = {()=>setWeatherModal(false)}
             //onShow = {onShow}
             modalStyle = {{
-                width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
-                left: appStyle.modals.fullWidth? 0 : horizontalProximity,
+                width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximityModal),
+                left: appStyle.modals.fullWidth? 0 : horizontalProximityModal,
             }}
             style={{
                 backgroundColor: Theme.basics.neutrals.quaternary,

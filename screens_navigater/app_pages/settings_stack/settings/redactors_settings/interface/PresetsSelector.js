@@ -231,6 +231,7 @@ export default PresetsSelector = ({
             const newAppStyle = (index == 0? appStyle : presets[index].options)
             newAppStyle.customTheme = appStyle.customTheme
             newAppStyle.presetUsed = presetsNames[index]
+            newAppStyle.palette.scheme = appStyle.palette.scheme
             r_setAppStyle(newAppStyle)
             dataRedactor("storedAppStyle",newAppStyle);
         }

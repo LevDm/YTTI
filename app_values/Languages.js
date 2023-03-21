@@ -327,7 +327,8 @@ const LanguageStoreRu = {
         deadline: {
           title: 'Отслежевание дедлайна (ч.)',
           placeholder: 'Сразу',
-        }
+        },
+        accept: 'Установить'
       },
       listItems: {
         to: 'До',
@@ -691,7 +692,8 @@ const LanguageStoreEng = {
         deadline: {
           title: 'Deadline Tracker (h.)',
           placeholder: 'Immediately',
-        }
+        },
+        accept: 'Set'
       },
       listItems: {
         to: 'To',

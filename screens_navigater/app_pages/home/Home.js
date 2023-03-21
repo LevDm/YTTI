@@ -602,6 +602,8 @@ const headerFullHeight = statusBarHeight+headerPanel+headerParams
 
 const listItemHeight = 110
 
+import WeatherComponent from "../../../weather/WeatherComponent";
+
 const Reanimated_SwipeList = Reanimated.createAnimatedComponent(SwipeListView)
 const Reanimated_FlatList = Reanimated.createAnimatedComponent(FlatList)
 const ListItems = (props) => {
@@ -789,7 +791,7 @@ const ListItems = (props) => {
         const duration = 350; 
         return {
             width: withTiming(indicatorLine.value.widths.length>0? indicatorLine.value.widths[category] : 0, {duration: duration-20}),
-            left: withTiming(indicatorLine.value.left.length>0? ((0.5*deviceWidth*category) + indicatorLine.value.left[category]) : 0, {duration: duration, easing: Easing.bezier(0.45, 0, 0.55, 1)}),
+            left: withTiming(indicatorLine.value.left.length>0? ((0.5*(deviceWidth-100)*category) + indicatorLine.value.left[category]) : 0, {duration: duration, easing: Easing.bezier(0.45, 0, 0.55, 1)}),
         }
     }, [indicatorLine, category])
 
@@ -817,6 +819,215 @@ const ListItems = (props) => {
           animations,
         };
     }
+
+    const [ listFormatRow, setListFormatRow ] = useState(true)
+
+
+    const renderTasks = ({index, item }) => {
+        const {
+            key,
+            date,
+            fireTarget,
+            title,
+            toDate,
+            toTime,
+        } = item
+        
+        const taskDate = new Date(date)
+        console.log(key, toDate, currentDate.formatDate)
+       
+        //const TODAY = taskDate.getDate() == (currentDate.day-1) && taskDate.getMonth() == parseInt(currentDate.month)-1 && taskDate.getFullYear() == currentDate.year
+        const TODAY = toDate == currentDate.formatDate
+        //TODAY 
+        if( category == 0 && !TODAY){ return null}
+        
+        let timeInFire = 'none';
+
+        let burnProgress = 0
+
+        let across = (taskDate - currentDate.source)/3600000
+
+        //console.log((taskDate.getTime() - currentDate.source.getTime())/3600000,across)
+
+        if(across >= 0 && across <= 24){ // 
+            timeInFire = 'soon';
+            
+        } 
+        if(across >= 0 && across <= parseInt(fireTarget)){
+            timeInFire = 'burn';
+            const procent = (fireTarget-across)/fireTarget
+            burnProgress =  Math.min(Math.max(procent, 0), 1)
+        }
+        if(across < 0){ 
+            timeInFire = 'burnOut';
+        }
+
+        //console.log(across, fireTarget, burnProgress,(fireTarget-across)/fireTarget)
+
+        return (
+            <View 
+                style = {[{
+                    height: listItemHeight * (listFormatRow? 1 : 2),
+                    width:  deviceWidth  * (listFormatRow? 1 : 0.5),
+                    marginVertical: listFormatRow? appStyle.lists.proximity : appStyle.lists.fullWidth? 0.5 : 5,
+                    backgroundColor: '#00000001'
+                }]}
+            >
+                <SkiaViewDisign 
+                    borderRadius = {appStyle.borderRadius.basic}
+                    backgroundColor = {Theme.basics.neutrals.secondary}
+                    shadowColors = {Theme.specials.shadow}
+                    shadowMargin={{
+                        horizontal: appStyle.lists.fullWidth? 1 : 10, 
+                        vertical: listFormatRow? appStyle.lists.proximity : appStyle.lists.fullWidth? 0.5 : 5,
+                    }}
+                    shadowStyle = {appStyle.effects.shadows}
+                    adaptiveSizeForStyle={false}
+                    innerShadow={{
+                        used: true,
+                        borderWidth: 2
+                    }}
+                />
+                <View 
+                    style = {[{
+                        flex: 1,
+                        marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
+                        marginVertical:  listFormatRow? appStyle.lists.proximity : appStyle.lists.fullWidth? 0.5 : 5,
+                        borderRadius: appStyle.borderRadius.basic,
+                        backgroundColor: '#00000001'
+                    }]}
+                >
+                <Pressable 
+                    style = {{
+                        flex: 1,
+                        paddingHorizontal: 10,
+                        paddingTop: 5,
+                        paddingBottom: appStyle.borderRadius.basic * (15/35),
+                    }}
+                    android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.basics.accents.quaternary) : false}
+                    unstable_pressDelay = {300}
+                    onLongPress = {() => {taskLongPress(key)}}
+                    onPress = {() => {taskPress(item)}}
+                    //backgroundColor = 'red'
+                >   
+                    <View
+                        style = {{
+                            flexDirection: 'row',
+                            //backgroundColor: 'red',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <MaterialCommunityIcons 
+                            style={{
+                                height: 16,
+                                width: 16,
+                                position: 'absolute',
+                                left: 0,
+                                borderRadius: appStyle.borderRadius.additional,
+                                padding: 2,
+                                backgroundColor: changesTask.includes(key)? Theme.icons.accents.primary : 'transparent'
+                            }}
+                            name = {'check'} 
+                            size={12} 
+                            color={changesTask.includes(key)? Theme.basics.neutrals.secondary : 'transparent'} 
+                        />
+                        <Text 
+                            style = {[styles.TaskDate,{
+                                textDecorationLine: timeInFire == 'burnOut'?'line-through':'none',
+                                color: Theme.texts.neutrals.tertiary
+                            }]}
+                        >
+                            {Language.listItems.to}: {toTime}  {toDate} 
+                        </Text>
+                        {timeInFire != 'none' &&
+                        <View style = {{marginLeft: 10}}>
+
+                            <MaterialCommunityIcons 
+                                name = {timeInFire == 'burnOut'?"timer-off-outline":"timer-outline"} 
+                                size={20} 
+                                color={Theme.icons.neutrals.tertiary} 
+                            />
+                            
+                            <MaskedView
+                                androidRenderingMode = {'software'}
+                                style={{
+                                    width: 16, 
+                                    height: 16,
+                                    position: 'absolute', 
+                                    bottom: 6, 
+                                    left: -5,
+                                    justifyContent: 'flex-end', 
+                                    backgroundColor: (timeInFire == 'burn')? Theme.specials.fire.secondary : 'transparent'
+                                }}
+                                maskElement={<MaterialCommunityIcons //timeInFire == 'burn'?Theme.specials.fire.primary:Theme.specials.fire.secondary
+                                    name="fire" 
+                                    size={16} 
+                                    color = {'black'}
+                                />}
+                            >
+                            {/* COLOR*/}
+                            <View 
+                                style={[{
+                                    width: 16,
+                                    height: 16*burnProgress,
+                                    backgroundColor: Theme.specials.fire.primary
+                                }]}
+                            />  
+                            </MaskedView>
+                        </View>}                 
+                    </View> 
+                    <View flex = {1}>
+                        <Text 
+                            numberOfLines = {3 * (listFormatRow? 1 : 2)} 
+                            style = {[styles.TaskText, {color: Theme.texts.neutrals.secondary}]}
+                        >
+                            {title}
+                        </Text> 
+                    </View>
+                </Pressable> 
+                </View>                                    
+            </View>
+        )
+    }
+
+    const [weatherModal, setWeatherModal] = useState(false)
+
+    const primaryComponent = (
+        <View 
+            style = {[{
+                height: listItemHeight,
+                width: deviceWidth,
+                marginVertical: appStyle.lists.proximity,
+                backgroundColor: '#00000001'
+            }]}
+        >
+            <SkiaViewDisign 
+                borderRadius = {appStyle.borderRadius.basic}
+                backgroundColor = {Theme.basics.accents.quaternary}
+                shadowColors = {Theme.specials.shadow}
+                shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: appStyle.lists.proximity}}
+                shadowStyle = {appStyle.effects.shadows}
+                adaptiveSizeForStyle={false}
+                innerShadow={{
+                    used: true,
+                    borderWidth: 2
+                }}
+            />
+            <Pressable
+                style = {[{
+                    flex: 1,
+                    marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
+                    marginVertical:  appStyle.lists.proximity,
+                    borderRadius: appStyle.borderRadius.basic,
+                    backgroundColor: '#00000001'
+                }]}
+                onPress = {()=>setWeatherModal(true)}
+            >
+                <WeatherComponent type = {'list'} />
+            </Pressable>
+        </View>
+    )
  
     return (
         <>
@@ -904,17 +1115,22 @@ const ListItems = (props) => {
             >
                 {Language.HeaderTitle}
             </Text>
-            {changesTask.length == 0 &&
+            {(changesTask.length == 0 && (appConfig.weather.type == 'widget' && appConfig.weather.locationInfo.length>0)) &&
             //WEATHER
             <Reanimated.View
                 entering={entering}
                 style={{
                     height: 55,
                     width: 180,
-                    backgroundColor: 'red'
-                }}
+                    //backgroundColor :'red'
+                }} //
             >
-
+                <Pressable
+                    style={{flex: 1}}
+                    onPress = {()=>setWeatherModal(true)}
+                >
+                    <WeatherComponent type = {'widget'} />
+                </Pressable>        
             </Reanimated.View>}
             {changesTask.length > 0 &&
             <Reanimated.View
@@ -988,6 +1204,7 @@ const ListItems = (props) => {
                 style={{
                     flex: 1,
                     //paddingHorizontal: 5,
+                    //backgroundColor: 'red',
                     flexDirection: 'row'
                 }}
             >
@@ -996,7 +1213,7 @@ const ListItems = (props) => {
                         <Pressable
                             key={item+index}
                             style={{
-                                width: (deviceWidth)/2,
+                                width: (deviceWidth-100)/2,
                                 justifyContent: 'center',
                                 alignItems: 'center'
                             }}
@@ -1024,6 +1241,32 @@ const ListItems = (props) => {
                         </Pressable>
                     )
                 })}
+                <View
+                    style={{
+                        flex: 1,
+                        width: 100,
+                        //flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',//'space-around',
+                        //backgroundColor: 'blue'
+                    }}
+                >
+                    <BasePressable
+                        type="i"
+                        style={{
+                            width: 90,
+                            height: headerParams,
+                            borderRadius: appStyle.borderRadius.additional
+                        }}
+                        icon = {{
+                            name: listFormatRow? "view-sequential-outline" : "view-grid-outline",
+                            size: 22,
+                            color: appStyle.lists.invertColorsHeader? Theme.icons.neutrals.secondary : Theme.icons.neutrals.primary,
+                        }}
+                        android_ripple={appStyle.effects.ripple != 'off'? ripple(appStyle.lists.invertColorsHeader? Theme.icons.neutrals.secondary : Theme.icons.neutrals.primary) : false}
+                        onPress = {()=>{setListFormatRow(!listFormatRow)}}                
+                    />
+                </View>
             </View>
             <Reanimated.View 
                 style={[animStyleIndicatorLine, {
@@ -1036,219 +1279,54 @@ const ListItems = (props) => {
                 }]}
             />
         </Reanimated.View>
+
         <Reanimated_FlatList
+            key={listFormatRow? 'row' : 'half_row'}
             data = {tasks}
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={{
                 paddingTop: headerFullHeight,
-                paddingBottom: appStyle.functionButton.size+13+(appStyle.navigationMenu.type != 'not'? appStyle.navigationMenu.height : 0)
+                paddingBottom: appStyle.functionButton.size+13+(appStyle.navigationMenu.type != 'not'? appStyle.navigationMenu.height : 0),
             }}
             onScroll = {onScrollList}
-            showsVerticalScrollIndicator = {false}
+            showsVerticalScrollIndicator = {false} 
+            numColumns={listFormatRow? 1 : 2}
             style = {{
                 flex: 1, 
                 paddingBottom: 10, 
                 marginBottom: 0, 
             }}
-            renderItem = {({index, item }) => {
-                const {
-                    key,
-                    date,
-                    fireTarget,
-                    title,
-                    toDate,
-                    toTime,
-                } = item
-                
-                const taskDate = new Date(date)
-                console.log(key, toDate, currentDate.formatDate)
-               
-                //const TODAY = taskDate.getDate() == (currentDate.day-1) && taskDate.getMonth() == parseInt(currentDate.month)-1 && taskDate.getFullYear() == currentDate.year
-                const TODAY = toDate == currentDate.formatDate
-                //TODAY 
-                if( category == 0 && !TODAY){ return null}
-                
-                let timeInFire = 'none';
-
-                let burnProgress = 0
-
-                let across = (taskDate - currentDate.source)/3600000
-
-                console.log(taskDate.getTime() - currentDate.source.getTime())
-
-                if(across >= 0 && across <= 24){ // 
-                    timeInFire = 'soon';
-                } 
-                if(across >= 0 && across <= parseInt(fireTarget)){
-                    timeInFire = 'burn';
-                    const procent = (fireTarget-across)/fireTarget
-                    burnProgress =  Math.min(Math.max(procent, 0), 1)
-                }
-                if(across < 0){ 
-                    timeInFire = 'burnOut';
-                }
-
-                //console.log(across, fireTarget, burnProgress,(fireTarget-across)/fireTarget)
-
-                return (
-                    <View 
-                        style = {[{
-                            height: listItemHeight,
-                            width: deviceWidth,
-                            marginVertical: appStyle.lists.proximity,
-                            backgroundColor: '#00000001'
-                        }]}
-                    >
-                        <SkiaViewDisign 
-                            borderRadius = {appStyle.borderRadius.basic}
-                            backgroundColor = {Theme.basics.neutrals.secondary}
-                            shadowColors = {Theme.specials.shadow}
-                            shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: appStyle.lists.proximity}}
-                            shadowStyle = {appStyle.effects.shadows}
-                            adaptiveSizeForStyle={false}
-                            innerShadow={{
-                                used: true,
-                                borderWidth: 2
-                            }}
-                        />
-                        <View 
-                            style = {[{
-                                flex: 1,
-                                marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
-                                marginVertical:  appStyle.lists.proximity,
-                                borderRadius: appStyle.borderRadius.basic,
-                                backgroundColor: '#00000001'
-                            }]}
-                        >
-                        <Pressable 
-                            style = {{
-                                flex: 1,
-                                paddingHorizontal: 10,
-                                paddingTop: 5,
-                                paddingBottom: appStyle.borderRadius.basic * (15/35),
-                            }}
-                            android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.basics.accents.quaternary) : false}
-                            unstable_pressDelay = {300}
-                            onLongPress = {() => {taskLongPress(key)}}
-                            onPress = {() => {taskPress(item)}}
-                            //backgroundColor = 'red'
-                        >   
-                            <View
-                                style = {{
-                                    flexDirection: 'row',
-                                    //backgroundColor: 'red',
-                                    justifyContent: 'flex-end',
-                                    alignItems: 'center'
-                                }}
-                            >
-                                <MaterialCommunityIcons 
-                                    style={{
-                                        position: 'absolute',
-                                        left: 0,
-                                        borderRadius: appStyle.borderRadius.additional,
-                                        padding: 2,
-                                        backgroundColor: changesTask.includes(key)? Theme.icons.accents.primary : 'transparent'
-                                    }}
-                                    name = {'check'} 
-                                    size={12} 
-                                    color={Theme.basics.neutrals.secondary} 
-                                />
-                                <Text 
-                                    style = {[styles.TaskDate,{
-                                        textDecorationLine: timeInFire == 'burnOut'?'line-through':'none',
-                                        color: Theme.texts.neutrals.tertiary
-                                    }]}
-                                >
-                                    {Language.listItems.to}: {toTime}  {toDate} 
-                                </Text>
-                                {timeInFire != 'none' &&
-                                <View style = {{marginLeft: 10}}>
-
-                                    <MaterialCommunityIcons 
-                                        name = {timeInFire == 'burnOut'?"timer-off-outline":"timer-outline"} 
-                                        size={20} 
-                                        color={Theme.icons.neutrals.tertiary} 
-                                    />
-                                    
-                                    <MaskedView
-                                        androidRenderingMode = {'software'}
-                                        style={{
-                                            width: 16, 
-                                            height: 16,
-                                            position: 'absolute', 
-                                            bottom: 6, 
-                                            left: -5,
-                                            justifyContent: 'flex-end', 
-                                            backgroundColor: (timeInFire == 'burn')? Theme.specials.fire.secondary : 'transparent'
-                                        }}
-                                        maskElement={<MaterialCommunityIcons //timeInFire == 'burn'?Theme.specials.fire.primary:Theme.specials.fire.secondary
-                                            name="fire" 
-                                            size={16} 
-                                            color = {'black'}
-                                        />}
-                                    >
-                                    {/* COLOR*/}
-                                    <View 
-                                        style={[{
-                                            width: 16,
-                                            height: 16*burnProgress,
-                                            backgroundColor: Theme.specials.fire.primary
-                                        }]}
-                                    />  
-                                    </MaskedView>
-                                </View>}                 
-                            </View> 
-                            <View flex = {1}>
-                                <Text 
-                                    numberOfLines = {3} 
-                                    style = {[styles.TaskText, {color: Theme.texts.neutrals.secondary}]}
-                                >
-                                    {title}
-                                </Text> 
-                            </View>
-                        </Pressable> 
-                        </View>                                    
-                    </View>
-                )
-            }}
-            ListHeaderComponent={
-                <View 
-                    style = {[{
-                        height: listItemHeight,
-                        width: deviceWidth,
-                        marginVertical: appStyle.lists.proximity,
-                        backgroundColor: '#00000001'
-                    }]}
-                >
-                    <SkiaViewDisign 
-                        borderRadius = {appStyle.borderRadius.basic}
-                        backgroundColor = {Theme.basics.accents.quaternary}
-                        shadowColors = {Theme.specials.shadow}
-                        shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: appStyle.lists.proximity}}
-                        shadowStyle = {appStyle.effects.shadows}
-                        adaptiveSizeForStyle={false}
-                        innerShadow={{
-                            used: true,
-                            borderWidth: 2
-                        }}
-                    />
-                    <View 
-                        style = {[{
-                            flex: 1,
-                            marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
-                            marginVertical:  appStyle.lists.proximity,
-                            borderRadius: appStyle.borderRadius.basic,
-                            backgroundColor: '#00000001'
-                        }]}
-                    >
-                        
-                    </View>
-                </View>
-            }
+            renderItem = {renderTasks}
+            ListHeaderComponent= {(appConfig.weather.type == 'list' && appConfig.weather.locationInfo.length>0)? primaryComponent : undefined}
         />
+
+        <BaseWindow
+            visible = {weatherModal}
+            dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
+            gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.quaternary : false}
+            blur={appStyle.effects.blur}
+            outPress = {()=>setWeatherModal(false)}
+            //onShow = {onShow}
+            modalStyle = {{
+                width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
+                left: appStyle.modals.fullWidth? 0 : horizontalProximity,
+            }}
+            style={{
+                backgroundColor: Theme.basics.neutrals.quaternary,
+                borderTopLeftRadius: appStyle.borderRadius.additional,
+                borderTopRightRadius: appStyle.borderRadius.additional,
+                borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
+                borderColor: Theme.basics.accents.tertiary,
+                flex: 1,
+            }}
+        > 
+            <View style = {[styles.ModalView,{height: 355}]}>
+            <WeatherComponent />
+            </View> 
+        </BaseWindow>
         </>
 
-    );
+    )
 }
 
 //====================================================================================================================================
@@ -1316,9 +1394,19 @@ const ModalItems = ({
             <View style = {[styles.ModalView,{height: 250}]}>
             <ScrollView
                 style = {{
-                    height: 200
+                    height: 200,
+                    width: '96%',
                 }}
             >
+                <Text 
+                    style = {[styles.TaskDate,{
+                        color: Theme.texts.neutrals.tertiary,
+                        width: '100%',
+                        textAlign: 'right'
+                    }]}
+                >
+                    {Language.listItems.to}: {task? task.toTime: '-'}  {task? task.toDate : '-'} 
+                </Text>
                 <Text
                     style={{
                         fontSize: 15,
@@ -1402,7 +1490,8 @@ const ModalItems = ({
     )
 }
 
-import DateTimePicker from "../../../componets/picker/DateTimePicker";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { DatePicker, TimePicker, TimerPicker } from "../../../general_components/DateTimePicker.js/DateTimePicker";
 
 const ModalInput = ({
     visible,
@@ -1423,31 +1512,13 @@ const ModalInput = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].TasksScreen
         
-    const [timePickerModalVisible, setTimePickerModalVisible] = useState(false);
-    const [datePickerModalVisible, setDatePickerModalVisible] = useState(false);
-    const [timerPickerModalVisible, setTimerPickerModalVisible] = useState(false);
+    const [picker, setPicker] = useState({type: undefined, value: undefined});
 
     const [ inputValue, setInputValue ] = useState('');
     const [toTimeValue, setToTimeValue] = useState(undefined);
     const [toDateValue, setToDateValue] = useState(undefined);
     const [inFireValue, setInFireValue] = useState(undefined);
 
-    const setToValues = (values, type) => {
-        if(type == 'time'){
-            setToTimeValue(values);
-            //setToValues(`${pikValueHour} ${pikValueMinute}`,typePicker)
-        } 
-        if(type == 'date') {
-            setToDateValue(values);
-            //setToValues(`${pikValueDay} ${pikValueMonth} ${pikValueYear}`,typePicker)
-        }
-        if(type == 'timer') {
-            setInFireValue(values);
-            //setToValues(`${pikValueTimer}`,typePicker)
-        }
-        //console.log(toTimeValue)
-        //console.log(toDateValue)
-    }
 
     const resetValues=()=>{
         setInputValue('');
@@ -1461,6 +1532,37 @@ const ModalInput = ({
         resetValues()
     }
 
+    const callPicker = (type) => {
+        setPicker({type: type, value: undefined})
+    }
+
+    const resetPicker = () => {
+        setPicker({type: undefined, value: undefined})
+    }
+
+    const closePicker = () => {
+        resetPicker()
+    }
+
+    const setPickerValue = (dataList) => {
+        //setPicker({type: picker.type, value: dataList})
+        picker.value = dataList
+    }
+
+    const accept = () => {
+        if(picker.type == 'time' && picker.value){
+            const time = `${picker.value[0].item}:${picker.value[1].item}`
+            setToTimeValue(time);
+        } 
+        if(picker.type == 'date' && picker.value) {
+            const date = `${picker.value[0].item}.${picker.value[1].item}.${picker.value[2].item}`
+            setToDateValue(date);
+        }
+        if(picker.type == 'timer' && picker.value) {
+            setInFireValue(picker.value.item);
+        }
+        closePicker()
+    }
 
     const handleSubmit = () => {
         inputTask({
@@ -1594,7 +1696,7 @@ const ModalInput = ({
                                 }}
                                 android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
                                 onPress = {()=>{
-                                    setTimePickerModalVisible(true)
+                                    callPicker('time')
                                 }}
                             />
                         </View>
@@ -1633,7 +1735,7 @@ const ModalInput = ({
                                 }}
                                 android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
                                 onPress = {()=>{
-                                    setDatePickerModalVisible(true)
+                                    callPicker('date')
                                 }}
                             />
                         </View>
@@ -1678,7 +1780,7 @@ const ModalInput = ({
                                 }}
                                 android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
                                 onPress = {()=>{
-                                    setTimerPickerModalVisible(true)
+                                    callPicker('timer')
                                 }}
                             />
                         </View>
@@ -1709,29 +1811,84 @@ const ModalInput = ({
                 />
             </BaseWindow>
 
-            <DateTimePicker
-                dateTimePickerModalVisible = {timePickerModalVisible} 
-                setDateTimePickerModalVisible = {setTimePickerModalVisible}
-                typePicker = {'time'}
-                setToValues = {setToValues}
-                LanguageStore = {languagesAppList[LanguageAppIndex]}
-            />
-
-            <DateTimePicker 
-                dateTimePickerModalVisible = {datePickerModalVisible} 
-                setDateTimePickerModalVisible = {setDatePickerModalVisible}
-                typePicker = {'date'}
-                setToValues = {setToValues}
-                LanguageStore = {languagesAppList[LanguageAppIndex]}      
-            />
-
-            <DateTimePicker 
-                dateTimePickerModalVisible = {timerPickerModalVisible} 
-                setDateTimePickerModalVisible = {setTimerPickerModalVisible}
-                typePicker = {'timer'}
-                setToValues = {setInFireValue}
-                LanguageStore = {languagesAppList[LanguageAppIndex]}      
-            />
+            <BaseWindow
+                visible = {picker.type != undefined}
+                dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
+                gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.quaternary : false}
+                blur={appStyle.effects.blur}
+                outPress = {closePicker}
+                //onShow = {onShow}
+                modalStyle = {{
+                    width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
+                    left: appStyle.modals.fullWidth? 0 : horizontalProximity,
+                }}
+                style={{
+                    backgroundColor: Theme.basics.neutrals.quaternary,
+                    borderTopLeftRadius: appStyle.borderRadius.additional,
+                    borderTopRightRadius: appStyle.borderRadius.additional,
+                    borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
+                    borderColor: Theme.basics.accents.tertiary,
+                    flex: 1,
+                }}
+            >
+                <GestureHandlerRootView 
+                    style={{
+                        height: 210,
+                        width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
+                        alignItems: 'center'
+                    }}
+                >
+                {picker.type == 'time' && 
+                <TimePicker 
+                    setValue = {setPickerValue}
+                    colors={{
+                        backgroundColor: Theme.basics.neutrals.quaternary,
+                        textColor: Theme.texts.neutrals.secondary,
+                        separatorColor: Theme.icons.neutrals.secondary,
+                    }}
+                />}
+                {picker.type == 'date' && 
+                <DatePicker 
+                    setValue = {setPickerValue}
+                    colors={{
+                        backgroundColor: Theme.basics.neutrals.quaternary,
+                        textColor: Theme.texts.neutrals.secondary,
+                        separatorColor: Theme.icons.neutrals.secondary,
+                    }}
+                    LanguageAppIndex = {LanguageAppIndex}
+                />}
+                {picker.type == 'timer' &&  
+                <TimerPicker 
+                    setValue = {setPickerValue}
+                    colors={{
+                        backgroundColor: Theme.basics.neutrals.quaternary,
+                        textColor: Theme.texts.neutrals.secondary,
+                        separatorColor: Theme.texts.neutrals.secondary,
+                    }}
+                />}
+                </GestureHandlerRootView>
+                <BasePressable
+                    type="ti"
+                    text={Language.modalInput.accept}
+                    textStyle={{
+                        fontSize: 14,
+                        color: Theme.texts.neutrals.secondary
+                    }}
+                    style={{
+                        height: 50,
+                        width: '100%',
+                        borderRadius: appStyle.borderRadius.additional
+                    }}
+                    direction={'row-reverse'}
+                    icon = {{
+                        name: "check",
+                        size: 28,
+                        color: Theme.texts.neutrals.secondary
+                    }}
+                    android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
+                    onPress = {accept}
+                />
+            </BaseWindow>
         </>
     );
 }

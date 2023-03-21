@@ -50,8 +50,6 @@ const transition = (
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
 const WeatherComponent = (props) => {
-  
-
   const [ weatherData, setWeatherData ] = useState(props.weatherData)
 
   const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
@@ -121,11 +119,158 @@ const WeatherComponent = (props) => {
     color: `${color}20`,
     borderless: true,
     foreground: false
-})
-  
+  })
+
+  const {
+    type = 'full'
+  } = props
+
+  //console.log(weatherData)
+
+  if(type == 'widget'){
+    const localCity = (appConfig.weather.locationInfo[0].city)
+    return (
+      <View
+        style = {{
+          flex: 1,
+          //backgroundColor: 'blue',
+          borderRadius: appStyle.borderRadius.basic
+        }}
+      >
+        {!weatherData  && 
+        <View style = {{alignItems: 'center'}}>
+          <ActivityIndicator size={30} color={Theme.icons.accents.primary}/>
+          <Text
+            color = {Theme.texts.accents.primary}
+          >
+            {netConnectInfo?Language.loadingData:Language.netConnectError}</Text>
+        </View>}
+
+        {weatherData && <>
+        <View
+          style = {{}}
+        >
+          <WeatherItem 
+            item = {weatherData[localCity].weather.hourly[0]} 
+            elements = {"min"} 
+            //{...props}
+            appStyle={appStyle}
+            appConfig={appConfig}
+            ThemeColorsAppIndex={ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+            LanguageAppIndex = {LanguageAppIndex}
+          />
+        </View>
+
+        <View 
+          style = {{
+            position: 'absolute',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            left: 5
+          }}
+        >
+          <MaterialCommunityIcons name="weather-partly-cloudy" size={15} color={appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary} />
+          <Text 
+            style = {{
+              fontSize: 14, 
+              fontWeight: '400', 
+              fontVariant: ['small-caps'],
+              letterSpacing: 0.7, 
+              paddingHorizontal: 3,
+              color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+            }}
+            //
+          >
+            {localCity.toLowerCase()}
+          </Text>
+        </View>
+        
+        </>}
+      </View>
+    )
+  }
+
+  if(type == 'list'){
+    const localCity = (appConfig.weather.locationInfo[0].city)
+    return (
+      <View
+        style = {{
+          flex: 1,
+          //backgroundColor: 'blue',
+          borderRadius: appStyle.borderRadius.basic
+        }}
+      >
+        {!weatherData  && 
+        <View style = {{alignItems: 'center'}}>
+          <ActivityIndicator size={50} color={Theme.icons.accents.primary}/>
+          <Text
+            color = {Theme.texts.accents.primary}
+          >
+            {netConnectInfo?Language.loadingData:Language.netConnectError}</Text>
+        </View>}
+
+        {weatherData && <>
+        <View
+          style = {{flexDirection: 'row',alignItems: 'center'}}
+        >
+          <WeatherItem 
+            item = {weatherData[localCity].weather.hourly[0]} 
+            elements = {"full_list"} 
+            //{...props}
+            appStyle={appStyle}
+            appConfig={appConfig}
+            ThemeColorsAppIndex={ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+            LanguageAppIndex = {LanguageAppIndex}
+          />
+          <WeatherItem 
+            item = {weatherData[localCity].weather.hourly[1]} 
+            elements = {"short_list"} 
+            //{...props}
+            appStyle={appStyle}
+            appConfig={appConfig}
+            ThemeColorsAppIndex={ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+            LanguageAppIndex = {LanguageAppIndex}
+          />
+        </View>
+
+        <View 
+          style = {{
+            position: 'absolute',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            left: 80
+          }}
+        >
+          <MaterialCommunityIcons name="weather-partly-cloudy" size={20} color={Theme.texts.neutrals.primary} />
+          <Text 
+            style = {{
+              fontSize: 14, 
+              fontWeight: '400', 
+              fontVariant: ['small-caps'],
+              letterSpacing: 0.7, 
+              paddingHorizontal: 3,
+              color: Theme.texts.neutrals.primary
+            }}
+            //
+          >
+            {localCity.toLowerCase()}
+          </Text>
+        </View>
+        
+        </>}
+      </View>
+    )
+  }
+
+  //props.type = 'full'
   return (
     <View
-      style = {[styles.base, {opacity: 1}]}
+      style = {styles.base}
     >
       <View style = {{flexDirection: 'row',alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10}}>
         <MaterialCommunityIcons name="weather-partly-cloudy" size={24} color={Theme.icons.accents.primary} />
@@ -141,6 +286,7 @@ const WeatherComponent = (props) => {
           {Language.actualWeather}
         </Text>
       </View>
+
       {!weatherData  && 
       <View style = {{alignItems: 'center'}}>
         <ActivityIndicator size={50} color={Theme.icons.accents.primary}/>
@@ -148,8 +294,7 @@ const WeatherComponent = (props) => {
           color = {Theme.texts.accents.primary}
         >
           {netConnectInfo?Language.loadingData:Language.netConnectError}</Text>
-      </View>
-      }
+      </View>}
 
       {weatherData && <>
       <View style = {{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 30, height: 30}}>
@@ -277,14 +422,7 @@ export default connect(mapStateToProps("WEATHER_C"))(WeatherComponent); //mapDis
 
 const styles = StyleSheet.create({
   base: {
-    paddingTop: 5,
-    //marginTop: 5,
+    flex: 1,
     justifyContent: 'flex-start', 
-    flexGrow: 1,
-    //marginHorizontal: 5,
-    zIndex: 1,
-    flexDirection: "column",
-    //backgroundColor: 'grey',//ColorsApp.sky,
-    borderRadius: 12,
   },
 })

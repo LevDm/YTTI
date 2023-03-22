@@ -27,17 +27,22 @@ import {
 import Constants from "expo-constants";
 //import { transform } from "@motify/core/node_modules/framer-motion";
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-const deviceHeight = Dimensions.get('window').height
-const deviceWidth = Dimensions.get('window').width
+import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+
+const A_BottomSheetFlatList = Animated.createAnimatedComponent(BottomSheetFlatList)
+
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const statusBarHeight = Constants.statusBarHeight+1
 
 import Preview, {Phone} from "./make/Preview";
 
 export default StyleChangePreview = ({
     appStyle,
-    setAppStyle,
-    r_setAppStyle,
-    previewAppStyle,
+    //setAppStyle,
+    //r_setAppStyle,
+    //previewAppStyle,
 
     previewAppStyleA,
 
@@ -47,8 +52,12 @@ export default StyleChangePreview = ({
     splashStart,
 
     ThemeColorsAppIndex,
+    ThemeSchema,
     LanguageAppIndex  
 }, props) => {
+
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex]
     //console.log('changer',appStyle, previewAppStyle)
     const duration = 500
     const scale = 2
@@ -104,11 +113,21 @@ export default StyleChangePreview = ({
     const pressPreview = (index) => {
         //console.log(previewAppStyle)
 
-        let newScaleValues = [false, false, false] 
-        newScaleValues[index] = true
-        setScaleValues(newScaleValues)
+        //let newScaleValues = [false, false, false] 
+        //newScaleValues[index] = true
+        //setScaleValues(newScaleValues)
 
         flatListRef.current.scrollToOffset({animated: true, offset: index*widthPreview})
+    }
+
+    const longPressPreview = (index) => {
+        console.log('preview long', index)
+
+        const newScaleValues = [...scaleValues]
+        newScaleValues[index] = !newScaleValues[index] 
+        setScaleValues(newScaleValues)
+
+        //flatListRef.current.scrollToOffset({animated: true, offset: index*widthPreview})
     }
 
     const renderItem = ({ item,index }) => {
@@ -173,33 +192,40 @@ export default StyleChangePreview = ({
                         ]
                     }}
                 >
-                    
+                    <Pressable
+                        onPress = {()=>{pressPreview(index)}}
+                        delayLongPress={200}
+                        onLongPress={()=>longPressPreview(index)}
+                    >
                     {item === 'load' && 
                         <Phone
                             //key = {String('review'+item+index)} 
+                            previewAppStyleA = {previewAppStyleA}
                             animatedValue = {scaleValues[index]}
-                            onPress = {()=>{pressPreview(index)}}
+             
                         /> 
                     }
                     {item === 'app' && 
-                    
+                        
                         <Preview
                             //key = {String('review'+item+index)} 
                             animatedValue = {scaleValues[index]}
-                            onPress = {()=>{pressPreview(index)}}
+                
 
                             appStyle = {appStyle}
-                            previewAppStyle = {previewAppStyle}
+                            //previewAppStyle = {previewAppStyle}
                             previewAppStyleA = {previewAppStyleA}
                         />
                     }
                     {item === 'modal' && 
                         <Phone
-                            //key = {String('review'+item+index)}  
+                            //key = {String('review'+item+index)} 
+                            previewAppStyleA = {previewAppStyleA} 
                             animatedValue = {scaleValues[index]}
-                            onPress = {()=>{pressPreview(index)}}
+               
                         /> 
                     }
+                    </Pressable>
                 </Animated.View>
           </Animated.View>
           
@@ -207,16 +233,15 @@ export default StyleChangePreview = ({
     };
 
     return (
-        <>
         <View
             style = {{
                 //flex: 1,
                 width: deviceWidth,
                 justifyContent :'center',
                 alignItems: 'center',
-                backgroundColor: 'white',
-                borderBottomLeftRadius: appStyle.borderRadius.basic,
-                borderBottomRightRadius: appStyle.borderRadius.basic,               
+                backgroundColor: Theme.basics.neutrals.quaternary,
+                //borderBottomLeftRadius: appStyle.borderRadius.additional,
+                //borderBottomRightRadius: appStyle.borderRadius.additional,              
                 height: 50+deviceHeight/2,
 
             }}
@@ -226,6 +251,7 @@ export default StyleChangePreview = ({
                     zIndex: 1,
                     left: 10,
                     top: 3,
+                    color: Theme.texts.neutrals.tertiary,
                     fontWeight: 'bold',
                     opacity: 0.3,
                     position: 'absolute',
@@ -234,8 +260,8 @@ export default StyleChangePreview = ({
             >
                 Preview{`\n`}style
             </Text>
-            
             <Animated.FlatList
+                //scrollEnabled={false}
                 ref = {flatListRef}
                 style={{
                     width: deviceWidth
@@ -262,6 +288,7 @@ export default StyleChangePreview = ({
                     return item + index
                 }} 
             />
+
             <View
                 style = {{
                     //flex: 1,
@@ -270,31 +297,18 @@ export default StyleChangePreview = ({
                     height: 48,
                     //borderRadius: 20,
                     flexDirection: 'row',
-                    backgroundColor: 'red'
                 }}
             >
                 <BasePressable
                     text="apply"
-                    icon = {{name: 'check-outline'}}
+                    textStyle={{color: Theme.texts.neutrals.secondary}}
+                    icon = {{name: 'check-bold', color: Theme.texts.neutrals.secondary}}
                     style={{flex: 1}}
-                    onPress={()=>{splashStart(themesApp.indexOf(previewAppStyle.palette.theme))}}
-                />
-                <BasePressable
-                    text={'?'}
-                    style={{flex: 1}}
-                    //onPress={()=>{setPreviewFixed(!previewFixed)}}
+                    direction={'row-reverse'}
+                    onPress={()=>{splashStart()}}
                 />
             </View>
         </View>
-        {/* 
-        <ColorSplash
-            theme={splashTheme}
-            splashVisible = {splashVisible} 
-            setSplashVisible = {setSplashVisible} 
-            splashOut = {splashOut}
-        />
-        */}
-        </>
     )
 }
 

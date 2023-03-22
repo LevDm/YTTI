@@ -215,9 +215,10 @@ export default PresetsSelector = ({
         if(index == 0 || presets[index].options){
             const newAppStyle = (index == 0? appStyle : presets[index].options)
             newAppStyle.customTheme = appStyle.customTheme
+            newAppStyle.palette.scheme = appStyle.palette.scheme
             newAppStyle.presetUsed = presetsNames[index]
             
-            cancelAnimation(previewAppStyleA)
+            //cancelAnimation(previewAppStyleA)
             previewAppStyleA.value = newAppStyle
             
             setPreviewIndex(index)

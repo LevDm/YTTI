@@ -514,10 +514,10 @@ const Settings = (props) => {
 
 
     
-    const previewHeight = (50+deviceHeight/2)+(appStyle.lists.proximity)
+    const previewHeight = (50+deviceHeight/2)
     
 
-    const snapPoints = useMemo(() => [previewHeight/3+30, previewHeight+30], []);
+    const snapPoints = useMemo(() => [previewHeight/3+30, previewHeight+23], []);
 
     const handlePresentModalPress = useCallback(() => {
         props.r_setHideMenu(true)
@@ -585,19 +585,23 @@ const Settings = (props) => {
         />
 
         {/*STYLE UPDATE*/}
-        {false && 
+        {true && 
         <BottomSheetModalProvider>
         <BottomSheetModal
           ref={bottomSheetModalRef}
           index={1}
           snapPoints={snapPoints}
+          handleIndicatorStyle={{backgroundColor: Theme.icons.accents.primary, width: 50}}
+          backgroundStyle={{ backgroundColor: Theme.basics.neutrals.quaternary, borderTopLeftRadius: appStyle.borderRadius.additional, borderTopRightRadius: appStyle.borderRadius.additional}}
           onChange={handleSheetChanges}
         >           
             <StyleChangePreview
                 appStyle={appStyle}
+
                 setAppStyle={setAppStyle}
-                r_setAppStyle={props.r_setAppStyle}
-                previewAppStyle={previewAppStyle}
+                //r_setAppStyle={props.r_setAppStyle}
+                //previewAppStyle={previewAppStyle}
+
                 previewAppStyleA = {previewAppStyleA}
                 splashStart = {splashStart}
 

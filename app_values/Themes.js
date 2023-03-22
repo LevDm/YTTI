@@ -151,11 +151,11 @@ const tinkoff_l = {
     },
     "texts":{
         "accents":{"primary":"#579CF7","secondary":"#4088F6","tertiary":"#9BC2FB","quaternary":"#438DF6"},
-        "neutrals":{"primary":"#feffff","secondary":"#353535","tertiary":"#ACACAC","quaternary":"#E8E8E8"}
+        "neutrals":{"primary":"#101111","secondary":"#353535","tertiary":"#ACACAC","quaternary":"#E8E8E8"}
     },
     "icons":{
         "accents":{"primary":"#579CF7","secondary":"#4088F6","tertiary":"#9BC2FB","quaternary":"#438DF6"},
-        "neutrals":{"primary":"#feffff","secondary":"#353535","tertiary":"#ACACAC","quaternary":"#E8E8E8"}
+        "neutrals":{"primary":"#101111","secondary":"#353535","tertiary":"#ACACAC","quaternary":"#E8E8E8"}
     },
     "specials":{
         "fire":{"primary":"#f00","secondary":"#a5a5a5"},

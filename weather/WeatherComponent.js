@@ -192,7 +192,7 @@ const WeatherComponent = (props) => {
     )
   }
 
-  if(type == 'list'){
+  if(type == 'lists'){
     const localCity = (appConfig.weather.locationInfo[0].city)
     return (
       <View

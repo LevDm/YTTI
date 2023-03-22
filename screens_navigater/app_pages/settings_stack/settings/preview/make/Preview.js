@@ -39,7 +39,8 @@ export const Phone = (props) => {
 
     const {
         animatedValue,
-        previewAppStyleA //= {palette: {theme: 'stock', scheme: 'auto', statusbar: 'auto'}}
+        previewAppStyleA, //= {palette: {theme: 'stock', scheme: 'auto', statusbar: 'auto'}}
+        ThemeSchema
     } = props
 
     const animatedState = useSharedValue(false)
@@ -55,19 +56,22 @@ export const Phone = (props) => {
     },[animatedValue])
 
     const animStyleBG = useAnimatedStyle(()=>{
-
-        const Theme = themesColorsAppList[themesApp.indexOf(previewAppStyleA.value.palette.theme)][previewAppStyleA.value.palette.scheme]
-
+        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
+        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
+        const Theme = themesColorsAppList[ThemeIndex][Schema]
+        //console.log(Theme, previewAppStyleA.value)
         return {
             
-            backgroundColor: withTiming( 
+            backgroundColor: Theme.basics.neutrals.primary,
+            /* 
+            withTiming( 
                 interpolateColor(
                     animatedState.value, 
                     [0, 1],
                     [Theme.basics.neutrals.primary, 'black']  
                 ),
                 {duration: duration}
-            ),
+            ),*/
         }
     },[previewAppStyleA])
 
@@ -136,14 +140,8 @@ export const Phone = (props) => {
 
 export default Preview = (props) => {
     const {
-       // previewAppStyle,
         previewAppStyleA,
-        //appStyle,
-        //setAppStyle,
-        //r_setAppStyle,
-        //getNewAppStyleObject,
-        //LanguageStore,
-        onPress,
+        ThemeSchema,
         animatedValue 
     } = props
     //console.log('preview',appStyle, previewAppStyle)
@@ -157,8 +155,9 @@ export default Preview = (props) => {
     
     
     const header = useAnimatedStyle(()=>{
-        const Theme = themesColorsAppList[themesApp.indexOf(previewAppStyleA.value.palette.theme)][previewAppStyleA.value.palette.scheme]
-
+        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
+        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
+        const Theme = themesColorsAppList[ThemeIndex][Schema]
         return {
             //dynamic style
             backgroundColor: previewAppStyleA.value.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary, // 
@@ -192,7 +191,9 @@ export default Preview = (props) => {
     }, [previewAppStyleA])
    
     const animStyleBody = useAnimatedStyle(()=>{
-        const Theme = themesColorsAppList[themesApp.indexOf(previewAppStyleA.value.palette.theme)][previewAppStyleA.value.palette.scheme]
+        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
+        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
+        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         const heightValueReal = deviceHeight/scale - ((Constants.statusBarHeight+1)+30+35)-30
 
@@ -229,7 +230,9 @@ export default Preview = (props) => {
     }, [previewAppStyleA])
 
     const animStyleBodyItems = useAnimatedStyle(()=>{
-        const Theme = themesColorsAppList[themesApp.indexOf(previewAppStyleA.value.palette.theme)][previewAppStyleA.value.palette.scheme]
+        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
+        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
+        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
             //dynamic style
@@ -240,8 +243,10 @@ export default Preview = (props) => {
     }, [previewAppStyleA])
 
     const animStyleBodyButton = useAnimatedStyle(()=>{
-        const Theme = themesColorsAppList[themesApp.indexOf(previewAppStyleA.value.palette.theme)][previewAppStyleA.value.palette.scheme]
-
+        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
+        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
+        const Theme = themesColorsAppList[ThemeIndex][Schema]
+        
         const sizeValue = 60
         const sizeHalfValue = sizeValue/scale
 
@@ -288,7 +293,9 @@ export default Preview = (props) => {
     
 
     const navigationMenu = useAnimatedStyle(()=>{
-        const Theme = themesColorsAppList[themesApp.indexOf(previewAppStyleA.value.palette.theme)][previewAppStyleA.value.palette.scheme]
+        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
+        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
+        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
             //dynamic style
@@ -343,6 +350,7 @@ export default Preview = (props) => {
             //key = {props.key}
             animatedValue = {phoneAnimatedState}
             previewAppStyleA={previewAppStyleA}
+            ThemeSchema={ThemeSchema}
             //onPress={()=>{
             //    onPress != undefined? onPress() : NaN
 

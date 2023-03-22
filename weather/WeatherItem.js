@@ -392,12 +392,14 @@ function FullListItem(props){
                             {temp}°
                         </Text>
                         <Text 
+                            numberOfLines={2}
                             style = {{
                                 fontWeight: '500', 
                                 fontVariant: ['small-caps'], 
                                 fontSize: 12, 
                                 textAlign: 'center', 
-                                color: Theme.texts.neutrals.primary
+                                color: Theme.texts.neutrals.primary,
+                                width: 110
                             }}
                         >
                             {description}
@@ -408,6 +410,7 @@ function FullListItem(props){
                     <Text 
                         style = {{
                             //flex: 1,
+                            marginTop: -4,
                             fontWeight: '600', 
                             fontVariant: ['small-caps'],
                             fontSize: 12, 
@@ -428,6 +431,7 @@ function FullListItem(props){
                     justifyContent: 'space-around', 
                     flexDirection: 'row', 
                     paddingLeft: 20, 
+                    marginTop: -10
                     //paddingBottom: 3,
                     //backgroundColor: 'red'
                 }}
@@ -506,6 +510,7 @@ function ShortListItem(props){
         >
             <Text 
                 style = {{
+                    marginTop: -9,
                     fontSize: 20, 
                     fontWeight: '700', 
                     fontVariant: ['small-caps'],
@@ -516,10 +521,12 @@ function ShortListItem(props){
                 {hour}
             </Text>
             <Text 
+                numberOfLines={2}
                 style = {{
                     fontWeight: '500', 
                     fontVariant: ['small-caps'], 
                     fontSize: 10, 
+                    width: 110,
                     textAlign: 'center', 
                     color: Theme.texts.neutrals.primary
                 }}

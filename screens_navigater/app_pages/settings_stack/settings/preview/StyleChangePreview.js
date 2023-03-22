@@ -202,6 +202,7 @@ export default StyleChangePreview = ({
                             //key = {String('review'+item+index)} 
                             previewAppStyleA = {previewAppStyleA}
                             animatedValue = {scaleValues[index]}
+                            ThemeSchema={ThemeSchema}
              
                         /> 
                     }
@@ -210,7 +211,7 @@ export default StyleChangePreview = ({
                         <Preview
                             //key = {String('review'+item+index)} 
                             animatedValue = {scaleValues[index]}
-                
+                            ThemeSchema={ThemeSchema}
 
                             appStyle = {appStyle}
                             //previewAppStyle = {previewAppStyle}
@@ -222,6 +223,7 @@ export default StyleChangePreview = ({
                             //key = {String('review'+item+index)} 
                             previewAppStyleA = {previewAppStyleA} 
                             animatedValue = {scaleValues[index]}
+                            ThemeSchema={ThemeSchema}
                
                         /> 
                     }

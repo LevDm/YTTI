@@ -979,7 +979,7 @@ const ListItems = (props) => {
                     </View> 
                     <View flex = {1}>
                         <Text 
-                            numberOfLines = {3 * (listFormatRow? 1 : 2)} 
+                            numberOfLines = {(listFormatRow? 2 : 8)} 
                             style = {[styles.TaskText, {color: Theme.texts.neutrals.secondary}]}
                         >
                             {title}
@@ -1024,7 +1024,7 @@ const ListItems = (props) => {
                 }]}
                 onPress = {()=>setWeatherModal(true)}
             >
-                <WeatherComponent type = {'list'} />
+                <WeatherComponent type = {'lists'} />
             </Pressable>
         </View>
     )
@@ -1299,7 +1299,7 @@ const ListItems = (props) => {
                 marginBottom: 0, 
             }}
             renderItem = {renderTasks}
-            ListHeaderComponent= {(appConfig.weather.type == 'list' && appConfig.weather.locationInfo.length>0)? primaryComponent : undefined}
+            ListHeaderComponent= {(appConfig.weather.type == 'lists' && appConfig.weather.locationInfo.length>0)? primaryComponent : undefined}
         />
 
         <BaseWindow

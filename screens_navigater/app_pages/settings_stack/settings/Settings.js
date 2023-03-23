@@ -53,12 +53,12 @@ import {
 import themesColorsAppList, {themesApp} from "../../../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../../../app_values/Languages";
 
-import store from "../../../../redux_files/store";
+import store from "../../../../app_redux_files/store";
 import {connect} from 'react-redux';
-import mapStateToProps from "../../../../redux_files/stateToProps";
-import mapDispatchToProps from "../../../../redux_files/dispatchToProps";
+import mapStateToProps from "../../../../app_redux_files/stateToProps";
+import mapDispatchToProps from "../../../../app_redux_files/dispatchToProps";
 
-import dataRedactor from "../../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../../app_async_data_manager/data_redactor";
 
 import { 
     BasePressable,
@@ -526,13 +526,14 @@ const Settings = (props) => {
     }, []);
 
     const handleSheetChanges = useCallback((index) => {
-        console.log('handleSheetChanges', index);
+        console.log('handleSheetChanges', index, bottomSheetVisible);
         if(index === -1 && bottomSheetVisible){
+            console.log('menu visible', index);
             setBottomSheetVisible(false)
             props.r_setHideMenu(false)
         }
 
-    }, []);
+    }, [bottomSheetVisible]);
     
     
 

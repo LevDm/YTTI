@@ -28,9 +28,9 @@ import themesColorsAppList, {themesApp} from "../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../app_values/Languages";
 
 import { connect } from "react-redux";
-import store from "../../redux_files/store"
-import mapDispatchToProps from "../../redux_files/dispatchToProps";
-import mapStateToProps from "../../redux_files/stateToProps";
+import store from "../../app_redux_files/store"
+import mapDispatchToProps from "../../app_redux_files/dispatchToProps";
+import mapStateToProps from "../../app_redux_files/stateToProps";
 
 const screen = Dimensions.get('screen')
 const widthScreen = screen.width

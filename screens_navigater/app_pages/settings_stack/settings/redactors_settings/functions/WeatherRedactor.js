@@ -52,7 +52,7 @@ import NetInfo from '@react-native-community/netinfo';
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 
-import dataRedactor from "../../../../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../../../../app_async_data_manager/data_redactor";
 
 import { 
     BasePressable, 
@@ -69,7 +69,7 @@ import { weatherTypes } from "../../../../../../app_values/AppDefault";
 
 import DraggableFlatList, {ScaleDecorator,} from "react-native-draggable-flatlist";
 
-import { WeatherAPI } from "../../../../../../async_data_manager/data_loader";
+import { WeatherAPI } from "../../../../../../app_async_data_manager/data_loader";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width

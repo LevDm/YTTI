@@ -33,12 +33,12 @@ const statusBarHeight = Constants.statusBarHeight+1
 
 import { LinearGradient } from "expo-linear-gradient";
 
-import dataRedactor from "../../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../../app_async_data_manager/data_redactor";
 
-import store from "../../../../redux_files/store";
+import store from "../../../../app_redux_files/store";
 import {connect} from 'react-redux';
-import mapStateToProps from "../../../../redux_files/stateToProps";
-import mapDispatchToProps from "../../../../redux_files/dispatchToProps";
+import mapStateToProps from "../../../../app_redux_files/stateToProps";
+import mapDispatchToProps from "../../../../app_redux_files/dispatchToProps";
 
 import { BasePressable, BaseTextInput } from "../../../../general_components/base_components/BaseElements";
 

@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import store from '../redux_files/store';
+import store from '../app_redux_files/store';
 import dataCleaner from './data_cleaner';
 
 import themesColorsAppList from '../app_values/Themes';

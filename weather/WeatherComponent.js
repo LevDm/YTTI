@@ -18,9 +18,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 
 import { connect } from 'react-redux';
-import store from "../redux_files/store";
-import mapStateToProps from "../redux_files/stateToProps";
-import mapDispatchToProps from "../redux_files/dispatchToProps";
+import store from "../app_redux_files/store";
+import mapStateToProps from "../app_redux_files/stateToProps";
+import mapDispatchToProps from "../app_redux_files/dispatchToProps";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -225,6 +225,7 @@ const WeatherComponent = (props) => {
             ThemeSchema = {ThemeSchema}
             LanguageAppIndex = {LanguageAppIndex}
           />
+          <View style={{backgroundColor: Theme.specials.separator,width: 1,height: 80}}/>
           <WeatherItem 
             item = {weatherData[localCity].weather.hourly[1]} 
             elements = {"short_list"} 

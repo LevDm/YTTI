@@ -7,7 +7,7 @@ import languagesAppList, {languagesApp} from "../../../../../app_values/Language
 import themesColorsAppList, {themesApp} from "../../../../../app_values/Themes";
 
 
-import dataRedactor from "../../../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../../../app_async_data_manager/data_redactor";
 
 import {
     BottomSheetModal,

@@ -40,7 +40,7 @@ const deviceWidth = Dimensions.get('window').width
 //<MaterialCommunityIcons name="moon-waning-crescent" size={24} color="black" />
 //<MaterialCommunityIcons name="theme-light-dark" size={24} color="black" />
 
-import dataRedactor from "../../../../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../../../../app_async_data_manager/data_redactor";
 
 import ColorShemeSwitch from "../../../../../../general_components/ColorShemeSwitch";
 

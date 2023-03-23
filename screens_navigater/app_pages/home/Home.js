@@ -48,19 +48,14 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as Application from 'expo-application';
 
 import SkiaViewDisign from "../../../general_components/base_components/SkiaViewDisign";
-// components
-//import ListItems from "../../../componets/Listitems";
-//import ModalInput from "../../../componets/ModalInput";
-import TrojanButton from "../../../componets/TrojanButton";
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {connect} from 'react-redux';
-import mapStateToProps from "../../../redux_files/stateToProps";
-import mapDispatchToProps from "../../../redux_files/dispatchToProps";
-import store from "../../../redux_files/store";
+import mapStateToProps from "../../../app_redux_files/stateToProps";
+import mapDispatchToProps from "../../../app_redux_files/dispatchToProps";
+import store from "../../../app_redux_files/store";
 
-import dataRedactor from "../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../app_async_data_manager/data_redactor";
 
 import { 
     BasePressable,
@@ -1004,7 +999,7 @@ const ListItems = (props) => {
         >
             <SkiaViewDisign 
                 borderRadius = {appStyle.borderRadius.basic}
-                backgroundColor = {Theme.basics.accents.quaternary}
+                backgroundColor = {Theme.basics.accents.tertiary}
                 shadowColors = {Theme.specials.shadow}
                 shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: appStyle.lists.proximity}}
                 shadowStyle = {appStyle.effects.shadows}
@@ -1671,7 +1666,7 @@ const ModalInput = ({
                         >
                             <SkiaViewDisign 
                                 borderRadius = {appStyle.borderRadius.additional}
-                                backgroundColor = {Theme.basics.accents.quaternary}
+                                backgroundColor = {Theme.basics.accents.tertiary}
                                 shadowColors = {Theme.specials.shadow}
                                 shadowMargin={{horizontal: 10, vertical: 10}}
                                 shadowStyle = {appStyle.effects.shadows}
@@ -1711,7 +1706,7 @@ const ModalInput = ({
                         >
                             <SkiaViewDisign 
                                 borderRadius = {appStyle.borderRadius.additional}
-                                backgroundColor = {Theme.basics.accents.quaternary}
+                                backgroundColor = {Theme.basics.accents.tertiary}
                                 shadowColors = {Theme.specials.shadow}
                                 shadowMargin={{horizontal: 10, vertical: 10}}
                                 shadowStyle = {appStyle.effects.shadows}
@@ -1757,7 +1752,7 @@ const ModalInput = ({
                         >
                             <SkiaViewDisign 
                                 borderRadius = {appStyle.borderRadius.additional}
-                                backgroundColor = {Theme.basics.accents.quaternary}
+                                backgroundColor = {Theme.basics.accents.tertiary}
                                 shadowColors = {Theme.specials.shadow}
                                 shadowMargin={{horizontal: 10, vertical: 10}}
                                 shadowStyle = {appStyle.effects.shadows}

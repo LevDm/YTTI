@@ -16,9 +16,9 @@ import * as SplashScreen from 'expo-splash-screen';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { Provider } from 'react-redux';
-import store from './redux_files/store';
+import store from './app_redux_files/store';
 
-import dataLoader from './async_data_manager/data_loader';
+import dataLoader from './app_async_data_manager/data_loader';
 
 
 //import ThemesColorsAppList, {themesApp} from './styles/ColorsApp';

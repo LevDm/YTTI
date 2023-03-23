@@ -30,7 +30,7 @@ import DraggableFlatList, {ScaleDecorator,} from "react-native-draggable-flatlis
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import dataRedactor from "../../../../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../../../../app_async_data_manager/data_redactor";
 
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";

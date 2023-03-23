@@ -17,10 +17,10 @@ import {
 } from '@gorhom/bottom-sheet';
 
 import { connect } from 'react-redux';
-import store from "../redux_files/store";
-import mapStateToProps from "../redux_files/stateToProps";
-import mapDispatchToProps from "../redux_files/dispatchToProps";
-import dataRedactor from '../async_data_manager/data_redactor';
+import store from "../app_redux_files/store";
+import mapStateToProps from "../app_redux_files/stateToProps";
+import mapDispatchToProps from "../app_redux_files/dispatchToProps";
+import dataRedactor from '../app_async_data_manager/data_redactor';
 
 import themesColorsAppList, {themesApp} from "../app_values/Themes";
 import languagesAppList, {languagesApp} from "../app_values/Languages";

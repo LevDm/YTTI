@@ -12,7 +12,7 @@ import {
 
 //import LanguagesAppList, {languagesApp} from "../../../../../language/language";
 //import ThemesColorsAppList, {themesApp} from "../../../../../styles/ColorsApp";
-import dataRedactor from "../../../../../../async_data_manager/data_redactor";
+import dataRedactor from "../../../../../../app_async_data_manager/data_redactor";
 
 
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";

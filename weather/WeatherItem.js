@@ -82,13 +82,13 @@ const WeatherItem = (props) => {
             break
 
         case 'full_list':
-            params.size.width = '60%'
+            params.size.width = '70%'
             params.size.height = 104
             params.skia = false
             break
 
         case 'short_list':
-            params.size.width = '40%'
+            params.size.width = '30%'
             params.size.height = 104
             params.skia = false
             break
@@ -354,7 +354,7 @@ function FullListItem(props){
                     //alignItems: 'center',
                     flexDirection: 'row',
                     width: '100%',
-                    justifyContent: 'space-between',
+                    justifyContent: 'flex-start',
                     //backgroundColor: 'red'
                 }}
             >
@@ -375,6 +375,7 @@ function FullListItem(props){
                             //width: '100%',
                             //flex: 3,
                             marginTop: 15,
+                            marginLeft: 10,
                             justifyContent: 'flex-start',
                             alignItems: 'center',
                             flexDirection: 'row',
@@ -504,7 +505,7 @@ function ShortListItem(props){
             style={[{
                     flex: 1,
                     alignItems: 'center', 
-                    justifyContent: 'center'
+                    justifyContent: 'center',
                 }
             ]}
         >

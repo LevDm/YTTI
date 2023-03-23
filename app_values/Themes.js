@@ -56,11 +56,11 @@ const morpPinkBlue_l = {
     },
     "texts":{
         "accents":{"primary":"#e896ff","secondary":"#cdb1f2","tertiary":"#93c7f2","quaternary":"#b7daf6"},
-        "neutrals":{"primary":"#f6fbff","secondary":"#3e526b","tertiary":"#b4c9f5","quaternary": "#AEB8D2"}
+        "neutrals":{"primary":"#f6fbff","secondary":"#3e526b","tertiary":"#506186","quaternary": "#AEB8D2"}
     },
     "icons":{
         "accents":{"primary":"#e896ff","secondary":"#cdb1f2","tertiary":"#93c7f2","quaternary":"#bfd8f9"},
-        "neutrals":{"primary":"#f6fbff","secondary":"#37485e","tertiary":"#b4c9f5","quaternary":"#AEB8D2"}
+        "neutrals":{"primary":"#f6fbff","secondary":"#37485e","tertiary":"#506186","quaternary":"#AEB8D2"}
     },
     "specials":{
         "fire":{"primary":"#f00","secondary":"#a5a5a5"},
@@ -79,11 +79,11 @@ const morpPinkBlue_d = {
     },
     "texts":{
         "accents":{"primary":"#e896ff","secondary":"#cdb1f2","tertiary":"#93c7f2","quaternary":"#9ac2f5"},
-        "neutrals":{"primary":"#f7fbff","secondary":"#b9c9e0","tertiary":"#b4c9f5","quaternary":"#d4dbe9"}
+        "neutrals":{"primary":"#f7fbff","secondary":"#b9c9e0","tertiary":"#48597d","quaternary":"#d4dbe9"}
     },
     "icons":{
         "accents":{"primary":"#e896ff","secondary":"#cdb1f2","tertiary":"#93c7f2","quaternary":"#9ac2f5"},
-        "neutrals":{"primary":"#f7fbff","secondary":"#b9c9e0","tertiary":"#b4c9f5","quaternary":"#d4dbe9"}
+        "neutrals":{"primary":"#f7fbff","secondary":"#b9c9e0","tertiary":"#48597d","quaternary":"#d4dbe9"}
     },
     "specials":{
         "fire":{"primary":"#f00","secondary":"#a5a5a5"},

@@ -54,6 +54,9 @@ const LanguageStoreRu = {
         selector: 'Выберете язык',
         engRu: ['Английский', 'Русский']
       },
+      NFCScreen: {
+        title: 'NFC',
+      },
       PainterScreen: {
         title: 'редактор цветов',
         mod: 'режим',
@@ -428,6 +431,9 @@ const LanguageStoreEng = {
       LanguageSettings: {
         selector: 'Select language',
         engRu: ['English', 'Russian']
+      },
+      NFCScreen: {
+        title: 'NFC',
       },
       PainterScreen: {
         title: 'color editor',

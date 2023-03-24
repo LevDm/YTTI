@@ -468,6 +468,16 @@ const Settings = (props) => {
     }
 
 
+    const goToNFC = () => {
+        //ToastAndroid.show(Language.stackTransition.loadPainter, ToastAndroid.SHORT);   
+        bottomSheetVisible? bottomSheetModalRef.current?.dismiss(): null;    
+        (!bottomSheetVisible && !props.hideMenu)? props.r_setHideMenu(true) : null
+        //console.log('settings to palette', bottomSheetVisible , props.hideMenu) 
+        props.navigation.navigate('NFC')
+        console.log('settings to nfc', bottomSheetVisible , props.hideMenu)  
+    }
+
+
 
     const goToPalleteScreen = (index = 0, mod = 0) => {
         ToastAndroid.show(Language.stackTransition.loadPainter, ToastAndroid.SHORT);   
@@ -513,6 +523,7 @@ const Settings = (props) => {
             previewAppStyleA = {previewAppStyleA}
     
             goToPalleteScreen = {goToPalleteScreen}
+            goToNFC={goToNFC}
     
             backBurgerPress = {backBurgerPress}
 
@@ -770,6 +781,7 @@ const BasisList = (props) => {
 
 
         goToPalleteScreen,
+        goToNFC,
 
         backBurgerPress,
 
@@ -1459,6 +1471,7 @@ const BasisList = (props) => {
                 <RedactorComponent
                     //for themes redactor
                     goToPalleteScreen = {goToPalleteScreen}
+                    goToNFC={goToNFC}
 
                     appStyle={appStyle}
                     //setAppStyle={setAppStyle}

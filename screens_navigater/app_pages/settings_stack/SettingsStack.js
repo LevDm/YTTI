@@ -14,6 +14,7 @@ import languagesAppList, { languagesApp } from "../../../app_values/Languages";
 
 import Settings from './settings/Settings';
 import Palette from './palette/Palette';
+import NFC from './NFC_dropper/NFC_rw_screen';
 
 const Stack = createStackNavigator();
 
@@ -86,6 +87,11 @@ function SettingsStack(props) {
             <Stack.Screen 
                 name="settings" 
                 component={Settings} 
+                //options={{detachPreviousScreen: false}}
+            />
+            <Stack.Screen 
+                name="NFC" 
+                component={NFC} 
                 //options={{detachPreviousScreen: false}}
             />
             <Stack.Screen 

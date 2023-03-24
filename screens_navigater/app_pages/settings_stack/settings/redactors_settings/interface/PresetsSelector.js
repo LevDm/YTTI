@@ -179,7 +179,7 @@ const PresetItem = ({
 }
 
 export default PresetsSelector = ({
-    goToPalleteScreen,
+    goToNFC,
 
     appStyle,
 
@@ -242,7 +242,7 @@ export default PresetsSelector = ({
 
     const dropPreset = ()=>{
         console.log('grop screen')
-
+        goToNFC()
     }
 
 

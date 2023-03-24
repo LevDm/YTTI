@@ -10,6 +10,16 @@ function mapStateToProps(component) {
                     tasks: state.tasks
                 };
             }
+        }
+        case "NFC_SCREEN": {
+            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            return function(state) {
+                return {
+                    appStyle: state.appStyle,
+                    appConfig: state.appConfig,
+                    hideMenu: state.hideMenu
+                };
+            }
         }    
         case "PALETTE_SCREEN": {
             console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')

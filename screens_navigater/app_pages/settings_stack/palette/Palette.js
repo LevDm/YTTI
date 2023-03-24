@@ -223,45 +223,6 @@ const Palette = (props) => {
   const [initialColor, setInitialValue] = useState() 
   const [stateOpenedColor, setStateOpenedColor] = useState()
 
-  const copyObject = (copied, currentTrace, listStates )=>{
-    const copy = {}
-    //let newTrace
-    for(let el in copied){  
-      let newTrace = [...currentTrace, el]
-      if((typeof copied[el] != 'object') || (Array.isArray(copied[el]))){        
-        let copyValue = copied[el]
-        for(let colorState of listStates){
-          if( typeof colorState.trace != 'string'){
-            if(newTrace.join('-') == colorState.trace.join('-')){
-              //console.log('find element. trace find & color',newTrace.join('-'), colorState.trace.join('-'))
-              copyValue = colorState.value
-              break
-            } 
-          } else {
-            if((colorState.scheme && (newTrace[0] == colorState.scheme)) || !colorState.scheme){
-              if(colorState.trace.includes(newTrace[newTrace.length-2])){
-                //console.log('find element. trace find & color', el)
-                let color = listStates[Object.keys(copied).indexOf(el)].value
-                if(color == ''){color = copied[el]}
-                copyValue = color
-                break
-              } 
-              else if (colorState.trace.includes(newTrace[newTrace.length-1])){
-                copyValue = colorState.value
-                break
-              }
-            }
-            
-          }
-        }
-        copy[el] = copyValue
-      } else {
-        copy[el] = copyObject(copied[el], newTrace, listStates)
-      }
-    }
-    return copy
-  }
-
   const [modIndex, setModIndex] = useState(props.route.params.modIndex ? props.route.params.modIndex : 0 )
   const [currentCustomTheme, setCurrentCustomTheme] = useState(easeUpdate(themesColorsAppList[props.route.params.themeIndex], ['theme'], 'custom'))
 

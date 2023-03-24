@@ -36,7 +36,9 @@ const A_BottomSheetFlatList = Animated.createAnimatedComponent(BottomSheetFlatLi
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 const statusBarHeight = Constants.statusBarHeight+1
 
-import Preview, {Phone} from "./make/Preview";
+import PreviewScreen from "./make/Preview_1";
+import PreviewModal from "./make/Preview_2";
+import Phone from "./make/Basis";
 
 export default StyleChangePreview = ({
     appStyle,
@@ -57,7 +59,7 @@ export default StyleChangePreview = ({
 }, props) => {
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex]
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.preview
     //console.log('changer',appStyle, previewAppStyle)
     const duration = 500
     const scale = 2
@@ -182,7 +184,7 @@ export default StyleChangePreview = ({
                         width: widthPreview,
                         //backgroundColor: 'blue',
                         position: 'absolute',
-                        opacity: opacity,
+                        //opacity: opacity,
                         justifyContent: 'center',
                         alignItems: 'center',
                         transform: [
@@ -208,23 +210,21 @@ export default StyleChangePreview = ({
                     }
                     {item === 'app' && 
                         
-                        <Preview
-                            //key = {String('review'+item+index)} 
+                        <PreviewScreen
                             animatedValue = {scaleValues[index]}
                             ThemeSchema={ThemeSchema}
 
                             appStyle = {appStyle}
-                            //previewAppStyle = {previewAppStyle}
                             previewAppStyleA = {previewAppStyleA}
                         />
                     }
                     {item === 'modal' && 
-                        <Phone
-                            //key = {String('review'+item+index)} 
-                            previewAppStyleA = {previewAppStyleA} 
+                        <PreviewModal
                             animatedValue = {scaleValues[index]}
                             ThemeSchema={ThemeSchema}
-               
+
+                            appStyle = {appStyle}
+                            previewAppStyleA = {previewAppStyleA}  
                         /> 
                     }
                     </Pressable>
@@ -253,14 +253,15 @@ export default StyleChangePreview = ({
                     zIndex: 1,
                     left: 10,
                     top: 3,
+                    fontSize: 11,
                     color: Theme.texts.neutrals.tertiary,
                     fontWeight: 'bold',
-                    opacity: 0.3,
+                    opacity: 0.7,
                     position: 'absolute',
                     textAlign: 'center'
                 }}
             >
-                Preview{`\n`}style
+                {Language.title}
             </Text>
             <Animated.FlatList
                 //scrollEnabled={false}
@@ -302,12 +303,12 @@ export default StyleChangePreview = ({
                 }}
             >
                 <BasePressable
-                    text="apply"
+                    text={Language.apply}
                     textStyle={{color: Theme.texts.neutrals.secondary}}
                     icon = {{name: 'check-bold', color: Theme.texts.neutrals.secondary}}
                     style={{flex: 1}}
                     direction={'row-reverse'}
-                    onPress={()=>{splashStart()}}
+                    onPress={splashStart}
                 />
             </View>
         </View>

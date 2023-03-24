@@ -46,6 +46,10 @@ const LanguageStoreRu = {
     SettingsScreen: {
       HeaderTitle: 'настройки',
       app: 'приложения',
+      preview: {
+        title: 'Предпросмотр',
+        apply: 'Принять изменения'
+      },
       LanguageSettings: {    
         selector: 'Выберете язык',
         engRu: ['Английский', 'Русский']
@@ -417,6 +421,10 @@ const LanguageStoreEng = {
     SettingsScreen: {
       HeaderTitle: 'settings',
       app: 'for app',
+      preview: {
+        title: 'Preview',
+        apply: 'Apply changes'
+      },
       LanguageSettings: {
         selector: 'Select language',
         engRu: ['English', 'Russian']

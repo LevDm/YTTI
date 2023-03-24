@@ -327,7 +327,6 @@ const Settings = (props) => {
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
-    const [previewAppStyle, setPreviewAppStyle] = useState(props.appStyle);
 
     const previewAppStyleA = useSharedValue(props.appStyle)
 
@@ -359,7 +358,6 @@ const Settings = (props) => {
 
         if (appStyle != jstore.appStyle) {
             setAppStyle(jstore.appStyle);
-            setPreviewAppStyle(jstore.appStyle)
             previewAppStyleA.value = jstore.appStyle
             setBottomBord(
                 jstore.appStyle.functionButton.size 
@@ -416,14 +414,6 @@ const Settings = (props) => {
     const bottomSheetModalRef = useRef(BottomSheetModal);
 
 
-    const splashStart = (themeIndex) => {
-        //if(appStyle.theme != theme){
-
-            //setSplashTheme(themeIndex);
-            //setSplashVisible(true);
-            applyAppStyle()    
-        //}
-    }
 
     const applyAppStyle = ()=>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
@@ -444,59 +434,35 @@ const Settings = (props) => {
     }
 
 
+    const splashStart = () => {
 
+        applyAppStyle()    
 
+        bottomSheetModalRef.current?.dismiss()
+    }
 
 
     const jumpPress =()=>{
         console.log('pressj')
-        /*
-        sectListRef.current.scrollToLocation({
-            itemIndex: 0,
-            sectionIndex: 0,
-            viewPosition: 1,
-            animated: false,
-        })
-        */
+        
         handlePresentModalPress()
     }
 
-
-    
-
-    const copyObject = (copied)=>{
-        const copy = {}
-        for(let el in copied){
-            if((typeof copied[el] != 'object') || (Array.isArray(copied[el]))){
-                copy[el] = copied[el]
-            } else {
-                copy[el] = copyObject(copied[el])
-            }
-        }
-        return copy
-    }
-
-    const getNewAppConfigObject =()=>{
-        return copyObject(appConfig)
-    }
-
-    const getNewAppStyleObject =(flag = 'previewStyle')=>{
-        if(flag == 'currentStyle'){
-            return copyObject(appStyle)
-        }
-        return copyObject(previewAppStyle)
-    }
   
     const applyPress =()=>{
         console.log('pressa')
-        
+        //bottomSheetModalRef.current?.dismiss()
         applyAppStyle()
         //splashStart(previewAppStyle.theme, themesApp.indexOf(previewAppStyle.theme));
     }
     
     const backBurgerPress = () => {
-        (!bottomSheetVisible && props.hideMenu)? props.r_setHideMenu(false) : null
         Vibration.vibrate([5,8])
+        if(bottomSheetVisible && props.hideMenu){
+            bottomSheetModalRef.current?.dismiss()
+            setBottomSheetVisible(false)
+            props.r_setHideMenu(false) 
+        } 
         props.navigation.goBack()
         console.log('settings back', bottomSheetVisible , props.hideMenu)
     }
@@ -534,32 +500,21 @@ const Settings = (props) => {
         }
 
     }, [bottomSheetVisible]);
-    
-    
 
     
     return (
     <>  
         <BasisList 
             reaValueBobberButtonVisible = {animValueBobberButtonVisible}
-
-            setAppConfig = {setAppConfig}
-            setAppStyle = {setAppStyle} 
     
             r_setAppStyle = {props.r_setAppStyle}
             r_setAppConfig = {props.r_setAppConfig}
     
             previewAppStyleA = {previewAppStyleA}
     
-            previewAppStyle = {previewAppStyle}
-            setPreviewAppStyle = {setPreviewAppStyle}
-    
             goToPalleteScreen = {goToPalleteScreen}
     
             backBurgerPress = {backBurgerPress}
-    
-            getNewAppStyleObject = {getNewAppStyleObject}
-            getNewAppConfigObject = {getNewAppConfigObject}
 
             bottomBord={bottomBord}
             
@@ -598,12 +553,8 @@ const Settings = (props) => {
         >           
             <StyleChangePreview
                 appStyle={appStyle}
-
-                setAppStyle={setAppStyle}
-                //r_setAppStyle={props.r_setAppStyle}
-                //previewAppStyle={previewAppStyle}
-
                 previewAppStyleA = {previewAppStyleA}
+
                 splashStart = {splashStart}
 
                 ThemeColorsAppIndex={ThemeColorsAppIndex}
@@ -812,23 +763,15 @@ const BasisList = (props) => {
     const {
         reaValueBobberButtonVisible,
 
-        setAppConfig,
-        setAppStyle,
-
         r_setAppStyle,
         r_setAppConfig,
 
         previewAppStyleA,
 
-        previewAppStyle,
-        setPreviewAppStyle,
 
         goToPalleteScreen,
 
         backBurgerPress,
-
-        getNewAppStyleObject,
-        getNewAppConfigObject,
 
         bottomBord,
 

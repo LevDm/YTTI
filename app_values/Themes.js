@@ -242,7 +242,7 @@ const whatsapp_l = {
     "scheme":"light",
     "statusBar":"auto",
     "basics":{
-        "accents":{"primary":"#01816A","secondary":"#01A985","tertiary":"#008069","quaternary":"#effffc"},
+        "accents":{"primary":"#01816A","secondary":"#01A985","tertiary":"#00bc9c","quaternary":"#effffc"},
         "neutrals":{"primary":"#F7F8FA","secondary":"#ffffff","tertiary":"#ffffff","quaternary":"#ffffff"}
     },
     "texts":{
@@ -265,7 +265,7 @@ const whatsapp_d = {
     "scheme":"dark",
     "statusBar":"auto",
     "basics":{
-        "accents":{"primary":"#1F2C34","secondary":"#04A885","tertiary":"#1F2C34","quaternary":"#1B9C7D"},
+        "accents":{"primary":"#1F2C34","secondary":"#04A885","tertiary":"#273741","quaternary":"#1B9C7D"},
         "neutrals":{"primary":"#0C131B","secondary":"#131A22","tertiary":"#121212","quaternary":"#1C1C1E"}
     },
     "texts":{

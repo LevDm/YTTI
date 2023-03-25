@@ -1950,13 +1950,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,  
     },
-    HiddenButton: {
-        width: 55,
-        marginRight: 5,
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     TaskText: {
         fontSize: 16, 
         letterSpacing: 1, 
@@ -2000,13 +1993,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center', 
         alignSelf: 'center',
-    },
-    HiddenButton: {
-        width: 55,
-        marginRight: 10,
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     ModalActionGroup: {
         width: '98%',

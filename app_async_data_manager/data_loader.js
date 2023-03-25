@@ -65,6 +65,7 @@ export default dataLoader;
 
 
 import Constants from 'expo-constants';
+const WEATHER_API_KEY = "e2b94f1a4a4231151132fbd1a15e1633"
 
 export const WeatherAPI = async (appConfig, load = true) => {
   const UPDATE_FREQUENCY = 2 //hours 8
@@ -131,7 +132,8 @@ export const WeatherAPI = async (appConfig, load = true) => {
   if(update){
     for(const location of locationInfo){
       if(!location.used){continue}
-      const API_WEATHER_URL = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${location.coords.lat}&lon=${location.coords.lon}&lang=${languageApp}&exclude=current,daily&units=metric&appid=${Constants.manifest.extra.WEATHER_API_KEY}`)
+      const API_WEATHER_URL = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${location.coords.lat}&lon=${location.coords.lon}&lang=${languageApp}&exclude=current,daily&units=metric&appid=${WEATHER_API_KEY}`)
+      //Constants.manifest.extra.WEATHER_API_KEY
       const dataWeather = await API_WEATHER_URL.json();
       
       const weatherInfo = {

@@ -87,7 +87,7 @@ const ShemePicker = ({
           width: deviceWidth,
           justifyContent: 'center',
           paddingHorizontal: CIRCLE_PICKER_SIZE/2,
-          backgroundColor: 'transparent',
+          //backgroundColor: 'transparent',
           borderRadius: 30,
           //justifyContent: 'center',
           alignItems: 'center',
@@ -221,14 +221,6 @@ const staticStyles = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.2)',
   },
   gradient: { height: sliderSize.height, width: sliderSize.width, borderRadius: sliderSize.height/2 },
-  listText: {
-    //paddingLeft: 10,
-    marginLeft: 5,
-    fontSize: 14, 
-    //fontVariant: ['small-caps'], 
-    fontWeight: '400', 
-    letterSpacing: 0.5
-  },
   text: {
     marginLeft: 10,
     fontSize: 16, 

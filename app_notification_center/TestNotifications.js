@@ -88,7 +88,10 @@ async function registerForPushNotificationsAsync() {
   console.log('async reg')
   let token = 'C7QfUUEc4txJFhn5KmdSDV';
   //MediaLibrary.getPermissionsAsync() and MediaLibrary.requestPermissionsAsync().
-  if (Constants.isDevice) {
+
+  const isDevice = true //Constants.isDevice
+
+  if (isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {

@@ -1,5 +1,4 @@
 import { StatusBar } from 'expo-status-bar';
-import Constants from "expo-constants";
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { AppState, StyleSheet, SafeAreaView, View, Appearance } from 'react-native';
 

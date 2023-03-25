@@ -70,6 +70,7 @@ import { weatherTypes } from "../../../../../../app_values/AppDefault";
 import DraggableFlatList, {ScaleDecorator,} from "react-native-draggable-flatlist";
 
 import { WeatherAPI } from "../../../../../../app_async_data_manager/data_loader";
+const WEATHER_API_KEY = "e2b94f1a4a4231151132fbd1a15e1633"
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
@@ -133,7 +134,7 @@ export default WeatherRedactor = ({
         const lang = languagesAppList[LanguageAppIndex].language
 
         setDvcLocationMsg({code: 0.5, msg: 'request definition city'})
-        const API_CITY_URL = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&lang=${lang}&appid=${Constants.manifest.extra.WEATHER_API_KEY}`);
+        const API_CITY_URL = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${coords.lat}&lon=${coords.lon}&lang=${lang}&appid=${WEATHER_API_KEY}`);//Constants.manifest.extra.WEATHER_API_KEY
         const dataCity = await API_CITY_URL.json();
 
         locationInfo.city = (dataCity.name).replace(/\u0301/g, ""); // replace removes the accent of a letter

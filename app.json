@@ -19,29 +19,33 @@
       ]
     ],
     "extra": {
-      "WEATHER_API_KEY": "e2b94f1a4a4231151132fbd1a15e1633"
+      "WEATHER_API_KEY": "e2b94f1a4a4231151132fbd1a15e1633",
+      "expo-navigation-bar": {
+        "position": "absolute",
+        "visibility": "hidden",
+        "behavior": "inset-swipe",
+        "backgroundColor": "#00000080"
+      },
+      "eas": {
+        "projectId": "2456817a-bd8d-4391-9536-7d0069bb531e"
+      }
     },
-
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-
     "assetBundlePatterns": [
       "**/*"
     ],
-
     "ios": {
       "supportsTablet": true
     },
-
     "android": {
       "userInterfaceStyle": "automatic",
       "icon": "./assets/iconY.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/foreground_iconY.png",
         "backgroundColor": "#000000",
-        "backgroundImage": "./assets/background_iconY.png",
-        "monochromeImage": "./assets/monochrome_iconY.png"
+        "backgroundImage": "./assets/background_iconY.png"
       },
       "splash": {
         "resizeMode": "native",
@@ -51,5 +55,6 @@
       "package": "com.F1F.YTTI",
       "jsEngine": "hermes"
     }
-  }
+  },
+  "jsEngine": "hermes"
 }

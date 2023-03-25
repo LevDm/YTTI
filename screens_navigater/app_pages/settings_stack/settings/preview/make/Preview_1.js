@@ -746,7 +746,7 @@ export default Preview = (props) => {
                     key = {String('foot')}
                     style = {[navigationMenu, {
                         //backgroundColor: 'white',
-                        width: "100%",
+                        //width: "100%",
                         bottom: 0,
                         position: 'absolute',
                         flexDirection: 'row',

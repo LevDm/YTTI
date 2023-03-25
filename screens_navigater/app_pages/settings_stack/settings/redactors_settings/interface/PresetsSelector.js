@@ -288,6 +288,9 @@ export default PresetsSelector = ({
             keyExtractor={(item, index) => {
                 return item + index
             }}
+            /*
+            NFC SHARED SCREEN TESTING 
+            USED NFC LIBERTY DONT WORKING :C 
             ListHeaderComponent={
                 <Pressable 
                     style = {{
@@ -307,6 +310,7 @@ export default PresetsSelector = ({
                     <MaterialCommunityIcons name="nfc" size={35} color={Theme.texts.neutrals.secondary} />
                 </Pressable>
             }
+            */
             renderItem={({item, index})=>{
 
                 return (

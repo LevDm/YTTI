@@ -35,7 +35,7 @@ export const radioButtonDisign = ['type_1', 'type_2',]
 import { stock } from './AppDesigns';
 //APPERANCE
 export const defaultAppStyle = {
-    presetUsed: 'YTAT-custom',
+    presetUsed: 'YTAT-stock',
     customTheme: undefined,
     ...stock
 }

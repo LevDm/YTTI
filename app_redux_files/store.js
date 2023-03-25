@@ -1,6 +1,7 @@
-import { createStore } from 'redux';
+import { createStore, configureStore } from 'redux';
 
 import { defaultAppStyle, defaultAppConfig } from '../app_values/AppDefault';
+
 
 const initialState = {
     //DEFAULT SETTINGS
@@ -69,6 +70,13 @@ const reducer = (state=initialState, action) => {
         default: return state
     }
 }
+
+console.log('REDUX_STORE_ENABLE')
+//const st = configureStore({
+//    reducer: reducer
+//})
+
+
   
 const store = createStore(reducer);
 export default store;

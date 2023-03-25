@@ -176,7 +176,7 @@ const NFC_Screen = (props) => {
                 </Text>
             </View>
             </View>
-            <NFC_test {...props}/>
+            <NFC_test appStyle={appStyle} {...props}/>
             <NfcPromptAndroid />
         </View>
     )

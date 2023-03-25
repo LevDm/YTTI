@@ -11,9 +11,10 @@ import {
   Button,
   Alert,
   Linking,
+  ScrollView,
 } from 'react-native';
 import NfcProxy from './NFCproxy';
-import NfcManager, {NfcEvents, NfcTech} from 'react-native-nfc-manager';
+import NfcManager, { Ndef, NfcEvents, NfcTech} from 'react-native-nfc-manager';
 
 //import qs from 'query-string';
 
@@ -74,8 +75,17 @@ function rtdValueToName(value) {
   return null;
 }
 
+let tnf_c = '/tnf'
+let trd_c = '/trd'
+let techs_c = '/techs'
+let res_c = '/res'
+
+
 function NFC_test(props) {
-  const {navigation} = props;
+  const {
+    navigation,
+    AppStyle,
+  } = props;
   const [supported, setSupported] = React.useState(null);
   const [enabled, setEnabled] = React.useState(null);
   const padding = 40;
@@ -195,28 +205,50 @@ function NFC_test(props) {
   }, [navigation]);
 
 
-  const [result, setResult] = React.useState('')
+  const [tnf, setTnf] = React.useState('tnf-')
+  const [trd, setTrd] = React.useState('trd-')
+  const [techs, setTechs] = React.useState('ts-') //
+  const [result, setResult] = React.useState('2 r-')
+
+  
 
   function acceptTag(tag) {
+    Alert.alert('ПРИНЯЛ', JSON.stringify(tag), [{text: 'OK'}]);
     const techs = getTechList(tag);
+    techs_c = getTechList(tag);
+    
+    
     const ndef =
       Array.isArray(tag.ndefMessage) && tag.ndefMessage.length > 0
         ? tag.ndefMessage[0]
         : null;
+
+    Alert.alert('ОБРАБОТАЛ', `${ndef}`, [{text: 'OK'}]);
 
     console.log('tag',tag)
     console.log('TECHNOLOGIES', techs)
 
     const tnfName = tnfValueToName(ndef.tnf);
     const rtdName = rtdValueToName(ndef.type);
+    tnf_c = tnfValueToName(ndef.tnf);
+    trd_c = rtdValueToName(ndef.type);
+
+    Alert.alert('СЧИТАЛ', `${rtdName} ${tnfName} ${techs}`, [{text: 'OK'}]);
 
     console.log('tnfName', tnfName)
     console.log('tnfName', rtdName)
 
+    setTnf(tnfName)
+    setTrd(rtdName)
+    setTechs(techs)
+
+    Alert.alert('ПРОВЕРЯЮ', `${ndef.tnf}=${Ndef.TNF_WELL_KNOWN}`, [{text: 'OK'}]);
     if (ndef.tnf === Ndef.TNF_WELL_KNOWN) {
       if (rtdName === 'TEXT') {
-        let text = Ndef.text.decodePayload(ndef.payload);
+        const text = Ndef.text.decodePayload(ndef.payload);
         //return <RtdTextPayload ndef={ndef} />;
+        res_c = text;
+        Alert.alert('ПОЛУЧИЛ', `${text}`, [{text: 'OK'}]);
         console.log(text)
         setResult(text)
       }
@@ -228,12 +260,23 @@ function NFC_test(props) {
     return (
       <View
         style={{
-          alignItems: 'stretch',
-          alignSelf: 'center',
-          height: 400,
-          width: 300,
+          //alignItems: 'stretch',
+          //alignSelf: 'center',
+          height: 500,
+          width: 250,
         }}>
-        <Text>res: {result}</Text>
+          <ScrollView
+            style={{
+              height: 400,
+              width: 250,
+            }}
+          >
+            <Text style={{marginTop: 20}}>*: {tnf} {tnf_c}</Text>
+            <Text style={{marginTop: 20}}>*: {trd} {trd_c}</Text>
+            <Text style={{marginTop: 20}}>*: {techs} {techs_c}</Text>
+
+            <Text>res: {result} {res_c}</Text>
+          </ScrollView>
         <Button
           title="READ NDEF"
           onPress={async () => {
@@ -249,7 +292,7 @@ function NFC_test(props) {
         <Button 
           title="WRITE NDEF"
           onPress={async () => {
-            const value = 'GUSI GUSI га-га-га {:}#,10.9'
+            const value = JSON.stringify(AppStyle) //'GUSI GUSI га-га-га {:}#,10.9'
             await NfcProxy.writeNdef({type: 'TEXT', value: value});
           }}
         />

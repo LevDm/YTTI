@@ -249,12 +249,13 @@ export default PresetsSelector = ({
     return (
     <View
         style={{
+            paddingBottom: 12
         }}
     >   
         <Text
             style = {[staticStyles.text, {
                 color: Theme.texts.neutrals.secondary,
-                paddingLeft: 2,
+                paddingLeft: 10,
                 //marginTop: 10,
             }]}
         >

@@ -21,6 +21,7 @@ import {
 import languagesAppList, {languagesApp} from "../../../../../../app_values/Languages";
 import themesColorsAppList, {themesApp} from "../../../../../../app_values/Themes";
 
+import { listsHorizontalProximity } from "../../../../../../app_values/AppDefault";
 
 import { BasePressable } from "../../../../../../general_components/base_components/BaseElements";
 import SkiaViewDisign from "../../../../../../general_components/base_components/SkiaViewDisign";
@@ -31,6 +32,7 @@ import Constants from "expo-constants";
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
+const horizontalProximity = listsHorizontalProximity['true']
 
 const ReanimatedPressable = Reanimated.createAnimatedComponent(Pressable)
 const ReanimatedText = Reanimated.createAnimatedComponent(Text)
@@ -360,7 +362,7 @@ export default Preview = (props) => {
             //dynamic style
             backgroundColor: Theme.basics.neutrals.secondary,
             borderRadius: previewAppStyleA.value.borderRadius.basic,
-            marginHorizontal: previewAppStyleA.value.lists.fullWidth? 0 : 10,
+            marginHorizontal: previewAppStyleA.value.lists.fullWidth? 0 : horizontalProximity,
             marginVertical: 2*previewAppStyleA.value.lists.proximity
             //scale params
         }
@@ -376,7 +378,7 @@ export default Preview = (props) => {
             //dynamic style
             backgroundColor: Theme.basics.accents.tertiary,
             borderRadius: previewAppStyleA.value.borderRadius.basic,
-            marginHorizontal: previewAppStyleA.value.lists.fullWidth? 0 : 10,
+            marginHorizontal: previewAppStyleA.value.lists.fullWidth? 0 : horizontalProximity,
             marginVertical: 2*previewAppStyleA.value.lists.proximity
             //scale params
         }

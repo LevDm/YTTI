@@ -225,7 +225,7 @@ const WeatherComponent = (props) => {
             ThemeSchema = {ThemeSchema}
             LanguageAppIndex = {LanguageAppIndex}
           />
-          <View style={{backgroundColor: Theme.specials.separator,width: 1,height: 80}}/>
+          <View style={{backgroundColor: Theme.specials.separator,width: 1,height: 60, opacity: 0.3}}/>
           <WeatherItem 
             item = {weatherData[localCity].weather.hourly[1]} 
             elements = {"short_list"} 

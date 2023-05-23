@@ -70,12 +70,13 @@ import { weatherTypes } from "../../../../../../app_values/AppDefault";
 import DraggableFlatList, {ScaleDecorator,} from "react-native-draggable-flatlist";
 
 import { WeatherAPI } from "../../../../../../app_async_data_manager/data_loader";
-const WEATHER_API_KEY = "e2b94f1a4a4231151132fbd1a15e1633"
+
+import { listsHorizontalProximity, WEATHER_API_KEY } from "../../../../../../app_values/AppDefault";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
-const horizontalProximity = 10
+const horizontalProximity = listsHorizontalProximity['true']
 
 export default WeatherRedactor = ({
     appStyle,
@@ -470,7 +471,7 @@ export default WeatherRedactor = ({
         )
     }
 
-    return (<>
+    return (<View style={{paddingBottom: 12}}>
         <BoxsField
             //  'one'>true || 'multiple'>false
             isChoiceOne={true}
@@ -484,7 +485,7 @@ export default WeatherRedactor = ({
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10}]}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10, marginTop: 5}]}>
             {Language.locations}
         </Text>
         <View
@@ -726,7 +727,7 @@ export default WeatherRedactor = ({
                 </View>
             </View>
         </BaseModal> 
-    </>)
+    </View>)
 } 
 
 const staticStyles = StyleSheet.create({

@@ -87,7 +87,7 @@ export function DatePicker(props){
             opacityLimit: 0.75,
   
             separatorHeight: 30,
-            separatorMarginTop:  0,
+            separatorMarginTop:  -3,
             transitionBoost: 3.2
           }}
           setValue={setDay}
@@ -104,7 +104,7 @@ export function DatePicker(props){
             anim_rotation_out:  [25, 20, 15, 0],
             opacityLimit: 0,   
             separatorHeight: 30,
-            separatorMarginTop:  0,
+            separatorMarginTop:  -3,
             transitionBoost: 1.6
           }}
           setValue={setMonth}
@@ -124,7 +124,7 @@ export function DatePicker(props){
             opacityLimit: 0,   
             separatorHeight: 30,
             separatorWidth: '80%',
-            separatorMarginTop:  0,
+            separatorMarginTop:  -3,
             transitionBoost: 0.8
           }}
           setValue={setYear}
@@ -204,7 +204,7 @@ export function TimePicker(props){
             itemHeight: 40,    
             itemsMargin: 50,
             separatorHeight: 30,
-            separatorMarginTop:  0,
+            separatorMarginTop:  -3,
             transitionBoost: 3 //3.5
           }}
           {...colors}
@@ -220,7 +220,7 @@ export function TimePicker(props){
             itemHeight: 40,
             itemsMargin: 50,
             separatorHeight: 30,
-            separatorMarginTop:  0,
+            separatorMarginTop:  -3,
             transitionBoost: 3
           }}
           {...colors}
@@ -267,7 +267,7 @@ export function TimerPicker(props){
                     itemHeight: 40,    
                     itemsMargin: 50,
                     separatorHeight: 30,
-                    separatorMarginTop:  0,
+                    separatorMarginTop:  -3,
                     transitionBoost: 3 //3.5
                 }}
                 {...colors}

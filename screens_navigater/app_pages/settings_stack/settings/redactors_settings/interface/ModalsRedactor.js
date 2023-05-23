@@ -70,7 +70,7 @@ export default ModalsRedactor = ({
         previewAppStyleA.value = newAppStyle
     }
 
-    return (<>
+    return (<View style={{paddingBottom: 12}}>
         <SwitchField
             textTitle = {Language.horizontalProximity}
             textStates = {Language.horizontalProximityState}
@@ -95,7 +95,7 @@ export default ModalsRedactor = ({
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
-    </>)
+    </View>)
 }
 
 const staticStyles = StyleSheet.create({

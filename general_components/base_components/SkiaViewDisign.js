@@ -23,6 +23,7 @@ import {
   RoundedRect,
 } from "@shopify/react-native-skia";
 
+//const shadowsValues = ['material', 'materialSome', 'full','neomorphism', 'none']
 
 function SkiaViewDisign(props) {
     const {
@@ -83,10 +84,21 @@ function SkiaViewDisign(props) {
             rect={generalRect}
             color={backgroundColor}
           >
-            {shadowStyle == 'neomorphism' && <Shadow dx={shadowMargin.horizontal/2.6} dy={shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.primary}30`} />}
-            {shadowStyle == 'neomorphism' && <Shadow dx={-shadowMargin.horizontal/2.6} dy={-shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.secondary}30`}/>}
-            {(shadowStyle == 'material' || (isGeneralObject && shadowStyle == 'materialSome')) && <Shadow dx={0} dy={shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.primary}30`}/>}
-            {shadowStyle == 'full' && <Shadow dx={0} dy={0} blur={shadowBlur} color={`${shadowColors.primary}30`}/>}    
+            {shadowStyle == 'neomorphism' && 
+            <Shadow dx={shadowMargin.horizontal/2.6} dy={shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.primary}30`} />}
+
+            {shadowStyle == 'neomorphism' && 
+            <Shadow dx={-shadowMargin.horizontal/2.6} dy={-shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.secondary}30`}/>}
+
+            {(shadowStyle == 'material' || (isGeneralObject && shadowStyle == 'materialSome')) && 
+            <Shadow dx={0} dy={shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.primary}30`}/>}
+
+            {shadowStyle == "full" && 
+            <Shadow dx={0} dy={0} blur={shadowBlur} color={`${shadowColors.primary}30`}/>}
+
+            {shadowStyle == "square" && 
+            <Shadow dx={shadowMargin.vertical/1.4} dy={shadowMargin.vertical/1.4} blur={0.75} color={`${shadowColors.primary}8a`}/>}
+
           </RoundedRect>
           {shadowStyle == 'neomorphism' && innerShadow.used && 
           <RoundedRect 

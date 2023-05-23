@@ -109,7 +109,8 @@ export const SwitchField = ({
             {...viewProps}
             style = {[{
                 backgroundColor: "transparent", 
-                marginHorizontal: 5,
+                //marginHorizontal: 5,
+                marginLeft: 15,
                 marginRight: 15,
                 paddingVertical: 2.5,
                 borderRadius: appStyle.borderRadius.additional,
@@ -141,7 +142,7 @@ export const SwitchField = ({
                         commonStaticStyles.switchText, 
                         {   
                             marginLeft: 0,
-                            paddingLeft: 10,
+                            paddingLeft: 15,
                             //backgroundColor: 'red',
                             color: Theme.texts.neutrals.secondary
                         }
@@ -221,6 +222,9 @@ export const BoxsField = ({
 
     return (
         <View
+            style={{
+                marginTop: 5,
+            }}
             props={props}
 
         >

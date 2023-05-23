@@ -89,8 +89,8 @@ export default SelectorsRedactor = ({
         JSON.stringify(checkGroupRB) != JSON.stringify(newGroupRB)? setCheckGroupRB(newGroupRB) : null
     }, [appStyle])
 
-    return (<>
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10}]}>{Language.switchs}</Text>
+    return (<View style={{paddingBottom: 12}}>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10, marginTop: 5}]}>{Language.switchs}</Text>
         <FlatList 
             horizontal
             data={switchDisign}
@@ -166,7 +166,7 @@ export default SelectorsRedactor = ({
             )}
         />
 
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10}]}>{Language.checkBoxs}</Text>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10, marginTop: 5}]}>{Language.checkBoxs}</Text>
         <FlatList 
             horizontal
             data={checkBoxDisign}
@@ -202,7 +202,7 @@ export default SelectorsRedactor = ({
                     >
                         <BaseBox
                             isCheckBox={true}
-                            style={{marginRight: 20}}
+                            style={{marginRight: 24}}
                             Item = {false}
                             check = {false}
                             boxBorderRadius = {appStyle.borderRadius.additional}
@@ -215,7 +215,7 @@ export default SelectorsRedactor = ({
                         />
                         <BaseBox
                             isCheckBox={true}
-                            style={{marginLeft: 20}}
+                            style={{marginLeft: 24}}
                             Item = {false}
                             check = {true}
                             boxBorderRadius = {appStyle.borderRadius.additional}
@@ -232,7 +232,7 @@ export default SelectorsRedactor = ({
             )}
         />
 
-        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10}]}>{Language.radioButtons}</Text>
+        <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10, marginTop: 5}]}>{Language.radioButtons}</Text>
         <FlatList 
             horizontal
             data={radioButtonDisign}
@@ -268,7 +268,7 @@ export default SelectorsRedactor = ({
                     >
                         <BaseBox
                             isCheckBox={false}
-                            style={{marginRight: 20}}
+                            style={{marginRight: 24}}
                             Item = {false}
                             check = {false}
                             boxBorderRadius = {appStyle.borderRadius.additional}
@@ -281,7 +281,7 @@ export default SelectorsRedactor = ({
                         />
                         <BaseBox
                             isCheckBox={false}
-                            style={{marginLeft: 20}}
+                            style={{marginLeft: 24}}
                             Item = {false}
                             check = {true}
                             boxBorderRadius = {appStyle.borderRadius.additional}
@@ -297,7 +297,7 @@ export default SelectorsRedactor = ({
                 </View>
             )}
         />
-    </>)
+    </View>)
 }
 
 const staticStyles = StyleSheet.create({

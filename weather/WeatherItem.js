@@ -362,9 +362,8 @@ function FullListItem(props){
                     style={{
                         width: 84,
                         height: 84,
+                        borderRadius: appStyle.borderRadius.additional,
                         borderTopLeftRadius: appStyle.borderRadius.basic,
-                        //backgroundColor: 'red',
-                        borderRadius: 0
                     }}
                     source={icon}
                 />

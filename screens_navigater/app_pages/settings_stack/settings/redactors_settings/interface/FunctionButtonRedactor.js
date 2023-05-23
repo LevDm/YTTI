@@ -84,6 +84,7 @@ export default ListsRedactor = ({
     <View 
         style = {{
             //marginBottom: 30,
+            paddingBottom: 12
         }}
     >
         <BoxsField

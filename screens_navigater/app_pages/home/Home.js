@@ -70,6 +70,10 @@ import languagesAppList, {languagesApp} from "../../../app_values/Languages";
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 const statusBarHeight = Constants.statusBarHeight+1
 
+import { listsHorizontalProximity } from "../../../app_values/AppDefault";
+
+const horizontalProximity = listsHorizontalProximity['true']
+
 const Home = (props) => {
  
 
@@ -873,7 +877,7 @@ const ListItems = (props) => {
                     backgroundColor = {Theme.basics.neutrals.secondary}
                     shadowColors = {Theme.specials.shadow}
                     shadowMargin={{
-                        horizontal: appStyle.lists.fullWidth? 1 : 10, 
+                        horizontal: appStyle.lists.fullWidth? 1 : horizontalProximity, 
                         vertical: listFormatRow? appStyle.lists.proximity : appStyle.lists.fullWidth? 0.5 : 5,
                     }}
                     shadowStyle = {appStyle.effects.shadows}
@@ -886,7 +890,7 @@ const ListItems = (props) => {
                 <View 
                     style = {[{
                         flex: 1,
-                        marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
+                        marginHorizontal: appStyle.lists.fullWidth? 0 : horizontalProximity,
                         marginVertical:  listFormatRow? appStyle.lists.proximity : appStyle.lists.fullWidth? 0.5 : 5,
                         borderRadius: appStyle.borderRadius.basic,
                         backgroundColor: '#00000001'
@@ -1001,7 +1005,7 @@ const ListItems = (props) => {
                 borderRadius = {appStyle.borderRadius.basic}
                 backgroundColor = {Theme.basics.accents.tertiary}
                 shadowColors = {Theme.specials.shadow}
-                shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: appStyle.lists.proximity}}
+                shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : horizontalProximity, vertical: appStyle.lists.proximity}}
                 shadowStyle = {appStyle.effects.shadows}
                 adaptiveSizeForStyle={false}
                 innerShadow={{
@@ -1012,7 +1016,7 @@ const ListItems = (props) => {
             <Pressable
                 style = {[{
                     flex: 1,
-                    marginHorizontal: appStyle.lists.fullWidth? 0 : 10,
+                    marginHorizontal: appStyle.lists.fullWidth? 0 : horizontalProximity,
                     marginVertical:  appStyle.lists.proximity,
                     borderRadius: appStyle.borderRadius.basic,
                     backgroundColor: '#00000001'
@@ -1024,7 +1028,7 @@ const ListItems = (props) => {
         </View>
     )
 
-    const horizontalProximityModal = 10
+    //const horizontalProximityModal = 10
  
     return (
         <>
@@ -1305,8 +1309,8 @@ const ListItems = (props) => {
             outPress = {()=>setWeatherModal(false)}
             //onShow = {onShow}
             modalStyle = {{
-                width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximityModal),
-                left: appStyle.modals.fullWidth? 0 : horizontalProximityModal,
+                width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
+                left: appStyle.modals.fullWidth? 0 : horizontalProximity,
             }}
             style={{
                 backgroundColor: Theme.basics.neutrals.quaternary,
@@ -1364,7 +1368,7 @@ const ModalItems = ({
         handleTriggerEdit(task)
     }
 
-    const horizontalProximity = 10
+    //const horizontalProximity = 10
 
     return (
 
@@ -1573,7 +1577,7 @@ const ModalInput = ({
         resetValues()
     }
 
-    const horizontalProximity = 10
+    //const horizontalProximity = 8
 
     return (
         <> 
@@ -1956,7 +1960,7 @@ const styles = StyleSheet.create({
         //color:  ColorsApp.symbolDark
     },
     TaskDate: {
-        fontSize: 10,
+        fontSize: 9,
         //marginTop: 18, 
         //letterSpacing: 1, 
         //color: ColorsApp.symbolNeutral,

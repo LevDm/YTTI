@@ -181,7 +181,7 @@ const LanguageStoreRu = {
           ripple: 'Пульсации',
           ripples: ['Все', 'Основные', 'Выключены'],
           shadows: 'Тени элементов',
-          shadowsTypes: ['Стандартные', 'Основные стандартные','Полные','Неоморфические', 'Выключены'],
+          shadowsTypes: ['Стандартные', 'Основные стандартные','Полные','Неоморфические', 'Квадратные', 'Выключены'],
           blur: 'Прозрачность поверхностных элементов',
           blurState: {true: "включена", false: "выключена"},
           warningBlur: '! В активном состоянии данный параметр может вызвать проблемы с производительностью'
@@ -553,7 +553,7 @@ const LanguageStoreEng = {
           ripple: 'Ripple',
           ripples: ['All', 'General', 'Off'],
           shadows: 'Element Shadows',
-          shadowsTypes: ['Standard', 'Standard basic', 'Full','Neomorphic', 'Off'],
+          shadowsTypes: ['Standard', 'Standard basic', 'Full','Neomorphic', 'Square','Off'],
           blur: 'Surface element transparency',
           blurState: {true: "on", false: "off"},
           warningBlur: '! If enabled, this setting may cause performance issues'

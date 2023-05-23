@@ -66,6 +66,7 @@ export default EffectsRedactor = ({
     <View 
         style = {{
             //marginBottom: 30,
+            paddingBottom: 12
         }}
     >
         <BoxsField

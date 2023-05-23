@@ -750,12 +750,12 @@ export const BaseWindow = ({
                 />
                 </View>}
                 <LinearGradient
-                    colors={[gradient? gradient : 'transparent', 'transparent']}
+                    colors={['red', 'transparent']}//{[gradient? gradient : 'transparent', 'transparent']}
                     style={{
                         position: 'absolute',
                         //top: -25,
                         top: 0,
-                        opacity: .25,
+                        //opacity: .25,
                         height: 100,
                         width: '100%',
                         borderTopLeftRadius: style.borderTopLeftRadius - (gradient? 1 : 0),

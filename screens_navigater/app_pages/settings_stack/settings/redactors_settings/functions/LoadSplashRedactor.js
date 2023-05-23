@@ -95,12 +95,13 @@ export default LoadSplashRedactor = ({
         {!appConfig.splash.show && 
         <View
             style = {{
-                width: '100%',
+                width: '90%',
                 height: '100%',
                 position: 'absolute',
+                left: 20,
                 //left: -5,
-                backgroundColor: `${Theme.basics.neutrals.tertiary}25`,
-                borderRadius: appStyle.borderRadius.additional
+                backgroundColor: `${Theme.basics.neutrals.secondary}90`,
+                //borderRadius: appStyle.borderRadius.additional
             }}
         />}
     </View>

@@ -40,10 +40,12 @@ import SkiaViewDisign from "../../../../../../general_components/base_components
 
 import Constants from "expo-constants";
 
+import { listsHorizontalProximity } from "../../../../../../app_values/AppDefault";
 
 const deviceHeight = Dimensions.get('window').height
 const deviceWidth = Dimensions.get('window').width
 
+const horizontalProximity = listsHorizontalProximity['true']
 
 const ReanimatedPressable = Reanimated.createAnimatedComponent(Pressable)
 const ReanimatedText = Reanimated.createAnimatedComponent(Text)
@@ -72,7 +74,7 @@ const SkiaLinearGradient = ({previewAppStyleA, ThemeSchema}) => {
         return rrect(rect(
           0, 
           0, 
-          deviceWidth-(previewAppStyleA.value.modals.fullWidth? 0 : 10), 
+          deviceWidth-(previewAppStyleA.value.modals.fullWidth? 0 : horizontalProximity), 
           100), 
           previewAppStyleA.value.borderRadius.additional, 
           previewAppStyleA.value.borderRadius.additional
@@ -189,7 +191,7 @@ export default Preview = (props) => {
         return {
             //dynamic style
             height: height,
-            width: deviceWidth-(previewAppStyleA.value.modals.fullWidth? 0 : 10),
+            width: deviceWidth-(previewAppStyleA.value.modals.fullWidth? 0 : 2*horizontalProximity),
             backgroundColor: Theme.basics.neutrals.quaternary,
 
             borderWidth: previewAppStyleA.value.modals.highlightMethods.outline? 1 : 0,

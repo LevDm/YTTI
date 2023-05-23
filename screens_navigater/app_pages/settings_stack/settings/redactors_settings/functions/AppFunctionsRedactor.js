@@ -208,7 +208,7 @@ export default LanguageRedactor = ({
         )
     }
 
-    return (<>
+    return (<View style={{paddingBottom: 12}}>
         <DraggableFlatList
             data={data}
             onDragEnd={endDrag}
@@ -261,7 +261,7 @@ export default LanguageRedactor = ({
                 />
             </View>
         </View>
-    </>)
+    </View>)
 }
 
 const staticStyles = StyleSheet.create({

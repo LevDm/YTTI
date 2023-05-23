@@ -162,7 +162,7 @@ export default NavigateMenuRedactor = ({
     return (
     <View 
         style ={{
-            
+            paddingBottom: 12
         }}
     >
     <BoxsField

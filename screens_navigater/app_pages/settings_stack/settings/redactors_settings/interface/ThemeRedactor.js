@@ -320,6 +320,7 @@ export default ThemeRedacor = ({
     return (
     <View
         style={{
+            paddingBottom: 16
         }}
     >   
         <BoxsField
@@ -367,7 +368,7 @@ export default ThemeRedacor = ({
             ref = {flatListRef}
             style={{        
                 width: 5*itemSize,
-                height: itemSize+10,
+                height: itemSize,
             }}
             horizontal = {true}
             showsHorizontalScrollIndicator = {false}

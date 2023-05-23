@@ -758,6 +758,8 @@ import MaskedView from '@react-native-masked-view/masked-view';
 import { Ionicons } from '@expo/vector-icons';
 import * as Application from 'expo-application';
 
+import { listsHorizontalProximity } from "../../../../app_values/AppDefault";
+
 import SkiaViewDisign from "../../../../general_components/base_components/SkiaViewDisign";
 
 const ReanimatedFlatList = Reanimated.createAnimatedComponent(FlatList);
@@ -769,6 +771,8 @@ const itemCategoryHeight = 45
 const selectorLineHeight = 35
 const headerHeight = statusBarHeight+itemCategoryHeight//+selectorLineHeight
 const packHeight = 100
+
+const horizontalProximity = listsHorizontalProximity['true']
 
 const BasisList = (props) => {
     const {
@@ -1434,7 +1438,7 @@ const BasisList = (props) => {
                     borderRadius = {appStyle.borderRadius.basic}
                     backgroundColor = {Theme.basics.neutrals.secondary}
                     shadowColors = {Theme.specials.shadow}
-                    shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : 10, vertical: appStyle.lists.proximity}}
+                    shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : horizontalProximity, vertical: appStyle.lists.proximity}}
                     shadowStyle = {appStyle.effects.shadows}
                     adaptiveSizeForStyle={false}
                     innerShadow={{
@@ -1459,7 +1463,8 @@ const BasisList = (props) => {
                         { 
                         flexDirection: 'row', 
                         width: '100%',
-                        height: 25,
+                        height: 26,
+                        marginLeft: 8,
                         alignItems: 'center',
                         //backgroundColor: '#ff000020'
                     }]}
@@ -1791,7 +1796,7 @@ const BasisList = (props) => {
         {/*BODY*/}
         <ReanimatedSectionList
             ref={sectListRef}
-            contentOffset={{x: 0, y: (headHeightTop+itemCategoryHeight+1)}}
+            contentOffset={{x: 0, y: (headHeightTop)}}
             stickySectionHeadersEnabled={false}
             showsVerticalScrollIndicator={false}
             onScroll={scrollSectionsList}
@@ -1895,7 +1900,7 @@ const BasisList = (props) => {
                                 opacity: .5
                             }]}
                         >
-                            F1F<Text style={{fontSize: 9, left: -10}}>.INTERFACES</Text>
+                            F1F<Text style={{fontSize: 9, left: -10}}>.GUI's</Text>
                         </Text>
                         </View>}
                     >
@@ -1915,10 +1920,10 @@ const BasisList = (props) => {
         <Reanimated.View
             style={[scrollTopButton, {
                 position: 'absolute',
-                height: 40,
-                width: 40,
-                bottom: -40,
-                left: (deviceWidth-40)/2,
+                height: 44,
+                width: 44,
+                bottom: -30,
+                left: (deviceWidth-44)/2,
                 //backgroundColor: 'black'
             }]}
         >    

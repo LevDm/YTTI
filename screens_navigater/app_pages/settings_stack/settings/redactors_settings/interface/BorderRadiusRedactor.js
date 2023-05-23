@@ -86,6 +86,7 @@ export default BorderRadiusRedactor = ({
         <View
             style = {{
                 //marginBottom: 30,
+                paddingBottom: 12
             }}
         >
             {['basic','additional'].map((item, index)=>(

@@ -431,7 +431,7 @@ function FullListItem(props){
                     justifyContent: 'space-around', 
                     flexDirection: 'row', 
                     paddingLeft: 20, 
-                    marginTop: -10
+                    marginTop: -13
                     //paddingBottom: 3,
                     //backgroundColor: 'red'
                 }}

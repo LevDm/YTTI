@@ -10,6 +10,8 @@ import {
     useAnimatedProps,
     useAnimatedStyle,
     cancelAnimation,
+    useDerivedValue,
+    runOnJS,
     withTiming
 } from 'react-native-reanimated';
 
@@ -43,20 +45,10 @@ export default BorderRadiusRedactor = ({
     LanguageAppIndex   
 }) => {
 
-    //console.log('BR', basic, additional)
-
-    const [sliderValueBasic, setSliderValueBasic] = useState(appStyle.borderRadius.basic);
-    const [sliderValueAdditional, setSliderValueAdditional] = useState(appStyle.borderRadius.additional);
-
-    useEffect(()=>{
-        sliderValueBasic != appStyle.borderRadius.basic? setSliderValueBasic(appStyle.borderRadius.basic) : null
-        sliderValueAdditional != appStyle.borderRadius.additional? setSliderValueAdditional(appStyle.borderRadius.additional) : null
-    }, [appStyle])
-
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.fillets
 
-    const settingBorderRadius = (type, value, isComplete) =>{
+    const settingBorderRadius = (type, value) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         if(type == "basic" ){
             //isComplete? setSliderValueBasic(value) : null
@@ -66,21 +58,15 @@ export default BorderRadiusRedactor = ({
             //isComplete? setSliderValueAdditional(value) : null
             newAppStyle.borderRadius.additional = Number(value);
         }
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.presetUsed = 'YTTI-custom';
         
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
         //setPreviewAppStyle(newAppStyle)
     }
 
-    const accepteer = () => {//path, value
-        //const xx = {...JSON.parse(JSON.stringify(previewAppStyleA.value)), ...newAppStyle}
-
-
-        //console.log(JSON.stringify(xx))
-    }
-
-    
+    const basic = useDerivedValue(()=>previewAppStyleA.value.borderRadius.basic)
+    const additional = useDerivedValue(()=>previewAppStyleA.value.borderRadius.additional)
 
     return (
         <View
@@ -100,9 +86,10 @@ export default BorderRadiusRedactor = ({
                 minimumValue={borderRadiusValues.min}
                 maximumValue={borderRadiusValues.max}
                 step = {borderRadiusValues.step}
-                value = {item === 'basic'? appStyle.borderRadius.basic : appStyle.borderRadius.additional}
-                onSlidingComplete = {(value)=>{settingBorderRadius(item, value, true)}}
-                onValueChange = {(value)=>{settingBorderRadius(item, value, false)}}
+
+                aValue = {item === 'basic'? basic : additional}
+
+                onValueChange = {(value)=>{settingBorderRadius(item, value)}}
 
                 appStyle = {appStyle}
                 ThemeColorsAppIndex = {ThemeColorsAppIndex}

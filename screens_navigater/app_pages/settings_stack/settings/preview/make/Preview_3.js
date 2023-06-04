@@ -52,56 +52,7 @@ const ReanimatedText = Reanimated.createAnimatedComponent(Text)
 
 import Phone from "./Basis"
 
-const SkiaLinearGradient = (props) => {
-    const {
-        previewAppStyleA, 
-        //ThemeSchema, 
-        previewAppPalette
-    } = props 
-    //const gradientSize = 2.5*itemSize//-2
-    const noneColor = '#00000000'
-    const skiaFirstColor = useValue([noneColor, noneColor]);
-    const skiaBorderRadius = useValue(0);
-    
-    useSharedValueEffect(() => {
-        skiaFirstColor.current = previewAppStyleA.value.modals.highlightMethods.gradient? [previewAppPalette.value.basics.accents.quaternary, previewAppPalette.value.basics.neutrals.quaternary] : [noneColor, noneColor]
 
-    }, [previewAppStyleA, previewAppPalette]); // you can pass other shared values as extra parameters
-    
-
-    const generalRect = useComputedValue(() => {
-        //console.log('s?', size.current)
-        return rrect(rect(
-          0, 
-          0, 
-          deviceWidth-(previewAppStyleA.value.modals.fullWidth? 0 : horizontalProximity), 
-          100), 
-          previewAppStyleA.value.borderRadius.additional, 
-          previewAppStyleA.value.borderRadius.additional
-        )
-    }, [previewAppStyleA]);
-
-    const colors = useComputedValue(() => {
-        return skiaFirstColor.current
-    }, [skiaFirstColor])
-
-    //console.log()
-
-    return (
-        <Canvas 
-            style={{flex: 1, }}
-        >
-        <RoundedRect rect={generalRect}>
-          <LinearGradient
-            start={vec(0, 0)}
-            end={vec(0, 100)}
-            //positions={[0,1]}
-            colors={colors}
-          />
-        </RoundedRect>
-      </Canvas>
-    )
-}
 
 export default Preview = (props) => {
     const {
@@ -125,7 +76,7 @@ export default Preview = (props) => {
     const indexTheme = 1
 
 
-    const modalGroundColor = useAnimatedStyle(()=>{
+    const groundColor = useAnimatedStyle(()=>{
         //const height = deviceHeight*0.4
 
         //dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
@@ -135,7 +86,7 @@ export default Preview = (props) => {
             //dynamic style
             height: deviceHeight,
             width: deviceWidth,//-(previewAppStyleA.value.modals.fullWidth? 0 : 10),
-            backgroundColor: previewAppStyleA.value.modals.highlightMethods.dimOutDark? `${previewAppPalette.value.specials.dimout}25`: 'transparent',
+            backgroundColor: `${previewAppPalette.value.specials.dimout}25`,
 
             //borderWidth: previewAppStyleA.value.modals.highlightMethods.outline? 1 : 0,
            // borderBottomWidth: 0,
@@ -180,47 +131,62 @@ export default Preview = (props) => {
     }, [previewAppStyleA, previewAppPalette])
     
     
-    const modal = useAnimatedStyle(()=>{
-        const height = deviceHeight*0.4
+    const panel = useAnimatedStyle(()=>{
+        const height = deviceHeight/2 + 20
 
         //dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
         //gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.quaternary : false}
 
+        const angleLeft = previewAppStyleA.value.navigationMenu.drawerPosition == 'left' ? 30 : 0
+        const angleRight = previewAppStyleA.value.navigationMenu.drawerPosition == 'right' ? 30 : 0
+
         return {
             //dynamic style
-            height: height,
-            width: deviceWidth-(previewAppStyleA.value.modals.fullWidth? 0 : 2*horizontalProximity),
-            backgroundColor: previewAppPalette.value.basics.neutrals.quaternary,
+            height: deviceHeight+2,
+            width: deviceWidth*0.75,
+            backgroundColor: previewAppPalette.value.basics.neutrals.primary,
 
-            borderWidth: previewAppStyleA.value.modals.highlightMethods.outline? 1 : 0,
-            borderBottomWidth: 0,
-            borderColor: previewAppPalette.value.basics.accents.tertiary,
+            left: previewAppStyleA.value.navigationMenu.drawerPosition == 'right'? deviceWidth*0.25 : 0,
+            //right: 0,
 
-            borderTopLeftRadius: previewAppStyleA.value.borderRadius.additional,
-            borderTopRightRadius: previewAppStyleA.value.borderRadius.additional,
-            //scale params
-
+            borderTopLeftRadius: withTiming( 
+                interpolate(
+                    animatedState.value, 
+                    [ 0, 1 ],
+                    [ angleLeft, 0],
+                    { extrapolateRight: Extrapolate.CLAMP }
+                ),
+                {duration: duration}
+            ),
             borderBottomLeftRadius: withTiming( 
                 interpolate(
                     animatedState.value, 
                     [ 0, 1 ],
-                    [ 30, 0],
+                    [ angleLeft, 0],
                     { extrapolateRight: Extrapolate.CLAMP }
                 ),
                 {duration: duration}
             ),
 
+            borderTopRightRadius: withTiming( 
+                interpolate(
+                    animatedState.value, 
+                    [ 0, 1 ],
+                    [ angleRight, 0],
+                    { extrapolateRight: Extrapolate.CLAMP }
+                ),
+                {duration: duration}
+            ),
             borderBottomRightRadius: withTiming( 
                 interpolate(
                     animatedState.value, 
                     [ 0, 1 ],
-                    [ 30, 0],
+                    [ angleRight, 0],
                     { extrapolateRight: Extrapolate.CLAMP }
                 ),
                 {duration: duration}
             ),
-
-            
+     
             transform: [
                 {
                     scale: withTiming( 
@@ -235,62 +201,100 @@ export default Preview = (props) => {
                     
                 },
                 {   translateY: withTiming( 
+                        interpolate(
+                            animatedState.value, 
+                            [ 0, 1 ],
+                            [ -(deviceHeight/2+22), 0],
+                            { extrapolateRight: Extrapolate.CLAMP }
+                        ),
+                        {duration: duration}
+                    ), 
+                },
+                {   translateX: withTiming( 
                     interpolate(
                         animatedState.value, 
                         [ 0, 1 ],
-                        [ height/2 + 10, 0],
+                        [ previewAppStyleA.value.navigationMenu.drawerPosition == 'left' ? -(deviceWidth*0.40) : -(deviceWidth*0.657), 0],
                         { extrapolateRight: Extrapolate.CLAMP }
                     ),
                     {duration: duration}
-                ),
-                    
-                }
+                ), 
+            },
             ],
         }
     }, [previewAppStyleA, previewAppPalette])
 
 
-    const hangle = useAnimatedStyle(()=>{
+    const panelHead = useAnimatedStyle(()=>{
+        const angleRight = previewAppStyleA.value.navigationMenu.drawerPosition == 'right' ? 30 : 0
+        const angleLeft = previewAppStyleA.value.navigationMenu.drawerPosition == 'left' ? 30 : 0
         return {
-            backgroundColor: previewAppPalette.value.icons.accents.primary
+            borderTopRightRadius: withTiming( 
+                interpolate(
+                    animatedState.value, 
+                    [ 0, 1 ],
+                    [ angleRight, 0],
+                    { extrapolateRight: Extrapolate.CLAMP }
+                ),
+                {duration: duration}
+            ),
+            borderTopLeftRadius: withTiming( 
+                interpolate(
+                    animatedState.value, 
+                    [ 0, 1 ],
+                    [ angleLeft, 0],
+                    { extrapolateRight: Extrapolate.CLAMP }
+                ),
+                {duration: duration}
+            ),
+            //justifyContent: previewAppStyleA.value.navigationMenu.drawerPosition == 'left'? 'flex-end' : 'flex-start',
+            backgroundColor: previewAppStyleA.value.lists.invertColorsHeader? previewAppPalette.value.basics.neutrals.secondary : previewAppPalette.value.basics.accents.primary,
+        }
+    }, [previewAppStyleA, previewAppPalette])
+
+    const panelHeadIcon = useAnimatedStyle(()=>{
+
+        return {
+            marginLeft: previewAppStyleA.value.navigationMenu.drawerPosition == 'left'? deviceWidth*0.55: 0,
+            borderColor: previewAppStyleA.value.lists.invertColorsHeader? previewAppPalette.value.icons.neutrals.secondary : previewAppPalette.value.icons.neutrals.primary
+        }
+    }, [previewAppStyleA, previewAppPalette])
+
+    
+
+    const MenuText_0 = useAnimatedStyle(()=>{
+        const visible = previewAppStyleA.value.navigationMenu.type == 'not'
+
+        return {
+            color: ( visible)?  previewAppPalette.value.texts.neutrals.secondary : 'transparent'
+        }
+    }, [previewAppStyleA, previewAppPalette])
+
+    const MenuText_1 = useAnimatedStyle(()=>{
+        const visible = previewAppStyleA.value.navigationMenu.type == 'not'
+
+        return {
+            color: (visible)? 
+                (previewAppStyleA.value.navigationMenu.accentsType.coloring? previewAppPalette.value.texts.accents.primary : previewAppPalette.value.texts.neutrals.secondary ) :
+                'transparent'
         }
     }, [previewAppStyleA, previewAppPalette])
 
 
-
-    const ListText_0 = useAnimatedStyle(()=>{
+    const MenuIcon_0 = useAnimatedStyle(()=>{
+        const visible = previewAppStyleA.value.navigationMenu.type == 'not'
 
         return {
-            color: previewAppPalette.value.texts.neutrals.primary
+            borderColor: visible? previewAppPalette.value.texts.neutrals.secondary : 'transparent'
         }
     }, [previewAppStyleA, previewAppPalette])
 
-    const ListText_1 = useAnimatedStyle(()=>{
+    const MenuIcon_1 = useAnimatedStyle(()=>{
+        const visible = previewAppStyleA.value.navigationMenu.type == 'not'
 
         return {
-            color: previewAppPalette.value.texts.neutrals.secondary
-        }
-    }, [previewAppStyleA, previewAppPalette])
-
-    const ListText_2 = useAnimatedStyle(()=>{
-
-        return {
-            color: previewAppPalette.value.texts.neutrals.tertiary
-        }
-    }, [previewAppStyleA, previewAppPalette])
-
-    const ListIcon_0 = useAnimatedStyle(()=>{
-
-        return {
-            borderColor: previewAppPalette.value.icons.neutrals.primary
-        }
-    }, [previewAppStyleA, previewAppPalette])
-
-
-    const ListIcon_1 = useAnimatedStyle(()=>{
-
-        return {
-            borderColor: previewAppPalette.value.icons.neutrals.secondary
+            backgroundColor: (previewAppStyleA.value.navigationMenu.accentsType.filling && visible)? (previewAppStyleA.value.navigationMenu.accentsType.coloring?  previewAppPalette.value.texts.accents.primary : previewAppPalette.value.texts.neutrals.secondary ) : 'transparent',
+            borderColor: visible? (previewAppStyleA.value.navigationMenu.accentsType.coloring? previewAppPalette.value.texts.accents.primary : previewAppPalette.value.texts.neutrals.secondary) : 'transparent'
         }
     }, [previewAppStyleA, previewAppPalette])
 
@@ -368,22 +372,6 @@ export default Preview = (props) => {
         }
     }, [previewAppStyleA, previewAppPalette])
 
-    /*
-    const [phoneAnimatedState, setPhoneAnimatedState] = useState(false);
-
-    const newAnimatedState = (newValue) => {
-        animatedState.value = newValue;
-        setPhoneAnimatedState(newValue);
-    }
-
-    useEffect(()=>{
-        //console.log(props.animatedValue)
-        if(animatedValue != undefined && animatedValue != animatedState.value){
-            newAnimatedState(animatedValue)
-        }
-    },[animatedValue])
-    */
-    //console.log(Theme,'|||',ThemeUpdater)
 
     return (
         <Phone
@@ -401,8 +389,8 @@ export default Preview = (props) => {
             //}}
         >
             <Reanimated.View
-                key = {'modalGroud'}
-                style = {[modalGroundColor,{
+                key = {'Groud'}
+                style = {[groundColor,{
                     //borderTopLeftRadius: 30,
                     //borderTopRightRadius: 30, //,//
                     //backgroundColor: 'red',
@@ -414,138 +402,71 @@ export default Preview = (props) => {
                 }]}
             />
             <Reanimated.View
-                key = {'modal'}
-                style = {[modal,{
+                key = {'PANEL'}
+                style = {[panel,{
+                    //borderTopLeftRadius: 30,
+                    //borderTopRightRadius: 30, //,//
+                    //backgroundColor: 'red',
+                    //top: 0,
                     position: 'absolute',
-                    zIndex: 1,
-                    bottom: 0,
-                    justifyContent: 'flex-start',
-                    alignItems: 'center'
+                    top: -1
                 }]}
             >
-                <View 
-                    style={{
+                <Reanimated.View
+                    style={[{
+                        //backgroundColor: 'red',
                         height: 100,
                         width: '100%',
-                        position: 'absolute',
-                        top: 0,
-                        opacity: 0.25,
-                        //borderRadius: 20
-                    }}
+                        paddingTop: 30,
+                        paddingHorizontal: 24
+                    }, panelHead]}
                 >
-                    <SkiaLinearGradient 
-                        previewAppStyleA = {previewAppStyleA}
-                        previewAppPalette = {previewAppPalette}
-                        //ThemeSchema = {ThemeSchema}
-                    />
-                </View>
-                <Reanimated.View
-                    style = {[hangle,{
-                        width: 50, 
-                        height: 4,
-                        borderRadius: 2,
-                        marginTop: 10
-                    }]}
-                />
-                <View
-                    style={{
-                        marginTop: 20,
-                        width: '100%',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingHorizontal: 30
-                    }}
-                >
-                    <Reanimated.View style={[ListIcon_1, staticStyles.iconBorder, {height: 20, width: 20}]}/>
-                    <ReanimatedText
-                        style ={[ListText_1, {
-                            fontWeight: 'bold',
-                            fontSize: 20,
-                        }]}
-                    >
-                        Text
-                    </ReanimatedText>
-                    <ReanimatedText
-                        style ={[ListText_2, {
-                            fontWeight: 'bold',
-                            fontSize: 20,
-                        }]}
-                    >
-                        Text
-                    </ReanimatedText>
-                </View>
-
-                {[1,2].map((item, index)=>(
-                <Reanimated.View
-                    key = {String('elements'+item+index)} 
-                    style = {[{
-                        width: '70%',
-                        height: 100,
-                        marginTop: 10,
-                        //zIndex: 0,
-                        //borderRadius: previewAppStyle.borderRadius.basic,
-                        //borderRadius: previewAppStyleA.value.borderRadius.additional,
-                        //margin: 5,
-                        padding: 10,
-                        //backgroundColor: 'white',
-                        /* 
-                        elevation: 1,
-                        shadowColor: "#000",
-                        shadowOffset: {
-                            width: 0,
-                            height: 2
-                        },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 4,
-                        */
-                    },aStyleShadows, index != 0? animStyleBodyItems : animStyleBodyItems_w]}
-                >
-                    {index != 0 && <>
-                        <Reanimated.View style={[ListIcon_1, staticStyles.iconBorder, {height: 20, width: 20}]}/>
-                        <ReanimatedText
-                            style ={[ListText_1, {
-                                fontWeight: 'bold',
-                                fontSize: 14,
-                            }]}
-                        >
-                            Text
-                        </ReanimatedText>
-                        <ReanimatedText
-                            style ={[ListText_2, {
-                                fontWeight: 'bold',
-                                fontSize: 12
-                            }]}
-                        >
-                            Text
-                        </ReanimatedText>
-                    </>}
-
-                    {index == 0 && <>
-                        <Reanimated.View style={[ListIcon_0, staticStyles.iconBorder, {height: 20, width: 20}]}/>
-                        <ReanimatedText
-                            style ={[ListText_0, {
-                                fontWeight: 'bold',
-                                fontSize: 15,
-                            }]}
-                        >
-                            Text
-                        </ReanimatedText>
-                        <ReanimatedText
-                            style ={[ListText_2, {
-                                fontWeight: 'bold',
-                                fontSize: 12,
-                            }]}
-                        >
-                            Text
-                        </ReanimatedText>
-                    
-                    </>}
-
+                    <Reanimated.View style={[panelHeadIcon, staticStyles.iconBorder, {height: 35, width: 35, borderRadius: 20}]}/>
                 </Reanimated.View>
-            ))}
+
+                <View
+                    key = {String('navigater')} 
+                    style = {{
+                        //flex: 1,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'row',
+                        //backgroundColor: 'red',
+                        padding: 3,
+                    }}
+                >
+                    <Reanimated.View style = {[staticStyles.iconBorder, MenuIcon_0, {}]}/> 
+                    
+                    <ReanimatedText
+                        style={[MenuText_0,{
+                            fontSize: 16
+                        }]}
+                    >
+                        Text
+                    </ReanimatedText>
+                    <View
+                        style={{
+                            top: 10,
+                            position: 'absolute',
+                            height: '100%',
+                            width: '100%',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexDirection: 'row',
+                        }}
+                    >
+                        <Reanimated.View style = {[staticStyles.iconBorder, MenuIcon_1, { marginLeft: 2}]}/> 
+                        <ReanimatedText
+                            style={[MenuText_1,{
+                                fontSize: 16
+                            }]}
+                        >
+                            Text
+                        </ReanimatedText>
+                    </View>
+                </View>
+
             </Reanimated.View>
-
-
         </Phone>
     )
 }

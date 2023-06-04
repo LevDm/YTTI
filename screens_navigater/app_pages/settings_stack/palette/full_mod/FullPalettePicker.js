@@ -80,7 +80,8 @@ const ColorItem = (props) => {
     } = props
 
     //const check = useSharedValue(0)
-    const check = currentTrace == [...trace, generals, item].join('-')
+    const check = useDerivedValue(()=>currentTrace.value == [...trace, generals, item].join('-'))
+    //const check = 
 
     const onPress = () => {
         pressColor(objColors[item], [...trace, generals, item])
@@ -88,7 +89,7 @@ const ColorItem = (props) => {
 
     const checkStyle = useAnimatedStyle(()=>{
         return {
-            backgroundColor: check? textColor : 'transparent'
+            backgroundColor: check.value? textColor : 'transparent'
         }
     })
 
@@ -152,9 +153,21 @@ const ColorItem = (props) => {
 export default FullColorsPicker = (props) => {
     const {
         pressColor,
-        currentTrace,
-        currentCustomTheme,
+        paramsSelectColor,
+        //currentCustomTheme,
+        currentPalette,
+        listPaddingBottom = 20,
     } = props
+
+    const [currentCustomTheme, setCurrentCustomTheme] = useState({})
+
+    useDerivedValue(()=>{
+        runOnJS(setCurrentCustomTheme)(currentPalette.value? currentPalette.value : {})
+    }, [currentPalette])
+
+    const currentTrace = useDerivedValue(()=>{
+       return paramsSelectColor.value? paramsSelectColor.value.trace.join('-') : undefined
+    })
 
     //console.log(currentCustomTheme)
 
@@ -210,26 +223,27 @@ export default FullColorsPicker = (props) => {
             width: deviceWidth*2,
           }}
           contentContainerStyle={{  
-            flexDirection: 'row',   
+            flexDirection: 'row',
+            //paddingBottom:  
           }}
         >
         {Object.keys(currentCustomTheme).map((item, index)=>{
             if(item == 'title'){return null}
-          return (
-            <View
-              key = {`theme_oject_${item}_${new Date().getTime()}`}         
-              style={{
-                width: deviceWidth,
-                paddingTop: 10,
-                paddingLeft: 10,
-                paddingRight: 20,
-                paddingBottom: PICKER_AREA_HEIGHT,
-                backgroundColor: {light: 'white', dark: 'black'}[item]// themesColorsAppList[ThemeColorsAppIndex][item].basics.grounds.secondary
-              }}
-            >
-              {renderColors(currentCustomTheme[item], item, true)}
-            </View>
-          )
+            return (
+                <View
+                    key = {`theme_oject_${item}_${new Date().getTime()}`}         
+                    style={{
+                        width: deviceWidth,
+                        paddingTop: 10,
+                        paddingLeft: 10,
+                        paddingRight: 20,
+                        paddingBottom: listPaddingBottom ,
+                        backgroundColor: {light: 'white', dark: 'black'}[item]// themesColorsAppList[ThemeColorsAppIndex][item].basics.grounds.secondary
+                    }}
+                >
+                {renderColors(currentCustomTheme[item], item, true)}
+                </View>
+            )
         })}
         </ScrollView>
     )

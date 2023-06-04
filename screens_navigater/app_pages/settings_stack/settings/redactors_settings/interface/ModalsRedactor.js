@@ -10,6 +10,8 @@ import {
     useAnimatedProps,
     useAnimatedStyle,
     withTiming,
+    useDerivedValue,
+    runOnJS,
     cancelAnimation
 } from 'react-native-reanimated';
 
@@ -45,17 +47,21 @@ export default ModalsRedactor = ({
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.modals
 
     const params = Object.keys(appStyle.modals.highlightMethods) // ['outline', 'dimOutDark', 'gradient']
-    const paramsGroup =  Object.values(appStyle.modals.highlightMethods)
+    //const paramsGroup =  Object.values(appStyle.modals.highlightMethods)
     const toIndexs = (group) => {
-        return group.map((item, index)=> item? index : -1).filter(item => item >= 0);
+        'worklet';
+        return (group.map((item, index)=> item? index : -1).filter(item => item >= 0));
     }
 
     const items = [Language.dimOutDark, Language.gradient, Language.outline, ]
+
+    const horizProximity = useDerivedValue(()=>previewAppStyleA.value.modals.fullWidth)
+    const highlight = useDerivedValue(()=>toIndexs(Object.values(previewAppStyleA.value.modals.highlightMethods)))
     
     const changeHorizontalProximity = (value) => { 
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.modals.fullWidth = value;
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.presetUsed = 'YTTI-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
@@ -65,7 +71,7 @@ export default ModalsRedactor = ({
         for (let i = 0; i < params.length; i++){
             newAppStyle.modals.highlightMethods[params[i]] = indexs.includes(i)
         }            
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.presetUsed = 'YTTI-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
@@ -75,7 +81,7 @@ export default ModalsRedactor = ({
             textTitle = {Language.horizontalProximity}
             textStates = {Language.horizontalProximityState}
             //text = {`${Language[`horizontalProximity`]} ${Language[`horizontalProximityState`][`${horizontalProximity}`]}`}
-            primeValue={appStyle.modals.fullWidth}
+            aValue={horizProximity}
             onChange={changeHorizontalProximity}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
@@ -87,7 +93,7 @@ export default ModalsRedactor = ({
             isChoiceOne={false}
             title = {Language.highlightMethods}
             //  'one'>index || 'multiple'>[indexs]
-            primaryValue = {toIndexs(paramsGroup)}
+            aValue = {highlight}
             groupSize = {params.length}
             groupItems = {items}         
             onPress = {(activeIndexs)=>{settingMethods(activeIndexs)}}          

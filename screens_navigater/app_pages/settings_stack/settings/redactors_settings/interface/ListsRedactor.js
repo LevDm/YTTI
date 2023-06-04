@@ -3,7 +3,7 @@ import React, {useState, useRef, useEffect} from "react";
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
 
-import { cancelAnimation } from "react-native-reanimated";
+import { cancelAnimation, useDerivedValue, runOnJS } from "react-native-reanimated";
 
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
@@ -28,6 +28,7 @@ import commonStaticStyles, { SwitchField, SliderField } from "../CommonElements"
 
 export default ListsRedactor = ({
     appStyle,
+    appConfig,
     //setPreviewAppStyle,
     //getNewAppStyleObject,
     previewAppStyleA,
@@ -39,10 +40,14 @@ export default ListsRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.lists
 
+    const vertProximity = useDerivedValue(()=>previewAppStyleA.value.lists.proximity)
+    const fullWidth = useDerivedValue(()=>previewAppStyleA.value.lists.fullWidth)
+    const invertedHeader = useDerivedValue(()=>previewAppStyleA.value.lists.invertColorsHeader)
+
     const setPrewProximity = (value) => {
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.lists.proximity = Number(value);
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.presetUsed = 'YTTI-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
@@ -50,7 +55,7 @@ export default ListsRedactor = ({
     const fullWidthChange = (value) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.lists.fullWidth = value;//!fullWidth;
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.presetUsed = 'YTTI-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
@@ -58,7 +63,7 @@ export default ListsRedactor = ({
     const invertChange = (value) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.lists.invertColorsHeader = value;//!invertColors;
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.presetUsed = 'YTTI-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
@@ -72,12 +77,13 @@ export default ListsRedactor = ({
         }}
     >
         <SliderField
+            viewProps={{style: {height: 72,}}}
             title = {Language.proximity}
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             minimumValue={listsProximity.min}
             maximumValue={listsProximity.max}
             step = {listsProximity.step}
-            value = {appStyle.lists.proximity}
+            aValue = {vertProximity}
             onSlidingComplete = {setPrewProximity}
             onValueChange = {setPrewProximity}
             appStyle = {appStyle}
@@ -88,7 +94,7 @@ export default ListsRedactor = ({
             textTitle = {Language.fullWidth}
             textStates = {Language.fullWidthState}
             //text = {`${Language.fullWidth} ${Language.fullWidthState[`${fullWidth}`]}`}
-            primeValue={appStyle.lists.fullWidth}
+            aValue={fullWidth}
             onChange={fullWidthChange}
             style = {{
                 marginTop: 10
@@ -97,11 +103,12 @@ export default ListsRedactor = ({
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
+        {appConfig.user.role == 'a' && 
         <SwitchField
             textTitle = {Language.invertColorsHeader}
             textStates = {Language.invertColorsHeaderState}
             //text = {`${Language.invertColorsHeader} ${Language.invertColorsHeaderState[invertColors]}`}
-            primeValue={appStyle.lists.invertColorsHeader}
+            aValue={invertedHeader}
             onChange={invertChange}
             style = {{
                 marginTop: 10
@@ -109,7 +116,7 @@ export default ListsRedactor = ({
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
-        />
+        />}
     </View>)
 }
 

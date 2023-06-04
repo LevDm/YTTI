@@ -103,7 +103,7 @@ function SettingsStack(props) {
                     //cardStyle: {
                     //    backgroundColor: 'tomato',
                     //},
-                    detachPreviousScreen: false
+                    //detachPreviousScreen: false
                 }} 
             />
         </Stack.Navigator>

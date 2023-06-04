@@ -47,8 +47,13 @@ const LanguageStoreRu = {
       HeaderTitle: 'настройки',
       app: 'приложения',
       preview: {
-        title: 'Предпросмотр',
-        apply: 'Принять изменения'
+        title: 'предпросмотр',
+        //apply: 'Принять изменения',
+        toolbar: {
+          hide: 'свернуть',
+          show: 'показать',
+          apply: 'принять'
+        },
       },
       LanguageSettings: {    
         selector: 'Выберете язык',
@@ -61,8 +66,8 @@ const LanguageStoreRu = {
         title: 'редактор цветов',
         mod: 'режим',
         themes: {light: 'светлая тема', dark: 'темная тема'},
-        isNew: 'Сохранить изменения для новой палитры и выйти?',
-        isNewActions: {y: 'Да', n: 'Нет', yn: 'Выйти без сохранения'},
+        isNew: 'Создана новая палитра',
+        isNewActions: {y: 'Сохранить и выйти', n: 'Не выходить', yn: 'Выйти без сохранения'},
         saved: 'Палитра сохранена',
         fullMod: {
           title: 'полный',
@@ -80,12 +85,13 @@ const LanguageStoreRu = {
           }
         },
         easeMod: {
-          title: 'быстрый',
+          title: 'акцентный',
           stages: {
-            hue: 'Оттенки',
+            step: 'шаг из',
+            hue: 'Оттенок',
             saturation: 'Насыщенность',
             lightness: 'Яркость',
-            almost: 'Почти всё готово!'
+            almost: 'Готово!'
           },
           accept: 'Принять',
           changeGradient: 'Изменить направление градиента',
@@ -138,7 +144,7 @@ const LanguageStoreRu = {
 
           selectors: 'переключатели',
           navigationMenu: "меню навигации", 
-          loadAnimation: "загрузка",
+          loadAnimation: "Заставка",
           lists: "экраны",
           bobberButton:"плавающие кнопки",
           modals: 'модальные окна',
@@ -161,7 +167,7 @@ const LanguageStoreRu = {
           statusBarStyle: 'Цвет символов строки состояния',
           barStyles: {
             auto: 'Aвтоматический',
-            inverted: 'Инвертированный',
+            //inverted: 'Инвертированный',
             light: 'Светлый',
             dark: 'Tемный'
           },
@@ -172,8 +178,8 @@ const LanguageStoreRu = {
           synhronous: "Синхронизация значений",
           synhronousState: {true: "включена", false: "выключена"},
           type: {
-            basic: "Базовые элементы", 
-            additional: "Дополнительные элементы"
+            basic: "Углы первичных элементов", 
+            additional: "Углы вторичных элементов"
           },
           slider: {min: "прямее", max: "круглее"}
         },
@@ -181,19 +187,22 @@ const LanguageStoreRu = {
           ripple: 'Пульсации',
           ripples: ['Все', 'Основные', 'Выключены'],
           shadows: 'Тени элементов',
-          shadowsTypes: ['Стандартные', 'Основные стандартные','Полные','Неоморфические', 'Квадратные', 'Выключены'],
-          blur: 'Прозрачность поверхностных элементов',
+          shadowsTypes: ['Стандартные','Полные','Неоморфические','Грубые','Выключены'],
+          //shadowsTypes: ['Выключены','Неоморфические','Грубые','Полные','Стандартные','Основные стандартные',],
+          blur: 'Эффект стекла поверхностных элементов',
           blurState: {true: "включена", false: "выключена"},
           warningBlur: '! В активном состоянии данный параметр может вызвать проблемы с производительностью'
         },
         selectors: {
+          disabledShadows: 'Игнорирование полного отключения теней',
+          disabledShadowsState: {true: "включено", false: "выключено"},
           switchs: 'Тумблеры',
           checkBoxs: 'Флажки множественного выбора',
           radioButtons: 'Флажки одинарного выбора'
         },
         navigationMenu: {
           type: "Тип меню",
-          types: ["Классическое","Скрытое","Выдвижная панель"],
+          types: ["Классическое нижнее", "Боковая выдвижная панель","Скрытое",],
           menuParams: "Параметры меню",
           height: "Высота",
           slider: {min: "ниже", max: "выше"},
@@ -206,8 +215,8 @@ const LanguageStoreRu = {
           horizontalPositionsDrawer: ["Слева","Справа"],
           accentsType: 'Способ акцентирования',
           accentsTypes: {
-            coloring: 'Окраска',
-            filling: 'Заполнение иконок',
+            coloring: 'Цветная окраска',
+            filling: 'Заливка значка',
           }
         },
         loadAnimation: {
@@ -220,7 +229,7 @@ const LanguageStoreRu = {
         lists: {
           textSize: "Размер текста в элементах списка",
           slider: {min: "меньше", max: "больше"},
-          proximity: "Отступы между элементами списка",
+          proximity: "Вертикальные отступы между элементами списка",
           fullWidth: "Элементы списка занимают всю ширину экрана",
           fullWidthState: {true: "включено", false: "выключено"},
           invertColorsHeader: 'Нейтральная палитра заголовка' ,
@@ -228,7 +237,11 @@ const LanguageStoreRu = {
         },
         bobberButton: {
           position: "Положение на экране",
-          positions: ["Слева","По центру","Справа"],
+          positions: ["Снизу слева","Снизу по центру","Снизу справа", "Сверху в заголовке"],
+          signatures: 'Подписи к значкам',
+          signaturesState: {true: "включены", false: "выключены"},
+          disabledShadows: 'Игнорирование полного отключения теней',
+          disabledShadowsState: {true: "включено", false: "выключено"},
           size: "Размер кнопки",
           slider: {min: "меньше", max: "больше"},
           invertColors: 'Нейтральная палитра кнопки' ,
@@ -239,15 +252,15 @@ const LanguageStoreRu = {
         modals: {
           horizontalProximity: 'Окно занимает всю ширину экрана',
           horizontalProximityState: {true: "включено", false: "выключено"},
-          outline: 'Контур',
+          outline: 'Контур окна',
           outlineState: {true: "включен", false: "выключен"},
           dimOut: 'Затемнение вне окна при открытие',
           dimOutState: {true: "включено", false: "выключено"},
-          highlightMethods: 'Способ выделения окна',
+          highlightMethods: 'Способы выделения окна',
           //outline: 'Window outline',
-          dimOutDark: 'Затемнение',
+          dimOutDark: 'Затемнение фона',
           //dimOutLight: 'Засветление',
-          gradient: 'Градиент границы',
+          gradient: 'Градиент верхней границы окна',
         },
         languages: {
           thisLanguage: 'Использовать русский'
@@ -255,9 +268,9 @@ const LanguageStoreRu = {
         weather: {
           type: 'Тип отображения погоды',
           types: {
-            panel: 'В панеле',
-            lists: 'В списках', 
-            widget: 'Виджет', 
+            panel: 'Виджет в боковой панеле',
+            lists: 'Начальный элемент в списке главного экрана', 
+            widget: 'Значок в заголовке главного экрана', 
             off: 'Выключена'
           },
           locations: 'Используемые местоположения',
@@ -425,8 +438,12 @@ const LanguageStoreEng = {
       HeaderTitle: 'settings',
       app: 'for app',
       preview: {
-        title: 'Preview',
-        apply: 'Apply changes'
+        title: 'preview',
+        toolbar: {
+          hide: 'hide',
+          show: 'to show',
+          apply: 'apply'
+        },
       },
       LanguageSettings: {
         selector: 'Select language',
@@ -460,10 +477,11 @@ const LanguageStoreEng = {
         easeMod: {
           title: 'fast',
           stages: {
+            step: 'step',
             hue: 'Hues',
             saturation: 'Saturation',
             lightness: 'Brightness',
-            almost: 'Almost done!'
+            almost: 'Done!'
           },
           accept: 'Accept',
           changeGradient: 'Change gradient direction',
@@ -533,7 +551,7 @@ const LanguageStoreEng = {
           statusBarStyle: 'Color of status bar symbols',
           barStyles: {
             auto: 'Automatic',
-            inverted: 'Inverted',
+            //inverted: 'Inverted',
             light: 'Light',
             dark: 'Dark'
           },
@@ -553,19 +571,22 @@ const LanguageStoreEng = {
           ripple: 'Ripple',
           ripples: ['All', 'General', 'Off'],
           shadows: 'Element Shadows',
-          shadowsTypes: ['Standard', 'Standard basic', 'Full','Neomorphic', 'Square','Off'],
+          //shadowsTypes: ['Off','Neomorphic','Tough','Full','Standard','Standard basic',],
+          shadowsTypes: ['Standard','Full','Neomorphic','Tough','Off',],
           blur: 'Surface element transparency',
           blurState: {true: "on", false: "off"},
           warningBlur: '! If enabled, this setting may cause performance issues'
         },
         selectors: {
+          disabledShadows: 'Ignore completely disabling shadows',
+          disabledShadowsState: {true: "on", false: "off"},
           switches: 'Toggles', 
           checkBox: 'Multiple select checkboxes', 
           radioButtons: 'Single select checkboxes'
         },
         navigationMenu: {
           type: "Type menu",
-          types: ["Classical","Hidden", "Retractable panel"],
+          types: ["Classical", "Retractable panel", "Hidden",],
           menuParams: "Menu params",
           height: "Height",
           slider: {min: "up", max: "more"},
@@ -600,7 +621,11 @@ const LanguageStoreEng = {
         },
         bobberButton: {
           position: "Position on screen",
-          positions: ["Left","Center","Right"],
+          positions: ["Left","Center","Right","Above"],
+          signatures: 'Icon captions',
+          signaturesState: {true: "on", false: "off"},
+          disabledShadows: 'Ignore completely disabling shadows',
+          disabledShadowsState: {true: "on", false: "off"},
           size: "Button size",
           slider: {min: "less", max: "more"},
           invertColors: 'Neutral button palette' ,

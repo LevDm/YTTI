@@ -74,8 +74,7 @@ import { listsHorizontalProximity } from "../../../app_values/AppDefault";
 
 const horizontalProximity = listsHorizontalProximity['true']
 
-const Home = (props) => {
- 
+const Tasks = (props) => {
 
     const [tasks, setTasks] = useState(props.tasks);
     
@@ -394,6 +393,8 @@ const Home = (props) => {
 
                 menuPress = {menuPress}
 
+                fabPress = {bobberButtonPress}
+
                 appStyle={appStyle}
                 appConfig={appConfig}
                 ThemeColorsAppIndex={ThemeColorsAppIndex}
@@ -402,7 +403,7 @@ const Home = (props) => {
             />
 
             <BobberButton 
-                enabled={true}
+                enabled={appStyle.functionButton.position != 'top'}
         
                 bottomBord = {bottomBord}
                 reaValueBobberButtonVisible = {animValueBobberButtonVisible}
@@ -449,7 +450,7 @@ const Home = (props) => {
         
     );
 }
-export default connect(mapStateToProps('HOME_SCREEN'),mapDispatchToProps('HOME_SCREEN'))(Home);
+export default connect(mapStateToProps('HOME_SCREEN'),mapDispatchToProps('HOME_SCREEN'))(Tasks);
 
 //====================================================================================================================================
 
@@ -577,7 +578,7 @@ const BobberButton = (props) => {
                 />
                 <BasePressable
                     type={"i"}
-                    icon={{name: "pencil", size: 24, color: appStyle.functionButton.invertColors? Theme.icons.accents.primary : Theme.icons.neutrals.primary}}
+                    icon={{name: 'sticker-plus-outline', size: 24, color: appStyle.functionButton.invertColors? Theme.icons.accents.primary : Theme.icons.neutrals.primary}}
                     style={[{
                         height: appStyle.functionButton.size-10,
                         width: appStyle.functionButton.size-10,
@@ -595,8 +596,8 @@ const BobberButton = (props) => {
 }
 
 //====================================================================================================================================
-const headerPanel = 55
-const headerParams = 30
+const headerPanel = 50
+const headerParams = 46
 const headerFullHeight = statusBarHeight+headerPanel+headerParams
 
 const listItemHeight = 110
@@ -620,6 +621,7 @@ const ListItems = (props) => {
     reaValueBobberButtonVisible,
 
     menuPress,
+    fabPress,
 
     appConfig,
     LanguageAppIndex,
@@ -675,6 +677,11 @@ const ListItems = (props) => {
     const changesCheck = () => {
 
     }
+
+    const changesClose = () => {
+        setChangesTask([])
+    }
+
 
     const changesDelete = () => {
         handleDeleteTask(changesTask, true)
@@ -750,7 +757,7 @@ const ListItems = (props) => {
                 {translateY: interpolate(
                     headerShort.value, 
                     [headerFullHeight-headerPanel, headerFullHeight],
-                    [-statusBarHeight, statusBarHeight],
+                    [statusBarHeight, statusBarHeight],
                     //extrapolation
                     {
                         extrapolateLeft: Extrapolation.CLAMP,
@@ -758,11 +765,6 @@ const ListItems = (props) => {
                     })
                 }
             ],
-            opacity: interpolate(
-                headerShort.value, 
-                [headerFullHeight-headerPanel, headerFullHeight],
-                [0, 1]
-            )
         }
     })
 
@@ -781,16 +783,22 @@ const ListItems = (props) => {
                     })
                 }
             ],
+            opacity: interpolate(
+                headerShort.value, 
+                [headerFullHeight-headerPanel, headerFullHeight],
+                [0, 1]
+            )
         }
     })
 
-    
+    const areaFrameBut = 100
+    const paddingLeftCategorys = 45
     const indicatorLine = useSharedValue({widths: [], left: []})
     const animStyleIndicatorLine = useAnimatedStyle(() => {
         const duration = 350; 
         return {
             width: withTiming(indicatorLine.value.widths.length>0? indicatorLine.value.widths[category] : 0, {duration: duration-20}),
-            left: withTiming(indicatorLine.value.left.length>0? ((0.5*(deviceWidth-100)*category) + indicatorLine.value.left[category]) : 0, {duration: duration, easing: Easing.bezier(0.45, 0, 0.55, 1)}),
+            left: withTiming(indicatorLine.value.left.length>0? ((0.5*(deviceWidth-areaFrameBut)*category) + indicatorLine.value.left[category]) : 0, {duration: duration, easing: Easing.bezier(0.45, 0, 0.55, 1)}),
         }
     }, [indicatorLine, category])
 
@@ -1029,6 +1037,21 @@ const ListItems = (props) => {
     )
 
     //const horizontalProximityModal = 10
+    const cogButtonVisible = !(appConfig.appFunctions.settings.used && appStyle.navigationMenu.type == 'classical') ||
+                            appStyle.navigationMenu.type == 'not' ||
+                            (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)
+
+    const cogIconType = ((appStyle.navigationMenu.type == 'classical' && (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)))? "weather-partly-snowy-rainy" 
+    : appStyle.navigationMenu.type == 'not'? "menu" : 'cog'
+
+    console.log(cogButtonVisible, cogIconType)
+    console.log(!(appConfig.appFunctions.settings.used && appStyle.navigationMenu.type == 'classical'),
+        appStyle.navigationMenu.type == 'not',
+        (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0))
+    console.log(appConfig.appFunctions.settings.used , appStyle.navigationMenu.type)
+
+    const iconsSize = 28
+    
  
     return (
         <>
@@ -1074,49 +1097,112 @@ const ListItems = (props) => {
         <Reanimated.View
             style={[{
                 //top: statusBarHeight,
-                zIndex: 1,
+                zIndex: 2,
                 height: headerPanel,
                 width: deviceWidth,
                 position: 'absolute',
                 //backgroundColor: 'red'
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                flexDirection: appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
+                //justifyContent: 'flex-start',
+                //alignItems: 'center',
+                //flexDirection: appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
             }, dynamicPanel]}
         >
-            <BasePressable 
-                type="i"
-                icon={{
-                    name: ((appStyle.navigationMenu.type == 'not' || (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)))? "menu" : 'cog', 
-                    size: 24, 
-                    color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+            {changesTask.length == 0 &&
+            <Reanimated.View
+                entering={entering}
+                style = {{
+                    height: headerPanel,
+                    width: deviceWidth,
+                    position: 'absolute',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    //backgroundColor: 'red',
+                    flexDirection: appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
                 }}
-                style={[{
-                        height: 45, 
-                        width: 45, 
-                        paddingTop: 4,
-                        borderRadius: appStyle.borderRadius.additional,
-                        marginHorizontal: 15
-                    }, 
-                    //appStyle.navigationMenu.drawerPosition == 'left'? {marginLeft: 15,} : {marginRight: 15}
-                ]}
-                onPress={menuPress}
-                android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
-            />
-            <Text 
-                style = {[{
-                    flex: 1,
-                    textAlign: 'left',
-                    fontSize: 20,
-                    fontWeight: '500',
-                    letterSpacing: 0.5,
-                    fontVariant: ['small-caps'],
-                    color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-                }, appStyle.navigationMenu.drawerPosition == 'left'? {marginRight: 60,} : {marginLeft: 60}]}
             >
-                {Language.HeaderTitle}
-            </Text>
-            {(changesTask.length == 0 && (appConfig.weather.type == 'widget' && appConfig.weather.locationInfo.length>0)) &&
+                <BasePressable 
+                    type="i"
+                    icon={{
+                        name: cogIconType, 
+                        size: iconsSize, 
+                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+                    }}
+                    style={[{
+                            flex: 1,
+                            height: 46, 
+                            width: 46, 
+                            paddingTop: 4,
+                            borderRadius: appStyle.borderRadius.additional,
+                            marginHorizontal: 15,
+                            opacity: cogButtonVisible? 1 : 0
+                        }, 
+                        //appStyle.navigationMenu.drawerPosition == 'left'? {marginLeft: 15,} : {marginRight: 15}
+                    ]}
+                    onPress={menuPress}
+                    disabled = {!cogButtonVisible}
+                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+                />
+
+                <BasePressable 
+                    type="i"
+                    icon={{
+                        name: "weather-partly-snowy-rainy", 
+                        size: iconsSize, 
+                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+                    }}
+                    style={[{
+                            flex: 1,
+                            height: 46, 
+                            width: 46, 
+                            paddingTop: 4,
+                            borderRadius: appStyle.borderRadius.additional,
+                            marginHorizontal: 15,
+                            opacity: (changesTask.length == 0 && (appConfig.weather.type == 'widget' && appConfig.weather.locationInfo.length>0))? 1 : 0
+                        }, 
+                    ]}
+                    onPress={()=>setWeatherModal(true)}
+                    disabled = {!(changesTask.length == 0 && (appConfig.weather.type == 'widget' && appConfig.weather.locationInfo.length>0))}
+                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+                />
+                
+                <Text 
+                    style = {[{
+                        flex: 7,
+                        textAlign: 'center',
+                        fontSize: 18,
+                        fontWeight: '500',
+                        letterSpacing: 0.5,
+                        fontVariant: ['small-caps'],
+                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+                    }, appStyle.navigationMenu.drawerPosition == 'left'? {marginRight: 60,} : {marginLeft: 60}]}
+                >
+                    {Language.HeaderTitle}
+                </Text>
+
+                <BasePressable 
+                    type="i"
+                    icon={{
+                        name: 'sticker-plus-outline', 
+                        size: iconsSize, 
+                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+                    }}
+                    style={[{
+                            flex: 2,
+                            height: 46, 
+                            width: 46, 
+                            paddingTop: 4,
+                            borderRadius: appStyle.borderRadius.additional,
+                            marginHorizontal: 15,
+                            opacity: (appStyle.functionButton.position == 'top')? 1 : 0
+                        }, 
+                    ]}
+                    onPress={fabPress}
+                    disabled = {!(appStyle.functionButton.position == 'top')}
+                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+                />
+            </Reanimated.View>}
+            
+            {/*(changesTask.length == 0 && (appConfig.weather.type == 'widget' && appConfig.weather.locationInfo.length>0)) &&
             //WEATHER
             <Reanimated.View
                 entering={entering}
@@ -1132,62 +1218,96 @@ const ListItems = (props) => {
                 >
                     <WeatherComponent type = {'widget'} />
                 </Pressable>        
-            </Reanimated.View>}
+            </Reanimated.View>*/}
+
             {changesTask.length > 0 &&
             <Reanimated.View
                 entering={entering}
-                style={{
-                    flexDirection:  appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
-                    //backgroundColor: 'red'
+                style = {{
+                    height: headerPanel,
+                    width: deviceWidth,
+                    position: 'absolute',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    //backgroundColor: 'red',
+                    flexDirection: appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
                 }}
             >
-                <View
-                    style={{
-                        width: 25,
-                        height: 25,
-                        backgroundColor: Theme.basics.accents.quaternary,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        borderRadius: appStyle.borderRadius.additional
-                    }}
-                >
-                    <Text
-                        style={{
-                            fontSize: 15,
-                            color: Theme.texts.neutrals.primary
-                        }}
-                    >
-                        {changesTask.length}
-                    </Text>
-                </View>
-                <BasePressable
+                <BasePressable 
                     type="i"
-                    style={{
-                        width: 70
-                    }}
-                    icon = {{
-                        name: 'check',
-                        size: 22,
+                    icon={{
+                        name: 'close', 
+                        size: iconsSize, 
                         color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
                     }}
+                    style={[{
+                            height: 46, 
+                            width: 46, 
+                            paddingTop: 4,
+                            borderRadius: appStyle.borderRadius.additional,
+                            marginHorizontal: 15,
+                            opacity: (appStyle.functionButton.position == 'top')? 1 : 0
+                        }, 
+                    ]}
+                    onPress={changesClose}
                     android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
-                    onPress = {changesCheck}
-                />
-                <BasePressable
-                    type="i"
-                    style={{
-                        width: 70
-                    }}
-                    icon = {{
-                        name: 'delete',
-                        size: 22,
-                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-                    }}
-                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
-                    onPress = {changesDelete}
-                    onLongPress = {clearAllTasks}
                 />
 
+                <View
+                    //entering={entering}
+                    style={{
+                        alignItems: 'center',
+                        flexDirection:  appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
+                        //backgroundColor: 'red'
+                    }}
+                >
+                    <View
+                        style={{
+                            width: 26,
+                            height: 26,
+                            backgroundColor: Theme.basics.accents.quaternary,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: appStyle.borderRadius.additional
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontSize: 15,
+                                color: Theme.texts.neutrals.primary
+                            }}
+                        >
+                            {changesTask.length}
+                        </Text>
+                    </View>
+                    <BasePressable
+                        type="i"
+                        style={{
+                            width: 60
+                        }}
+                        icon = {{
+                            name: 'check',
+                            size: iconsSize,
+                            color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+                        }}
+                        android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+                        onPress = {changesCheck}
+                    />
+                    <BasePressable
+                        type="i"
+                        style={{
+                            width: 60
+                        }}
+                        icon = {{
+                            name: 'delete',
+                            size: iconsSize,
+                            color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+                        }}
+                        android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+                        onPress = {changesDelete}
+                        onLongPress = {clearAllTasks}
+                    />
+                </View>
             </Reanimated.View>}
         </Reanimated.View>
 
@@ -1198,7 +1318,8 @@ const ListItems = (props) => {
                 width: deviceWidth,
                 height: headerParams,
                 position: 'absolute',
-                //backgroundColor: 'blue'
+                //backgroundColor: 'blue',
+                paddingLeft: paddingLeftCategorys
             }, dynamicParams]}
         >
             <View
@@ -1214,7 +1335,7 @@ const ListItems = (props) => {
                         <Pressable
                             key={item+index}
                             style={{
-                                width: (deviceWidth-100)/2,
+                                width: (deviceWidth-areaFrameBut)/2,
                                 justifyContent: 'center',
                                 alignItems: 'center'
                             }}
@@ -1222,7 +1343,7 @@ const ListItems = (props) => {
                         >
                             <Text
                                 style={{
-                                    fontSize: 16,
+                                    fontSize: 15,
                                     fontWeight: '500',
                                     fontVariant: ['small-caps'],
                                     color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary,
@@ -1230,7 +1351,7 @@ const ListItems = (props) => {
                                 }}
                                 onLayout={(event)=>{
                                     indicatorLine.value.widths[index] = event.nativeEvent.layout.width+10
-                                    indicatorLine.value.left[index] = event.nativeEvent.layout.x-5
+                                    indicatorLine.value.left[index] = event.nativeEvent.layout.x-5+paddingLeftCategorys
                                     //
                                     if(index == categorys.length-1){
                                         indicatorLine.value = JSON.parse(JSON.stringify(indicatorLine.value))
@@ -1245,7 +1366,7 @@ const ListItems = (props) => {
                 <View
                     style={{
                         flex: 1,
-                        width: 100,
+                        width: areaFrameBut,
                         //flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'center',//'space-around',
@@ -1255,7 +1376,7 @@ const ListItems = (props) => {
                     <BasePressable
                         type="i"
                         style={{
-                            width: 90,
+                            width: areaFrameBut*0.9,
                             height: headerParams,
                             borderRadius: appStyle.borderRadius.additional
                         }}

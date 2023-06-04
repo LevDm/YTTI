@@ -43,12 +43,20 @@ import Phone from "./Basis"
 export default Preview = (props) => {
     const {
         previewAppStyleA,
-        ThemeSchema,
+        previewAppPalette,
+        //ThemeSchema,
+        frameColor,
+        index,
         animatedValue 
     } = props
     //console.log('preview',appStyle, previewAppStyle)
     //console.log('preview props',props.appStyle, props.previewAppStyle)
-    const animatedState = useSharedValue(false)
+
+    const animatedState = useDerivedValue(()=>{
+        return animatedValue.value[index]
+    }, [animatedValue])
+
+    //const animatedState = useSharedValue(false)
     const duration = 400
     const scale = 2
 
@@ -57,12 +65,10 @@ export default Preview = (props) => {
     
     
     const header = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
+        //console.log('PREVIEW 2', previewAppPalette.value)
         return {
             //dynamic style
-            backgroundColor: previewAppStyleA.value.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary, // 
+            backgroundColor: `${previewAppStyleA.value.lists.invertColorsHeader? previewAppPalette.value.basics.neutrals.secondary : previewAppPalette.value.basics.accents.primary}${previewAppStyleA.value.effects.blur? '90' : 'ff'}`, // 
             //scale params
             borderTopLeftRadius: withTiming( 
                 interpolate(
@@ -108,15 +114,11 @@ export default Preview = (props) => {
                 }
             ],
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
 
     const StatusBarText = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
-
-        const groundColor = previewAppStyleA.value.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary
+        const groundColor = previewAppStyleA.value.lists.invertColorsHeader? previewAppPalette.value.basics.neutrals.secondary : previewAppPalette.value.basics.accents.primary
 
         const getContrast = (hcolor) => {
             let r = 0, g = 0, b = 0;
@@ -140,173 +142,140 @@ export default Preview = (props) => {
             const count = (coef) => ((coef+0.055)/1.055)**2.4 
             
             let contr = count(r)+count(g)+count(b)
-          
-            return contr <= 0.5? 'white' : 'black'
+            console.log('PREVIEW_STATUSBAR', contr)
+            return contr <= 0.65? 'white' : 'black'
         }
 
         const autoColor = getContrast(groundColor)
 
         return {
-            color: previewAppStyleA.value.palette.StatusBar == 'auto'? autoColor :
-                previewAppStyleA.value.palette.StatusBar == 'inverted'? (autoColor == 'white'? 'black' : 'white') :
-                (previewAppStyleA.value.palette.StatusBar == 'light'? 'white' : 'black')
+            color: previewAppStyleA.value.palette.statusBar == 'auto'? autoColor :
+                previewAppStyleA.value.palette.statusBar == 'inverted'? (autoColor == 'white'? 'black' : 'white') :
+                (previewAppStyleA.value.palette.statusBar == 'light'? 'white' : 'black')
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
 
     const HeaderText = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
-            color: previewAppStyleA.value.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
+            color: previewAppStyleA.value.lists.invertColorsHeader? previewAppPalette.value.texts.neutrals.secondary : previewAppPalette.value.texts.neutrals.primary
         }
-    }, [previewAppStyleA])
-
+    }, [previewAppStyleA, previewAppPalette])
 
     const HeaderIcon = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
-            backgroundColor: previewAppStyleA.value.lists.invertColorsHeader? Theme.basics.accents.primary : Theme.basics.accents.quaternary
+            borderColor: previewAppStyleA.value.lists.invertColorsHeader? previewAppPalette.value.icons.neutrals.secondary : previewAppPalette.value.icons.neutrals.primary
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
+
+    const HeaderFuncIcon = useAnimatedStyle(()=>{
+
+        return {
+            opacity: previewAppStyleA.value.functionButton.position == 'top'? 1:0
+        }
+    }, [previewAppStyleA, previewAppPalette])
+
+
+    const HeaderIndicator = useAnimatedStyle(()=>{
+
+        return {
+            backgroundColor: previewAppStyleA.value.lists.invertColorsHeader? previewAppPalette.value.basics.accents.primary : previewAppPalette.value.basics.accents.quaternary
+        }
+    }, [previewAppStyleA, previewAppPalette])
 
 
     const ListText_0 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
-            color: Theme.texts.neutrals.primary
+            color: previewAppPalette.value.texts.neutrals.primary
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
     const ListText_1 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
-            color: Theme.texts.neutrals.secondary
+            color: previewAppPalette.value.texts.neutrals.secondary
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
     const ListText_2 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
-            color: Theme.texts.neutrals.tertiary
+            color: previewAppPalette.value.texts.neutrals.tertiary
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
     const ListIcon_0 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
-            borderColor: Theme.icons.accents.primary
+            borderColor: previewAppPalette.value.icons.accents.primary
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
 
     const ListIcon_1 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
-            borderColor: Theme.icons.neutrals.tertiary
+            borderColor: previewAppPalette.value.icons.neutrals.tertiary
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
     const ListIcon_2 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
-            borderColor: Theme.specials.fire.primary
+            borderColor: previewAppPalette.value.specials.fire.primary
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
     const ListIcon_3 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
-            borderColor: Theme.specials.fire.secondary
+            borderColor: previewAppPalette.value.specials.fire.secondary
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
 
     const MenuText_0 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
-
         const visible = previewAppStyleA.value.navigationMenu.type == 'classical'
 
         return {
-            color: (previewAppStyleA.value.navigationMenu.signatureIcons && visible)?  Theme.texts.neutrals.secondary : 'transparent'
+            color: (previewAppStyleA.value.navigationMenu.signatureIcons && visible)?  previewAppPalette.value.texts.neutrals.secondary : 'transparent'
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
     const MenuText_1 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
-
         const visible = previewAppStyleA.value.navigationMenu.type == 'classical'
 
         return {
             color: (previewAppStyleA.value.navigationMenu.signatureIcons && visible)? 
-                (previewAppStyleA.value.navigationMenu.accentsType.coloring? Theme.texts.accents.secondary : Theme.texts.neutrals.secondary ) :
+                (previewAppStyleA.value.navigationMenu.accentsType.coloring? previewAppPalette.value.texts.accents.primary : previewAppPalette.value.texts.neutrals.secondary ) :
                 'transparent'
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
 
     const MenuIcon_0 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
-
         const visible = previewAppStyleA.value.navigationMenu.type == 'classical'
 
         return {
-            borderColor: visible? Theme.texts.neutrals.secondary : 'transparent'
+            borderColor: visible? previewAppPalette.value.texts.neutrals.secondary : 'transparent'
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
     const MenuIcon_1 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
-
         const visible = previewAppStyleA.value.navigationMenu.type == 'classical'
 
         return {
-            backgroundColor: (previewAppStyleA.value.navigationMenu.accentsType.filling && visible)? (previewAppStyleA.value.navigationMenu.accentsType.coloring?  Theme.texts.accents.secondary : Theme.texts.neutrals.secondary ) : 'transparent',
-            borderColor: visible? (previewAppStyleA.value.navigationMenu.accentsType.coloring?  Theme.texts.accents.secondary : Theme.texts.neutrals.secondary) : 'transparent'
+            backgroundColor: (previewAppStyleA.value.navigationMenu.accentsType.filling && visible)? (previewAppStyleA.value.navigationMenu.accentsType.coloring?  previewAppPalette.value.texts.accents.primary : previewAppPalette.value.texts.neutrals.secondary ) : 'transparent',
+            borderColor: visible? (previewAppStyleA.value.navigationMenu.accentsType.coloring? previewAppPalette.value.texts.accents.primary : previewAppPalette.value.texts.neutrals.secondary) : 'transparent'
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
 
    
     const animStyleBody = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
-
         const heightValueReal = (deviceHeight/scale) //- ((Constants.statusBarHeight+1)+30+35)-30
 
         return {
@@ -351,66 +320,112 @@ export default Preview = (props) => {
         }
     }, [previewAppStyleA])
 
+    
 
+    const aStyleShadows = useAnimatedStyle(()=>{
+        const type = previewAppStyleA.value.effects.shadows
+        const primary = previewAppPalette.value.specials.shadow.primary
+        const secondary = previewAppPalette.value.specials.shadow.secondary
+
+        let shadowSize = {top: 0, left: 0, right: 0, bottom: 0}
+        let shadowOpacity = {top: '', left: '', right: '', bottom: ''}
+        let shadowColors= {top: 'transparent', left: 'transparent', right: 'transparent', bottom: 'transparent'}
+
+        const vertical = 4
+        const horizontal = previewAppStyleA.value.lists.fullWidth? 0 : 4
+
+        switch(type){
+            case 'material':
+                shadowSize = {top: 0, left: 0, right: 0, bottom: vertical};
+                shadowOpacity = {top: '20', left: '20', right: '20', bottom: '20'};
+                shadowColors = {top: primary, left: primary, right: primary, bottom: primary};
+                break;
+            case 'neomorphism':
+                shadowSize = {top: vertical, left: horizontal, right: horizontal, bottom: vertical};
+                shadowOpacity = {top: '20', left: '20', right: '20', bottom: '20'};
+                shadowColors = {top: secondary, left: secondary, right: primary, bottom: primary};
+                break;
+            case "square":
+                shadowSize = {top: 0, left: 0, right: horizontal, bottom: vertical};
+                shadowOpacity = {top: '01', left: '01', right: '89', bottom: '89'};
+                shadowColors = {top: primary, left: primary, right: primary, bottom: primary};
+                break;    
+            case 'full':
+                shadowSize = {top: vertical, left: horizontal, right: horizontal, bottom: vertical};
+                shadowOpacity = {top: '20', left: '20', right: '20', bottom: '20'};
+                shadowColors = {top: primary, left: primary, right: primary, bottom: primary};
+                break;
+            
+            default:
+                console.log('off shadows in preview_1')
+        }
+        //console.log(type, shadowSize, shadowOpacity, shadowColors)
+        return {
+            borderTopWidth: shadowSize.top,
+            borderLeftWidth: shadowSize.left,
+
+            borderRightWidth: shadowSize.right,
+            borderBottomWidth: shadowSize.bottom,
+
+            borderTopColor:`${shadowColors.top}${shadowOpacity.top}`,
+            borderLeftColor:`${shadowColors.left}${shadowOpacity.left}`,
+
+            borderRightColor:`${shadowColors.right}${shadowOpacity.right}`,
+            borderBottomColor:`${shadowColors.bottom}${shadowOpacity.bottom}`,
+        }
+    },[previewAppStyleA, previewAppPalette])
 
     const animStyleBodyItems = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
+        //const s = getShadows(previewAppStyleA.value.effects.shadows, previewAppPalette.value.specials.shadow.primary, previewAppPalette.value.specials.shadow.secondary)
+        //console.log(s)
         return {
             //dynamic style
-            backgroundColor: Theme.basics.neutrals.secondary,
-            borderRadius: previewAppStyleA.value.borderRadius.basic,
+            backgroundColor: previewAppPalette.value.basics.neutrals.secondary,
+            borderRadius: 5+previewAppStyleA.value.borderRadius.basic,
             marginHorizontal: previewAppStyleA.value.lists.fullWidth? 0 : horizontalProximity,
-            marginVertical: 2*previewAppStyleA.value.lists.proximity
+            marginVertical: 2*previewAppStyleA.value.lists.proximity,
             //scale params
+        
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
 
     const animStyleBodyItems_w = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
             //dynamic style
-            backgroundColor: Theme.basics.accents.tertiary,
-            borderRadius: previewAppStyleA.value.borderRadius.basic,
+            backgroundColor: previewAppPalette.value.basics.accents.tertiary,
+            borderRadius: 5+previewAppStyleA.value.borderRadius.basic,
             marginHorizontal: previewAppStyleA.value.lists.fullWidth? 0 : horizontalProximity,
-            marginVertical: 2*previewAppStyleA.value.lists.proximity
-            //scale params
+            marginVertical: 2*previewAppStyleA.value.lists.proximity,
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette.value])
 
     const animStyleBodyButton = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
-
         const y = previewAppStyleA.value.functionButton.size  + 12.5 + previewAppStyleA.value.navigationMenu.height 
 
     
-        const sizeValue = previewAppStyleA.value.functionButton.size 
+        const sizeValue = previewAppStyleA.value.functionButton.size-10
         const positionX = previewAppStyleA.value.functionButton.position == 'center'? ((deviceWidth-sizeValue)/2) :
                         previewAppStyleA.value.functionButton.position == 'right'? (12.5) : (deviceWidth-sizeValue-12.5)
 
         const translateX = previewAppStyleA.value.functionButton.position == 'center'? (deviceWidth)/2.05 + (sizeValue)/8   :
                         previewAppStyleA.value.functionButton.position == 'right'? 50 : deviceWidth - (12.5+sizeValue)/2
 
-        console.log(positionX, previewAppStyleA.value.functionButton.position )
+        //console.log(positionX, previewAppStyleA.value.functionButton.position )
 
         return {
             //dynamic style
-            backgroundColor: previewAppStyleA.value.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary, // Theme.basics.neutrals.tertiary
+            backgroundColor: `${previewAppStyleA.value.functionButton.invertColors? previewAppPalette.value.basics.neutrals.tertiary : previewAppPalette.value.basics.accents.secondary}${previewAppStyleA.value.effects.blur? '90' : 'ff'}` , // Theme.basics.neutrals.tertiary
             borderRadius: previewAppStyleA.value.borderRadius.additional,
             height: sizeValue,
             width: sizeValue,
 
             borderWidth: previewAppStyleA.value.functionButton.outline? 0.5 : 0,
-            borderColor: `${Theme.specials.separator}20`,
+            borderColor: `${previewAppPalette.value.specials.separator}20`,
 
+            opacity: previewAppStyleA.value.functionButton.position == 'top'? 0 : 1,
 
             bottom: 12.5,
             right: positionX,
@@ -449,30 +464,22 @@ export default Preview = (props) => {
                 }
             ]
         }    
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
     const ButtonIcon_1 = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
-
         return {
-            borderColor: previewAppStyleA.value.functionButton.invertColors? Theme.icons.accents.primary : Theme.icons.neutrals.primary
+            borderColor: previewAppStyleA.value.functionButton.invertColors? previewAppPalette.value.icons.accents.primary : previewAppPalette.value.icons.neutrals.primary
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
     
 
     const navigationMenu = useAnimatedStyle(()=>{
-        const Schema = previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : ThemeSchema
-        const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const Theme = themesColorsAppList[ThemeIndex][Schema]
 
         return {
             //dynamic style
             borderTopWidth: 1,
-            borderTopColor: `${Theme.specials.separator}20`,
-
-            backgroundColor: Theme.basics.neutrals.tertiary,
+            borderTopColor: `${previewAppPalette.value.specials.separator}20`,
+            backgroundColor: `${previewAppPalette.value.basics.neutrals.tertiary}${previewAppStyleA.value.effects.blur? '90' : 'ff'}`,
             height: previewAppStyleA.value.navigationMenu.height, 
             //scale params
             borderBottomLeftRadius: withTiming( 
@@ -519,8 +526,9 @@ export default Preview = (props) => {
                 }
             ],
         }
-    }, [previewAppStyleA])
+    }, [previewAppStyleA, previewAppPalette])
 
+    /*
     const [phoneAnimatedState, setPhoneAnimatedState] = useState(false);
 
     const newAnimatedState = (newValue) => {
@@ -528,21 +536,25 @@ export default Preview = (props) => {
         setPhoneAnimatedState(newValue);
     }
 
+
     useEffect(()=>{
         //console.log(props.animatedValue)
         if(animatedValue != undefined && animatedValue != animatedState.value){
             newAnimatedState(animatedValue)
         }
     },[animatedValue])
-
+    */
     //console.log(Theme,'|||',ThemeUpdater)
 
     return (
         <Phone
             //key = {props.key}
-            animatedValue = {phoneAnimatedState}
+            index={index}
+            animatedValue = {animatedValue}
             previewAppStyleA={previewAppStyleA}
-            ThemeSchema={ThemeSchema}
+            previewAppPalette={previewAppPalette}
+            frameColor = {frameColor}
+            //ThemeSchema={ThemeSchema}
             //onPress={()=>{
             //    onPress != undefined? onPress() : NaN
 
@@ -599,11 +611,14 @@ export default Preview = (props) => {
                         style = {[{
                             flexDirection: 'row',
                             height: 30,
+                            paddingHorizontal: 24,
                             width: deviceWidth,
-                            justifyContent: 'center'
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
                             //backgroundColor: ThemesColorsAppList[0].sky,<Reanimated.View style = {[staticStyles.iconBorder, HeaderIcon]}/>  
                         }]}
                     > 
+                        <Reanimated.View style={[HeaderIcon, staticStyles.iconBorder, {height: 20, width: 20}]}/>
                         <ReanimatedText
                             style ={[HeaderText, {
                                 fontWeight: 'bold',
@@ -612,6 +627,7 @@ export default Preview = (props) => {
                         >
                             Text
                         </ReanimatedText>
+                        <Reanimated.View style={[HeaderIcon, HeaderFuncIcon, staticStyles.iconBorder, {height: 20, width: 20}]}/>
                     </View>
 
                     <View
@@ -636,7 +652,7 @@ export default Preview = (props) => {
                         Text
                     </ReanimatedText>))}
 
-                    <Reanimated.View style={[HeaderIcon,{position: 'absolute', height: 2, width: 50, bottom: 0}]}/>
+                    <Reanimated.View style={[HeaderIndicator,{position: 'absolute', height: 2, width: 50, bottom: 0, borderRadius: 1}]}/>
                     </View>
                 </Reanimated.View>
 
@@ -673,6 +689,7 @@ export default Preview = (props) => {
                                         //margin: 5,
                                         padding: 10,
                                         //backgroundColor: 'white',
+                                        /*
                                         elevation: 1,
                                         shadowColor: "#000",
                                         shadowOffset: {
@@ -681,8 +698,9 @@ export default Preview = (props) => {
                                         },
                                         shadowOpacity: 0.25,
                                         shadowRadius: 4,
+                                        */
                                         
-                                    },index != 0? animStyleBodyItems : animStyleBodyItems_w]}
+                                    }, aStyleShadows, index != 0? animStyleBodyItems : animStyleBodyItems_w]}
                                 >
                                     {index != 0 && <>
                                     <View
@@ -813,7 +831,7 @@ export default Preview = (props) => {
                     style = {[animStyleBodyButton,{
                         position: 'absolute',
 
-                        
+                        /* 
                         shadowColor: "#000",
                         shadowOffset: {
                             width: 0,
@@ -822,6 +840,7 @@ export default Preview = (props) => {
                         shadowOpacity: 0.25,
                         shadowRadius: 4,
                         elevation: 4,
+                        */
                         
                         //height: 60,
                         //width: 60,

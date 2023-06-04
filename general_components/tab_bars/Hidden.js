@@ -24,7 +24,7 @@ const Hidden = ({
     state = {
         index: 0, 
         routes: [
-            {name: "home"},
+            {name: "tasks"},
             {name: "timetable"},
             {name: "notes"},
             {name: "settingsStack"},
@@ -153,7 +153,7 @@ const Hidden = ({
             {open && <>
             {state.routes.map((route, index) => {
                 const routes =  {
-                    tasks : {name: "home"},
+                    tasks : {name: "tasks"},
                     timetable: {name: "timetable"},
                     notes : {name: "notes"},
                     analytics : {name: "analytics"},
@@ -180,9 +180,9 @@ const Hidden = ({
                 let screenName = ''
 
                 switch(croute.name){
-                    case "home":
-                        iconsNames.focus = 'home-edit';
-                        iconsNames.notFocus = 'home-edit-outline';
+                    case "tasks":
+                        iconsNames.focus = 'sticker-check';//'home-edit';
+                        iconsNames.notFocus = 'sticker-check-outline';//'home-edit-outline';
                         screenName = Language.TasksScreen.HeaderTitle;
                         break;
 

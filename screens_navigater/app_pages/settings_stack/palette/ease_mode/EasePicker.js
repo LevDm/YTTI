@@ -66,7 +66,7 @@ const rowi = row - 1
 
 const alli = 2*(coli+rowi)
 
-const itemSize =  (deviceWidth-2)/col
+const itemSize =  (deviceWidth-8)/col
 const size = {w: col*itemSize, h: row*itemSize}
 
 
@@ -414,6 +414,14 @@ export default EasePicker = (props) => {
         }
     })
 
+    const textColorStep = useAnimatedProps(()=>{
+        const text = `${selected.value.h? selected.value.s? selected.value.l? '' : '3' : '2' : '1'} ${(selected.value.h && selected.value.s && selected.value.l)? '' : Language.easeMod.stages.step+' 3' }`
+        return {
+            text: text,
+            value: text
+        }
+    })
+
     const symbols = useAnimatedStyle(()=>{
         return {
             color: symbolsColor.value?  symbolsColor.value : 'transparent'
@@ -486,13 +494,19 @@ export default EasePicker = (props) => {
                     zIndex: 0,
                 }}
             >
+
+                <Reanimated_TextInput
+                    editable = {false}
+                    animatedProps={textColorStep}
+                    style={staticStyles.process}
+                />
+
                 <Reanimated_TextInput
                     editable = {false}
                     animatedProps={textColor}
                     style={staticStyles.process}
                 />
-                
-
+            
                 <Reanimated.View 
                     style={[{
                         height: 2.5*itemSize,
@@ -558,7 +572,7 @@ export default EasePicker = (props) => {
                         android_ripple={ripple()}
                     >
                         <MaterialCommunityIcons name="arrow-left" size={ICONS_SIZE} color="white" />
-                        <Text style={staticStyles.action} width={60}>{Language.easeMod.back}</Text>
+                        <Text style={staticStyles.action} >{Language.easeMod.back}</Text>
                     </Pressable>
                     <View style={{width: 1, backgroundColor: 'white', height: '70%'}}/>
                     <Pressable
@@ -567,7 +581,7 @@ export default EasePicker = (props) => {
                         android_ripple={ripple()}
                     >
                         <MaterialCommunityIcons name="arrow-collapse-left" size={ICONS_SIZE} color="white" />
-                        <Text style={staticStyles.action} width={60}>{Language.easeMod.clear}</Text>
+                        <Text style={staticStyles.action} >{Language.easeMod.clear}</Text>
                     </Pressable>
                 </View>
                 
@@ -587,7 +601,8 @@ const staticStyles = StyleSheet.create({
         fontSize: 13,
         paddingLeft: 3,
         fontWeight: 'bold',
-        textAlign: 'left', 
+        textAlign: 'center',
+         
         //fontWeight: '400', 
         //letterSpacing: 0.5,
         color: 'white'
@@ -604,6 +619,7 @@ const staticStyles = StyleSheet.create({
     },
     pressable: {
         flex: 1,
+        //backgroundColor: 'red',
         //flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center'

@@ -1,10 +1,11 @@
-import React, {useCallback, useState, useEffect,  useRef} from "react";
+import React, {useCallback, useState, useEffect, useMemo, useRef} from "react";
 
 import {
     Appearance,
     Text, 
     Pressable, 
     View,
+    ScrollView,
     TextInput,
     Modal,
     Button, 
@@ -18,13 +19,27 @@ import {
     StyleSheet
 } from 'react-native';
 
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 import Reanimated, {
-  useAnimatedStyle,
-  useSharedValue,
-  useAnimatedProps,
-  interpolate,
+  useSharedValue, 
+  useAnimatedStyle, 
+  withTiming,
+  withDelay,
+  withSequence, 
+  useAnimatedScrollHandler,
+  useAnimatedProps, 
+  cancelAnimation,
+  useAnimatedRef,
+  useDerivedValue,
+  scrollTo,
+  runOnJS,
   interpolateColor,
-  runOnJS
+  interpolate,
+  Extrapolate,
+  runOnUI,
+  Easing,
+  Extrapolation 
 } from 'react-native-reanimated';
 
 import Constants from "expo-constants";
@@ -40,68 +55,59 @@ import {connect} from 'react-redux';
 import mapStateToProps from "../../../../app_redux_files/stateToProps";
 import mapDispatchToProps from "../../../../app_redux_files/dispatchToProps";
 
+import { TabActions } from "@react-navigation/native";
+
 import { BasePressable, BaseTextInput } from "../../../../general_components/base_components/BaseElements";
 
 import themesColorsAppList, { themesApp } from "../../../../app_values/Themes";
 import languagesAppList, {languagesApp} from "../../../../app_values/Languages";
 
+import StyleChangePreview from "../settings/preview/StyleChangePreview";
+
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetScrollView,
+  BottomSheetVirtualizedList,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+
 import ColorPicker, { hexToHSL, HSLToHex } from "./elemens_pickers/ColorPicker";
-import ShemePicker from "./elemens_pickers/SchemePicker";
-import { ScrollView } from "react-native";
 
 import EasePicker from "./ease_mode/EasePicker";
 import FullPalettePicker from "./full_mod/FullPalettePicker";
 
 const Reanimated_TextInput = Reanimated.createAnimatedComponent(TextInput);
-
+const Reanimated_Pressable = Reanimated.createAnimatedComponent(Pressable);
 const BACKGROUND_COLOR = 'rgba(0,0,0,0.9)';
 const CIRCLE_SIZE = deviceWidth * 0.3;
 const PICKER_WIDTH = deviceWidth * 0.9;
 
-const easeUpdate = (copiedObject, pathList, newValue) => {
-  const shemes = ['light', 'dark']
-  const newObject = JSON.parse(JSON.stringify(copiedObject));
-
-  const multiPath = Array.isArray(pathList[0])
-
-  for(let i = 0; i<pathList.length; i++){
-    const onePathList = multiPath? pathList[i] : pathList
-    const oneValue = multiPath? newValue[i] : newValue
-    const allShemesUpdate = (onePathList[0] != shemes[0] && onePathList[0] != shemes[1])
-    for(let primaryKey of shemes){
-      const resPath = allShemesUpdate? [primaryKey, ...onePathList] : onePathList
-      //console.log(resPath,'=',oneValue)
-      switch(resPath.length){
-        case 1: 
-          newObject[resPath[0]] = oneValue;
-          break;
-        case 2: 
-          newObject[resPath[0]][resPath[1]] = oneValue;
-          break;
-        case 3: 
-          newObject[resPath[0]][resPath[1]][resPath[2]] = oneValue;
-          break;
-        case 4: 
-          newObject[resPath[0]][resPath[1]][resPath[2]][resPath[3]] = oneValue;
-          break;
-        case 5: 
-          newObject[resPath[0]][resPath[1]][resPath[2]][resPath[3]][resPath[4]] = oneValue;
-          break;
-        default:
-          console.log('!!!>PAINTER_EASE_UPDATE_DOES_NOT_HAVE_THIS_OBJECT_LVL',onePathList.length, onePathList);
-      }
-      if(!allShemesUpdate){break}
-    }
-    if(!multiPath){break}
-  }
-  return newObject
-}
+import {fullPaletteObjectUPD} from './Tools'
 
 const ripple = (color='#ffffff') => ({
   color: `${color}20`,
   borderless: true,
   foreground: false
 })
+
+const STATUSBAR_COLOR = '#333'
+
+const MODAL_SEPARATOR_COLOR = '#ffffff30'
+const PREVIEW_COLOR = '#333'
+const PREVIEW_HANDLE_COLOR = 'white'
+const PREVIEW_ICON_COLOR = 'white'
+const TOOLBAR_TEXT_COLOR = 'white'
+const FRAMES_COLOR = 'black'
+
+const TOOLBAR_HEIGHT = 46
+
+const PICKER_AREA_HEIGHT = 270
+
+const bottomSheetHeadHeight = 33
+const previewToolBArHeight = 46
+const previewHeight = deviceHeight/2 + 2
+const bottomMargin = bottomSheetHeadHeight
 
 const Palette = (props) => {
 
@@ -127,11 +133,12 @@ const Palette = (props) => {
       setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
     }
 
-    if(JSON.stringify(appStyle) != JSON.stringify(jstore.appStyle)){
+    if(appStyle != jstore.appStyle){
+      //previewAppStyleA.value = jstore.appStyle
       setAppStyle(jstore.appStyle);
     }
 
-    if(JSON.stringify(appConfig) != JSON.stringify(jstore.appConfig)){
+    if(appConfig != jstore.appConfig){
       setAppConfig(jstore.appConfig);
     }
   })
@@ -151,7 +158,13 @@ const Palette = (props) => {
   })
 
   const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+  const LanguagePreview = languagesAppList[LanguageAppIndex].SettingsScreen.preview
   const Language = languagesAppList[LanguageAppIndex].SettingsScreen.PainterScreen
+  
+
+  
+
+
 
   const colorsPickerShow = useSharedValue(-1);
   const shemePickerShow = useSharedValue(-1);
@@ -183,10 +196,12 @@ const Palette = (props) => {
     console.log('exit')
     props.r_setHideMenu(false)
     props.navigation.goBack()
+    //props.navigation.navigate("settingsStack", {screen: "settings", params: {newCustomPallete: true}})
   }
 
   const back = () => {
-    const notEqual = !(JSON.stringify(appStyle.customTheme) == JSON.stringify(currentCustomTheme))
+    //const notEqual = !(JSON.stringify(appStyle.customTheme) == JSON.stringify(currentCustomTheme))
+    const notEqual = !(JSON.stringify(appStyle.customTheme) == JSON.stringify(currentPalette.value))
     console.log('back', notEqual)
     if(notEqual){
       setSavedWindowShow(true)
@@ -206,33 +221,41 @@ const Palette = (props) => {
   }
 
   const saveCustomTheme = (saved = false) => {
-    const saveObject = saved? saved : currentCustomTheme
+    const saveObject = saved? saved : currentPalette.value // currentCustomTheme
     const equal = (JSON.stringify(appStyle.customTheme) === JSON.stringify(saveObject))
     if(!equal){
-      const newAppStyle = JSON.parse(JSON.stringify(appStyle));
-      newAppStyle.customTheme = saveObject;
-      newAppStyle.palette.theme = 'custom';
-      newAppStyle.presetUsed = 'YTAT-custom';
+      saveObject.title = 'custom'
       themesColorsAppList.splice(0,1,saveObject)
+
+      const newAppStyle = JSON.parse(JSON.stringify(appStyle));
+    
+      newAppStyle.customTheme = saveObject;
+      //newAppStyle.palette.theme = 'custom';
+      //newAppStyle.presetUsed = 'YTTI-custom';
+      
       props.r_setAppStyle(newAppStyle);
       dataRedactor("storedAppStyle",newAppStyle);
       ToastAndroid.show(Language.saved, ToastAndroid.LONG);
     }
   }
 
-  const [initialColor, setInitialValue] = useState() 
-  const [stateOpenedColor, setStateOpenedColor] = useState()
+  //const [initialColor, setInitialValue] = useState() 
+  const selectColor = useSharedValue()
 
-  const [modIndex, setModIndex] = useState(props.route.params.modIndex ? props.route.params.modIndex : 0 )
-  const [currentCustomTheme, setCurrentCustomTheme] = useState(easeUpdate(themesColorsAppList[props.route.params.themeIndex], ['theme'], 'custom'))
+  //const [stateOpenedColor, setStateOpenedColor] = useState()
+  const paramsSelectColor = useSharedValue()
 
-  const checkAlphaColor = (color)=>{
-    return color+stateOpenedColor.alpha
+
+  const checkAlphaColor = (color, alpha)=>{
+    return color+alpha
   }
 
   const applyNewStateColor = (changeColor) => {
-    const ret = easeUpdate(currentCustomTheme, stateOpenedColor.trace, checkAlphaColor(changeColor))
-    setCurrentCustomTheme(ret)
+    //const ret = easeUpdate(currentCustomTheme, paramsSelectColor.value.trace, checkAlphaColor(changeColor))
+    //setCurrentCustomTheme(ret)
+    const ret = fullPaletteObjectUPD(currentPalette.value, paramsSelectColor.value.trace, checkAlphaColor(changeColor, paramsSelectColor.value.alpha))
+    currentPalette.value = ret
+    previewAppFullPalette.value = ret
   }
 
   const gradientTracing = (accentColor, type, copied = false) => {
@@ -256,9 +279,9 @@ const Palette = (props) => {
     ]
 
     
-    if(stateOpenedColor? stateOpenedColor.trace[0] == 'light' || stateOpenedColor.trace[0] == 'dark' : false){
+    if(paramsSelectColor.value? paramsSelectColor.value.trace[0] == 'light' || paramsSelectColor.value.trace[0] == 'dark' : false){
       console.log('add shema accents tracing')
-      paths = paths.map((item)=>[ stateOpenedColor.trace[0], ...item])
+      paths = paths.map((item)=>[ paramsSelectColor.value.trace[0], ...item])
     }
 
     const values = [
@@ -273,10 +296,13 @@ const Palette = (props) => {
 
     
     if(copied){
-      return easeUpdate(copied, paths, values) 
+      return fullPaletteObjectUPD(copied, paths, values) 
     }
-    let ret = easeUpdate(currentCustomTheme, paths, values) 
-    setCurrentCustomTheme(ret)
+    //let ret = easeUpdate(currentCustomTheme, paths, values) 
+    //setCurrentCustomTheme(ret)
+    const ret = fullPaletteObjectUPD(currentPalette.value, paths, values) 
+    currentPalette.value = ret
+    previewAppFullPalette.value = ret
   }
 
   const symbolsTasing = (primaryColor, copied = false) => {
@@ -287,9 +313,9 @@ const Palette = (props) => {
       ['icons','neutrals', 'primary'],
     ]
 
-    if(stateOpenedColor? stateOpenedColor.trace[0] == 'light' || stateOpenedColor.trace[0] == 'dark' : false){
+    if(paramsSelectColor.value? paramsSelectColor.value.trace[0] == 'light' || paramsSelectColor.value.trace[0] == 'dark' : false){
       console.log('add shema symb tracing')
-      paths = paths.map((item)=>[ stateOpenedColor.trace[0], ...item])
+      paths = paths.map((item)=>[ paramsSelectColor.value.trace[0], ...item])
     }
 
     const values = [
@@ -299,21 +325,24 @@ const Palette = (props) => {
     ]
 
     if(copied){
-      return easeUpdate(copied, paths, values) 
+      return fullPaletteObjectUPD(copied, paths, values) 
     } 
-    let ret = easeUpdate(currentCustomTheme, paths, values)
-    setCurrentCustomTheme(ret)
+    //let ret = easeUpdate(currentCustomTheme, paths, values)
+    //setCurrentCustomTheme(ret)
+    const ret = fullPaletteObjectUPD(currentPalette.value, paths, values) 
+    currentPalette.value = ret
+    previewAppFullPalette.value = ret
   }
 
 
 
   const valueTacing = (color ) => {
-    let paths = [[...stateOpenedColor.trace.slice(1)]]
+    let paths = [[...paramsSelectColor.value.trace.slice(1)]]
     console.log('p0',paths)
     const ground = ['basics','texts','icons']
     for(let item of ground){
-      if(stateOpenedColor.trace[1] != item){
-        const newP = [item, ...stateOpenedColor.trace.slice(2)]
+      if(paramsSelectColor.value.trace[1] != item){
+        const newP = [item, ...paramsSelectColor.value.trace.slice(2)]
         if(newP.slice(0, 2).join('-') != ['basics', 'neutrals'].join('-')){
           paths.push(newP)
         }
@@ -323,42 +352,48 @@ const Palette = (props) => {
 
     console.log('p1',paths)
   
-    if(stateOpenedColor? stateOpenedColor.trace[0] == 'light' || stateOpenedColor.trace[0] == 'dark' : false){
+    if(paramsSelectColor.value? paramsSelectColor.value.trace[0] == 'light' || paramsSelectColor.value.trace[0] == 'dark' : false){
       console.log('add shema symb tracing')
-      paths = paths.map((item)=>[ stateOpenedColor.trace[0], ...item])
+      paths = paths.map((item)=>[ paramsSelectColor.value.trace[0], ...item])
     }
 
     let values = []
     for(let i = 0; i<paths.length;i++){values.push(color)}
 
-    let ret = easeUpdate(currentCustomTheme, paths, values)
-    setCurrentCustomTheme(ret)
+    //let ret = easeUpdate(currentCustomTheme, paths, values)
+    //setCurrentCustomTheme(ret)
+    const ret = fullPaletteObjectUPD(currentPalette.value, paths, values) 
+    currentPalette.value = ret
+    previewAppFullPalette.value = ret
   }
 
   const valueGradient = (color, type ) => {
     const accentsRans = getAccentsTrace(color, type)
 
-    let paths = [[...stateOpenedColor.trace.slice(1)]]
+    let paths = [[...paramsSelectColor.value.trace.slice(1)]]
     console.log('gp0',paths)
 
     for(let item of Object.keys(accentsRans)){
-      if(stateOpenedColor.trace[3] != item){
-        paths.push([...stateOpenedColor.trace.slice(1, 3), item])
+      if(paramsSelectColor.value.trace[3] != item){
+        paths.push([...paramsSelectColor.value.trace.slice(1, 3), item])
       }
     } 
 
     console.log('gp1',paths)
   
-    if(stateOpenedColor? stateOpenedColor.trace[0] == 'light' || stateOpenedColor.trace[0] == 'dark' : false){
+    if(paramsSelectColor.value? paramsSelectColor.value.trace[0] == 'light' || paramsSelectColor.value.trace[0] == 'dark' : false){
       console.log('add shema symb tracing')
-      paths = paths.map((item)=>[ stateOpenedColor.trace[0], ...item])
+      paths = paths.map((item)=>[ paramsSelectColor.value.trace[0], ...item])
     }
 
     let values = []
     for(let i = 0; i<paths.length;i++){values.push(Object.values(accentsRans)[i])}
 
-    let ret = easeUpdate(currentCustomTheme, paths, values)
-    setCurrentCustomTheme(ret)
+    //let ret = easeUpdate(currentCustomTheme, paths, values)
+    //setCurrentCustomTheme(ret)
+    const ret = fullPaletteObjectUPD(currentPalette.value, paths, values) 
+    currentPalette.value = ret
+    previewAppFullPalette.value = ret
   }
 
   const getAccentsTrace = (accentColor, type) => {
@@ -385,23 +420,29 @@ const Palette = (props) => {
   }
 
   const onShemeChangedSecondary=(scheme)=>{
-    let ret = easeUpdate(currentCustomTheme, ['statusBar'], scheme)
-    setCurrentCustomTheme(ret)
+    //let ret = easeUpdate(currentCustomTheme, ['statusBar'], scheme)
+    //setCurrentCustomTheme(ret)
   }
 
   const pressColor = (color, trace) => {
     const okTrace = !trace[0]? trace.slice(1) : trace
     console.log('press', color, okTrace)
     if(color[0] == '#'){
-      setInitialValue(color)
-      setStateOpenedColor({
+      //setInitialValue(color)
+      selectColor.value = color
+      const newParams = {
         value: color,
         alpha: color.length > 7? color.slice(7) : '',
         trace: trace,
-      })
+      }
+      //setStateOpenedColor(newParams)
+      paramsSelectColor.value = newParams
+      previewAppFullPalette.value = currentPalette.value
       shemePickerShow.value = -1
       colorsPickerShow.value = 0
-    } else {
+    } 
+    /* 
+    else {
       if(trace.includes('statusBar')){
         setStateOpenedColor({
           value: color,
@@ -411,33 +452,39 @@ const Palette = (props) => {
         colorsPickerShow.value = -1
         
       }
-    }
+    }*/
   }
 
   const buildPalette = (primaryAccent, typeAccents, primarySymbols) => {
-    const palette1 = easeUpdate(currentCustomTheme, ['statusBar'], 'auto')
+    //const palette1 = easeUpdate(currentCustomTheme, ['statusBar'], 'auto')
+    const palette1 = fullPaletteObjectUPD(currentPalette.value, ['statusBar'], 'auto')
     const palette2 = symbolsTasing(primarySymbols, palette1)
     const palette3 = gradientTracing(primaryAccent, typeAccents, palette2)
+    
+    //setCurrentCustomTheme(palette3)
+    currentPalette.value = palette3
+    previewAppFullPalette.value = palette3
+    bottomSheetModalRef.current?.snapToIndex(1);
+    
     saveCustomTheme(palette3)
-    setCurrentCustomTheme(palette3)
   }
 
   const modes = [Language.easeMod.title, Language.fullMod.title, Language.fullMod.title]
   const themes = ['', Language.themes.light, Language.themes.dark]
   
-  const PICKER_AREA_HEIGHT = 270
 
-  const subTitle = useSharedValue({mod: modes[modIndex], theme: themes[modIndex]})
+  const subTitle = useSharedValue({mod: modes[0], theme: themes[0], section: 0})
 
   const scrolling = (event) => {
     const scrollX = event.nativeEvent.contentOffset.x
     const scrollIndex = Math.abs(Math.round(scrollX/deviceWidth))
     //console.log(scrollIndex)
-    subTitle.value = {mod: modes[scrollIndex], theme: themes[scrollIndex]}
+    subTitle.value = {mod: modes[scrollIndex], theme: themes[scrollIndex], section: scrollIndex}
     if(scrollIndex == 0){
       shemePickerShow.value = -1
       colorsPickerShow.value = -1
     }
+    previewScheme.value = scrollIndex == 2? 'dark' : 'light'
   }
 
   const modText = useAnimatedProps(()=>{
@@ -457,89 +504,262 @@ const Palette = (props) => {
       value: text
     }
   })
-  
+
+  const leftArrow = useAnimatedStyle(()=>{
+    console.log('left a',  subTitle.value.section)
+    return {
+      opacity: subTitle.value.section == 0? 0.5 : 1
+    }
+  })
+
+  const rightArrow = useAnimatedStyle(()=>{
+    console.log('right a',  subTitle.value.section)
+    return {
+      opacity: subTitle.value.section == 2? 0.5 : 1
+    }
+  })
+
+  const scrollList = useRef()
+
+  const toScroll = (direction) => {
+    const index =  subTitle.value.section
+    const offset = deviceWidth*Math.min(Math.max((direction == 'l'? index-1 : index+1), 0), 2)
+    scrollList.current.scrollTo({x: offset, y: 0, animated: true})
+  }
+
+  // ===============================================================================================
+
+  const previewAppStyleA = useSharedValue()
+  /*useDerivedValue(()=>{
+    console.log('open',props.route.params)
+    const style = props.appStyle
+    return style
+  }, [props])*/
+
+  const currentPalette = useSharedValue()
+
+  const previewScheme = useSharedValue()
+
+
+  const previewAppFullPalette = useSharedValue()
+  /*
+  useDerivedValue(()=>{
+    if(currentPalette.value){
+      previewAppFullPalette.value = currentPalette.value
+    }
+  }, [currentPalette]) */
+
+  const previewAppPalette = useSharedValue()
+  useDerivedValue(()=>{
+    if(previewAppFullPalette.value && previewScheme.value){
+      previewAppPalette.value = previewAppFullPalette.value[previewScheme.value]
+    }
+  })
+
+
+  useEffect(()=>{
+    console.log('PALETTE UE')
+    const {
+      styles,
+      modIndex,
+      fullPalette,
+      openedScheme,
+      //colors,
+      themeIndex
+    } = props.route.params
+    scrollList.current.scrollTo({x: modIndex*deviceWidth, y: 0, animated: true})
+    //subTitle.value = {mod: modes[scrollIndex], theme: themes[scrollIndex], section: scrollIndex}
+    
+    previewAppStyleA.value = styles
+
+    previewScheme.value = openedScheme
+    currentPalette.value = fullPalette
+
+    previewAppFullPalette.value = fullPalette
+    previewAppPalette.value = fullPalette[openedScheme]//easeUpdate(themesColorsAppList[themeIndex], ['theme'], 'custom')
+
+    console.log(styles, themeIndex)
+
+    console.log(previewAppStyleA, previewAppPalette)
+
+  }, [props.route.params])
+
+  const bottomSheetIndex = useSharedValue(1);
+
+  //console.log('PALETTE PREVIEW', previewAppStyleA)
+
+
+  const bottomSheetModalRef = useRef();
+
+  const toolPress =()=>{
+      console.log('pressj')
+      handlePresentModalPress()
+  }
+
+
+  const applyPress =()=>{
+      console.log('pressa')
+      //applyAppStyle()
+  }
+
+  useEffect(()=>{
+      bottomSheetIndex.value = 1
+      bottomSheetModalRef.current?.present();
+  }, [bottomSheetModalRef])
+
+  const snapPoints = useMemo(() => {
+    //return([bottomMargin, (previewHeight+bottomMargin+previewToolBArHeight),(previewHeight+bottomMargin+previewToolBArHeight + PICKER_AREA_HEIGHT)])
+    return([bottomMargin, (previewHeight+bottomMargin),(previewHeight+bottomMargin+ PICKER_AREA_HEIGHT)])
+  }, [bottomMargin]);
+
+
+  const handlePresentModalPress = useCallback(() => {
+      if(bottomSheetIndex.value >= 1){
+          bottomSheetModalRef.current?.snapToIndex(0);
+          bottomSheetIndex.value = 0
+      } else {
+          bottomSheetModalRef.current?.present();
+          const newIndex = colorsPickerShow.value >= 0? 2 : 1
+          bottomSheetModalRef.current?.snapToIndex(newIndex);
+          bottomSheetIndex.value = newIndex
+      }
+  }, [bottomSheetModalRef, bottomSheetIndex]);
+
+
+  const handleSheetChanges = useCallback((index) => {
+      //console.log('handleSheetChanges', index, bottomSheetIndex.value);
+      if(index === -1){
+          console.log('menu visible', index);
+      }
+      bottomSheetIndex.value = index
+
+  }, [bottomSheetIndex]);
+
+
+
   return (
-    <View style = {{ flex: 1}}>
+  <>
+    <View
+      style ={{
+        width: '100%',
+        //paddingTop: statusBarHeight,
+        height: statusBarHeight+50+46,
+        backgroundColor: 'black',   
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
+        borderBottomWidth: 2,
+        borderColor: 'white'
+      }}
+    >
+      <View 
+        style = {{height: statusBarHeight, width: '100%', backgroundColor: STATUSBAR_COLOR}}
+      />
       <View
         style ={{
-          width: '100%',
-          paddingTop: statusBarHeight,
-          height: statusBarHeight+45+35,
-          backgroundColor: 'black',   
-          justifyContent: 'flex-start',
-          alignItems: 'flex-start',
-          borderBottomWidth: 2,
-          borderColor: 'white'
+          width: deviceWidth,
+          height: 50,
+          paddingHorizontal: 8,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexDirection: 'row', 
         }}
       >
         <View
-          style ={{
+          style = {{
             width: deviceWidth/2,
-            height: 45,
-            paddingHorizontal: 3
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexDirection: 'row',                    
           }}
         >
-          <View
-            style = {{
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexDirection: 'row',                    
+          <BasePressable
+            type='i'
+            icon={{name: "chevron-left", size: 32, color: 'white' }}
+            style={{
+              height: 46, 
+              width: 46,
+              paddingTop: 4,
+              marginLeft: 15,
+              borderRadius: 22.5//appStyle.borderRadius.additional
             }}
+            onPress={back}
+            android_ripple={{
+              color: 'white',
+              borderless: true,
+              foreground: false
+            }}
+          />
+          <Text
+            style = {[staticStyles.headerText, {
+              left: 0,
+              color: 'white'
+            }]}
           >
-            <BasePressable
-              type='i'
-              icon={{name: "keyboard-backspace", size: 24, color: 'white' }}
-              style={{
-                height: 45, 
-                width: 45,
-                paddingTop: 4,
-                marginLeft: 15,
-                borderRadius: 22.5//appStyle.borderRadius.additional
-              }}
-              onPress={back}
-              android_ripple={{
-                color: 'white',
-                borderless: true,
-                foreground: false
-              }}
-            />
-            <Text
-              style = {[staticStyles.headerText, {
-                left: 0,
-                color: 'white'
-              }]}
-            >
-              {Language.title}
-            </Text>
-          </View>
+            {Language.title}
+          </Text>
         </View>
-        <View
-          style ={{
-            width: deviceWidth,
-            height: 35,
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            alignContent: 'center'
+        <BasePressable 
+          type="i"
+          icon={{name: "cellphone-cog", size: 24, color: 'white'}}
+          style={{
+            height: 46,
+            width: 46, 
+            transform: [{rotate: '180deg'}],
+            borderRadius: 12
           }}
-        >       
-          <Reanimated_TextInput
-            editable = {false}
-            animatedProps={modText}
-            style={[staticStyles.text, {flex: 1, textAlign: 'center',  color: 'white'}]}
-          />
-          <Reanimated_TextInput
-            editable = {false}
-            animatedProps={themeText}
-            style={[staticStyles.text, {flex: 1, textAlign: 'center', color: 'white'}]}
-          />
-        </View>
+          direction='row-reverse'
+          onPress={toolPress}
+          android_ripple={ripple()}
+        />
       </View>
-      
+      <View
+        style ={{
+          width: deviceWidth,
+          height: 46,
+          paddingHorizontal: 12,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          alignItems: 'center'
+        }}
+      > 
+        <Reanimated_Pressable
+          style={[leftArrow,{}]}
+          onPress={()=>toScroll('l')}
+        >
+          <MaterialCommunityIcons
+            name="arrow-left-drop-circle-outline"
+            size={28}
+            color={'white'}
+          />
+        </Reanimated_Pressable>
+        <Reanimated_TextInput
+          editable = {false}
+          animatedProps={modText}
+          style={[staticStyles.text, {flex: 1, textAlign: 'center',  color: 'white'}]}
+        />
+        <Reanimated_TextInput
+          editable = {false}
+          animatedProps={themeText}
+          style={[staticStyles.text, {flex: 1, textAlign: 'center', color: 'white'}]}
+        />
+        <Reanimated_Pressable
+          style={[rightArrow,{}]}
+          onPress={()=>toScroll('r')}
+        >
+          <MaterialCommunityIcons
+            name="arrow-right-drop-circle-outline"
+            size={28}
+            color={'white'}
+          />
+        </Reanimated_Pressable>
+      </View>
+    </View>
 
     <ScrollView
+      ref={scrollList}
       horizontal = {true}
       snapToInterval={deviceWidth}
-      contentOffset={{x: modIndex*deviceWidth, y: 0}}
+      //contentOffset={{x: modIndex*deviceWidth, y: 0}}
       onScroll={scrolling}
       style={{
         backgroundColor: 'black'
@@ -559,32 +779,13 @@ const Palette = (props) => {
 
       <FullPalettePicker
         pressColor = {pressColor}
-        currentTrace={stateOpenedColor? stateOpenedColor.trace.join('-') : undefined}
-        currentCustomTheme = {currentCustomTheme}
+        paramsSelectColor={paramsSelectColor}
+        //currentCustomTheme = {currentCustomTheme}
+        currentPalette = {currentPalette}
+        listPaddingBottom = {previewHeight+bottomMargin+PICKER_AREA_HEIGHT}
       />
     </ScrollView>
       
-    <ColorPicker
-      show={colorsPickerShow}
-
-      applyNewStateColor={applyNewStateColor}
-      valueGradient={valueGradient}
-      valueTacing={valueTacing}
-
-      initialValue={initialColor}
-      opened={stateOpenedColor}
-
-      LanguageAppIndex={LanguageAppIndex}
-    />
-
-    <ShemePicker
-      show={shemePickerShow}
-
-      onShemeChanged={onShemeChangedSecondary}
-      initialValue={currentCustomTheme[stateOpenedColor? stateOpenedColor.trace[0] : 'light'].statusBar}
-
-      LanguageAppIndex={LanguageAppIndex}
-    />
 
     <Modal
       visible={savedWindowShow}
@@ -609,7 +810,7 @@ const Palette = (props) => {
           backgroundColor: 'black'
         }}
       >
-        <Text style = {[staticStyles.headerText, {flex: 1, color: 'white',}]}>{Language.isNew}</Text>
+        <Text style = {[staticStyles.headerText, {flex: 1, color: 'white', textAlign: 'center', top: 20}]}>{Language.isNew}</Text>
         <View
           style={{
             flex: 1,
@@ -627,19 +828,7 @@ const Palette = (props) => {
             android_ripple={ripple()}
             onPress={saveAndExit}
           >
-            <Text style = {[staticStyles.headerText, { color: 'white',fontSize: 14}]}>{Language.isNewActions.y}</Text>
-          </Pressable>
-          <Pressable
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginHorizontal: 5
-            }}
-            android_ripple={ripple()}
-            onPress={closeModal}
-          >
-            <Text style = {[staticStyles.headerText, { color: 'white',fontSize: 14}]}>{Language.isNewActions.n}</Text>
+            <Text style = {[staticStyles.headerText, { color: 'white',fontSize: 12, textAlign: 'center'}]}>{Language.isNewActions.y}</Text>
           </Pressable>
           <Pressable
             style={{
@@ -653,14 +842,163 @@ const Palette = (props) => {
           >
             <Text style = {[staticStyles.headerText, {color: 'white',fontSize: 12}]}>{Language.isNewActions.yn}</Text>
           </Pressable>
+          <Pressable
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginHorizontal: 5
+            }}
+            android_ripple={ripple()}
+            onPress={closeModal}
+          >
+            <Text style = {[staticStyles.headerText, { color: 'white',fontSize: 12, textAlign: 'center'}]}>{Language.isNewActions.n}</Text>
+          </Pressable>
         </View>
       </View>
     </Modal>
-    </View>
-  );
-    
+
+  {/*STYLE UPDATE*/}
+  <BottomSheetModalProvider >
+  <BottomSheetModal
+    ref={bottomSheetModalRef}
+    enableDismissOnClose={false}
+    index={1}
+    snapPoints={snapPoints}
+    handleComponent={()=>{
+      return (
+        <View
+            style = {{
+                height: 24,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderTopWidth: 0.4,
+                borderColor: MODAL_SEPARATOR_COLOR,
+                marginHorizontal: 12
+            }}
+        >
+            <View style={{height: 4, borderRadius: 2, backgroundColor: PREVIEW_HANDLE_COLOR, width: 50}}/>
+            <Text
+                style ={{
+                    left: 24,
+                    fontSize: 11,
+                    color: PREVIEW_ICON_COLOR,
+                    fontWeight: 'bold',
+                    letterSpacing: 1,
+                    fontVariant: ['small-caps'],
+                    position: 'absolute',
+                    textAlign: 'center'
+                }}
+            >
+                {LanguagePreview.title}
+            </Text>
+            <MaterialCommunityIcons name="cellphone-cog" size={11} color = {PREVIEW_ICON_COLOR} style={{position: 'absolute', left: 12, transform: [{rotate: '180deg'}]}}/>
+        </View>
+      )
+    }}
+    backgroundStyle={{ backgroundColor: PREVIEW_COLOR, borderTopLeftRadius: 12, borderTopRightRadius: 12}}
+    onChange={handleSheetChanges}
+  > 
+    {false &&        
+    <View
+      style = {{
+        width: '100%',
+        height: previewToolBArHeight,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        //backgroundColor: 'red'
+      }}  
+    >
+      <View
+        style={{
+          width: 136,
+          height: previewToolBArHeight,
+        }}
+      >
+        <BasePressable
+            type="t"
+            text={LanguagePreview.toolbar.hide}
+            textStyle={{
+                fontSize: 14,
+                //textAlign: 'center',
+                letterSpacing: 1,
+                fontVariant: ['small-caps'],
+                fontWeight: '500',
+                color: TOOLBAR_TEXT_COLOR
+            }}
+            style={{
+                width: 120,
+                height: previewToolBArHeight-16,
+                margin: 8,
+                borderRadius: 12
+            }}
+            android_ripple={ripple()}
+            onPress = {toolPress}
+        />
+      </View>
+      <View
+          style={{
+              width: 136,
+              height: previewToolBArHeight,
+          }}
+      >
+          <BasePressable
+              type="t"
+              text={LanguagePreview.toolbar.apply}
+              textStyle={{
+                  fontSize: 14,
+                  letterSpacing: 1,
+                  fontVariant: ['small-caps'],
+                  fontWeight: '500',  
+                  color: TOOLBAR_TEXT_COLOR
+              }}
+              style={{
+                  width: 120,
+                  height: previewToolBArHeight-16,
+                  margin: 8,
+                  borderRadius: 12
+              }}
+              android_ripple={ripple()}
+              onPress = {applyPress}
+          />
+      </View>
+    </View>}
+    {true && 
+    <StyleChangePreview
+      previewAppStyleA = {previewAppStyleA}
+      previewAppPalette = {previewAppPalette}
+      frameColor={FRAMES_COLOR}
+      appStyle={appStyle}
+      ThemeColorsAppIndex={ThemeColorsAppIndex}
+      ThemeSchema={ThemeSchema}
+      LanguageAppIndex={LanguageAppIndex}
+    />} 
+  </BottomSheetModal>
+  </BottomSheetModalProvider>
+
+
+  <ColorPicker
+    show={colorsPickerShow}
+
+    previewFull = {previewAppFullPalette}
+
+    selectColor = {selectColor}
+    paramsSelectColor = {paramsSelectColor}
+
+    applyNewStateColor={applyNewStateColor}
+    valueGradient={valueGradient}
+    valueTacing={valueTacing}
+
+    //initialValue={initialColor}
+    //opened={paramsSelectColor.value}
+
+    LanguageAppIndex={LanguageAppIndex}
+  />
+
+  </>)
 }
-export default connect(mapStateToProps('PALETTE_SCREEN'), mapDispatchToProps('PALETTE_SCREEN'))(Palette);
+export default connect(mapStateToProps("PALETTE_SCREEN"), mapDispatchToProps("PALETTE_SCREEN"))(Palette);
 
 
 const staticStyles = StyleSheet.create({

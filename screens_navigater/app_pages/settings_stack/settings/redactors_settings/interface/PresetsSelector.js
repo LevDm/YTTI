@@ -23,7 +23,8 @@ import Reanimated, {
     withTiming,
     interpolate,
     useAnimatedProps,
-    cancelAnimation
+    cancelAnimation,
+    useDerivedValue
 } from 'react-native-reanimated';
 
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
@@ -60,7 +61,9 @@ import presets, {presetsNames} from "../../../../../../app_values/AppDesigns";
 const PresetItem = ({
     preset,
 
-    primaryCheck,
+    //primaryCheck,
+    boxIndex, 
+    currentIndex,
 
     onPress,
     onLongPress,
@@ -78,6 +81,14 @@ const PresetItem = ({
         imageLowScale,
         options,
     } = preset
+
+    const accentState = useDerivedValue(()=>boxIndex == currentIndex.value);
+
+    const accentFrame = useAnimatedStyle(()=>{
+        return ({
+            opacity: withTiming(accentState.value? 1 : 0, {duration: 200}) 
+        })
+    })
 
     const presetTheme = options? themesColorsAppList[themesApp.indexOf(options.palette.theme)].light : undefined
 
@@ -109,7 +120,7 @@ const PresetItem = ({
     return (
         <Reanimated_Pressable
             key = {props.key}
-            disabled = {primaryCheck} 
+            //disabled = {primaryCheck} 
             style={[{
                 height: itemSize,
                 width: itemSize,
@@ -163,16 +174,16 @@ const PresetItem = ({
                 {name}
             </Text>}
 
-            <View
-                style={{
-                    height: itemSize-(2*outlineSize),//-(8)+1.5,
-                    width: itemSize-(2*outlineSize),
+            <Reanimated.View
+                style={[{
+                    height: itemSize-(2*outlineSize+1),//-(8)+1.5,
+                    width: itemSize-(2*outlineSize+1),
                     position: 'absolute',
                     alignItems: 'center',
                     borderRadius: appStyle.borderRadius.additional -2,
                     borderWidth:  outlineSize,
-                    borderColor: primaryCheck? colors.background: 'transparent',
-                }}
+                    borderColor: colors.background,
+                }, accentFrame]}
             />
         </Reanimated_Pressable>
     )
@@ -182,6 +193,7 @@ export default PresetsSelector = ({
     goToNFC,
 
     appStyle,
+    appConfig,
 
     previewAppStyleA,
 
@@ -195,15 +207,18 @@ export default PresetsSelector = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.presets
 
+    /* 
     const [previewIndex, setPreviewIndex] = useState(presetsNames.indexOf(appStyle.presetUsed))
-
     useEffect(()=>{
         console.log('ue',appStyle.presetUsed)
         const newIndex = presetsNames.indexOf(appStyle.presetUsed)
         newIndex != previewIndex? setPreviewIndex(newIndex) : null
     }, [appStyle])
+    */
 
-    //console.log('PRESET:', presetsNames[previewIndex])
+    const previewPresetIndex = useDerivedValue(()=>presetsNames.indexOf(previewAppStyleA.value.presetUsed))
+
+    //console.log('PRESET:', previewIndex)
 
     const flatListRef = useRef()
 
@@ -211,38 +226,79 @@ export default PresetsSelector = ({
     const outlineSize = 2
 
     const pressItem = (index) => {
-        console.log('preset PressItem', index, presetsNames[index])
-        if(index == 0 || presets[index].options){
-            const newAppStyle = (index == 0? appStyle : presets[index].options)
-            newAppStyle.customTheme = appStyle.customTheme
-            newAppStyle.palette.scheme = appStyle.palette.scheme
-            newAppStyle.presetUsed = presetsNames[index]
-            
-            //cancelAnimation(previewAppStyleA)
-            previewAppStyleA.value = newAppStyle
-            
-            setPreviewIndex(index)
-        }
+        //if(index != previewPresetIndex.value){
+            Vibration.vibrate([1,1])
+            console.log('preset PressItem', index, presetsNames[index])
+            flatListRef.current.scrollToIndex({animated: true, index: Math.max(0,index-1)})
+
+            if(index == 0 || presets[index].options){
+                const newAppStyle = (index == 0? appStyle : presets[index].options)
+                newAppStyle.customTheme = appStyle.customTheme
+                newAppStyle.palette.scheme = appStyle.palette.scheme
+                newAppStyle.presetUsed = presetsNames[index]
+                
+                if(appConfig.screenSubsequence.length == 1 && newAppStyle.navigationMenu.type == 'classical'){
+                    newAppStyle.navigationMenu.height = 0
+                }
+
+                previewAppStyleA.value = newAppStyle
+            }
+        //}
     }
 
     const longPressItem = (index) => {
-        Vibration.vibrate([5,10, 20, 10, 20, 10])
-        console.log('preset longPressItem', index)
-        if(index == 0 || presets[index].options){
-            const newAppStyle = (index == 0? appStyle : presets[index].options)
-            newAppStyle.customTheme = appStyle.customTheme
-            newAppStyle.presetUsed = presetsNames[index]
-            newAppStyle.palette.scheme = appStyle.palette.scheme
-            r_setAppStyle(newAppStyle)
-            dataRedactor("storedAppStyle",newAppStyle);
-        }
+        //if(index != previewPresetIndex.value){
+            Vibration.vibrate([5,10, 20, 10, 20, 10])
+            console.log('preset longPressItem', index)
+            if(index == 0 || presets[index].options){
+                const newAppStyle = (index == 0? appStyle : presets[index].options)
+                newAppStyle.customTheme = appStyle.customTheme
+                newAppStyle.presetUsed = presetsNames[index]
+                newAppStyle.palette.scheme = appStyle.palette.scheme
 
+                if(appConfig.screenSubsequence.length == 1 && newAppStyle.navigationMenu.type == 'classical'){
+                    newAppStyle.navigationMenu.height = 0
+                }
+
+                r_setAppStyle(newAppStyle)
+                dataRedactor("storedAppStyle",newAppStyle);
+            }
+        //}
     }
-    
 
     const dropPreset = ()=>{
         console.log('grop screen')
         goToNFC()
+    }
+
+    const RENDER_ITEMS = ({item, index})=>{
+        //console.log('check', index, previewIndex)
+        return (
+        <PresetItem
+            key = {String(`theme_selector_${item.name+index}`)} 
+
+            preset={index == 0? {
+                name: item.name,
+                imageSource: item.imageSource,
+                imageLowScale: item.imageLowScale,
+                options: appStyle 
+            }: item}
+
+            onPress = {()=>{pressItem(index)}}
+            onLongPress = {()=>{longPressItem(index)}}
+            
+            boxIndex = {index}
+            currentIndex = {previewPresetIndex}
+            //primaryCheck = {index == previewIndex}//{(JSON.stringify(index == 0? appStyle : item.options) === JSON.stringify(previewAppStyleA.value))}
+
+            backgroundColor = {Theme.basics.neutrals.secondary}
+           
+            appStyle = {appStyle}   
+                
+            itemSize={itemSize}
+            outlineSize={outlineSize}
+        />
+        )
     }
 
 
@@ -269,6 +325,7 @@ export default PresetsSelector = ({
         >
         <FlatList
             ref = {flatListRef}
+            initialNumToRender={15}
             style={{
                 marginTop: 5,        
                 width: 4*itemSize,
@@ -284,7 +341,7 @@ export default PresetsSelector = ({
             getItemLayout={(data, index) => (
                 {length: itemSize, offset: itemSize * index, index: index}
             )}
-            initialScrollIndex = {Math.min(presets.length-1, previewIndex+1)}
+            initialScrollIndex = {presetsNames.indexOf(appStyle.presetUsed)}//{Math.min(presets.length-1, previewIndex+1)}
             data = {presets}         
             keyExtractor={(item, index) => {
                 return item + index
@@ -312,32 +369,7 @@ export default PresetsSelector = ({
                 </Pressable>
             }
             */
-            renderItem={({item, index})=>{
-
-                return (
-                <PresetItem
-                    key = {String(`theme_selector_${item.name+index}`)} 
-
-                    preset={index == 0? {
-                        name: item.name,
-                        imageSource: item.imageSource,
-                        imageLowScale: item.imageLowScale,
-                        options: appStyle 
-                    }: item}
-
-                    onPress = {()=>{pressItem(index)}}
-                    onLongPress = {()=>{longPressItem(index)}}
-
-                    primaryCheck = {index == previewIndex}//{(JSON.stringify(index == 0? appStyle : item.options) === JSON.stringify(previewAppStyleA.value))}
-
-                    backgroundColor = {Theme.basics.neutrals.secondary}
-                   
-                    appStyle = {appStyle}   
-                        
-                    itemSize={itemSize}
-                    outlineSize={outlineSize}
-                />
-            )}}
+            renderItem={RENDER_ITEMS}
         />
         </View>
     </View>)

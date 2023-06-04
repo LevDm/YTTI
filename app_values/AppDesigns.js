@@ -2,7 +2,7 @@
 export const instagram = {
     "borderRadius": {"additional": 12, "basic": 0}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "none"}, 
-    "functionButton": {"invertColors": false, "outline": true, "position": "right", "size": 64}, 
+    "functionButton": {"invertColors": false, "outline": true, "position": "right", "size": 64, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": true, "invertColorsHeader": false, "proximity": 0.25, "textSize": 14}, 
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -14,13 +14,13 @@ export const instagram = {
         "type": "classical"
         }, 
     "palette": {"scheme": "auto", "statusBar": "auto", "theme": "instagram"},
-    "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}
+    "selectors":{"design": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}, 'ignoredShadows': {'disable': false}}
 }
 
 export const vk = {
     "borderRadius": {"additional": 35, "basic": 22}, 
-    "effects": {"blur": false, "ripple": "some", "shadows": "materialSome"}, 
-    "functionButton": {"invertColors": true, "outline": false, "position": "right", "size": 70}, 
+    "effects": {"blur": false, "ripple": "some", "shadows": "none"}, 
+    "functionButton": {"invertColors": true, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': true}}, 
     "lists": {"fullWidth": true, "invertColorsHeader": true, "proximity": 2, "textSize": 14}, 
     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -32,13 +32,13 @@ export const vk = {
         "type": "classical"
         }, 
     "palette": {"scheme": "auto", "statusBar": "auto", "theme": "vk"},
-    "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}
+    "selectors":{"design": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}, 'ignoredShadows': {'disable': true}}
 }
 
 export const tincoff = {
     "borderRadius": {"additional": 26, "basic": 28}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "full"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 62}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 62, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 6.5, "textSize": 14}, 
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}},
     "navigationMenu": {
@@ -50,13 +50,13 @@ export const tincoff = {
         "type": "classical"
     },
     "palette": {"scheme": "auto", "statusBar": "auto", "theme": "tinkoff"},
-    "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}
+    "selectors":{"design": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}, 'ignoredShadows': {'disable': false}}
 }
 
 export const whatsapp = {
     "borderRadius": {"additional": 29, "basic": 0}, 
-    "effects": {"blur": false, "ripple": "all", "shadows": "materialSome"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 68}, 
+    "effects": {"blur": false, "ripple": "all", "shadows": "material"}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 68, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": true, "invertColorsHeader": false, "proximity": 0.25, "textSize": 14}, 
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -68,13 +68,13 @@ export const whatsapp = {
         "type": "not"
     }, 
     "palette": {"scheme": "auto", "statusBar": "auto", "theme": "whatsapp"}, 
-    "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}
+    "selectors":{"design": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_2"}, 'ignoredShadows': {'disable': false}}
 }
 
 export const telegram = {
     "borderRadius": {"additional": 31, "basic": 0}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "none"},
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': true}}, 
     "lists": {"fullWidth": true, "invertColorsHeader": false, "proximity": 0.25, "textSize": 14}, 
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -86,13 +86,14 @@ export const telegram = {
         "type": "not"
     }, 
     "palette": {"scheme": "auto", "statusBar": "auto", "theme": "telegram"}, 
-    "selectorsDisign": {"checkBox": "type_1", "radioButton": "type_1", "switch": "type_1"}
+    "selectors":{"design": {"checkBox": "type_1", "radioButton": "type_1", "switch": "type_1"}, 'ignoredShadows': {'disable': true}}
 }
 
 export const pbNeomorphism = {
     "borderRadius": {"additional": 9, "basic": 18}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "neomorphism"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70}, "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 10, "textSize": 14}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
+    "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 10, "textSize": 14}, 
     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": false, "gradient": true, "outline": false}}, 
     "navigationMenu": {
         "accentsType": {"coloring": true, "filling": true}, 
@@ -103,13 +104,13 @@ export const pbNeomorphism = {
         "type": "classical"
     }, 
     "palette": {"scheme": "auto", "statusBar": "auto", "theme": "morpPinkBlue"},  
-    "selectorsDisign": {"checkBox": "type_1", "radioButton": "type_2", "switch": "type_3"}
+    "selectors":{"design": {"checkBox": "type_1", "radioButton": "type_2", "switch": "type_3"}, 'ignoredShadows': {'disable': false}}
 }
 
 export const oliveBook = {
     "borderRadius": {"additional": 29, "basic": 16}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "neomorphism"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 68}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 68, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 6.5, "textSize": 14}, 
     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": false, "gradient": false, "outline": true}}, 
     "navigationMenu": {
@@ -121,13 +122,13 @@ export const oliveBook = {
         "type": "classical"
     }, 
     "palette": {"scheme": "auto", "statusBar": "auto", "theme": "oliveBook"}, 
-    "selectorsDisign": {"checkBox": "type_1", "radioButton": "type_1", "switch": "type_3"}
+    "selectors":{"design": {"checkBox": "type_1", "radioButton": "type_1", "switch": "type_3"}, 'ignoredShadows': {'disable': false}}
 }
 
 export const stock = {
     "borderRadius": {"additional": 36, "basic": 0}, 
-    "effects": {"blur": false, "ripple": "all", "shadows": "materialSome"}, 
-    "functionButton": {"invertColors": true, "outline": false, "position": "right", "size": 70},
+    "effects": {"blur": false, "ripple": "all", "shadows": "material"}, 
+    "functionButton": {"invertColors": true, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': false}},
     "lists": {"fullWidth": true, "invertColorsHeader": true, "proximity": 2.75, "textSize": 14},
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}},
     "navigationMenu": {
@@ -139,31 +140,66 @@ export const stock = {
         "type": "classical"
     }, 
     "palette": {"scheme": "auto", "statusBar": "auto", "theme": "stock"}, 
-    "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_3"}
+    "selectors":{"design": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_3"}, 'ignoredShadows': {'disable': false}}
 }
 
 export const greenFun = {
-    "borderRadius": {"additional": 10, "basic": 0}, 
-    "effects": {"blur": true, "ripple": "all", "shadows": "neomorphism"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70}, 
-    "lists": {"fullWidth": true, "invertColorsHeader": false, "proximity": 2.75, "textSize": 14}, 
-    "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": false, "gradient": true, "outline": false}}, 
+    "borderRadius": {"additional": 18, "basic": 18}, 
+    "effects": {"blur": true, "ripple": "all", "shadows": "material"}, 
+    "functionButton": {"ignoredShadows": {"disable": false}, "invertColors": false, "outline": false, "position": "top", "size": 70, "topSignatures": true}, 
+    "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 7.25, "textSize": 14},
+    "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": true}}, 
     "navigationMenu": {
         "accentsType": {"coloring": false, "filling": true}, 
         "drawerPosition": "left", 
-        "height": 53, 
+        "height": 64, 
+        "position": {"horizontal": "center", "vertical": 0}, 
+        "signatureIcons": true,
+        "type": "classical"
+    }, 
+    "palette": {"scheme": "auto", "statusBar": "auto", "theme": "greenFun"},
+    "selectors": {"design": {"checkBox": "type_1", "radioButton": "type_1", "switch": "type_1"}, "ignoredShadows": {"disable": false}}}
+
+export const cyber =  {
+    "borderRadius": {"additional": 1, "basic": 1}, 
+    "effects": {"blur": false, "ripple": "all", "shadows": "neomorphism"},
+     "functionButton": {"ignoredShadows": {"disable": false}, "invertColors": false, "outline": false, "position": "top", "size": 70, "topSignatures": true}, 
+     "lists": {"fullWidth": false, "invertColorsHeader": false, "proximity": 9, "textSize": 14}, 
+     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": false, "gradient": true, "outline": true}}, 
+     "navigationMenu": {
+        "accentsType": {"coloring": true, "filling": false}, 
+        "drawerPosition": "left", 
+        "height": 50, 
         "position": {"horizontal": "center", "vertical": 0}, 
         "signatureIcons": true, 
         "type": "classical"
     }, 
-    "palette": {"scheme": "auto", "statusBar": "auto", "theme": "greenFun"}, 
-    "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_1"}
+    "palette": {"scheme": "auto", "statusBar": "auto", "theme": "cyber"}, 
+    "selectors": {"design": {"checkBox": "type_2", "radioButton": "type_1", "switch": "type_3"}, "ignoredShadows": {"disable": false}}
+}
+
+export const nineties =  {
+    "borderRadius": {"additional": 0, "basic": 0}, 
+    "effects": {"blur": false, "ripple": "all", "shadows": "square"},
+     "functionButton": {"ignoredShadows": {"disable": false}, "invertColors": false, "outline": false, "position": "top", "size": 70, "topSignatures": true}, 
+     "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 12, "textSize": 14}, 
+     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": true}}, 
+     "navigationMenu": {
+        "accentsType": {"coloring": true, "filling": true}, 
+        "drawerPosition": "left", 
+        "height": 66, 
+        "position": {"horizontal": "center", "vertical": 0}, 
+        "signatureIcons": true, 
+        "type": "classical"
+    }, 
+    "palette": {"scheme": "auto", "statusBar": "auto", "theme": "nineties"}, 
+    "selectors": {"design": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_3"}, "ignoredShadows": {"disable": false}}
 }
 
 export const extra =  {
     "borderRadius": {"additional": 36, "basic": 36}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "neomorphism"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 5.75, "textSize": 14}, 
     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -175,7 +211,7 @@ export const extra =  {
         "type": "classical"
     }, 
     "palette": {"scheme": "auto", "statusBar": "auto", "theme": "extra"}, 
-    "selectorsDisign": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_3"}
+    "selectors":{"design": {"checkBox": "type_2", "radioButton": "type_2", "switch": "type_3"}, 'ignoredShadows': {'disable': false}}
 }
  
 const pathImages = '../assets/presets_icons/'
@@ -183,39 +219,51 @@ const pathAppIcon = "../assets/foreground_iconY.png"
 
 export default presets = [
     {
-        name: 'YTAT-custom',
+        name: 'YTTI-custom',
         imageSource: require(pathAppIcon),
         imageLowScale: 1.1,
         options: null
     },
     {
-        name: 'YTAT-stock',
-        imageSource: require(pathAppIcon),
-        imageLowScale: 1.1,
+        name: 'YTTI-stock',
+        imageSource: require(pathImages+'stock.png'),
+        imageLowScale: 1,
         options: stock
     },
     {
-        name: 'YTAT-oliveBook',
-        imageSource: require(pathAppIcon),
-        imageLowScale: 1.1,
+        name: 'YTTI-oliveBook',
+        imageSource: require(pathImages+'oliveBook.png'),
+        imageLowScale: 1,
         options: oliveBook
     },
     {
-        name: 'YTAT-extra',
-        imageSource: require(pathAppIcon),
-        imageLowScale: 1.1,
+        name: 'YTTI-extra',
+        imageSource: require(pathImages+'cake.png'),
+        imageLowScale: 1,
         options: extra
     },
     {
-        name: 'YTAT-greenFun',
-        imageSource: require(pathAppIcon),
-        imageLowScale: 1.1,
+        name: 'YTTI-nineties',
+        imageSource: require(pathImages+'90s.png'),
+        imageLowScale: 1,
+        options: nineties
+    },
+    {
+        name: 'YTTI-greenFun',
+        imageSource: require(pathImages+'leaf.png'),
+        imageLowScale: 1,
         options: greenFun
     },
     {
-        name: 'YTAT-pbNeomorphism',
-        imageSource: require(pathAppIcon),
-        imageLowScale: 1.1,
+        name: 'YTTI-cyber',
+        imageSource: require(pathImages+'chip.png'),
+        imageLowScale: 1,
+        options: cyber
+    },
+    {
+        name: 'YTTI-pbNeomorphism',
+        imageSource: require(pathImages+'flower.png'),
+        imageLowScale: 1,
         options: pbNeomorphism
     },
     {

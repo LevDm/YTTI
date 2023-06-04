@@ -11,7 +11,7 @@ import {
   TapGestureHandlerGestureEvent,
 } from 'react-native-gesture-handler';
 
-import Animated, {
+import Reanimated, {
   interpolateColor,
   interpolate,
   useAnimatedGestureHandler,
@@ -24,9 +24,12 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
-
 import { LinearGradient, LinearGradientProps } from 'expo-linear-gradient';
+
+const Reanimated_LinearGradient = Reanimated.createAnimatedComponent(LinearGradient)
+const AnimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
+
+
 //import { deviceHeight, deviceWidth } from '../../../../../app_values/AppDefault';
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
@@ -35,6 +38,7 @@ import languagesAppList, {languagesApp} from "../../../../../app_values/Language
 
 import { BasePressable } from '../../../../../general_components/base_components/BaseElements';
 
+import {fullPaletteObjectUPD, getFromObject} from "../Tools"
 
 const RAINBOW = [
   '#ff0000',
@@ -58,6 +62,7 @@ const COLORS_L = [
 ]
 
 export function hexToHSL(H) {
+  'worklet'
   // Convert hex to RGB firsts
   let r = 0, g = 0, b = 0;
   if (H.length == 4) {
@@ -164,19 +169,27 @@ const PICKER_AREA_HEIGHT = 270
 const CIRCLE_PICKER_SIZE = 30;
 const INTERNAL_PICKER_SIZE = CIRCLE_PICKER_SIZE  ;
 
-console.log('dw========================================', deviceWidth, deviceHeight)
+//console.log('dw========================================', deviceWidth, deviceHeight)
 
-const ColorPicker = ({
-  show,
-  initialValue,
-  opened, 
+const ColorPicker = (props) => {
+  const {
+    show,
 
-  applyNewStateColor,
-  valueGradient,
-  valueTacing,
+    previewFull,
 
-  LanguageAppIndex,
-}) => {
+    selectColor,
+    paramsSelectColor,
+
+    //initialValue,
+    //opened, 
+
+    applyNewStateColor,
+    valueGradient,
+    valueTacing,
+
+    LanguageAppIndex,
+  } = props
+
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.PainterScreen.fullMod.traceActions
 
     const logg = (t)=>{
@@ -196,7 +209,7 @@ const ColorPicker = ({
 
     
     //______________________H
-    const [stateH, setStateH] = useState(0)
+    //const [stateH, setStateH] = useState(0)
     const selectH = useSharedValue(0);
     const translateXH = useSharedValue(0);
     const translateYH = useSharedValue(0);
@@ -279,7 +292,7 @@ const ColorPicker = ({
       
       const resColor = d2h(backgroundColor)
       selectH.value = resColor
-      runOnJS(setStateH)(resColor)
+      //runOnJS(setStateH)(resColor)
         
       return {
         backgroundColor,
@@ -288,11 +301,11 @@ const ColorPicker = ({
     }, []);
     
     const gradientS = useAnimatedProps(()=>{
-      'worklet';
+      //'worklet';
       return {
-        colors: ['#000000', selectH.value]
+        backgroundColor: selectH.value
       }
-    },[selectH.value, stateH])
+    },[selectH])
 
   
     //______________________S
@@ -451,8 +464,31 @@ const ColorPicker = ({
     //===================================
    
 
-    const [ inputValue, setInputValue ] = useState()
+    //const [ inputValue, setInputValue ] = useState()
+    const inputColor = useSharedValue()
     const currentSelectColor = useSharedValue('')
+
+    useDerivedValue(()=>{
+
+    }, [previewFull]) 
+
+    useDerivedValue(()=>{
+      /* 
+      if(opened){
+        if(getFromObject(previewFull.value, opened.trace) != currentSelectColor.value){
+          console.log('UPD slider color', opened, getFromObject(previewFull.value, opened.trace),'================', currentSelectColor.value)
+          const newPalette = fullPaletteObjectUPD(previewFull.value, opened.trace, currentSelectColor.value)
+          previewFull.value = newPalette
+        }
+      }*/
+      if(paramsSelectColor.value){
+        if(getFromObject(previewFull.value, paramsSelectColor.value.trace) != currentSelectColor.value){
+          console.log('UPD slider color', paramsSelectColor.value, getFromObject(previewFull.value, paramsSelectColor.value.trace),'================', currentSelectColor.value)
+          const newPalette = fullPaletteObjectUPD(previewFull.value, paramsSelectColor.value.trace, currentSelectColor.value)
+          previewFull.value = newPalette
+        }
+      }
+    })
 
     const HS40Lcolor = useAnimatedStyle(()=>{
       const h = interpolate(
@@ -520,7 +556,7 @@ const ColorPicker = ({
       
       if(show.value != 1){
         //onColorChanged?.(color);
-        runOnJS(setInputValue)(undefined)
+        //runOnJS(setInputValue)(undefined)
         currentSelectColor.value = color
       }
 
@@ -537,7 +573,6 @@ const ColorPicker = ({
     })
 
     const text = useAnimatedProps(()=>{
-      'worklet';
       return {
         text: currentSelectColor.value,
       }
@@ -545,32 +580,63 @@ const ColorPicker = ({
 
     const settingSlidersColor = (color)=>{
       //console.log('hsl slider set color')
+      'worklet';
       const initHSL = hexToHSL(color)
       translateXH.value = interpolate(initHSL.h, interval_h, interval_slider)
       translateXS.value = interpolate(initHSL.s, interval_sl, interval_slider)
       translateXL.value = interpolate(initHSL.l, interval_sl, interval_slider)
     }
-    const getTypeTracing = ()=> {
+
+    const getTypeTracing = (params)=> {
+      'worklet';
       let type = ''
-      if(opened != undefined && opened.trace != undefined){
-        const current = (opened.trace).slice(0).join('-')
+      if(params != undefined && params.trace != undefined){
+        const current = (params.trace).slice(0).join('-')
       
         if(current.includes("accents-primary")){type = 'accents'}
         if(current.includes("basics-neutrals")){type = 'neutrals'}
       }
       return type
     }
-    const typeTrasing = getTypeTracing()
+
+    const colorsFuncs = useSharedValue()
+
+    useDerivedValue(()=>{
+      selectColor.value? settingSlidersColor(selectColor.value) : null
+
+      colorsFuncs.value = paramsSelectColor.value? getTypeTracing(paramsSelectColor.value)  : null
+
+    }, [selectColor, paramsSelectColor])
+
+    const accentMod = useAnimatedStyle(()=>{
+      return {
+        opacity: colorsFuncs.value == 'accents'? 1 : 0,
+        zIndex: colorsFuncs.value == 'accents'? 1 : 0,
+      }
+    })
+
+    const neutralsMod = useAnimatedStyle(()=>{
+      return {
+        opacity: colorsFuncs.value == 'neutrals'? 1 : 0,
+        zIndex: colorsFuncs.value == 'neutrals'? 1 : 0,
+      }
+    })
+    
+    //const typeTrasing = getTypeTracing()
+
+    /* 
     useEffect(()=>{
       //console.log('ue iv')
       initialValue? settingSlidersColor(initialValue) : null
-      
     },[initialValue])
+    */
 
     const onPressInText = () =>{
-      if(inputValue == undefined){
+      //if(inputValue == undefined){
+      if(inputColor.value == undefined){  
         //console.log('iv set color')
-        setInputValue(currentSelectColor.value)
+        //setInputValue(currentSelectColor.value)
+        inputColor.value = currentSelectColor.value
       }
     }
 
@@ -585,7 +651,8 @@ const ColorPicker = ({
         }
       }
       outputText = outputText.toLowerCase()
-      setInputValue(outputText)
+      //setInputValue(outputText)
+      inputColor.value = outputText
     }
 
     const changeEnd = ({nativeEvent: {text}})=>{
@@ -612,7 +679,7 @@ const ColorPicker = ({
     const circlesSize = 30
 
     return (
-      <Animated.View
+      <Reanimated.View
         style ={[{
           position: 'absolute',
           bottom: 0,
@@ -665,7 +732,8 @@ const ColorPicker = ({
             defaultValue={currentSelectColor.value}
             
             
-            value={inputValue}
+            //value={inputValue}
+            value={inputColor.value}
             onPressIn={onPressInText}
             onChangeText={changeTextColor}
             //onEndEditing = {changeEnd}
@@ -685,21 +753,21 @@ const ColorPicker = ({
 
             }}
           >
-            <Animated.View style={[ HS60Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}>
+            <Reanimated.View style={[ HS60Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}>
               <BasePressable
                 type='t'
                 text='<'
                 onPress={()=>{shift('light')}}
               />
-            </Animated.View>
-            <Animated.View style={[ HS50Lcolor, {height: circlesSize, width: 1.5*circlesSize,borderRadius: circlesSize/2}]}/>
-            <Animated.View style={[ HS40Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}>
+            </Reanimated.View>
+            <Reanimated.View style={[ HS50Lcolor, {height: circlesSize, width: 1.5*circlesSize,borderRadius: circlesSize/2}]}/>
+            <Reanimated.View style={[ HS40Lcolor, {height: circlesSize, width: circlesSize,borderRadius: circlesSize/2}]}>
               <BasePressable
                 type='t'
                 text='>'
                 onPress={()=>{shift('dark')}}
               />
-            </Animated.View>
+            </Reanimated.View>
           </View>
           
           <BasePressable
@@ -718,74 +786,99 @@ const ColorPicker = ({
             onPress={()=>{applyNewStateColor(currentSelectColor.value)}}
           />
         </View>
+
         <View
           style ={{
             flex: 1,
             width: sliderSize.width,
             //backgroundColor: 'grey',
-            justifyContent: 'space-around',
+            //justifyContent: 'space-around',
             alignItems: 'center',
-            flexDirection: 'row',
+            justifyContent: 'center'
+            //flexDirection: 'row',
             //marginRight: 85
 
           }}
         >
-          {typeTrasing == 'accents' &&
-          <BasePressable
-            type = 't'
-            text={Language.lightGradient}
-            textStyle={{
-              fontSize: 10,
-              textAlign: 'center'
-            }}
-            style = {{
-              flex: 1,
-              marginHorizontal: 10,
-              backgroundColor: '#00000025',
-              height: circlesSize,
-              borderRadius: circlesSize/2,
-              paddingHorizontal: 10,
-            }} 
-            onPress={()=>{valueGradient(currentSelectColor.value, 'light')}}
-          />}
-          {typeTrasing != 'neutrals' &&
-          <BasePressable
-            type = 't'
-            text={Language.distributeValue}
-            textStyle={{
-              fontSize: 10,
-              color: 'white',
-              textAlign: 'center'
-            }}
-            style = {{
-              flex: 1.5,
-              marginHorizontal: 10,
-              backgroundColor: '#80808080',
-              height: circlesSize,
-              borderRadius: circlesSize/2,
-              paddingHorizontal: 10,
-            }} 
-            onPress={()=>{valueTacing(currentSelectColor.value)}}
-          />}
-          {typeTrasing == 'accents' &&
-          <BasePressable
-            type = 't'
-            text={Language.darkGradient}
-            textStyle={{
-              fontSize: 10,
-              textAlign: 'center'
-            }}
-            style = {{
-              flex: 1,
-              marginHorizontal: 10,
-              backgroundColor: '#ffffff75',
-              height: circlesSize,
-              borderRadius: circlesSize/2,
-              paddingHorizontal: 10,
-            }} 
-            onPress={()=>{valueGradient(currentSelectColor.value, 'dark')}}
-          />}
-          
+          <Reanimated.View
+            style ={[{
+              position: 'absolute',
+              height: '100%',
+              width: sliderSize.width,
+              //backgroundColor: 'grey',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              flexDirection: 'row',
+              //marginRight: 85
+            }, accentMod]}
+          >
+            <BasePressable
+              type = 't'
+              text={Language.lightGradient}
+              textStyle={{
+                fontSize: 10,
+                textAlign: 'center'
+              }}
+              style = {{
+                flex: 1,
+                marginHorizontal: 10,
+                backgroundColor: '#00000025',
+                height: circlesSize,
+                borderRadius: circlesSize/2,
+                paddingHorizontal: 10,
+              }} 
+              onPress={()=>{valueGradient(currentSelectColor.value, 'light')}}
+            />
+
+            <BasePressable
+              type = 't'
+              text={Language.darkGradient}
+              textStyle={{
+                fontSize: 10,
+                textAlign: 'center'
+              }}
+              style = {{
+                flex: 1,
+                marginHorizontal: 10,
+                backgroundColor: '#ffffff75',
+                height: circlesSize,
+                borderRadius: circlesSize/2,
+                paddingHorizontal: 10,
+              }} 
+              onPress={()=>{valueGradient(currentSelectColor.value, 'dark')}}
+            />
+          </Reanimated.View>
+          <Reanimated.View
+            style ={[{
+              position: 'absolute',
+              height: '100%',
+              width: sliderSize.width,
+              //backgroundColor: 'grey',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              flexDirection: 'row',
+              //marginRight: 85
+            }, neutralsMod]}
+          >
+            <BasePressable
+              type = 't'
+              text={Language.distributeValue}
+              textStyle={{
+                fontSize: 10,
+                color: 'white',
+                textAlign: 'center'
+              }}
+              style = {{
+                flex: 1.5,
+                marginHorizontal: 10,
+                backgroundColor: '#80808080',
+                height: circlesSize,
+                borderRadius: circlesSize/2,
+                paddingHorizontal: 10,
+              }} 
+              onPress={()=>{valueTacing(currentSelectColor.value)}}
+            />
+          </Reanimated.View>
         </View>
       {[
         {
@@ -802,7 +895,7 @@ const ColorPicker = ({
         {
           tapGestureEvent: tapGestureEventS,
           panGestureEvent: panGestureEventS,
-          colors: ['#000000', selectH.value],
+          colors: ['#000000', 'transparent'],
           gradient: gradientS,
           dynamicStyle: {
             line: lineS,
@@ -833,17 +926,17 @@ const ColorPicker = ({
         }}
       >
         <TapGestureHandler onGestureEvent={item.tapGestureEvent}>
-        <Animated.View>
+        <Reanimated.View>
         <PanGestureHandler onGestureEvent={item.panGestureEvent}>
-          <Animated.View style={{ justifyContent: 'center' }}>
-            <LinearGradient          
+          <Reanimated.View style={{ justifyContent: 'center' }}>
+            <Reanimated_LinearGradient          
               start={start}
               end={end}
               style={staticStyles.gradient}
-              animatedProps={item.gradient}
               colors={item.colors}
+              animatedProps={item.gradient}
             />
-            <Animated.View
+            <Reanimated.View
                 style={[item.dynamicStyle.line, {
                   position: 'absolute',
                   marginLeft: -1,//CIRCLE_PICKER_SIZE/2
@@ -853,19 +946,19 @@ const ColorPicker = ({
                   opacity: 0.5,
                 }]}
               />
-            <Animated.View style={[staticStyles.picker, item.dynamicStyle.areaThumb]}>
-              <Animated.View
+            <Reanimated.View style={[staticStyles.picker, item.dynamicStyle.areaThumb]}>
+              <Reanimated.View
                 style={[staticStyles.internalPicker, item.dynamicStyle.thumb]}
               />
-            </Animated.View>
-          </Animated.View>
+            </Reanimated.View>
+          </Reanimated.View>
         </PanGestureHandler>
-        </Animated.View>
+        </Reanimated.View>
         </TapGestureHandler>
       </View>
       )
       })}
-      </Animated.View>
+      </Reanimated.View>
     );
 };
 

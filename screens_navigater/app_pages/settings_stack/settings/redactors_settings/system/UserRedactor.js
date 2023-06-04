@@ -59,7 +59,7 @@ export default UserRedactor = ({
 }) => {
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.user
+    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors
 
     const [textInputValue, setTextInputValue] = useState(appConfig.user.name? appConfig.user.name : null)
 
@@ -68,21 +68,46 @@ export default UserRedactor = ({
         const newAppConfig = JSON.parse(JSON.stringify(appConfig));
         //let newAppConfig = getNewAppConfigObject();
         //console.log('this',newAppConfig)
-        newAppConfig.user.name = typeof text === 'string'? text : '';
+        
+        let ROLE = undefined
+        if(text == 'SET_ROLE_ADMIN'){
+            newAppConfig.user.name = 'admin'
+            setTextInputValue('admin')
+            ROLE = 'a'
+        } else if (text == 'SET_ROLE_USER'){
+            newAppConfig.user.name = 'user'
+            setTextInputValue('user')
+            ROLE = 'u'
+        } else {
+            newAppConfig.user.name = typeof text === 'string'? text : '';
+        }
+
+        if(ROLE){
+            console.log('SET_ROLE_'+ROLE)
+            newAppConfig.user.role = ROLE
+        }
         r_setAppConfig(newAppConfig);
         dataRedactor("storedAppConfig", newAppConfig);
     }
+
+    const welcomeUsedSetting = (value) => {
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
+        newAppConfig.splash.welcome = value;// !welcomeUsed
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
+    }
+
 
     return (<>
     <View 
         style = {[{
             //marginLeft: 20,
             //width: "80%"
-            
+            paddingBottom: 12
         }]}
     >
         <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10}]}>
-            {Language.accost}
+            {Language.user.accost}
         </Text>
         <BaseTextInput 
             textValue={textInputValue}
@@ -98,7 +123,7 @@ export default UserRedactor = ({
                     fontSize: 16
                 },
                 
-                placeholder: Language.name,
+                placeholder: Language.user.name,
                 placeholderTextColor: Theme.texts.neutrals.tertiary,
                 maxLength: 70,
 
@@ -137,6 +162,21 @@ export default UserRedactor = ({
                 }
             }}
         />
+        {appConfig.user.role == 'a' && 
+        <SwitchField
+            textTitle = {Language.loadAnimation.welcome}
+            textStates = {Language.loadAnimation.welcomeState}
+            //text = {`${Language.welcome} ${Language.welcomeState[`${welcomeUsed}`]}`}
+            primeValue={appConfig.splash.welcome}
+            onChange={welcomeUsedSetting}
+            style={{
+                //height: 60,
+                //flex: 1
+            }}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />}
     </View>
     </>)
 }

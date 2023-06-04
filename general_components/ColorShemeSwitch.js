@@ -38,8 +38,11 @@ export default ColorSchemeSwitch = ({
     pressableStyle = {},
     switching
 }) => {
+    const schemes = ['auto', 'light', 'dark'] 
 
-    const tingDuration = 400
+    const currentScheme = useDerivedValue(()=>scheme)
+
+    const tingDuration = 300
     const entering = (targetValues) => {
         'worklet';
         const animations = {
@@ -67,14 +70,45 @@ export default ColorSchemeSwitch = ({
         };
     };
 
+    const accent_auto = useAnimatedStyle(()=>{
+        return {
+            opacity: withTiming(currentScheme.value == schemes[0]? 1 : 0, { duration: tingDuration })
+        }
+    })
+    const accent_light = useAnimatedStyle(()=>{
+        return {
+            opacity: withTiming(currentScheme.value == schemes[1]? 1 : 0, { duration: tingDuration })
+        }
+    })
+    const accent_dark = useAnimatedStyle(()=>{
+        return {
+            opacity: withTiming(currentScheme.value == schemes[2]? 1 : 0, { duration: tingDuration })
+        }
+    })
+    
+
+    const press = () => {
+        let index = schemes.indexOf(currentScheme.value)
+        if(currentScheme.value == 'auto'){
+            index = (index+1) == schemes.length? 0 : index+1
+        } else {
+            index = (index == 1? 2 : 1)
+        }
+        const newScheme = schemes[index]
+        currentScheme.value = newScheme
+        console.log('SWITCH SCHEMA',newScheme)
+        setTimeout(()=>{switching(newScheme)}, tingDuration)
+    }
+
     return (
         <Pressable
             style = {[{
                 flexDirection: 'row',
                 //alignItems: 'center',
+                //backgroundColor: 'red',
                 padding: 2
             },pressableStyle]}
-            onPress={switching}
+            onPress={press}
         >
             <View
                 style = {{
@@ -85,10 +119,11 @@ export default ColorSchemeSwitch = ({
                     //backgroundColor: 'red'
                 }}
             >
-                {scheme == 'auto' &&
+                
                 <Animated.View
-                    entering={entering}
-                    exiting={exiting}
+                    //entering={entering}{scheme == 'auto' &&
+                    //exiting={exiting}
+                    style={[accent_auto, {position: 'absolute'}]}
                 >
                 <Text style={[staticStyles.letter, {color: colorIcon}]}>A</Text>
                 <Svg width={sizeIcon} height={sizeIcon} viewBox="0 0 36 43" fill="none" xmlns="http://www.w3.org/2000/Svg">
@@ -119,11 +154,12 @@ export default ColorSchemeSwitch = ({
                 </LinearGradient>
                 </Defs>
                 </Svg>
-                </Animated.View>}
-                {scheme == 'dark' &&
+                </Animated.View>
+                
                 <Animated.View
-                    entering={entering}
-                    exiting={exiting}
+                    //entering={entering} {scheme == 'dark' &&
+                    //exiting={exiting}
+                    style={[accent_dark, {position: 'absolute'}]}
                 >
                 <Text style={[staticStyles.letter, {color: colorIcon}]}>D</Text>         
                 <Svg width={sizeIcon} height={sizeIcon} viewBox="0 0 36 43" fill="none" xmlns="http://www.w3.org/2000/Svg">
@@ -144,11 +180,12 @@ export default ColorSchemeSwitch = ({
                 <Rect x="26.15" y="26.15" width="3.7" height="3.7" rx="0.85" fill={invertColorIcon} stroke={colorIcon} strokeWidth="0.3"/>
                 <Rect x="19.15" y="26.15" width="3.7" height="3.7" rx="0.85" fill={invertColorIcon} stroke={colorIcon} strokeWidth="0.3"/>
                 </Svg>
-                </Animated.View>}
-                {scheme == 'light' &&
+                </Animated.View>
+                
                 <Animated.View
-                    entering={entering}
-                    exiting={exiting}
+                    style={[accent_light, {position: 'absolute'}]}
+                    //entering={entering}{scheme == 'light' &&
+                    //exiting={exiting}
                 >
                 <Text style={[staticStyles.letter, {color: colorIcon}]}>L</Text> 
                 <Svg width={sizeIcon} height={sizeIcon} viewBox="0 0 36 43" fill="none" xmlns="http://www.w3.org/2000/Svg">
@@ -169,7 +206,7 @@ export default ColorSchemeSwitch = ({
                 <Rect x="26" y="19" width="4" height="4" rx="1" fill={colorIcon}/>
                 <Line x1="3" y1="42.5" x2="33" y2="42.5" stroke={colorIcon}/>
                 </Svg>
-                </Animated.View>}
+                </Animated.View>
             </View>
             {text && 
             <Text

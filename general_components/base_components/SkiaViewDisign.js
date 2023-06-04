@@ -76,7 +76,8 @@ function SkiaViewDisign(props) {
     return (
         <Canvas
           onSize={size}
-          mode={'default'}
+          //mode={'default'}
+          //mode = {'continuous'}
           style={{height: '100%', width: '100%', position: 'absolute', backgroundColor: 'transparent'}} 
         >
         <Group>
@@ -85,16 +86,15 @@ function SkiaViewDisign(props) {
             color={backgroundColor}
           >
             {shadowStyle == 'neomorphism' && 
+            <Shadow dx={-shadowMargin.horizontal/2.6} dy={-shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.secondary}30`}/>}
+            {shadowStyle == 'neomorphism' && 
             <Shadow dx={shadowMargin.horizontal/2.6} dy={shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.primary}30`} />}
 
-            {shadowStyle == 'neomorphism' && 
-            <Shadow dx={-shadowMargin.horizontal/2.6} dy={-shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.secondary}30`}/>}
-
             {(shadowStyle == 'material' || (isGeneralObject && shadowStyle == 'materialSome')) && 
-            <Shadow dx={0} dy={shadowMargin.vertical/2.6} blur={shadowBlur} color={`${shadowColors.primary}30`}/>}
+            <Shadow dx={0} dy={shadowMargin.vertical/3.5} blur={shadowBlur} color={`${shadowColors.primary}30`}/>}
 
             {shadowStyle == "full" && 
-            <Shadow dx={0} dy={0} blur={shadowBlur} color={`${shadowColors.primary}30`}/>}
+            <Shadow dx={0} dy={0} blur={shadowBlur-0.15} color={`${shadowColors.primary}30`}/>}
 
             {shadowStyle == "square" && 
             <Shadow dx={shadowMargin.vertical/1.4} dy={shadowMargin.vertical/1.4} blur={0.75} color={`${shadowColors.primary}8a`}/>}

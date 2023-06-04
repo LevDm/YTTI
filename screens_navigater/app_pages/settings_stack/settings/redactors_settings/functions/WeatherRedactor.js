@@ -426,7 +426,7 @@ export default WeatherRedactor = ({
                     check = {usersLocations[index].used}
                     onPress = {()=>{settingLocaion(index, !usersLocations[index].used)}}
                     boxBorderRadius = {appStyle.borderRadius.additional}
-                    disignType = {appStyle.selectorsDisign.checkBox}
+                    designType = {appStyle.selectors.design.checkBox}
                     colors={{
                         background: Theme.basics.neutrals.secondary,
                         primary: Theme.icons.accents.secondary,

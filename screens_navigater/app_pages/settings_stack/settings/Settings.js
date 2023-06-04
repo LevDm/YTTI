@@ -174,11 +174,13 @@ const STRUCTURE = {
                 {
                     subCategory: "additionalFunctions",
                     data: [
+                        /*
                         {
                             param: "loadAnimation",
                             icon:  "animation-play",
                             paramRedactorComponent: LoadSplashRedactor
-                        },
+                        }, 
+                        */
                         {
                             param:"weather",
                             icon:  "weather-cloudy-clock",
@@ -321,19 +323,22 @@ const Settings = (props) => {
     }
 
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
+
     const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
+    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
-    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
-
-    const previewAppStyleA = useSharedValue(props.appStyle)
+   const previewAppStyleA = useSharedValue(props.appStyle)
+   
+   const bottomSheetHeadHeight = 33
 
     // position wherein bobber not visible
     const [ bottomBord, setBottomBord ] = useState(
         props.appStyle.functionButton.size 
         + 12.5 
+        + bottomSheetHeadHeight
         + props.appStyle.navigationMenu.height 
         + ((props.appStyle.navigationMenu.type == 'hidden' && props.appStyle.navigationMenu.position.horizontal == 'center' && props.appStyle.functionButton.position == 'center')? 
             20 + interpolate(props.appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30]) 
@@ -362,6 +367,7 @@ const Settings = (props) => {
             setBottomBord(
                 jstore.appStyle.functionButton.size 
                 + 12.5 
+                + bottomSheetHeadHeight
                 + jstore.appStyle.navigationMenu.height
                 + ((jstore.appStyle.navigationMenu.type == 'hidden' && jstore.appStyle.navigationMenu.position.horizontal == 'center')? 
                     20 + interpolate(jstore.appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
@@ -407,13 +413,46 @@ const Settings = (props) => {
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen
 
-
+    const previewAppPalette = useSharedValue(themesColorsAppList[1]['light'])
     
-    const animValueBobberButtonVisible = useSharedValue(0);//bottomBord
-    const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-    const bottomSheetModalRef = useRef(BottomSheetModal);
+    useDerivedValue(()=>{
+        //console.log('SETINGS PREV PALETTE', previewAppStyleA.value)
+        const sourceStyle = previewAppStyleA.value? previewAppStyleA.value : appStyle
+        const index = themesApp.indexOf(sourceStyle.palette.theme)
+        const schema = ThemeSchema// sourceStyle.palette.scheme == 'auto'? runOnJS(Appearance.getColorScheme)() : sourceStyle.palette.scheme
 
+        console.log('SETINGS PREV UPD', index, schema)
+        //console.log('SETINGS PREV UPD', props.route.params)
 
+        if(index == 0 && !themesColorsAppList[index] && appStyle.customTheme){ //
+            console.log('SETINGS PREV PALETTE *custom', schema)
+            previewAppPalette.value = appStyle.customTheme[schema]
+        } else {
+
+            console.log('SETINGS PREV PALETTE', themesColorsAppList[index].title, schema)
+            //console.log('SETINGS PREV PALETTE', themesColorsAppList[index])
+            previewAppPalette.value = themesColorsAppList[index][schema]
+        }
+
+        
+    },[previewAppStyleA, ThemeSchema, appStyle, themesColorsAppList])
+    /*
+    useDerivedValue(()=>{
+        if(!previewAppStyleA.value){return null}
+        const colorsAppIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
+        const schema = previewAppStyleA.value.palette.scheme == 'auto'? Appearance.getColorScheme() : previewAppStyleA.value.palette.scheme
+        const newPalette = themesColorsAppList[colorsAppIndex][schema]
+        return newPalette
+    }) */
+    console.log('settings theme', previewAppPalette.value)
+    
+    
+    const animValueBobberButtonVisible = useSharedValue(1);//bottomBord
+    //const [bottomSheetIndex, setBottomSheetIndex] = useState(0);
+    const bottomSheetIndex = useSharedValue(1);
+    const bottomSheetModalRef = useRef();
+
+    //console.log(bottomSheetModalRef)
 
     const applyAppStyle = ()=>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
@@ -423,7 +462,7 @@ const Settings = (props) => {
             const usedSubsequence = Object.values(appConfig.appFunctions).filter(item => item.used && true)
             
             if(usedSubsequence.length == 1 && newAppStyle.navigationMenu.type == 'classical'){
-                console.log('apply', usedSubsequence)
+                console.log('hide menu in app style', usedSubsequence)
                 newAppStyle.navigationMenu.height = 0
             }
 
@@ -458,59 +497,116 @@ const Settings = (props) => {
     
     const backBurgerPress = () => {
         Vibration.vibrate([5,8])
-        if(bottomSheetVisible && props.hideMenu){
-            bottomSheetModalRef.current?.dismiss()
-            setBottomSheetVisible(false)
+        if(props.hideMenu){
+            //bottomSheetModalRef.current?.dismiss()
+            //setBottomSheetIndex(false)
             props.r_setHideMenu(false) 
         } 
         props.navigation.goBack()
-        console.log('settings back', bottomSheetVisible , props.hideMenu)
+        console.log('settings back', bottomSheetIndex.value , props.hideMenu)
     }
 
 
     const goToNFC = () => {
         //ToastAndroid.show(Language.stackTransition.loadPainter, ToastAndroid.SHORT);   
-        bottomSheetVisible? bottomSheetModalRef.current?.dismiss(): null;    
-        (!bottomSheetVisible && !props.hideMenu)? props.r_setHideMenu(true) : null
+        //bottomSheetIndex? bottomSheetModalRef.current?.dismiss(): null;    
+        (!props.hideMenu)? props.r_setHideMenu(true) : null
         //console.log('settings to palette', bottomSheetVisible , props.hideMenu) 
         props.navigation.navigate('NFC')
-        console.log('settings to nfc', bottomSheetVisible , props.hideMenu)  
+        console.log('settings to nfc', bottomSheetIndex.value , props.hideMenu)  
     }
 
 
 
     const goToPalleteScreen = (index = 0, mod = 0) => {
+
+        /*
+        if(!themesColorsAppList[0]){
+            console.log('custom theme create')
+            const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+            //let newAppStyle = getNewAppStyleObject('currentStyle')
+            const newTheme = JSON.parse(JSON.stringify(themesColorsAppList[ThemeColorsAppIndex]));
+            newTheme.light.theme = 'custom'
+            newTheme.dark.theme = 'custom'
+
+            newAppStyle.customTheme = newTheme
+            themesColorsAppList.splice(0,1,newTheme)
+        }
+        */
+        
+
         ToastAndroid.show(Language.stackTransition.loadPainter, ToastAndroid.SHORT);   
-        bottomSheetVisible? bottomSheetModalRef.current?.dismiss(): null;    
-        (!bottomSheetVisible && !props.hideMenu)? props.r_setHideMenu(true) : null
+        //bottomSheetIndex? bottomSheetModalRef.current?.dismiss(): null;    
+        (!props.hideMenu)? props.r_setHideMenu(true) : null
         //console.log('settings to palette', bottomSheetVisible , props.hideMenu) 
-        props.navigation.navigate('palette', {themeIndex: index, modIndex: mod})
-        console.log('settings to palette', bottomSheetVisible , props.hideMenu)  
+        const colors = JSON.parse(JSON.stringify(previewAppPalette.value))
+        //colors.title = 'custom'
+        //colors.light.theme = 'custom'
+        //colors.dark.theme = 'custom'
+        colors.theme = 'custom'
+
+       
+        console.log('TO PALETTE OPE COLORS', colors)
+
+        const styles = JSON.parse(JSON.stringify(previewAppStyleA.value))
+        styles.palette.theme = 'custom'
+
+        const ground = themesColorsAppList[index]
+        ground.title = 'custom'
+        ground.light.theme = 'custom'
+        ground.dark.theme = 'custom'
+
+        props.navigation.navigate('palette', {
+            themeIndex: index, 
+            modIndex: mod, 
+            styles: previewAppStyleA.value,
+            fullPalette: ground,
+            openedScheme: ThemeSchema,
+
+            //colors: colors
+        })
+
+        console.log('settings to palette', 'sheet',bottomSheetIndex.value ,'menu', props.hideMenu)  
     }
 
 
-    
-    const previewHeight = (50+deviceHeight/2)
-    
+    const previewToolBArHeight = 46
+    const previewHeight = deviceHeight/2 + 2
+    const bottomMargin = appStyle.navigationMenu.height + bottomSheetHeadHeight
 
-    const snapPoints = useMemo(() => [previewHeight/3+30, previewHeight+23], []);
+    useEffect(()=>{
+        bottomSheetIndex.value = 1
+        bottomSheetModalRef.current?.present();
+    }, [bottomSheetModalRef])
+
+    const snapPoints = useMemo(() => [bottomMargin,(previewHeight+bottomMargin+previewToolBArHeight)], [bottomMargin]);
 
     const handlePresentModalPress = useCallback(() => {
-        props.r_setHideMenu(true)
-        setBottomSheetVisible(true)
-        bottomSheetModalRef.current?.present();
-    }, []);
+        if(bottomSheetIndex.value == 1){
+            bottomSheetModalRef.current?.snapToIndex(0);
+            bottomSheetIndex.value = 0
+        } else {
+            bottomSheetModalRef.current?.present();
+            bottomSheetModalRef.current?.snapToIndex(1);
+            bottomSheetIndex.value = 1
+        }
+    }, [bottomSheetModalRef, bottomSheetIndex]);
 
     const handleSheetChanges = useCallback((index) => {
-        console.log('handleSheetChanges', index, bottomSheetVisible);
-        if(index === -1 && bottomSheetVisible){
+        //console.log('handleSheetChanges', index, bottomSheetIndex.value);
+        if(index == -1){
             console.log('menu visible', index);
-            setBottomSheetVisible(false)
-            props.r_setHideMenu(false)
         }
+        bottomSheetIndex.value = index
 
-    }, [bottomSheetVisible]);
+    }, [bottomSheetIndex]);
 
+    const enableFab = useDerivedValue(()=>{
+        console.log('upd preview enable', bottomSheetIndex.value != 1 , appStyle.functionButton.position != 'top')
+        return bottomSheetIndex.value != 1 && appStyle.functionButton.position != 'top'
+    }, [bottomSheetIndex])
+    
+    const marginFab = useDerivedValue(()=>bottomSheetIndex.value == -1? 0 : bottomSheetHeadHeight)
     
     return (
     <>  
@@ -526,6 +622,8 @@ const Settings = (props) => {
             goToNFC={goToNFC}
     
             backBurgerPress = {backBurgerPress}
+            showPress = {jumpPress}
+            applyPress = {applyPress}
 
             bottomBord={bottomBord}
             
@@ -538,8 +636,8 @@ const Settings = (props) => {
         />
         
         <BobberButton 
-            enabled={!bottomSheetVisible}
-     
+            aEnabled={enableFab}
+            aBottomMargin = {marginFab}
             bottomBord = {bottomBord}
             reaValueBobberButtonVisible = {animValueBobberButtonVisible}
 
@@ -552,28 +650,155 @@ const Settings = (props) => {
         />
 
         {/*STYLE UPDATE*/}
-        {true && 
-        <BottomSheetModalProvider>
+        <BottomSheetModalProvider >
         <BottomSheetModal
-          ref={bottomSheetModalRef}
-          index={1}
-          snapPoints={snapPoints}
-          handleIndicatorStyle={{backgroundColor: Theme.icons.accents.primary, width: 50}}
-          backgroundStyle={{ backgroundColor: Theme.basics.neutrals.quaternary, borderTopLeftRadius: appStyle.borderRadius.additional, borderTopRightRadius: appStyle.borderRadius.additional}}
-          onChange={handleSheetChanges}
-        >           
+            ref={bottomSheetModalRef}
+            //animateOnMount={false} 
+            enableDismissOnClose={false}
+            //detached={true}
+            index={1}
+            snapPoints={snapPoints}
+            handleComponent={()=>{
+                return (
+                <View
+                    style = {{
+                        height: bottomSheetHeadHeight,
+                        //backgroundColor: 'red',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderTopWidth: 0.4,
+                        borderColor: `${Theme.specials.separator}25`,
+                        //backgroundColor :'red',
+                        marginHorizontal: appStyle.borderRadius.additional
+                        //borderRadius: 
+                    }}
+                >
+                    <View style={{height: 4, borderRadius: 2, backgroundColor: Theme.icons.accents.primary, width: 50}}/>
+                    <Text
+                        style ={{
+                            left: 24,
+                            fontSize: 11,
+                            color: Theme.texts.neutrals.tertiary,
+                            fontWeight: 'bold',
+                            letterSpacing: 1,
+                            fontVariant: ['small-caps'],
+                            //opacity: 0.7,
+                            position: 'absolute',
+                            textAlign: 'center'
+                        }}
+                    >
+                        {Language.preview.title}
+                    </Text>
+                    <MaterialCommunityIcons name="cellphone-cog" size={11} color = {Theme.icons.neutrals.tertiary} style={{position: 'absolute', left: 12, transform: [{rotate: '180deg'}]}}/>
+                </View>
+                )
+            }}
+            backgroundStyle={{ backgroundColor: Theme.basics.neutrals.quaternary, borderTopLeftRadius: appStyle.borderRadius.additional, borderTopRightRadius: appStyle.borderRadius.additional}}
+            onChange={handleSheetChanges}
+        >        
+            <View
+                style = {{
+                    width: '100%',
+                    height: previewToolBArHeight,
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    //backgroundColor: 'red'
+                }}  
+            >
+                <View
+                    style={{
+                        width: 136,
+                        height: previewToolBArHeight,
+                    }}
+                >
+                    <SkiaViewDisign 
+                        borderRadius = {appStyle.borderRadius.additional}
+                        backgroundColor = {Theme.basics.accents.tertiary}
+                        shadowColors = {Theme.specials.shadow}
+                        shadowMargin={{horizontal: 8, vertical: 8}}
+                        shadowStyle = {appStyle.effects.shadows}
+                        adaptiveSizeForStyle={false}
+                        innerShadow={{
+                            used: true,
+                            borderWidth: 1
+                        }}
+                    />
+                    <BasePressable
+                        type="t"
+                        text={Language.preview.toolbar.hide}
+                        textStyle={{
+                            fontSize: 14,
+                            //textAlign: 'center',
+                            letterSpacing: 1,
+                            fontVariant: ['small-caps'],
+                            fontWeight: '500',
+                            color: Theme.texts.neutrals.primary
+                        }}
+                        style={{
+                            width: 120,
+                            height: previewToolBArHeight-16,
+                            margin: 8,
+                            //;backgroundColor: Theme.basics.accents.quaternary,
+                            borderRadius: appStyle.borderRadius.additional
+                        }}
+                        android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
+                        onPress = {jumpPress}
+                    />
+                </View>
+
+                <View
+                    style={{
+                        width: 136,
+                        height: previewToolBArHeight,
+                    }}
+                >
+                    <SkiaViewDisign 
+                        borderRadius = {appStyle.borderRadius.additional}
+                        backgroundColor = {Theme.basics.accents.tertiary}
+                        shadowColors = {Theme.specials.shadow}
+                        shadowMargin={{horizontal: 8, vertical: 8}}
+                        shadowStyle = {appStyle.effects.shadows}
+                        adaptiveSizeForStyle={false}
+                        innerShadow={{
+                            used: true,
+                            borderWidth: 1
+                        }}
+                    />
+                    <BasePressable
+                        type="t"
+                        text={Language.preview.toolbar.apply}
+                        textStyle={{
+                            fontSize: 14,
+                            letterSpacing: 1,
+                            fontVariant: ['small-caps'],
+                            fontWeight: '500',
+                            //textAlign: 'center',
+                            color: Theme.texts.neutrals.primary
+                        }}
+                        style={{
+                            width: 120,
+                            height: previewToolBArHeight-16,
+                            margin: 8,
+                            //;backgroundColor: Theme.basics.accents.quaternary,
+                            borderRadius: appStyle.borderRadius.additional
+                        }}
+                        android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
+                        onPress = {applyPress}
+                    />
+                </View>
+            </View> 
             <StyleChangePreview
-                appStyle={appStyle}
                 previewAppStyleA = {previewAppStyleA}
+                previewAppPalette = {previewAppPalette}
 
-                splashStart = {splashStart}
-
+                appStyle={appStyle}
                 ThemeColorsAppIndex={ThemeColorsAppIndex}
                 ThemeSchema={ThemeSchema}
                 LanguageAppIndex={LanguageAppIndex}
             />
         </BottomSheetModal>
-        </BottomSheetModalProvider>}
+        </BottomSheetModalProvider>
     </>);  
 };
 export default connect(mapStateToProps('SETTINGS_SCREEN'), mapDispatchToProps('SETTINGS_SCREEN'))(Settings);
@@ -591,7 +816,9 @@ const BobberButton = (props) => {
     const {
         reaValueBobberButtonVisible,
         bottomBord,
-        enabled,
+        aBottomMargin,
+
+        aEnabled,
 
         upPress,
         downPress,
@@ -604,16 +831,20 @@ const BobberButton = (props) => {
         ThemeSchema
     } = props
 
+    const enabled = useDerivedValue(()=>aEnabled.value)
+    const bottomMargin = useDerivedValue(()=>aBottomMargin.value)
+
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     
     const dynamicStyleBobberUp = useAnimatedStyle(() => {
         const duration = 200;
         return {
             transform: [
-                {translateY: withTiming((reaValueBobberButtonVisible.value == 0 && enabled)? -(5+appStyle.functionButton.size) : 0, {duration: duration})}
+                {translateY: withTiming((reaValueBobberButtonVisible.value == 0 && enabled.value)? -(5+appStyle.functionButton.size) : 0, {duration: duration})}
             ] 
         }
     })
+
     const dynamicStyleBobberDown = useAnimatedStyle(() => {
         const duration = 200;
         return {
@@ -632,13 +863,13 @@ const BobberButton = (props) => {
         const bottom = interpolate(appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
         const addBottom = (appStyle.navigationMenu.type == 'hidden' && appStyle.navigationMenu.position.horizontal == 'center' && appStyle.functionButton.position == 'center')? (20+bottom) : 0
         return {
-            height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
+            height:  withTiming(appStyle.functionButton.size, {duration: duration}),
             width:  withTiming(appStyle.functionButton.size, {duration: duration}),
-            bottom:  withTiming((appStyle.navigationMenu.height+12.5+addBottom), {duration: duration}),
+            bottom:  withTiming((appStyle.navigationMenu.height+12.5+ bottomMargin.value +addBottom), {duration: duration}),
             right: withTiming( (position(appStyle.functionButton.size)[appStyle.functionButton.position]), {duration: duration}),
 
             transform: [
-                {translateY: withTiming((reaValueBobberButtonVisible.value == 0 && enabled)? 0 : bottomBord, {duration: durationTranslate})}
+                {translateY: withTiming((reaValueBobberButtonVisible.value == 0 && enabled.value)? 0 : bottomBord, {duration: durationTranslate})}
             ] 
         }
     })
@@ -651,102 +882,89 @@ const BobberButton = (props) => {
                 justifyContent: 'flex-end',
             }]}
         >   
-            {["down", "up"].map((item, index)=>{
-                let animStyle;
-                let iconName;
-                let pressFunction;
-                switch(item){
-                    case "up": 
-                        animStyle = dynamicStyleBobberUp;
-                        iconName = "cellphone-cog";
-                        pressFunction = upPress;
-                        break;
-                    case "down": 
-                        animStyle = dynamicStyleBobberDown;
-                        iconName = "check-bold";
-                        pressFunction = downPress;
-                        break;
-                }
-                return (
-                    <Reanimated.View
-                        key={item+index}
-                        
-                        style = {[animStyle,{
-                            zIndex: 1,       
-                            position: 'absolute',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            height: appStyle.functionButton.size ,
-                            width: appStyle.functionButton.size ,
-                            
-                            //backgroundColor: 'red'
-                            //borderRadius: appStyle.borderRadius.additional,
-                        }]}
-                    >        
-                        <SkiaViewDisign
-                            isGeneralObject={true} 
-                            borderRadius = {appStyle.borderRadius.additional}
-                            backgroundColor = {(appStyle.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary)}
-                            shadowColors = {Theme.specials.shadow}
-                            shadowMargin={{horizontal: 5, vertical: 5}}
-                            shadowStyle = {appStyle.effects.shadows}
-                            adaptiveSizeForStyle={false}
-                            innerShadow={{
-                                used: true,
-                                borderWidth: 0.5
-                            }}
-                        />
-                        {appStyle.effects.blur && 
-                        <View 
-                            style = {[StyleSheet.absoluteFillObject, {
-                                left: 5,
-                                top: 5,
-                                height: appStyle.functionButton.size-10,
-                                width: appStyle.functionButton.size-10,
-                                //specialty blur for android
-                                overflow: 'hidden',
-                                borderRadius: appStyle.borderRadius.additional,
-                            }]}
-                        >
-                        <BlurView
-                            style = {{flex: 1, }}
-                            blurType = {'light'}
-                            blurAmount = {10}
-                            
-                            //ANDROID_PROPS
-                            overlayColor={`${appStyle.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary}90`}
-                            //overlayColor={'transparent'}
-                            //blurRadius	= {10}
-                            //downsampleFactor = {10}
-                        />
-                        </View>}  
-                        <View 
-                            style={{
-                                position: 'absolute',
-                                height: appStyle.functionButton.size -10,
-                                width: appStyle.functionButton.size -10,
-                                borderWidth: appStyle.functionButton.outline? 0.5 : 0,
-                                borderColor: `${Theme.specials.separator}20`,
-                                borderRadius: appStyle.borderRadius.additional
-                            }}
-                        />
-                        <BasePressable
-                            type={"i"}
-                            icon={{name: iconName, size: 24, color: appStyle.functionButton.invertColors? Theme.icons.accents.primary : Theme.icons.neutrals.primary}}
-                            style={[{
-                                height: appStyle.functionButton.size-10,
-                                width: appStyle.functionButton.size-10,
-                                borderRadius: appStyle.borderRadius.additional,
-                                //backgroundColor: appStyle.effects.blur? 'transparent' : (appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary),
-                      
-                                },
-                            ]}
-                            android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
-                            onPress={pressFunction}
-                        />
-                    </Reanimated.View>
-                )
-            })}
+            <Reanimated.View              
+                style = {[dynamicStyleBobberDown,{
+                    zIndex: 1,       
+                    position: 'absolute',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: appStyle.functionButton.size ,
+                    width: appStyle.functionButton.size ,
+                    
+                    //backgroundColor: 'red'
+                    //borderRadius: appStyle.borderRadius.additional,
+                }]}
+            >        
+                <SkiaViewDisign
+                    isGeneralObject={true} 
+                    borderRadius = {appStyle.borderRadius.additional}
+                    backgroundColor = {(appStyle.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary)}
+                    shadowColors = {Theme.specials.shadow}
+                    shadowMargin={{horizontal: 5, vertical: 5}}
+                    shadowStyle = {appStyle.effects.shadows == 'none' && appStyle.functionButton.ignoredShadows.disable? 'material' : appStyle.effects.shadows}
+                    adaptiveSizeForStyle={false}
+                    innerShadow={{
+                        used: true,
+                        borderWidth: 0.5
+                    }}
+                />
+                {appStyle.effects.blur && 
+                <View 
+                    style = {[StyleSheet.absoluteFillObject, {
+                        left: 5,
+                        top: 5,
+                        height: appStyle.functionButton.size-10,
+                        width: appStyle.functionButton.size-10,
+                        //specialty blur for android
+                        overflow: 'hidden',
+                        borderRadius: appStyle.borderRadius.additional,
+                    }]}
+                >
+                <BlurView
+                    style = {{flex: 1, }}
+                    blurType = {'light'}
+                    blurAmount = {10}
+                    
+                    //ANDROID_PROPS
+                    overlayColor={`${appStyle.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary}90`}
+                    //overlayColor={'transparent'}
+                    //blurRadius	= {10}
+                    //downsampleFactor = {10}
+                />
+                </View>}  
+                <View 
+                    style={{
+                        position: 'absolute',
+                        height: appStyle.functionButton.size -10,
+                        width: appStyle.functionButton.size -10,
+                        borderWidth: appStyle.functionButton.outline? 0.5 : 0,
+                        borderColor: `${Theme.specials.separator}20`,
+                        borderRadius: appStyle.borderRadius.additional,
+                    }}
+                />
+                <Pressable
+                    style={[{
+                        height: appStyle.functionButton.size-10,
+                        width: appStyle.functionButton.size-10,
+                        borderRadius: appStyle.borderRadius.additional,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        //backgroundColor: appStyle.effects.blur? 'transparent' : (appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary),
+                        //transform: [{rotate: rotate? '180deg' : '0deg'}]
+                        },
+                    ]}
+                    android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
+                    onPress={upPress}
+                    delayLongPress={250}
+                    onLongPress={downPress}
+                >
+                    <MaterialCommunityIcons 
+                        name = {"cellphone-check"} // "cellphone-cog";
+                        size = {24}
+                        color = {appStyle.functionButton.invertColors? Theme.icons.accents.primary : Theme.icons.neutrals.primary}
+                    />
+                </Pressable>
+            </Reanimated.View>
         </Reanimated.View>
     )
 }
@@ -767,10 +985,10 @@ const ReanimatedSectionList = Reanimated.createAnimatedComponent(SectionList);
 const ReanimatedTextInput = Reanimated.createAnimatedComponent(TextInput);
 
 const headerStickysHeight = 33
-const itemCategoryHeight = 45
-const selectorLineHeight = 35
+const itemCategoryHeight = 50
+const selectorLineHeight = 46
 const headerHeight = statusBarHeight+itemCategoryHeight//+selectorLineHeight
-const packHeight = 100
+const packHeight = 300
 
 const horizontalProximity = listsHorizontalProximity['true']
 
@@ -788,6 +1006,8 @@ const BasisList = (props) => {
         goToNFC,
 
         backBurgerPress,
+        applyPress,
+        showPress,
 
         bottomBord,
 
@@ -805,9 +1025,12 @@ const BasisList = (props) => {
     const selectorLineHeightFull = itemCategoryHeight + selectorLineHeight
     const headHeight = packHeight-itemCategoryHeight
     const [headHeightTop, setHeadHeightTop] = useState(headHeight);
+    //const headHeightTop = useSharedValue(headHeight);
+    const topToolBar = appStyle.functionButton.position == 'top'? 2 : 0
 
     //const headFullHeight = headHeight + selectorLineHeightFull
-    const headFullHeight = headHeightTop + selectorLineHeightFull  
+    //const headFullHeight = headHeightTop.value + selectorLineHeightFull+topToolBar
+    const headFullHeight = headHeightTop + selectorLineHeightFull+topToolBar
     
     const animSelectorLine = useSharedValue(headFullHeight-selectorLineHeight)
 
@@ -818,8 +1041,13 @@ const BasisList = (props) => {
 
     const accentCategory = useSharedValue(0);
 
-    const [listWidths, setListWidths] = useState([]);
-    const [listHeights, setListHeights] = useState([]);
+    //const [listWidths, setListWidths] = useState([]);
+    //const [listHeights, setListHeights] = useState([]);
+
+    const listWidths = useSharedValue([]);
+    const setListWidths = (value) => {listWidths.value = value}
+    const listHeights = useSharedValue([]);
+    const setListHeights = (value) => {listHeights.value = value}
 
     const derivedValues = useSharedValue({
         listHeights: [],
@@ -842,7 +1070,7 @@ const BasisList = (props) => {
     const topButtonVisible = useSharedValue(0)
 
     const logg = (info) =>{
-        console.log(info)
+        console.log('lg_'+info)
     }
 
     const scrollHandlerFlatListParams = useAnimatedScrollHandler({
@@ -913,11 +1141,14 @@ const BasisList = (props) => {
         
     })
     
+    const listPaddingLeft = 12
+    
     const animStyleIndicatorLine = useAnimatedStyle(() => {
         const duration = 450;
+        const primaryXOffsetIndicator = 6 + listPaddingLeft
         return {
             width: withTiming(animValueWidthLine.value, {duration: duration-20}),
-            left: withTiming(5+animValueMarginLeft.value, {duration: duration, easing: Easing.bezier(0.45, 0, 0.55, 1)}),
+            left: withTiming(primaryXOffsetIndicator+animValueMarginLeft.value, {duration: duration, easing: Easing.bezier(0.45, 0, 0.55, 1)}),
             transform: [
                 {translateX: animValueTranslateX.value}
             ] 
@@ -936,7 +1167,7 @@ const BasisList = (props) => {
                 isUpScroll = (event.velocity.y).toFixed(4) < 0.0001;
             }
             isEnd = (event.layoutMeasurement.height + event.contentOffset.y) >= (event.contentSize.height - 5);
-            isStart = event.contentOffset.y > (headFullHeight-selectorLineHeight-10);
+            isStart = event.contentOffset.y > (headFullHeight-itemCategoryHeight-selectorLineHeight-10);
             const visibleBobber = ((isUpScroll ) && isStart)
 
             cancelAnimation(reaValueBobberButtonVisible);
@@ -960,7 +1191,10 @@ const BasisList = (props) => {
     
 
     const countDerivedValues = () =>{
-        console.log('reculc')
+        console.log('>>DERIVED_VALUES_UPD')
+        const heights = listHeights.value
+        const widths = listWidths.value
+
         const intervals = []//[{left: 0, right: 100}, ...]
         for(let i = 0; i < allStructurParams.length; i++){
             let right = -1;
@@ -972,8 +1206,8 @@ const BasisList = (props) => {
                 right += allStructurParams[i].indexSection*(headerStickysFullHeight)
             }
 
-            left += listHeights.reduce(((countValue, currentValue, index)=>(index <= (i>=1?i-1:0)? (countValue+currentValue) : countValue)), 0)
-            right += listHeights.reduce(((countValue, currentValue, index)=>(index <= i? (countValue+currentValue) : countValue)), 0)
+            left += heights.reduce(((countValue, currentValue, index)=>(index <= (i>=1?i-1:0)? (countValue+currentValue) : countValue)), 0)
+            right += heights.reduce(((countValue, currentValue, index)=>(index <= i? (countValue+currentValue) : countValue)), 0)
             intervals.push({
                 left: left,
                 right: right
@@ -983,13 +1217,13 @@ const BasisList = (props) => {
     
         const shifts = []
         for(let param = 0; param <= allStructurParams.length; param++){
-            const maxAccepIndex = listWidths.length-1;
+            const maxAccepIndex = widths.length-1;
             let centrallFront = 0;
             //left shift 
-            const shift = listWidths.reduce(((countValue, currentValue, index)=>(index < param? (countValue+currentValue) : countValue)), 0)
+            const shift = widths.reduce(((countValue, currentValue, index)=>(index < param? (countValue+currentValue) : countValue)), 0)
             //shifts for position in center
             if(1 <= param && param <= maxAccepIndex-1){ 
-                centrallFront = -((deviceWidth-listWidths[param])/2) //-Math.round((deviceWidth-listWidths[param])/2) 
+                centrallFront = -((deviceWidth-widths[param])/2) //-Math.round((deviceWidth-listWidths[param])/2) 
             }
             let resOffset = centrallFront+shift
             if(resOffset < 0){resOffset = 0}
@@ -1001,10 +1235,10 @@ const BasisList = (props) => {
      
         const limList = []//[{less: 30, more: 70}, ...]
         for(let param = 0; param < allStructurParams.length; param++){
-            const interval = listHeights.reduce(((countValue, currentValue, index)=>(index < param? (countValue+currentValue) : countValue)), 0)
+            const interval = heights.reduce(((countValue, currentValue, index)=>(index < param? (countValue+currentValue) : countValue)), 0)
             limList.push({
-                less: lessCooef*listHeights[param]+interval, 
-                more: moreCooef*listHeights[param]+interval
+                less: lessCooef*heights[param]+interval, 
+                more: moreCooef*heights[param]+interval
             })
         }
 
@@ -1014,15 +1248,15 @@ const BasisList = (props) => {
         }
         const categoryIntervals = []
         for(let i = 0; i<indexs.length ; i++){
-            let value = (listWidths).reduce(((countValue, currentValue, index)=>(index < indexs[i]? (countValue+currentValue) : countValue)), 0)
-            let center = deviceWidth/2 - (listWidths)[indexs[i]]/2
+            let value = (widths).reduce(((countValue, currentValue, index)=>(index < indexs[i]? (countValue+currentValue) : countValue)), 0)
+            let center = deviceWidth/2 - (widths)[indexs[i]]/2
             center = (center >  value? 0 : center)
             categoryIntervals.push(value-center)      
         }
 
         derivedValues.value = {
-            listHeights: listHeights,
-            listWidths: listWidths,
+            listHeights: heights,
+            listWidths: widths,
             shifts: shifts,
             intervals: intervals,
             limits: limList,
@@ -1157,12 +1391,12 @@ const BasisList = (props) => {
             itemIndex: itemIndex+1,
             sectionIndex: sectionIndex,
             animated: false,
-            viewOffset: 30+appStyle.lists.proximity
+            viewOffset: headerStickysHeight //1.5*appStyle.lists.proximity//30+appStyle.lists.proximity
             //viewPosition: 0
         })
     }
 
-    const stacker = (list, setList, newValue) => {
+    const stacker = (list, setList, newValue, type = '?') => {
         //newValue = Math.round(newValue);
         if (list.length >= allStructurParams.length){
             setList([newValue]);
@@ -1170,16 +1404,16 @@ const BasisList = (props) => {
             list.push(newValue);
             setList(list); 
         }
-        //console.log('st')
+        //console.log('st', type, list.length, '/', allStructurParams.length)
 
         //const eqh = listHeights.map((item, index)=>item-derivedValues.value.listHeights[index])
         //const eqw = listWidths.map((item, index)=>item-derivedValues.value.listWidths[index])
 
-        const heightsEqaul = (derivedValues.value.listHeights.toString() === listHeights.toString())
-        const heightsCountEqaul = (listHeights.length === allStructurParams.length)
+        const heightsEqaul = (derivedValues.value.listHeights.toString() === listHeights.value.toString())
+        const heightsCountEqaul = (listHeights.value.length === allStructurParams.length)
 
-        const widthsEqaul = (derivedValues.value.listWidths.toString() === listWidths.toString())
-        const widthsCountEqaul = (listWidths.length === allStructurParams.length)
+        const widthsEqaul = (derivedValues.value.listWidths.toString() === listWidths.value.toString())
+        const widthsCountEqaul = (listWidths.value.length === allStructurParams.length)
 
         if((!heightsEqaul || !widthsEqaul) && ( heightsCountEqaul && widthsCountEqaul)){
             //console.log('lh',listHeights, listHeights.length)
@@ -1223,7 +1457,7 @@ const BasisList = (props) => {
     const dynamicStyleListItemsHeaders = useAnimatedStyle(()=>{
         const duration = 300
         return {
-            paddingHorizontal:  withTiming((12 * appStyle.borderRadius.basic/32), {duration: duration}),
+            paddingHorizontal:  withTiming((12 * appStyle.borderRadius.basic/20), {duration: duration}),
         }
     })
 
@@ -1231,6 +1465,16 @@ const BasisList = (props) => {
     const selectorLine = useAnimatedStyle(()=>{
         const duration = 300
         return {
+            zIndex: interpolate(
+                animSelectorLine.value, 
+                [headerHeight, 0],
+                [0, 1],
+                //extrapolation
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }  
+            ),  
             transform: [
                {translateY: animSelectorLine.value-0.25}
             ]
@@ -1255,12 +1499,10 @@ const BasisList = (props) => {
     const maskParamsHeight = useAnimatedStyle(()=>{
         const duration = 300
         return {
-
             height: interpolate(
-                animSelectorLine.value+selectorLineHeight-9, //9???
-                [0, headerHeight-statusBarHeight],
-
-                [selectorLineHeightFull, 0],
+                animSelectorLine.value,
+                [selectorLineHeight/2-1, 0],
+                [0, selectorLineHeight],
                 //extrapolation
                 {
                     extrapolateLeft: Extrapolation.CLAMP,
@@ -1273,12 +1515,10 @@ const BasisList = (props) => {
     const maskIndicatorHeight = useAnimatedStyle(()=>{
         const duration = 300
         return {
-
             height: interpolate(
-                animSelectorLine.value+selectorLineHeight+7.9, //9???
-                [0, headerHeight-statusBarHeight],
-
-                [selectorLineHeightFull, 0],
+                animSelectorLine.value,
+                [1.25, 0], // height/2
+                [0, 2.5], // height
                 //extrapolation
                 {
                     extrapolateLeft: Extrapolation.CLAMP,
@@ -1310,7 +1550,7 @@ const BasisList = (props) => {
             height: interpolate(
                 animSelectorLine.value, 
                 [headerHeight-statusBarHeight, 0],
-                [headerHeight, headerHeight+selectorLineHeight],
+                [headerHeight+topToolBar, headerHeight+topToolBar+selectorLineHeight],
                 //extrapolation
                 {
                     extrapolateLeft: Extrapolation.CLAMP,
@@ -1324,9 +1564,11 @@ const BasisList = (props) => {
         const duration = 300
         return {
             paddingLeft: interpolate(
+                //animSelectorLine.value+(appStyle.functionButton.position == 'top'? 37 : 0),
                 animSelectorLine.value,
                 [headerHeight-statusBarHeight, 0], 
                 [0, deviceWidth/2-((Language.StructureScreen.typesSettings.appearance.type).length * 0.375 * staticStyles.AnimatedHeaderText.fontSize)]
+                //[(appStyle.functionButton.position == 'top'? 37 : 0), deviceWidth/2-((Language.StructureScreen.typesSettings.appearance.type).length * 0.375 * staticStyles.AnimatedHeaderText.fontSize)]
             ),
             
             opacity: interpolate(
@@ -1343,7 +1585,7 @@ const BasisList = (props) => {
             fontSize: interpolate(
                 animSelectorLine.value, 
                 [headerHeight-statusBarHeight, 0], 
-                [25, 20],
+                [20, 18],
                 //extrapolation
                 {
                     extrapolateLeft: Extrapolation.CLAMP,
@@ -1381,7 +1623,7 @@ const BasisList = (props) => {
         return {
             opacity: interpolate(
                 animSelectorLine.value, 
-                [headerHeight/2, 0],
+                [(headerHeight)/2, 0],
                 [1, 0]  
             ),
         }
@@ -1390,13 +1632,13 @@ const BasisList = (props) => {
     const scrollTopButton = useAnimatedStyle(()=>{
         return {
             transform: [
-                {translateY: withTiming(topButtonVisible.value == 0? 0 : -(bottomBord-32), {duration: 400})}
+                {translateY: withTiming(topButtonVisible.value == 0? 0 : -(bottomBord), {duration: 400})}
             ]
         }
     })
     
     
-    const renderItem = ({item, index})=>{
+    const RENDER_REDACTORS_ITEM = ({item, index})=>{
         const RedactorComponent = item.paramRedactorComponent;
         const redactorName = Language.StructureScreen.params[item.param]
         const icon = (item.icon != null? item.icon : "border-none-variant");
@@ -1414,18 +1656,18 @@ const BasisList = (props) => {
                         )
                         //+(item.subTitle? 27 : 0)
                         */
-                        stacker(listHeights, setListHeights, event.nativeEvent.layout.height)
+                        stacker(listHeights.value, setListHeights, event.nativeEvent.layout.height, 'h')
                     }
                 }}
             >
             {item.subTitle &&
             <Text
                 style={[{
-                    height: 35,
+                    height: 25,
                     textAlign: 'center',
                     //color: Theme.texts.accents.secondary,
                     color: Theme.texts.neutrals.tertiary,
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: '500',
                     letterSpacing: 4,
                     fontVariant: ['small-caps'],
@@ -1506,6 +1748,56 @@ const BasisList = (props) => {
         )
     }
 
+
+    const RENDER_PARAMS_ITEMS = ({item, index})=> {
+        return (
+        <Pressable
+            key={String(item+index)}
+            style={[staticStyles.frontFLArea]}
+            onPress={()=>{selectParametr(item, index, "params")}}
+            onLayout={(event)=>{stacker(listWidths.value, setListWidths, (event.nativeEvent.layout.width+2*staticStyles.frontFLArea.marginHorizontal), 'w')}}
+        >   
+            <View
+                style={[staticStyles.frontFLPressable,{
+                    backgroundColor: 'transparent',
+                    height: selectorLineHeight, 
+                }]}
+            >
+                <Text style={[staticStyles.frontFLText, {color: 'transparent'}]}>
+                    {Language.StructureScreen.params[item.param]}
+                </Text>
+            </View>
+
+            <MaskedView
+                androidRenderingMode = {'software'}
+                style={{
+                    width: '100%',
+                    position: 'absolute', 
+                    height: selectorLineHeight,
+                    justifyContent: 'flex-start', 
+                    backgroundColor: Theme.texts.accents.tertiary
+                }}
+                maskElement={
+            <View
+                style={[staticStyles.frontFLPressable,{
+                    backgroundColor: 'transparent',
+                    height: selectorLineHeight, 
+                }]}
+            >
+                <Text style={[staticStyles.frontFLText]}>
+                    {Language.StructureScreen.params[item.param]}
+                </Text>
+            </View>}>
+            {/* COLOR*/}
+            <Reanimated.View style={[maskParamsHeight, {width: '100%', backgroundColor: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}/>  
+            </MaskedView>
+        </Pressable>
+        )
+    }
+
+
+
+    // GENERAL RENDER
     return(<>
         {/*HEADER PANEL*/}
         <Reanimated.View
@@ -1553,9 +1845,11 @@ const BasisList = (props) => {
                 marginTop: statusBarHeight,
                 position: 'absolute',
                 height: itemCategoryHeight,
+                //right:  appStyle.functionButton.position =='top'? 37 : 0,
                 right: 0,
-                zIndex: 2,
+                zIndex: 1,
                 justifyContent: 'center',
+                //backgroundColor: 'red'
                 
             }]}
         >
@@ -1574,7 +1868,7 @@ const BasisList = (props) => {
                     justifyContent: 'center',
                     position: 'absolute',
                     height: '100%',
-                    right: 0
+                    right: 0,
                 }]}
             >
                 <Text style = {[staticStyles.AnimatedHeaderText, {color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}>
@@ -1583,40 +1877,91 @@ const BasisList = (props) => {
             </Reanimated.View>
         </View>
 
+        {/*HEADER TOOLBAR*/}
+        <View 
+            style = {[{ 
+                marginTop: statusBarHeight,
+                position: 'absolute',
+                height: itemCategoryHeight,
+                width: deviceWidth,
+                left: 0,
+                zIndex: 3,
+                //backgroundColor: 'red',
+                paddingHorizontal: 12,
+                paddingTop: 4,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+            }]}
+        >
+            <BasePressable 
+                type="i"
+                /* 
+                text={(appStyle.functionButton.position == 'top' && appStyle.functionButton.topSignatures)? Language.toolbar.back : ''}
+                textStyle={[staticStyles.AnimatedHeaderText,{
+                    fontSize: 11,
+                    color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary,  
+                }]}
+                */
+                icon={{name: appStyle.navigationMenu.type == 'not'? "backburger":'chevron-left', 
+                size: appStyle.navigationMenu.type == 'not'? 28 : 32, 
+                color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}}
+                style={{
+                    height: itemCategoryHeight,
+                    width: itemCategoryHeight,
+                    //paddingHorizontal: 4,
+                    //paddingLeft: 6,
+                    //backgroundColor: 'blue',
+                    borderRadius: appStyle.borderRadius.additional
+                }}
+                direction='row-reverse'
+                onPress={backBurgerPress}
+                android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+            />
+
+            {appStyle.functionButton.position == 'top' && 
+                <BasePressable 
+                    type="i"
+                    /*
+                    text={(appStyle.functionButton.topSignatures)? Language.toolbar.apply : ''}
+                    textStyle={[staticStyles.AnimatedHeaderText,{
+                        fontSize: 11,
+                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary,  
+                    }]}
+                     */
+                    icon={{name: "cellphone-check", size: 24, color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}}
+                    style={{
+                        height: itemCategoryHeight,
+                        width: itemCategoryHeight,
+                        marginLeft: 2, 
+                        //paddingHorizontal: 4,
+                        //backgroundColor: 'blue',
+                        borderRadius: appStyle.borderRadius.additional
+                    }}
+                    direction='row-reverse'
+                    onPress={showPress}
+                    onLongPress={applyPress}
+                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+                />
+            }
+        </View>
+
         {/*HEADER TITLE*/}
         <View 
             style = {[staticStyles.SLtopBord,{ 
                 marginTop: statusBarHeight,
                 position: 'absolute',
                 height: itemCategoryHeight,
+                //left: appStyle.functionButton.position =='top'? -35 : 0,
                 left: 0,
-                zIndex: 2         
+                zIndex: 2,
+                justifyContent: 'center',
+                alignItems: 'flex-end',
             }]}
         >
-            <View
-                style = {{
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexDirection: 'row',                    
-                }}
-            >
-                <BasePressable 
-                    type="i"
-                    icon={{name: "backburger", size: 24, color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}}
-                    style={{
-                        height: 45, 
-                        width: 45, 
-                        marginLeft: 15,
-                        paddingTop: 4,
-                        borderRadius: appStyle.borderRadius.additional
-                    }}
-                    onPress={backBurgerPress}
-                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
-                />
-                <Text style = {[staticStyles.AnimatedHeaderText, {color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}>
-                    {Language.HeaderTitle}
-                </Text>
-            </View>
+            <Text style = {[staticStyles.AnimatedHeaderText, {color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}>
+                {Language.HeaderTitle}
+            </Text>
         </View>
 
         {/*HEADER FREE SELECTOR*/}
@@ -1627,8 +1972,8 @@ const BasisList = (props) => {
                 justifyContent: 'flex-end',
                 alignItems: 'flex-end',
                 position: 'absolute',
-                top: statusBarHeight,
-                zIndex: 1,
+                top: statusBarHeight+topToolBar,
+                //zIndex: 1,
             }]}
         >
             {/*HEADER CATEGORYS*/}
@@ -1675,7 +2020,12 @@ const BasisList = (props) => {
                                 }]}                   
                             >
                                 <Reanimated.Text 
-                                    style={[staticStyles.AnimatedHeaderText, categorysText,]}
+                                    style={[categorysText, {
+                                        fontSize: 20, // 18
+                                        fontWeight: '500', // '500'
+                                        letterSpacing: 4, // 0.5
+                                        fontVariant: ['small-caps'],
+                                    }]}
                                 >
                                     {Language.StructureScreen.typesSettings[item].category}
                                 </Reanimated.Text>
@@ -1729,13 +2079,15 @@ const BasisList = (props) => {
                 
                 <ReanimatedFlatList
                     ref={flatListRef}
-                    style={staticStyles.frontFL}
+                    initialNumToRender={15}
+                    style={{height: selectorLineHeight}}
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
                     onScroll={scrollHandlerFlatListParams}
                     data={allStructurParams}
                     keyExtractor={item => item.param}
                     contentContainerStyle={{// 100//
+                        paddingLeft: listPaddingLeft,
                         paddingRight: (deviceWidth/2) - (
                             (derivedValues.value.listWidths).length == allStructurParams.length? 
                                 (derivedValues.value.listWidths[allStructurParams.length-1])/2 
@@ -1743,51 +2095,7 @@ const BasisList = (props) => {
                                 ((Language.StructureScreen.params[allStructurParams[allStructurParams.length-1].param]).length*0.75*staticStyles.frontFLText.fontSize)/2
                         )
                     }}
-                    renderItem={({item, index})=> {
-                        return (
-                        <Pressable
-                            key={String(item+index)}
-                            style={[staticStyles.frontFLArea]}
-                            onPress={()=>{selectParametr(item, index, "params")}}
-                            onLayout={(event)=>{stacker(listWidths, setListWidths, (event.nativeEvent.layout.width+2*staticStyles.frontFLArea.marginHorizontal))}}
-                        >   
-                            <View
-                                style={[staticStyles.frontFLPressable,{
-                                    backgroundColor: 'transparent',
-                                    height: selectorLineHeight, 
-                                }]}
-                            >
-                                <Text style={[staticStyles.frontFLText, {color: 'transparent'}]}>
-                                    {Language.StructureScreen.params[item.param]}
-                                </Text>
-                            </View>
-
-                            <MaskedView
-                                androidRenderingMode = {'software'}
-                                style={{
-                                    width: '100%',
-                                    position: 'absolute', 
-                                    height: selectorLineHeight,
-                                    justifyContent: 'flex-start', 
-                                    backgroundColor: Theme.texts.accents.tertiary
-                                }}
-                                maskElement={
-                            <View
-                                style={[staticStyles.frontFLPressable,{
-                                    backgroundColor: 'transparent',
-                                    height: selectorLineHeight, 
-                                }]}
-                            >
-                                <Text style={[staticStyles.frontFLText]}>
-                                    {Language.StructureScreen.params[item.param]}
-                                </Text>
-                            </View>}>
-                            {/* COLOR*/}
-                            <Reanimated.View style={[maskParamsHeight, {width: '100%', backgroundColor: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}]}/>  
-                            </MaskedView>
-                        </Pressable>
-                        )
-                    }}
+                    renderItem={RENDER_PARAMS_ITEMS}
                 />
             </Reanimated.View>
         </Reanimated.View>
@@ -1796,14 +2104,16 @@ const BasisList = (props) => {
         {/*BODY*/}
         <ReanimatedSectionList
             ref={sectListRef}
+            initialNumToRender={15}
             contentOffset={{x: 0, y: (headHeightTop)}}
+            //contentOffset={{x: 0, y: (headHeightTop.value)}}
             stickySectionHeadersEnabled={false}
             showsVerticalScrollIndicator={false}
             onScroll={scrollSectionsList}
             sections={structureCustomizer}
             keyExtractor={(item, index) => item.param + index}
             style={{
-                paddingTop: headerHeight
+                paddingTop: headerHeight+topToolBar
             }}
             ListHeaderComponent={
                 <View
@@ -1817,11 +2127,15 @@ const BasisList = (props) => {
 
                     onLayout={(event)=>{
                         const height = event.nativeEvent.layout.height
-                        if(height != headHeightTop){setHeadHeightTop(height)}
+                        //console.log('APP_SETTING_PART_HEIGHT_'+height)
+                        if(height != headHeightTop){
+                            //headHeightTop.value = height
+                            setHeadHeightTop(height)
+                        }
                         
                     }}
                 >   
-                    {STRUCTURE.settingsData.map((item, index)=>{return(renderItem({item, index}))})}               
+                    {STRUCTURE.settingsData.map((item, index)=>{return(RENDER_REDACTORS_ITEM({item, index}))})}               
                 </View> 
             }
             renderSectionHeader={({section: {category, indexSection: index}})=>{
@@ -1841,7 +2155,7 @@ const BasisList = (props) => {
                     <Text 
                         style = {[{
                             color: Theme.texts.accents.primary,
-                            fontSize: 25,
+                            fontSize: 20,
                             fontWeight: '500',
                             letterSpacing: 4,
                             fontVariant: ['small-caps'],
@@ -1853,7 +2167,7 @@ const BasisList = (props) => {
                 </View> 
                 )
             }}
-            renderItem={renderItem}
+            renderItem={RENDER_REDACTORS_ITEM}
             ListFooterComponent = {
                 <View style={{
                         height: deviceHeight -200, //-headerHeight-selectorLineHeight
@@ -1870,7 +2184,7 @@ const BasisList = (props) => {
                             bottom: 25,
                             letterSpacing: 1.2,
                             fontVariant: ['small-caps'],
-                            color: 'black'
+                            color: Theme.texts.accents.primary,
                         }]}
                     >
                         YTTI {Application.nativeApplicationVersion}
@@ -1922,7 +2236,7 @@ const BasisList = (props) => {
                 position: 'absolute',
                 height: 44,
                 width: 44,
-                bottom: -30,
+                bottom: -44,
                 left: (deviceWidth-44)/2,
                 //backgroundColor: 'black'
             }]}
@@ -1960,7 +2274,7 @@ const staticStyles = StyleSheet.create({
         justifyContent: 'center',
     },
     frontFLText: {
-        fontSize: 16,
+        fontSize: 15,
         //opacity: .9,
         fontWeight: '500',
         fontVariant: ['small-caps'],
@@ -2009,7 +2323,7 @@ const staticStyles = StyleSheet.create({
         marginLeft: 5,
         fontSize: 18,
         //position: 'absolute',
-        fontWeight: 'bold',
+        fontWeight: '500',
         letterSpacing: 1.8,
         fontVariant: ['small-caps'],
     },
@@ -2024,7 +2338,7 @@ const staticStyles = StyleSheet.create({
         height: 46
     },
     AnimatedHeaderText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '500',
         //fontStyle: 'italic',
         //color: 'white',

@@ -25,7 +25,7 @@ import dataRedactor from '../app_async_data_manager/data_redactor';
 import themesColorsAppList, {themesApp} from "../app_values/Themes";
 import languagesAppList, {languagesApp} from "../app_values/Languages";
 
-import Home from './app_pages/home/Home';
+import Tasks from './app_pages/home/Home';
 import Analytic from './app_pages/analytic/Analytic';
 import Notes from './app_pages/notes/Notes';
 import Timetable from './app_pages/timetable/Timetable';
@@ -116,7 +116,6 @@ function AppDrawer(props) {
                 : 
                     "settingsStack"
             }
-            //animationTypeForReplace={"pop"}
             drawerContent={(props) => 
                 <CustomDrawerContent {...props}
                     appStyle={appStyle}
@@ -159,7 +158,7 @@ function AppDrawer(props) {
             
             
         >
-            <Drawer.Screen name="home" component={Home} />
+            <Drawer.Screen name="tasks" component={Tasks} />
             <Drawer.Screen name="timetable" component={Timetable} />
             <Drawer.Screen name="analytics" component={Analytic} />
             <Drawer.Screen name="notes" component={Notes} />
@@ -181,12 +180,9 @@ function SchemeSwitch (props) {
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
-    const switching = ()=>{   
-        const schemes = ['auto', 'light', 'dark'] 
-        let index = schemes.indexOf(appStyle.palette.scheme)
-        index = (index+1) == schemes.length? 0 : index+1
+    const switching = (scheme)=>{   
         const newAppStyle = JSON.parse(JSON.stringify(appStyle));
-        newAppStyle.palette.scheme = schemes[index]
+        newAppStyle.palette.scheme = scheme
         r_setAppStyle(newAppStyle);
         dataRedactor("storedAppStyle",newAppStyle);
     }
@@ -202,26 +198,13 @@ function SchemeSwitch (props) {
                 alignItems: 'center'
             }}
         >
-        <SkiaViewDisign 
-            borderRadius = {appStyle.borderRadius.additional}
-            backgroundColor = {Theme.basics.accents.tertiary}
-            shadowColors = {Theme.specials.shadow}
-            shadowMargin={{horizontal: 5, vertical: 5}}
-            shadowStyle = {appStyle.effects.shadows}
-            adaptiveSizeForStyle={false}
-            innerShadow={{
-                used: true,
-                borderWidth: 2
-            }}
-        />
-
         <ColorShemeSwitch 
-            scheme = {appStyle.palette.scheme}
-            sizeIcon = {30}
-            colorIcon ={Theme.icons.neutrals.primary}
+            scheme = {ThemeSchema}
+            sizeIcon = {32}
+            colorIcon ={appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}
             invertColorIcon = {Theme.icons.neutrals.quaternary}
             pressableStyle = {{
-
+                flex: 1
             }}
             switching = {switching}
         />
@@ -302,7 +285,7 @@ function CustomDrawerItemList(props) {
         state = {
             index: 0, 
             routes: [
-                {name: "home"},
+                {name: "tasks"},
                 {name: "timetable"},
                 {name: "notes"},
                 {name: "settingsStack"},
@@ -341,7 +324,7 @@ function CustomDrawerItemList(props) {
         >
         {state.routes.map((route, index) => {
             const routes =  {
-                tasks : {name: "home"},
+                tasks : {name: "tasks"},
                 timetable: {name: "timetable"},
                 notes : {name: "notes"},
                 analytics : {name: "analytics"},
@@ -369,9 +352,9 @@ function CustomDrawerItemList(props) {
             let screenName = ''
 
             switch(croute.name){
-                case "home":
-                    iconsNames.focus = 'home-edit';
-                    iconsNames.notFocus = 'home-edit-outline';
+                case "tasks":
+                    iconsNames.focus = 'sticker-check';//'home-edit';
+                    iconsNames.notFocus = 'sticker-check-outline';//'home-edit-outline';
                     screenName = Language.TasksScreen.HeaderTitle;
                     break;
 

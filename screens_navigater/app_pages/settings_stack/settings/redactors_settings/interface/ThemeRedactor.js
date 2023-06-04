@@ -21,8 +21,14 @@ import Reanimated, {
     useAnimatedStyle, 
     withTiming,
     interpolate,
+    useDerivedValue,
     useAnimatedProps,
-    cancelAnimation
+    cancelAnimation,
+    runOnJS,
+    useFrameCallback,
+    useAnimatedReaction,
+    useAnimatedRef,
+    scrollTo
 } from 'react-native-reanimated';
 
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
@@ -53,6 +59,7 @@ import {
 
 import commonStaticStyles, { BoxsField } from "../CommonElements";
 
+const Reanimated_FlatList = Reanimated.createAnimatedComponent(FlatList);
 const Reanimated_Pressable = Reanimated.createAnimatedComponent(Pressable)
 const R_ActivityIndicator = Reanimated.createAnimatedComponent(ActivityIndicator)
 
@@ -61,7 +68,8 @@ import { schemes, statusBarStyles } from "../../../../../../app_values/AppDefaul
 const ThemeItem = ({
     title,
 
-    primaryCheck,
+    itemIndex,
+    selectIndex,
     //secondaryCheck,
 
     onPress,
@@ -80,6 +88,7 @@ const ThemeItem = ({
 
     appStyle,
 },props) => {
+    const sIn = useDerivedValue(()=>selectIndex.value == itemIndex)
 
     const longPressed = useSharedValue(0)
 
@@ -96,6 +105,12 @@ const ThemeItem = ({
             ]
         }
         )
+    })
+
+    const accentFrame = useAnimatedStyle(()=>{
+        return ({
+            opacity: withTiming(sIn.value? 1 : 0, {duration: 200}) 
+        })
     })
 
     const duration = 400
@@ -146,16 +161,16 @@ const ThemeItem = ({
                 {title}
             </Text>}
 
-            <View
-                style={{
+            <Reanimated.View
+                style={[{
                     height: itemSize-(2*outlineSize),//-(8)+1.5,
                     width: itemSize-(2*outlineSize),
                     position: 'absolute',
                     //alignItems: 'center',
                     borderRadius: appStyle.borderRadius.additional -2,
                     borderWidth:  outlineSize,
-                    borderColor: primaryCheck? colors.background: 'transparent',
-                }}
+                    borderColor: colors.background,
+                }, accentFrame]}
             />
          
             <MaterialCommunityIcons 
@@ -186,6 +201,7 @@ export default ThemeRedacor = ({
     goToPalleteScreen,
 
     appStyle,
+    appConfig,
     //previewAppStyle,
     //setPreviewAppStyle,
     //getNewAppStyleObject,
@@ -199,29 +215,38 @@ export default ThemeRedacor = ({
     ThemeSchema,
     LanguageAppIndex  
 }) => {
-    const [previewThemeIndex, setPreviewThemeIndex] = useState(ThemeColorsAppIndex)
-
-    useEffect(()=>{
-        previewThemeIndex != ThemeColorsAppIndex? setPreviewThemeIndex(ThemeColorsAppIndex) : null
-    }, [ThemeColorsAppIndex])
-
-    const [schema, setSchema] = useState(appStyle.palette.scheme)
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.themes
 
-    const flatListRef = useRef()
-    const scrollX = React.useRef(new Animated.Value(0)).current;
-    const [chosenThemeIndex, setChosenThemeIndex] = useState(themesApp.indexOf(appStyle.palette.theme))
+    const flatListRef = useAnimatedRef()
+    
 
-    const itemSize = 72
+    const itemSize = 68
     const outlineSize = 2
+    
+    const selectIndex = useDerivedValue(()=>{
+        const newIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
+        const scrollIndex = Math.max((newIndex-1), 0)
+        scrollTo(
+            flatListRef, //ref
+            scrollIndex*(itemSize), //x offset
+            0, //y offset
+            true //animate
+        )
+        return newIndex
+    })
+    const selectSchema = useDerivedValue(()=>{ 
+        //console.log()
+        return  schemes.indexOf(previewAppStyleA.value.palette.scheme)
+    })
+    const selectStatusBar = useDerivedValue(()=>statusBarStyles.indexOf(previewAppStyleA.value.palette.statusBar))
 
     const pressItem = (index) => {
         console.log('THEME PressItem', index)
-        if(previewThemeIndex != index){
+        if(selectIndex.value != index){
             changeThema(index)
-            flatListRef.current.scrollToIndex({index: index})
+            //flatListRef.current.scrollToIndex({index: index})
         }
     }
 
@@ -243,27 +268,28 @@ export default ThemeRedacor = ({
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         if(themeIndex != 0){
             //let newAppStyle = getNewAppStyleObject();
+            //console.log('app theme ok', themesColorsAppList[themeIndex].light)
             
             newAppStyle.palette.theme = themesApp[themeIndex]
-            newAppStyle.presetUsed = 'YTAT-custom';
+            newAppStyle.presetUsed = 'YTTI-custom';
             //setPreviewAppStyle(newAppStyle)
             cancelAnimation(previewAppStyleA)
             previewAppStyleA.value = newAppStyle
 
-            setPreviewThemeIndex(themeIndex)
+            //setPreviewThemeIndex(themeIndex)
         } else {
             if(!themesColorsAppList[0]){
                 console.log('not custom theme')
             } else {
-                console.log('custom theme ok')
+                console.log('custom theme ok', themesColorsAppList[themeIndex])
                 //let newAppStyle = getNewAppStyleObject();
                 newAppStyle.palette.theme = themesApp[themeIndex]
-                newAppStyle.presetUsed = 'YTAT-custom';
+                newAppStyle.presetUsed = 'YTTI-custom';
                 //setPreviewAppStyle(newAppStyle)
                 cancelAnimation(previewAppStyleA)
                 previewAppStyleA.value = newAppStyle
 
-                setPreviewThemeIndex(themeIndex)
+                //setPreviewThemeIndex(themeIndex)
             }
         }
         
@@ -271,24 +297,8 @@ export default ThemeRedacor = ({
     
 
     const createCustomTheme = ()=>{
-        //setWaitRender(true)
-        console.log('custom theme create')
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        //let newAppStyle = getNewAppStyleObject('currentStyle')
-        const newTheme = JSON.parse(JSON.stringify(themesColorsAppList[ThemeColorsAppIndex]));
-        newTheme.light.theme = 'custom'
-        newTheme.dark.theme = 'custom'
-
-        newAppStyle.customTheme = newTheme
-        themesColorsAppList.splice(0,1,newTheme)
-        //themesColorsAppList[0] = themesColorsAppList[2]
-
-        //setAppStyle(newAppStyle);
-        //r_setAppStyle(newAppStyle);
-        //dataRedactor("storedAppStyle",newAppStyle);
-
-        goToPalleteScreen(previewThemeIndex, 0)
-        
+        const grounThemeIndex = selectIndex.value
+        goToPalleteScreen(grounThemeIndex, 0)
     }
 
     /*
@@ -315,7 +325,49 @@ export default ThemeRedacor = ({
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
-    
+
+    const RENDER_ITEMS = ({item, index})=>{
+        const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
+        const schemaThisItem = 'light'
+        const ThemeThisItem = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem] : Theme
+        const title = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem].theme : item
+        return (
+            <ThemeItem
+                key = {String(`theme_selector_${item+index}`)} 
+                title = {title}
+
+                pressDissable = {themesColorsAppList[index]? false : true}
+                
+                onPress = {()=>{pressItem(index)}}
+                onLongPress = {()=>{longPressItem(index)}}
+
+                selectIndex = {selectIndex}
+                itemIndex={index}
+                //primaryCheck = {getcheck(index)}//{index === ThemeColorsAppIndex}
+                //secondaryCheck = {index === previewThemeIndex}
+            
+                appStyle = {appStyle}
+                                
+                colors = {
+                    themesColorsAppList[index]? {
+                    gradient: [ThemeThisItem.basics.accents.primary,ThemeThisItem.basics.accents.secondary, ThemeThisItem.basics.accents.tertiary, ThemeThisItem.basics.accents.quaternary],
+                    title: ThemeThisItem.texts.neutrals.primary,
+                    background: Theme.basics.neutrals.secondary,
+                    selector: Theme.texts.neutrals.secondary,
+                    } : {
+                    //not custom palette
+                    gradient: ['#00000060','#00000040','#00000020','#0000000a'],
+                    subTitle: 'transparent', //,Theme.texts.neutrals.secondary,
+                    title: 'transparent',// Theme.texts.neutrals.primary,
+                    background: 'transparent',
+                    selector: 'transparent',  
+                }}
+                    
+                itemSize={itemSize}
+                outlineSize={outlineSize}
+            />
+        )
+    }
 
     return (
     <View
@@ -328,7 +380,8 @@ export default ThemeRedacor = ({
             isChoiceOne={true}
             title = {Language.colorMode}
             //  'one'>index || 'multiple'>[indexs]
-            primaryValue = {schemes.indexOf(appStyle.palette.scheme)} 
+            aValue = {selectSchema}
+            //primaryValue = {schemes.indexOf(previewAppStyleA.value.palette.scheme)} 
             groupSize = {schemes.length}
             onPress = {(activeIndex)=>{shemaSetting(activeIndex)}}
             groupItems = {Object.values(Language.colorsMods)}
@@ -336,19 +389,21 @@ export default ThemeRedacor = ({
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
+        {appConfig.user.role == 'a' && 
         <BoxsField
             //  'one'>true || 'multiple'>false
             isChoiceOne={true}
             title = {Language.statusBarStyle}
             //  'one'>index || 'multiple'>[indexs]
-            primaryValue = {statusBarStyles.indexOf(appStyle.palette.statusBar)} 
+            aValue = {selectStatusBar}
+            //primaryValue = {statusBarStyles.indexOf(previewAppStyleA.value.palette.statusBar)} 
             groupSize = {statusBarStyles.length}
             onPress = {(activeIndex)=>{barSetting(activeIndex)}}
             groupItems = {Object.values(Language.barStyles)}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
-        />
+        />}
         <Text
             style = {[staticStyles.text, {
                 color: Theme.texts.neutrals.secondary,
@@ -366,6 +421,7 @@ export default ThemeRedacor = ({
         >
         <FlatList
             ref = {flatListRef}
+            initialNumToRender={15}
             style={{        
                 width: 5*itemSize,
                 height: itemSize,
@@ -416,45 +472,7 @@ export default ThemeRedacor = ({
                     </Text>
                 </Pressable>
             }
-            renderItem={({item, index})=>{
-                const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
-                const schemaThisItem = 'light'
-                const ThemeThisItem = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem] : Theme
-                const title = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem].theme : item
-                return (
-                <ThemeItem
-                    key = {String(`theme_selector_${item+index}`)} 
-                    title = {title}
-
-                    pressDissable = {themesColorsAppList[index]? false : true}
-                    
-                    onPress = {()=>{pressItem(index)}}
-                    onLongPress = {()=>{longPressItem(index)}}
-
-                    primaryCheck = {index === previewThemeIndex}//{index === ThemeColorsAppIndex}
-                    //secondaryCheck = {index === previewThemeIndex}
-                   
-                    appStyle = {appStyle}
-                                    
-                    colors = {
-                        themesColorsAppList[index]? {
-                        gradient: [ThemeThisItem.basics.accents.primary,ThemeThisItem.basics.accents.secondary, ThemeThisItem.basics.accents.tertiary, ThemeThisItem.basics.accents.quaternary],
-                        title: ThemeThisItem.texts.neutrals.primary,
-                        background: Theme.basics.neutrals.secondary,
-                        selector: Theme.texts.neutrals.secondary,
-                        } : {
-                        //not custom palette
-                        gradient: ['#00000060','#00000040','#00000020','#0000000a'],
-                        subTitle: 'transparent', //,Theme.texts.neutrals.secondary,
-                        title: 'transparent',// Theme.texts.neutrals.primary,
-                        background: 'transparent',
-                        selector: 'transparent',  
-                    }}
-                        
-                    itemSize={itemSize}
-                    outlineSize={outlineSize}
-                />
-            )}}
+            renderItem={RENDER_ITEMS}
         />
         </View>
     </View>)

@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import { cancelAnimation } from "react-native-reanimated";
+import Reanimated, { withTiming, cancelAnimation, useDerivedValue, runOnJS, useAnimatedStyle } from "react-native-reanimated";
 
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
@@ -21,12 +21,13 @@ const deviceWidth = Dimensions.get('window').width
 
 //const sizeButton = {min: 40, max: 70, step: 5}
 //const valuePosition = ['left','center','right']
-import { sizeButton, valuePosition } from "../../../../../../app_values/AppDefault";
+import { sizeButton, positionFAB } from "../../../../../../app_values/AppDefault";
 
 import commonStaticStyles, { SwitchField, SliderField, BoxsField } from "../CommonElements";
 
 export default ListsRedactor = ({
     appStyle,
+    appConfig,
     //setPreviewAppStyle,
     //getNewAppStyleObject,
 
@@ -39,12 +40,19 @@ export default ListsRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.bobberButton
 
-    //const [sliderValue, setSliderValue] = useState(appStyle.functionButton.size);
+
+    const position = useDerivedValue(()=>positionFAB.indexOf(previewAppStyleA.value.functionButton.position))
+    const size = useDerivedValue(()=>previewAppStyleA.value.functionButton.size)
+    const invertColors = useDerivedValue(()=>previewAppStyleA.value.functionButton.invertColors)
+    const outline = useDerivedValue(()=>previewAppStyleA.value.functionButton.outline)
+    const disabledShadows = useDerivedValue(()=>previewAppStyleA.value.functionButton.ignoredShadows.disable)
+    //const signatures = useDerivedValue(()=>previewAppStyleA.value.functionButton.topSignatures)
+    
 
     const positionButtonSetting = (index) => {
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.functionButton.position = valuePosition[index];
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.functionButton.position = positionFAB[index];
+        newAppStyle.presetUsed = 'YTTI-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     };
@@ -53,32 +61,52 @@ export default ListsRedactor = ({
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         //isComplete? setSliderValue(value) : null
         newAppStyle.functionButton.size = Number(value);
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.presetUsed = 'YTTI-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
     }
 
-    //const [invertColors, setInvertColors] = useState(appStyle.functionButton.invertColors)
+    const signaturesChange = (value) =>{
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        newAppStyle.functionButton.topSignatures = value;
+        newAppStyle.presetUsed = 'YTTI-custom';
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
+    }
+
+    const disableChange = (value) =>{
+        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
+        newAppStyle.functionButton.ignoredShadows.disable = value;
+        newAppStyle.presetUsed = 'YTTI-custom';
+        cancelAnimation(previewAppStyleA)
+        previewAppStyleA.value = newAppStyle
+    }
 
     const invertChange = (value) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.functionButton.invertColors = value;//!invertColors;
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.presetUsed = 'YTTI-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
         //setInvertColors(!invertColors)
     }
 
-    //const [outline, setOutline] = useState(appStyle.functionButton.outline)
 
     const outlineChange = (value) =>{
         const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         newAppStyle.functionButton.outline = value;// !outline;
-        newAppStyle.presetUsed = 'YTAT-custom';
+        newAppStyle.presetUsed = 'YTTI-custom';
         cancelAnimation(previewAppStyleA)
         previewAppStyleA.value = newAppStyle
         //setOutline(!outline)
     }
+
+    const tingDuration = 300
+    const blind = useAnimatedStyle(()=>{
+        return {
+            height: withTiming(position.value == 3? '100%' : '0%', {duration: tingDuration})
+        }
+    })
 
     return (
     <View 
@@ -92,38 +120,36 @@ export default ListsRedactor = ({
             isChoiceOne={true}
             title = {Language.position}
             //  'one'>index || 'multiple'>[indexs]
-            primaryValue = {valuePosition.indexOf(appStyle.functionButton.position)} 
-            groupSize = {valuePosition.length}
+            //primaryValue = 
+            aValue={position}
+            groupSize = {positionFAB.length}
             groupItems = {Language.positions}         
             onPress = {(activeIndex)=>{positionButtonSetting(activeIndex)}}          
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
+        <View style={{height: appConfig.user.role == 'a'? 220 : 80}}>
+        
         <SliderField
-            viewProps={{
-                style: {
-                    marginTop: 10,
-                }
-            }}
-            
             title = {Language.size}
             signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
             minimumValue={sizeButton.min}
             maximumValue={sizeButton.max}
             step = {sizeButton.step}
-            value = {appStyle.functionButton.size}
+            aValue = {size}
             onSlidingComplete = {(value)=>{settingSizeButton(value, true)}}
             onValueChange = {(value)=>{settingSizeButton(value, false)}}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
+        {appConfig.user.role == 'a' && 
         <SwitchField
             textTitle = {Language.invertColors}
             textStates = {Language.invertColorsState}
             //text = {`${Language.invertColors} ${Language.invertColorsState[invertColors]}`}
-            primeValue={appStyle.functionButton.invertColors}
+            aValue={invertColors}
             onChange={invertChange}
             style = {{
                 marginTop: 10
@@ -131,12 +157,27 @@ export default ListsRedactor = ({
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
-        />
+        />}
+        {appConfig.user.role == 'a' && 
+        <SwitchField
+            textTitle = {Language.disabledShadows}
+            textStates = {Language.disabledShadowsState}
+            //text = {`${Language.invertColors} ${Language.invertColorsState[invertColors]}`}
+            aValue={disabledShadows}
+            onChange={disableChange}
+            style = {{
+                marginTop: 10
+            }}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />}
+        {appConfig.user.role == 'a' && 
         <SwitchField
             textTitle = {Language.outline}
             textStates = {Language.outlineState}
             //text = {`${Language.outline} ${Language.outlineState[outline]}`}
-            primeValue={appStyle.functionButton.outline}
+            aValue={outline}
             onChange={outlineChange}
             style = {{
                 marginTop: 10
@@ -144,7 +185,36 @@ export default ListsRedactor = ({
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
+        />}
+
+        <Reanimated.View 
+            style = {[{
+                position: 'absolute',
+                //height: '100%', 
+                minHeight : 1,
+                width: '94%', 
+                left: 12, 
+                backgroundColor: `${Theme.basics.neutrals.secondary}90`
+            }, blind]}
         />
+
+        {false && // position top
+        <Reanimated.View 
+            //exiting={exiting} 
+            entering={entering}
+        >
+        <SwitchField
+            textTitle = {Language.signatures}
+            textStates = {Language.signaturesState}
+            //text = {`${Language.fullWidth} ${Language.fullWidthState[`${fullWidth}`]}`}
+            aValue={signatures}
+            onChange={signaturesChange}
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        </Reanimated.View>}
+        </View>
     </View>)
 }
 

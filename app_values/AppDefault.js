@@ -1,7 +1,7 @@
 //fillets
 export const borderRadiusValues = {min: 0, max: 36, step: 1}
 //navigation menu
-export const menuTypes = ['classical','hidden', 'not'];
+export const menuTypes = ['classical','not','hidden' ];
 export const positionNavigateMenu = {min: -150, max: 150, step: 10}
 export const valuePosition = ['left','center','right']
 export const heightNavigateMenu = {min: 36, max: 66, step: 2}
@@ -9,22 +9,22 @@ export const drawerPositions = ['left', 'right']
 export const accentsType = ['filling', 'coloring']
 //lists
 export const listsTextSize = {min: 10, max: 20, step: 1}
-export const listsProximity = {min: 0, max: 12, step: 0.25}
+export const listsProximity = {min: 0, max: 10, step: 0.25}
 export const listsHorizontalProximity = {'true': 16, 'false': 0}
 //bobber button
 export const sizeButton = {min: 54, max: 72, step: 2}
-//export const valuePosition = ['left','center','right']
+export const positionFAB = ['left','center','right', 'top']
 
 export const weatherTypes = ['panel', 'lists',  'widget', 'off']
 
 export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 //effects
 export const rippleValues = ['all', 'some', 'none']
-export const shadowsValues = ['material', 'materialSome', 'full','neomorphism', 'square', 'none']
-
+//export const shadowsValues = ['none','neomorphism','square','full','material','materialSome',]
+export const shadowsValues = ['material','full','neomorphism','square','none',]
 //colors
 export const schemes = ['auto', 'light', 'dark'] 
-export const statusBarStyles = ['auto','inverted','light','dark']
+export const statusBarStyles =  ['auto','light','dark'] //['auto','inverted','light','dark']
 
 //selectorsStyle:
 export const switchDisign = ['type_1', 'type_2', 'type_3',]
@@ -36,7 +36,7 @@ export const radioButtonDisign = ['type_1', 'type_2',]
 import { stock } from './AppDesigns';
 //APPERANCE
 export const defaultAppStyle = {
-    presetUsed: 'YTAT-stock',
+    presetUsed: 'YTTI-stock',
     customTheme: undefined,
     ...stock
 }
@@ -45,7 +45,9 @@ export const defaultAppStyle = {
 export const defaultAppConfig = {
     languageApp: 'en',
     user: {
+        onboarding: 0,
         name: '',
+        role: 'u'
     },
     splash: {
         show: true,

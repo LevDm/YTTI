@@ -46,7 +46,7 @@ import commonStaticStyles, { SwitchField, BoxsField, ripple } from "../CommonEle
 
 
 
-export default LanguageRedactor = ({
+export default AppFunctionsRedactor = ({
     appStyle,
     r_setAppStyle,
     //setAppStyle,
@@ -116,10 +116,12 @@ export default LanguageRedactor = ({
                 }
             })
 
-            r_setAppConfig(newAppConfig);
-            dataRedactor("storedAppConfig", newAppConfig);
-
             setCheckGroup(newGroup)
+
+            
+            dataRedactor("storedAppConfig", newAppConfig);
+            r_setAppConfig(newAppConfig);
+
 
             if(usedSubsequence.length == 1 && appStyle.navigationMenu.type == 'classical'){menuDisplay(0)}
             else if(usedSubsequence.length >= 1 && (appStyle.navigationMenu.type == 'classical' && appStyle.navigationMenu.height == 0)){menuDisplay(50)}
@@ -139,6 +141,51 @@ export default LanguageRedactor = ({
         console.log('funcs', data)
         settingFunctions(undefined, data)
         setData(data)
+    }
+    
+
+    const BoxItem = ({childItem}) => {
+        const icons = {
+            'loadSplash': "animation-play",
+            'settings' : 'cog-outline',
+            'tasks': 'sticker-check-outline',
+            "analytics": 'circle-outline',
+            "notes": 'note-edit-outline',
+            "timetable": 'timetable'
+        }
+        const titles = {
+            'loadSplash': languagesAppList[LanguageAppIndex].SettingsScreen.StructureScreen.params.loadAnimation,
+            'settings' :  languagesAppList[LanguageAppIndex].SettingsScreen.HeaderTitle,
+            'tasks': languagesAppList[LanguageAppIndex].TasksScreen.HeaderTitle,
+            "analytics": languagesAppList[LanguageAppIndex].AnalyticsScreen.HeaderTitle,
+            "notes": languagesAppList[LanguageAppIndex].NotesScreen.HeaderTitle,
+            "timetable": languagesAppList[LanguageAppIndex].TimetableScreen.HeaderTitle
+        } 
+        const title = titles[childItem].charAt(0).toUpperCase() + titles[childItem].slice(1)
+
+        return(
+            <View
+                style = {{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    marginLeft: 8
+                }}
+            >
+                <MaterialCommunityIcons 
+                    name={icons[childItem]} 
+                    size={18} 
+                    color = {Theme.texts.neutrals.secondary}
+                />
+                <Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{title}</Text>
+            </View>
+        )
+    }
+
+    const loadSplashShowSetting = (value) =>{
+        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
+        newAppConfig.splash.show = value;//(!loadSplash);
+        r_setAppConfig(newAppConfig);
+        dataRedactor("storedAppConfig", newAppConfig);
     }
 
     const renderItem = ({ item, drag = undefined, isActive = false }) => {
@@ -190,11 +237,11 @@ export default LanguageRedactor = ({
                         borderRadius: appStyle.borderRadius.additional,
                     }}
                     android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
-                    Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{item}</Text>}
+                    Item = {<BoxItem childItem={item}/>}
                     check = {checkGroup[index]}
                     onPress = {()=>{settingFunctions(index)}}
                     boxBorderRadius = {appStyle.borderRadius.additional}
-                    disignType = {appStyle.selectorsDisign.checkBox}
+                    designType = {appStyle.selectors.design.checkBox}
                     colors={{
                         background: Theme.basics.neutrals.secondary,
                         primary: Theme.icons.accents.secondary,
@@ -209,6 +256,52 @@ export default LanguageRedactor = ({
     }
 
     return (<View style={{paddingBottom: 12}}>
+        <View 
+            style={{
+                backgroundColor: '#00000001',
+                borderRadius: appStyle.borderRadius.additional,
+                marginLeft: 30,
+                width: '85%',
+            }}
+        >
+            <View
+                style={[
+                    { 
+                        height: 32,
+                        //marginLeft: 30,
+                        //width: '85%',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                        borderRadius: appStyle.borderRadius.additional,
+                        backgroundColor: 'transparent',
+                    },
+                ]}
+                
+            >
+                <BaseBox
+                    isCheckBox={true}
+                    style = {{
+                        //flex: 4,
+                        width: '80%',
+                        //marginTop: index > 0 ? 4 : 0,
+                        backgroundColor: 'transparent',
+                        borderRadius: appStyle.borderRadius.additional,
+                    }}
+                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
+                    Item = {<BoxItem childItem={'loadSplash'}/>}
+                    check = {appConfig.splash.show}
+                    onPress = {()=>{loadSplashShowSetting(!appConfig.splash.show)}}
+                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    designType = {appStyle.selectors.design.checkBox}
+                    colors={{
+                        background: Theme.basics.neutrals.secondary,
+                        primary: Theme.icons.accents.secondary,
+                        secondary: Theme.icons.accents.quaternary,
+                    }}
+                />
+            </View>
+        </View>
         <DraggableFlatList
             data={data}
             onDragEnd={endDrag}
@@ -248,11 +341,11 @@ export default LanguageRedactor = ({
                         borderRadius: appStyle.borderRadius.additional,
                     }}
                     android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
-                    Item = {<Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{'settings'}</Text>}
+                    Item = {<BoxItem childItem={'settings'}/>}
                     check = {checkGroup[Object.keys(appConfig.appFunctions).indexOf('settings')]}
                     onPress = {()=>{settingFunctions(Object.keys(appConfig.appFunctions).indexOf('settings'))}}
                     boxBorderRadius = {appStyle.borderRadius.additional}
-                    disignType = {appStyle.selectorsDisign.checkBox}
+                    designType = {appStyle.selectors.design.checkBox}
                     colors={{
                         background: Theme.basics.neutrals.secondary,
                         primary: Theme.icons.accents.secondary,

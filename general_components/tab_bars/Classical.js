@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Keyboard, View, Pressable, Text, Dimensions, StyleSheet } from "react-native";
 
-import Animated from "react-native-reanimated";
-import {
+import Reanimated, {
     useSharedValue,
     useAnimatedProps,
     useAnimatedStyle,
-    withTiming
+    withTiming,
+    useDerivedValue
 } from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
@@ -20,32 +20,143 @@ import languagesAppList from "../../app_values/Languages";
 
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
-const Classical = ({
-    state = {
-        index: 0, 
-        routes: [
-            {name: "home"},
-            {name: "timetable"},
-            {name: "notes"},
-            {name: "settingsStack"},
-            {name: "analytics"},
-        ]
-    },  
-    route,
-    navigation, 
+const Reanimated_Text = Reanimated.createAnimatedComponent(Text);
+const Reanimated_Icon = Reanimated.createAnimatedComponent(MaterialCommunityIcons)
 
-    appStyle,
-    appConfig,
+function Classical(props){
+    const {
+        state = {
+            index: 0, 
+            routes: [
+                {name: "tasks"},
+                {name: "timetable"},
+                {name: "notes"},
+                {name: "settingsStack"},
+                {name: "analytics"},
+            ]
+        },  
+        route,
+        navigation, 
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex,
-}) => {
+        appStyle,
+        appConfig,
+
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex,
+    } = props
+
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
-    const tingDuration = 400
+    
+
+
+    const ripple = (color) => ({
+        color: `${color}20`,
+        borderless: true,
+        foreground: false
+    })
+
+    const MenuItem = (props) => {
+        const {
+            itemIndex,
+            accentIndex,
+            accentState,
+            onPress,
+            icons,
+            iconSize,
+            title
+        } = props
+        
+        const accent = useDerivedValue(()=>accentState)
+        //const accent = accentState// (accentIndex == itemIndex)
+        //console.log('>>MENU_RERENDEER', itemIndex)
+        const tingDuration = 300
+
+        const accentStyle = useAnimatedStyle(()=>{
+            return {
+                color:appStyle.navigationMenu.accentsType.coloring && accent.value? Theme.texts.accents.primary : Theme.texts.neutrals.secondary,
+            }
+        })
+
+        const accentProps = useAnimatedProps(()=>{
+            return {
+                name:  appStyle.navigationMenu.accentsType.filling && accent.value? icons.focus : icons.notFocus, 
+                size: iconSize,
+                color:  appStyle.navigationMenu.accentsType.coloring && accent.value? Theme.icons.accents.primary : Theme.icons.neutrals.secondary, 
+            }
+        })
+
+        const pressItem = () => {
+            if(!accent.value){
+                accent.value = true
+                setTimeout(onPress, 300) 
+            } else {
+                //accent.value = false
+            }
+        }
+
+        return (
+            <View
+                key = {props.keyID}
+                style = {{
+                    flex: 1, 
+                    backgroundColor: 'transparent',
+                    borderRadius: appStyle.borderRadius.additional
+                }}
+            >
+            <Pressable
+                //disabled = {accent}
+                onPress={onPress}
+                style={[
+                        {
+                        flex: 1, 
+                        alignItems: 'center',
+                        alignContent: 'center',
+                        paddingTop: appStyle.navigationMenu.height > 55? 8 : 3,
+                        justifyContent: 'flex-start',
+                        //backgroundColor: 'transparent' 
+                    }
+                ]}
+                android_ripple = {appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
+            >
+                <Reanimated.View 
+                    //exiting={exiting}
+                    style = {{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                    //entering={entering}
+                >
+                    <Reanimated_Icon
+                        animatedProps={accentProps}
+                    />
+                    {appStyle.navigationMenu.signatureIcons &&
+                    <Reanimated_Text
+                        style = {[
+                            {
+                                fontSize: 10,
+                                width: '100%',
+                                textAlign: 'center',
+                                fontVariant: ['small-caps'],
+                                fontWeight: '500',
+                                
+                            },
+                            accentStyle
+                        ]}
+                    >
+                        {title}
+                    </Reanimated_Text>
+                    }
+                </Reanimated.View>        
+            </Pressable>    
+            </View>
+        )
+    }
+
+    const tingDuration = 350
     const entering = (targetValues) => {
         'worklet';
         const animations = {
@@ -73,14 +184,12 @@ const Classical = ({
         };
     };
 
-    const ripple = (color) => ({
-        color: `${color}20`,
-        borderless: true,
-        foreground: false
-    })
+    //console.log("cur acc", )
+    //if(state.routes[state.index].name != route.name){return null}
 
     return (
-        <View
+        <Reanimated.View
+            key = {`${Math.random()}`}
             style = {
                 [{
                     height: appStyle.navigationMenu.height,
@@ -112,8 +221,11 @@ const Classical = ({
                 //downsampleFactor = {10}
             />
             </View>}
-
-            <View 
+            
+            {true && //state.routes[state.index].name == route.name ||
+            <Reanimated.View
+                entering={entering}
+                //exiting={exiting} 
                 style = {{
                     flex: 1, 
                     flexDirection: 'row',
@@ -122,7 +234,7 @@ const Classical = ({
             {state.routes.map((route, index) => {
 
                 const routes =  {
-                    tasks : {name: "home"},
+                    tasks : {name: "tasks"},
                     timetable: {name: "timetable"},
                     notes : {name: "notes"},
                     analytics : {name: "analytics"},
@@ -143,35 +255,21 @@ const Classical = ({
                 const croute = routes[current]
                 const cpage = appConfig.appFunctions[current]
 
-                
-                //const page = appConfig.appFunctions[route.name]
-                //const isFocused = state.index === index;
+                if(!routes[current]){return null} 
 
-                
-
-
-                if(!routes[current]){
-                    //console.log('cmenu page not used', route.name, page.used)
-                    return null
-                } else {
-                    //console.log('cmenu page used',route.name, page, (page != undefined) && !page.used)
-                }
-
-                //console.log('???', croute, cpage, 'focus', state.routes[state.index].name,'=',croute.name)
                 const cisFocused = state.routes[state.index].name === croute.name;
 
-
                 let size = 19;
-                size = (appStyle.navigationMenu.height-5-15)//(appStyle.navigationMenu.signatureIcons? 15 : 0)
+                size = (appStyle.navigationMenu.height-5-15)
                 size = (size > 32? 32 : size)
 
                 const iconsNames = {focus: '', notFocus: ''}
                 let screenName = ''
 
                 switch(croute.name){
-                    case "home":
-                        iconsNames.focus = 'home-edit';
-                        iconsNames.notFocus = 'home-edit-outline';
+                    case "tasks":
+                        iconsNames.focus = 'sticker-check';//'home-edit';
+                        iconsNames.notFocus = 'sticker-check-outline';//'home-edit-outline';
                         screenName = Language.TasksScreen.HeaderTitle;
                         break;
 
@@ -205,68 +303,26 @@ const Classical = ({
                         screenName = 'screenName'
                 }
 
+                const navigate = () =>{
+                    //console.log('PRESS', croute.name)
+                    navigation.navigate(croute.name)
+                }
+
                 return (
-                    <View
-                        key = {`${Math.random()}`}
-                        style = {{
-                            flex: 1, 
-                            backgroundColor: 'transparent',
-                            borderRadius: appStyle.borderRadius.additional
-                        }}
-                    >
-                    <Pressable
-                        disabled = {cisFocused}
-                        onPress={()=>{
-                            navigation.navigate(croute.name)
-                        }}
-                        style={[
-                                {
-                                flex: 1, 
-                                alignItems: 'center',
-                                alignContent: 'center',
-                                paddingTop: appStyle.navigationMenu.height > 55? 8 : 3,
-                                justifyContent: 'flex-start',
-                                //backgroundColor: 'transparent' 
-                            }
-                        ]}
-                        android_ripple = {appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
-                    >
-                        <Animated.View 
-                            //exiting={exiting}
-                            style = {{
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                            }}
-                            //entering={entering}
-                        >
-                            <MaterialCommunityIcons 
-                                name={appStyle.navigationMenu.accentsType.filling && cisFocused? iconsNames.focus : iconsNames.notFocus} 
-                                size={size} 
-                                color = {appStyle.navigationMenu.accentsType.coloring && cisFocused? Theme.icons.accents.primary : Theme.icons.neutrals.secondary}
-                            />
-                            {appStyle.navigationMenu.signatureIcons &&
-                            <Text
-                                style = {[
-                                    {
-                                        fontSize: 10,
-                                        width: '100%',
-                                        textAlign: 'center',
-                                        fontVariant: ['small-caps'],
-                                        fontWeight: '600',
-                                        color: appStyle.navigationMenu.accentsType.coloring && cisFocused? Theme.texts.accents.primary : Theme.texts.neutrals.secondary
-                                    }
-                                ]}
-                            >
-                                {screenName}
-                            </Text>
-                            }
-                        </Animated.View>        
-                    </Pressable>    
-                    </View>
+                    <MenuItem
+                        keyID = {`${screenName}_${index}`}
+                        itemIndex = {index}
+                        accentIndex = {state.index}
+                        accentState = {state.routes[state.index].name == croute.name}
+                        onPress = {navigate}
+                        icons = {iconsNames}
+                        iconSize = {size}
+                        title = {screenName}
+                    />
                 )
             })}
-            </View>
-        </View>
+            </Reanimated.View>}
+        </Reanimated.View>
     );
 }
 

@@ -62,7 +62,7 @@ export default LanguageRedactor = ({
         return items
     }
     
-    return (<>
+    return (<View style={{paddingBottom: 12}}>
         <BoxsField
             //  'one'>true || 'multiple'>false
             isChoiceOne={true}
@@ -76,7 +76,7 @@ export default LanguageRedactor = ({
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
-    </>)
+    </View>)
 }
 
 const staticStyles = StyleSheet.create({

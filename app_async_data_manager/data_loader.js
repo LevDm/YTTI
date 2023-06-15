@@ -44,7 +44,21 @@ const dataLoader = ()  => {
       store.dispatch({type: 'SET_LOAD_STATUS_CONFIG_APP', value: true})
     }
   }).catch((error) => console.log(error));
-  
+
+
+  AsyncStorage.getItem("storedTests").then(data =>{
+    //console.log(JSON.parse(data))
+    let jsonData = JSON.parse(data)
+    if (data !== null){
+      //if (jsonData.length <= 2){jsonData = baseTasksList}
+      console.log('>>LOAD_TESTS_LIST_LENGTH_'+(jsonData.length))
+      store.dispatch({type: 'SET_TESTS_LIST', value: jsonData})
+      store.dispatch({type: 'SET_LOAD_STATUS_TESTS', value: true})
+    } else {
+      store.dispatch({type: 'SET_LOAD_STATUS_TESTS', value: true})
+      console.log('>>NOT_DATA_TESTS_LOAD_'+data)
+    }   
+  }).catch((error) => console.log(error));
   
   AsyncStorage.getItem("storedTasks").then(data =>{
     //console.log(JSON.parse(data))

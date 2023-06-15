@@ -19,6 +19,7 @@ import store from './app_redux_files/store';
 
 import dataLoader from './app_async_data_manager/data_loader';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 //import ThemesColorsAppList, {themesApp} from './styles/ColorsApp';
 import themesColorsAppList, {themesApp} from './app_values/Themes';
@@ -38,6 +39,15 @@ export default function App() {
   const [loadStatusTasks, setLoadStatusTasks] = useState(false);
   const [loadStatusStyle, setLoadStatusStyle] = useState(false);
   const [loadStatusConfig, setLoadStatusConfig] = useState(false);
+
+
+  const [ testing, setTesting] = useState(store.getState().testing);
+  const [ tests, setTests ] = useState(store.getState().tests);
+  const [ loadStatusTests, setLoadStatusTests ] = useState(false);
+
+  const [ testCycle, setTestCycle ] = useState() 
+  // emply > start >>stop>> emply
+
 
   const [appStyle, setAppStyle] = useState(store.getState().appStyle);
 
@@ -62,6 +72,18 @@ export default function App() {
         setAppStyle(jstore.appStyle);
         setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme)
       }
+    }
+
+    if (jstore.testing  != testing) {
+      setTesting(jstore.testing)
+    }
+
+    if (jstore.tests != tests) {
+      setTests(jstore.tests)
+    }
+
+    if (jstore.loadStatusTests) {
+      if (!loadStatusTests){setLoadStatusTests(true)}
     }
 
     if (jstore.loadStatusConfig) {
@@ -107,14 +129,15 @@ export default function App() {
   */
 
   useEffect(() => {
-    if(loadStatusTasks && loadStatusConfig && loadStatusStyle && !appIsReady){
+    if((loadStatusTasks && loadStatusConfig && loadStatusStyle && loadStatusTests) && !appIsReady){
     //if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !ready){
       console.log('>APP_ALL_DATA_LOADED_' + (new Date().getTime() - start) + 'ms' )
       //if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
       //setReady(true);
       setAppIsReady(true)
+      setTestCycle('emply')
     }
-  }, [loadStatusTasks, loadStatusConfig, loadStatusStyle]);
+  }, [loadStatusTasks, loadStatusConfig, loadStatusStyle, loadStatusTests]);
   
 
   useEffect(() => {
@@ -163,6 +186,76 @@ export default function App() {
   const splashOut = () => {
     setSplashVisible(false)
   } 
+
+
+
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if ( appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        console.log('App has come to the foreground!');
+      }
+      //const B = []
+      //B.length
+      console.log('exit', tests)
+
+      const lastIndex = Math.max(0, tests.length-1)
+      const currentTest = tests[lastIndex]
+
+      if(nextAppState == 'background' && testing  && currentTest.actions.length > 2
+      //&& testCycle == 'start'
+      ){
+        //tests.length
+        currentTest.stop = new Date().getTime()
+        currentTest.time = currentTest.stop - currentTest.start
+
+        const newTests = [...tests.slice(0, lastIndex), currentTest]
+
+        console.log('|||  END_TEST', currentTest)
+        AsyncStorage.setItem("storedTests", JSON.stringify(newTests)).then(() => {
+          //setTestCycle('emply')
+        }).catch((error) => console.log(error));
+
+
+        setTests(newTests);
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+      
+      console.log('>APP_STATE_' + String(appState.current).toUpperCase());
+
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [tests]);
+
+  useEffect(()=>{
+    if(appIsReady && testing && appStateVisible == 'active' 
+      //&& testCycle == 'emply'
+    ){
+      
+      const newTest = {
+        start: new Date().getTime(),
+        stop: undefined,
+        id: `test_${tests.length? tests.length : 0}`,
+        actions: []
+      }
+
+      const newTests = [...tests, newTest]
+
+      console.log('|||  START_TEST', newTests)
+
+      store.dispatch({type: 'SET_TESTS_LIST', value: newTests})
+      setTestCycle('start')
+      setTests(newTests)
+    }
+  }, [appIsReady, appStateVisible])
+
   
   if (!appIsReady) {
     return null;

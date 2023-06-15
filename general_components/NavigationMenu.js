@@ -29,8 +29,10 @@ const NavigationMenu = ({
     navigation,
     state, 
     route,
-
+    keyID,
     hideMenu,
+
+    addTestActions,
     
     appStyle,
     appConfig,
@@ -103,6 +105,7 @@ const NavigationMenu = ({
     if(!keyboardVisible && !hideMenu){
     return (
         <View
+            key={keyID}
             style = {[
                 {
                     position: 'absolute',
@@ -115,6 +118,8 @@ const NavigationMenu = ({
                 state = {state}
                 route = {route}  
                 navigation = {navigation}
+
+                addTestActions={addTestActions}
                 
                 appStyle={appStyle}
                 appConfig={appConfig}

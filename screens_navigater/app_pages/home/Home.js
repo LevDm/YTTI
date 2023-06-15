@@ -87,6 +87,10 @@ const Tasks = (props) => {
 
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
 
+
+
+    const [allTests, setAllTests ] = useState(props.tests)
+
     store.subscribe(() => {
         const jstore = store.getState();
 
@@ -121,6 +125,14 @@ const Tasks = (props) => {
 
         if(hideMenu != jstore.hideMenu){
             setHideMenu(jstore.hideMenu)
+        }
+
+        if (tasks != jstore.tasks){
+            setTasks(jstore.tasks);
+        }
+
+        if (allTests != jstore.tests){
+            setAllTests(jstore.tests);
         }
     })
     
@@ -163,6 +175,19 @@ const Tasks = (props) => {
         )
     ) 
 
+    const addTestActions = (action) => {
+        const lastIndex = Math.max(0, allTests.length-1)
+        const currentTest = allTests[lastIndex]
+        const currentAction = {title: action, checkPoint: new Date().getTime()}
+        const newActions = [...currentTest.actions,  currentAction] 
+        currentTest.actions = newActions
+
+        const newTests = [...allTests.slice(0, lastIndex), currentTest]
+        console.log('|||  NEW_ACTION', newActions)
+        props.r_setTests(newTests)
+        setAllTests(newTests);
+    }
+
     const animValueBobberButtonVisible = useSharedValue(0);
 
     const bobberButtonPress = () => {
@@ -204,9 +229,13 @@ const Tasks = (props) => {
         const newTasks = [...tasks, task].sort(taskSort);
 
         AsyncStorage.setItem("storedTasks", JSON.stringify(newTasks)).then(() => {
+            props.r_setTasksList(newTasks)
             setTasks(newTasks);
             resetModal();
+            
         }).catch((error) => console.log(error));
+
+        addTestActions('a_task')
     }
 
     const inputTask = (data) => {
@@ -293,18 +322,53 @@ const Tasks = (props) => {
         }
     }
 
-    const handleDeleteTask = (rowKey, some = false) => {
-        console.log('DELETED_TASKS', rowKey)
+
+    const handleCheckTask = (rowKey, some = false) => {
+        console.log('CHECKING_TASKS', rowKey)
+        /** 
         const newTasks = [...tasks];
         for(const row of (some? rowKey : [rowKey])){
             console.log(row)
             newTasks.splice(tasks.findIndex((task) => task.key === row), 1);
-        }
+        }*/
+
+        const keyFilter = some? rowKey : [rowKey]
+
+        const newTasks = tasks.filter(task => !keyFilter.includes(task.key))
+
 
         AsyncStorage.setItem("storedTasks", JSON.stringify(newTasks)).then(() => {
             setTasks(newTasks);
+            props.r_setTasksList(newTasks)
             resetModal();
+            
         }).catch((error) => console.log(error));
+
+        addTestActions('c_task'+String(some? `_${rowKey.length}` : ''))
+    }
+
+    const handleDeleteTask = (rowKey, some = false) => {
+        console.log('DELETED_TASKS', rowKey)
+        /** 
+        const newTasks = [...tasks];
+        for(const row of (some? rowKey : [rowKey])){
+            console.log(row)
+            newTasks.splice(tasks.findIndex((task) => task.key === row), 1);
+        }*/
+
+        const keyFilter = some? rowKey : [rowKey]
+
+        const newTasks = tasks.filter(task => !keyFilter.includes(task.key))
+
+
+        AsyncStorage.setItem("storedTasks", JSON.stringify(newTasks)).then(() => {
+            setTasks(newTasks);
+            props.r_setTasksList(newTasks)
+            resetModal();
+            
+        }).catch((error) => console.log(error));
+
+        addTestActions('d_task'+String(some? `_${rowKey.length}` : ''))
     }
 
     const handleTriggerEdit = (item) => {
@@ -321,8 +385,12 @@ const Tasks = (props) => {
 
         AsyncStorage.setItem("storedTasks", JSON.stringify(newTasks)).then(() => {
             setTasks(newTasks);
+            props.r_setTasksList(newTasks)
             resetModal();
+            
         }).catch((error) => console.log(error));
+
+        addTestActions('e_task')
     }
 
     const menuPress = () => { 
@@ -330,6 +398,7 @@ const Tasks = (props) => {
         if(appStyle.navigationMenu.type == 'not' || (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)){
             props.navigation.openDrawer()
         } else {
+            addTestActions('settingsStack')
             props.navigation.navigate('settingsStack')
         }
 
@@ -383,6 +452,7 @@ const Tasks = (props) => {
                 tasks = {tasks}
 
                 handleDeleteTask = {handleDeleteTask}
+                handleCheckTask = {handleCheckTask}
                 clearAllTasks = { handleClearTasks}
 
                 setModal={setModal}
@@ -438,6 +508,7 @@ const Tasks = (props) => {
                 outModalPress = {resetModal}
 
                 handleTriggerEdit = {handleTriggerEdit}
+                handleCheckTask = {handleCheckTask}
                 handleDeleteTask = {handleDeleteTask}
 
                 appStyle={appStyle}
@@ -450,7 +521,7 @@ const Tasks = (props) => {
         
     );
 }
-export default connect(mapStateToProps('HOME_SCREEN'),mapDispatchToProps('HOME_SCREEN'))(Tasks);
+export default connect(mapStateToProps('HOME_SCREEN'),mapDispatchToProps('N_SCREEN'))(Tasks);
 
 //====================================================================================================================================
 
@@ -596,7 +667,7 @@ const BobberButton = (props) => {
 }
 
 //====================================================================================================================================
-const headerPanel = 50
+const headerPanel = 55
 const headerParams = 46
 const headerFullHeight = statusBarHeight+headerPanel+headerParams
 
@@ -604,7 +675,7 @@ const listItemHeight = 110
 
 import WeatherComponent from "../../../weather/WeatherComponent";
 
-const Reanimated_SwipeList = Reanimated.createAnimatedComponent(SwipeListView)
+//const Reanimated_SwipeList = Reanimated.createAnimatedComponent(SwipeListView)
 const Reanimated_FlatList = Reanimated.createAnimatedComponent(FlatList)
 const ListItems = (props) => {
     const {
@@ -612,6 +683,7 @@ const ListItems = (props) => {
     tasks, 
 
     handleDeleteTask,
+    handleCheckTask,
     clearAllTasks,
 
     setModal, 
@@ -647,7 +719,9 @@ const ListItems = (props) => {
 
     const taskLongPress = (key) =>{
         Vibration.vibrate([5,8])
-        setChangesTask([key, ...changesTask])
+        if(!changesTask.includes(key)){
+            setChangesTask([key, ...changesTask])
+        }
     }
 
     const taskPress = (task) =>{
@@ -675,7 +749,8 @@ const ListItems = (props) => {
     }
 
     const changesCheck = () => {
-
+        handleCheckTask(changesTask, true)
+        setChangesTask([])
     }
 
     const changesClose = () => {
@@ -1117,6 +1192,7 @@ const ListItems = (props) => {
                     justifyContent: 'flex-start',
                     alignItems: 'center',
                     //backgroundColor: 'red',
+                    paddingBottom: 5,
                     flexDirection: appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
                 }}
             >
@@ -1133,7 +1209,7 @@ const ListItems = (props) => {
                             width: 46, 
                             paddingTop: 4,
                             borderRadius: appStyle.borderRadius.additional,
-                            marginHorizontal: 15,
+                            marginHorizontal: 12,
                             opacity: cogButtonVisible? 1 : 0
                         }, 
                         //appStyle.navigationMenu.drawerPosition == 'left'? {marginLeft: 15,} : {marginRight: 15}
@@ -1156,7 +1232,7 @@ const ListItems = (props) => {
                             width: 46, 
                             paddingTop: 4,
                             borderRadius: appStyle.borderRadius.additional,
-                            marginHorizontal: 15,
+                            marginHorizontal: 12,
                             opacity: (changesTask.length == 0 && (appConfig.weather.type == 'widget' && appConfig.weather.locationInfo.length>0))? 1 : 0
                         }, 
                     ]}
@@ -1192,7 +1268,7 @@ const ListItems = (props) => {
                             width: 46, 
                             paddingTop: 4,
                             borderRadius: appStyle.borderRadius.additional,
-                            marginHorizontal: 15,
+                            marginHorizontal: 12,
                             opacity: (appStyle.functionButton.position == 'top')? 1 : 0
                         }, 
                     ]}
@@ -1229,6 +1305,7 @@ const ListItems = (props) => {
                     position: 'absolute',
                     justifyContent: 'space-between',
                     alignItems: 'center',
+                    paddingBottom: 5,
                     //backgroundColor: 'red',
                     flexDirection: appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
                 }}
@@ -1245,8 +1322,8 @@ const ListItems = (props) => {
                             width: 46, 
                             paddingTop: 4,
                             borderRadius: appStyle.borderRadius.additional,
-                            marginHorizontal: 15,
-                            opacity: (appStyle.functionButton.position == 'top')? 1 : 0
+                            marginHorizontal: 12,
+                            //opacity: (appStyle.functionButton.position == 'top')? 1 : 0
                         }, 
                     ]}
                     onPress={changesClose}
@@ -1274,7 +1351,7 @@ const ListItems = (props) => {
                         <Text
                             style={{
                                 fontSize: 15,
-                                color: Theme.texts.neutrals.primary
+                                color: Theme.texts.neutrals.secondary
                             }}
                         >
                             {changesTask.length}
@@ -1461,6 +1538,7 @@ const ModalItems = ({
 
     handleTriggerEdit,
     handleDeleteTask,
+    handleCheckTask,
 
     appStyle,
     appConfig,
@@ -1478,7 +1556,7 @@ const ModalItems = ({
     }
 
     const checkTask = () => {
-
+        handleCheckTask(task? task.key : undefined);
     }
 
     const deleteTask = () => {

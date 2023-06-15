@@ -38,6 +38,8 @@ function Classical(props){
         route,
         navigation, 
 
+        addTestActions,
+
         appStyle,
         appConfig,
 
@@ -224,7 +226,7 @@ function Classical(props){
             
             {true && //state.routes[state.index].name == route.name ||
             <Reanimated.View
-                entering={entering}
+                //entering={entering}
                 //exiting={exiting} 
                 style = {{
                     flex: 1, 
@@ -305,6 +307,7 @@ function Classical(props){
 
                 const navigate = () =>{
                     //console.log('PRESS', croute.name)
+                    addTestActions(croute.name)
                     navigation.navigate(croute.name)
                 }
 

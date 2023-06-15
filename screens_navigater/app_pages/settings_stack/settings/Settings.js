@@ -12,6 +12,7 @@ import {
     Dimensions,
     ToastAndroid,
     Keyboard,
+    BackHandler,
     Vibration 
 } from 'react-native';
 import Constants from "expo-constants";
@@ -327,6 +328,9 @@ const Settings = (props) => {
     const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
 
+
+    const [allTests, setAllTests ] = useState(props.tests)
+
     const [appStyle, setAppStyle] = useState(props.appStyle);
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
@@ -379,7 +383,26 @@ const Settings = (props) => {
         if (appConfig != jstore.appConfig) {
             setAppConfig(jstore.appConfig);
         }
+
+
+        if (allTests != jstore.tests){
+            setAllTests(jstore.tests);
+        }
     })
+
+    const addTestActions = (action) => {
+        const lastIndex = Math.max(0, allTests.length-1)
+        const currentTest = allTests[lastIndex]
+        const currentAction = {title: action, checkPoint: new Date().getTime()}
+        const newActions = [...currentTest.actions,  currentAction] 
+        currentTest.actions = newActions
+    
+        const newTests = [...allTests.slice(0, lastIndex), currentTest]
+        console.log('|||  NEW_ACTION', newActions)
+        props.r_setTests(newTests)
+        setAllTests(newTests);
+    }
+    
 
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
@@ -419,7 +442,7 @@ const Settings = (props) => {
         //console.log('SETINGS PREV PALETTE', previewAppStyleA.value)
         const sourceStyle = previewAppStyleA.value? previewAppStyleA.value : appStyle
         const index = themesApp.indexOf(sourceStyle.palette.theme)
-        const schema = ThemeSchema// sourceStyle.palette.scheme == 'auto'? runOnJS(Appearance.getColorScheme)() : sourceStyle.palette.scheme
+        const schema = previewAppStyleA.value? previewAppStyleA.value.palette.scheme != 'auto'? previewAppStyleA.value.palette.scheme : listenerColorSheme : ThemeSchema// sourceStyle.palette.scheme == 'auto'? runOnJS(Appearance.getColorScheme)() : sourceStyle.palette.scheme
 
         console.log('SETINGS PREV UPD', index, schema)
         //console.log('SETINGS PREV UPD', props.route.params)
@@ -469,6 +492,8 @@ const Settings = (props) => {
             setAppStyle(newAppStyle)
             dataRedactor("storedAppStyle",newAppStyle);
             props.r_setAppStyle(newAppStyle);
+
+            addTestActions(`newStyle(P:${newAppStyle.presetUsed} T:${newAppStyle.palette.theme})`)
         }
     }
 
@@ -494,6 +519,15 @@ const Settings = (props) => {
         applyAppStyle()
         //splashStart(previewAppStyle.theme, themesApp.indexOf(previewAppStyle.theme));
     }
+
+    useEffect(() => {
+        const backAction = () => {
+            backBurgerPress()
+            return true;
+        };
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+        return () => backHandler.remove();
+      }, []);
     
     const backBurgerPress = () => {
         Vibration.vibrate([5,8])
@@ -502,8 +536,9 @@ const Settings = (props) => {
             //setBottomSheetIndex(false)
             props.r_setHideMenu(false) 
         } 
+        addTestActions('settings_back')
         props.navigation.goBack()
-        console.log('settings back', bottomSheetIndex.value , props.hideMenu)
+        console.log('settings_back', bottomSheetIndex.value , props.hideMenu)
     }
 
 
@@ -566,6 +601,8 @@ const Settings = (props) => {
             //colors: colors
         })
 
+        addTestActions('paletteR')
+
         console.log('settings to palette', 'sheet',bottomSheetIndex.value ,'menu', props.hideMenu)  
     }
 
@@ -604,7 +641,7 @@ const Settings = (props) => {
     const enableFab = useDerivedValue(()=>{
         console.log('upd preview enable', bottomSheetIndex.value != 1 , appStyle.functionButton.position != 'top')
         return bottomSheetIndex.value != 1 && appStyle.functionButton.position != 'top'
-    }, [bottomSheetIndex])
+    }, [bottomSheetIndex, appStyle])
     
     const marginFab = useDerivedValue(()=>bottomSheetIndex.value == -1? 0 : bottomSheetHeadHeight)
     

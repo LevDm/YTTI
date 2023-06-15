@@ -60,6 +60,9 @@ function AppDrawer(props) {
 
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
 
+
+    const [allTests, setAllTests ] = useState(props.tests)
+
     store.subscribe(() => {
         let jstore = store.getState();
 
@@ -86,6 +89,10 @@ function AppDrawer(props) {
         if(hideMenu != jstore.hideMenu){
             setHideMenu(jstore.hideMenu)
         }
+
+        if (allTests != jstore.tests){
+            setAllTests(jstore.tests);
+        }
     })
     
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
@@ -105,6 +112,20 @@ function AppDrawer(props) {
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
+
+    const addTestActions = (action) => {
+        const lastIndex = Math.max(0, allTests.length-1)
+        const currentTest = allTests[lastIndex]
+        const currentAction = {title: action, checkPoint: new Date().getTime()}
+        const newActions = [...currentTest.actions,  currentAction] 
+        currentTest.actions = newActions
+
+        const newTests = [...allTests.slice(0, lastIndex), currentTest]
+        console.log('|||  NEW_ACTION', newActions)
+        props.r_setTests(newTests)
+        setAllTests(newTests);
+    }
+
     return (
         
         <Drawer.Navigator 
@@ -122,6 +143,8 @@ function AppDrawer(props) {
                     r_setAppStyle={r_setAppStyle}
                     appConfig={appConfig}
 
+                    addTestActions={addTestActions}
+
                     ThemeColorsAppIndex={ThemeColorsAppIndex}
                     ThemeSchema={ThemeSchema}
                     LanguageAppIndex={LanguageAppIndex}
@@ -136,11 +159,14 @@ function AppDrawer(props) {
                 header: ({ navigation, route }) => {
                     return (
                     <NavigationMenu
+                        keyID={String(Math.random())}
                         state = {navigation.getState()}
                         route = {route}  
                         navigation = {navigation}
 
                         hideMenu = {hideMenu}
+
+                        addTestActions={addTestActions}
                         
                         appStyle={appStyle}
                         appConfig={appConfig}
@@ -294,6 +320,8 @@ function CustomDrawerItemList(props) {
         },  
         route,
         navigation, 
+
+        addTestActions,
     
         appStyle,
         appConfig,
@@ -400,6 +428,7 @@ function CustomDrawerItemList(props) {
                 <Pressable
                     disabled = {cisFocused}
                     onPress={()=>{
+                        addTestActions(croute.name)
                         navigation.navigate(croute.name)
                     }}
                     style={[{
@@ -449,6 +478,8 @@ function LeadingToSettings(props){
     
         appStyle,
         appConfig,
+
+        addTestActions,
     
         ThemeColorsAppIndex,
         ThemeSchema,
@@ -476,6 +507,7 @@ function LeadingToSettings(props){
         >
             <Pressable
                 onPress={()=>{
+                    addTestActions("settingsStack")
                     navigation.navigate("settingsStack")
                 }}
                 style={[{

@@ -43,7 +43,7 @@ export const defaultAppStyle = {
 
 //CONFIGURATION
 export const defaultAppConfig = {
-    languageApp: 'en',
+    languageApp: 'ru',
     user: {
         onboarding: 0,
         name: '',
@@ -53,7 +53,7 @@ export const defaultAppConfig = {
         show: true,
         welcome: true
     },
-    screenSubsequence: ['tasks', 'timetable', 'notes', 'analytics', 'settings'],
+    screenSubsequence: ['tasks', 'timetable', 'notes', 'analytics'],
     appFunctions: {
         analytics: {
             useId: 2,
@@ -73,7 +73,7 @@ export const defaultAppConfig = {
         },
         settings: {
             useId: 4,
-            used: true
+            used: false
         }
     },
     weather: {

@@ -53,7 +53,7 @@ export const defaultAppConfig = {
         show: true,
         welcome: true
     },
-    screenSubsequence: ['tasks', 'timetable', 'notes', 'analytics'],
+    screenSubsequence: ['tasks', 'timetable', 'notes', 'analytics', 'settings'],
     appFunctions: {
         analytics: {
             useId: 2,
@@ -72,7 +72,7 @@ export const defaultAppConfig = {
             used: true
         },
         settings: {
-            useId: 4,
+            useId: null,
             used: false
         }
     },

@@ -32,8 +32,6 @@ const NavigationMenu = ({
     keyID,
     hideMenu,
 
-    addTestActions,
-    
     appStyle,
     appConfig,
 
@@ -118,8 +116,6 @@ const NavigationMenu = ({
                 state = {state}
                 route = {route}  
                 navigation = {navigation}
-
-                addTestActions={addTestActions}
                 
                 appStyle={appStyle}
                 appConfig={appConfig}

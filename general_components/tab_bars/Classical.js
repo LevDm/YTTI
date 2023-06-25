@@ -37,9 +37,7 @@ function Classical(props){
         },  
         route,
         navigation, 
-
-        addTestActions,
-
+        
         appStyle,
         appConfig,
 
@@ -307,7 +305,6 @@ function Classical(props){
 
                 const navigate = () =>{
                     //console.log('PRESS', croute.name)
-                    addTestActions(croute.name)
                     navigation.navigate(croute.name)
                 }
 

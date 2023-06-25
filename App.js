@@ -40,15 +40,6 @@ export default function App() {
   const [loadStatusStyle, setLoadStatusStyle] = useState(false);
   const [loadStatusConfig, setLoadStatusConfig] = useState(false);
 
-
-  const [ testing, setTesting] = useState(store.getState().testing);
-  const [ tests, setTests ] = useState(store.getState().tests);
-  const [ loadStatusTests, setLoadStatusTests ] = useState(false);
-
-  const [ testCycle, setTestCycle ] = useState() 
-  // emply > start >>stop>> emply
-
-
   const [appStyle, setAppStyle] = useState(store.getState().appStyle);
 
   const [appConfig, setAppConfig] = useState(store.getState().appConfig);
@@ -58,7 +49,7 @@ export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
 
   store.subscribe(() => {
-    let jstore = store.getState();
+    const jstore = store.getState();
 
     if (jstore.loadStatusTasks) {
       if (!loadStatusTasks){setLoadStatusTasks(true)}
@@ -72,18 +63,6 @@ export default function App() {
         setAppStyle(jstore.appStyle);
         setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme)
       }
-    }
-
-    if (jstore.testing  != testing) {
-      setTesting(jstore.testing)
-    }
-
-    if (jstore.tests != tests) {
-      setTests(jstore.tests)
-    }
-
-    if (jstore.loadStatusTests) {
-      if (!loadStatusTests){setLoadStatusTests(true)}
     }
 
     if (jstore.loadStatusConfig) {
@@ -116,28 +95,13 @@ export default function App() {
     console.log('>WAIT_LOAD')
   }
 
-  /*
-  if (!ready) {
-    return (
-      <AppLoading 
-        startAsync = {dataLoader}
-        onFinish = {finish}
-        onError = {console.warn}
-      />
-    )
-  }
-  */
 
   useEffect(() => {
-    if((loadStatusTasks && loadStatusConfig && loadStatusStyle && loadStatusTests) && !appIsReady){
-    //if(loadStatusTasks && loadStatusLanguage && loadStatusConfig && loadStatusStyle && !ready){
+    if((loadStatusTasks && loadStatusConfig && loadStatusStyle ) && !appIsReady){
       console.log('>APP_ALL_DATA_LOADED_' + (new Date().getTime() - start) + 'ms' )
-      //if(appStyle.splachLoadShow){ setHelloModalVisible(true) };
-      //setReady(true);
       setAppIsReady(true)
-      setTestCycle('emply')
     }
-  }, [loadStatusTasks, loadStatusConfig, loadStatusStyle, loadStatusTests]);
+  }, [loadStatusTasks, loadStatusConfig, loadStatusStyle]);
   
 
   useEffect(() => {
@@ -197,29 +161,9 @@ export default function App() {
       if ( appState.current.match(/inactive|background/) && nextAppState === 'active') {
         console.log('App has come to the foreground!');
       }
-      //const B = []
-      //B.length
-      console.log('exit', tests)
 
-      const lastIndex = Math.max(0, tests.length-1)
-      const currentTest = tests[lastIndex]
+      if(nextAppState == 'background' ){
 
-      if(nextAppState == 'background' && testing  && currentTest.actions.length > 2
-      //&& testCycle == 'start'
-      ){
-        //tests.length
-        currentTest.stop = new Date().getTime()
-        currentTest.time = currentTest.stop - currentTest.start
-
-        const newTests = [...tests.slice(0, lastIndex), currentTest]
-
-        console.log('|||  END_TEST', currentTest)
-        AsyncStorage.setItem("storedTests", JSON.stringify(newTests)).then(() => {
-          //setTestCycle('emply')
-        }).catch((error) => console.log(error));
-
-
-        setTests(newTests);
       }
 
       appState.current = nextAppState;
@@ -232,27 +176,10 @@ export default function App() {
     return () => {
       subscription.remove();
     };
-  }, [tests]);
+  }, []);
 
   useEffect(()=>{
-    if(appIsReady && testing && appStateVisible == 'active' 
-      //&& testCycle == 'emply'
-    ){
-      
-      const newTest = {
-        start: new Date().getTime(),
-        stop: undefined,
-        id: `test_${tests.length? tests.length : 0}`,
-        actions: []
-      }
-
-      const newTests = [...tests, newTest]
-
-      console.log('|||  START_TEST', newTests)
-
-      store.dispatch({type: 'SET_TESTS_LIST', value: newTests})
-      setTestCycle('start')
-      setTests(newTests)
+    if(appIsReady && appStateVisible == 'active'){
     }
   }, [appIsReady, appStateVisible])
 

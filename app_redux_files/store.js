@@ -4,11 +4,6 @@ import { defaultAppStyle, defaultAppConfig } from '../app_values/AppDefault';
 
 
 const initialState = {
-
-    loadStatusTests: false,
-    testing: true,
-    tests: [],
-
     //DEFAULT SETTINGS
     loadStatusTasks: false,
     loadStatusStyle: false,
@@ -30,17 +25,17 @@ const reducer = (state=initialState, action) => {
         //FOR WKR TESTS
         case 'SET_TESTS_LIST': {
             console.log('>'+action.type)
-            initialState.tests = action.value
+
             return initialState
         }
         case 'SET_LOAD_STATUS_TESTS': {
             console.log('>'+action.type+'_'+String(action.value).toUpperCase())
-            initialState.loadStatusTests = action.value
+
             return initialState
         }
         case 'SET_TESTING_MOD': {
             console.log('>'+action.type+'_'+String(action.value).toUpperCase())
-            initialState.testing = action.value
+
             return initialState
         }
         //APP

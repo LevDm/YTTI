@@ -328,9 +328,6 @@ const Settings = (props) => {
     const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
 
-
-    const [allTests, setAllTests ] = useState(props.tests)
-
     const [appStyle, setAppStyle] = useState(props.appStyle);
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
@@ -384,25 +381,8 @@ const Settings = (props) => {
             setAppConfig(jstore.appConfig);
         }
 
-
-        if (allTests != jstore.tests){
-            setAllTests(jstore.tests);
-        }
     })
 
-    const addTestActions = (action) => {
-        const lastIndex = Math.max(0, allTests.length-1)
-        const currentTest = allTests[lastIndex]
-        const currentAction = {title: action, checkPoint: new Date().getTime()}
-        const newActions = [...currentTest.actions,  currentAction] 
-        currentTest.actions = newActions
-    
-        const newTests = [...allTests.slice(0, lastIndex), currentTest]
-        console.log('|||  NEW_ACTION', newActions)
-        props.r_setTests(newTests)
-        setAllTests(newTests);
-    }
-    
 
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
@@ -493,7 +473,6 @@ const Settings = (props) => {
             dataRedactor("storedAppStyle",newAppStyle);
             props.r_setAppStyle(newAppStyle);
 
-            addTestActions(`newStyle(P:${newAppStyle.presetUsed} T:${newAppStyle.palette.theme})`)
         }
     }
 
@@ -536,7 +515,7 @@ const Settings = (props) => {
             //setBottomSheetIndex(false)
             props.r_setHideMenu(false) 
         } 
-        addTestActions('settings_back')
+
         props.navigation.goBack()
         console.log('settings_back', bottomSheetIndex.value , props.hideMenu)
     }
@@ -600,8 +579,6 @@ const Settings = (props) => {
 
             //colors: colors
         })
-
-        addTestActions('paletteR')
 
         console.log('settings to palette', 'sheet',bottomSheetIndex.value ,'menu', props.hideMenu)  
     }

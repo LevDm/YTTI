@@ -119,8 +119,6 @@ const Palette = (props) => {
   const [appConfig, setAppConfig] = useState(props.appConfig);
 
 
-  const [allTests, setAllTests ] = useState(props.tests)
-
   store.subscribe(() => {
     const jstore = store.getState();
 
@@ -145,9 +143,7 @@ const Palette = (props) => {
       setAppConfig(jstore.appConfig);
     }
 
-    if (allTests != jstore.tests){
-      setAllTests(jstore.tests);
-    }
+
   })
 
   const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
@@ -167,21 +163,6 @@ const Palette = (props) => {
   const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
   const LanguagePreview = languagesAppList[LanguageAppIndex].SettingsScreen.preview
   const Language = languagesAppList[LanguageAppIndex].SettingsScreen.PainterScreen
-  
-
-  const addTestActions = (action) => {
-    const lastIndex = Math.max(0, allTests.length-1)
-    const currentTest = allTests[lastIndex]
-    const currentAction = {title: action, checkPoint: new Date().getTime()}
-    const newActions = [...currentTest.actions,  currentAction] 
-    currentTest.actions = newActions
-
-    const newTests = [...allTests.slice(0, lastIndex), currentTest]
-    console.log('|||  NEW_ACTION', newActions)
-    props.r_setTests(newTests)
-    setAllTests(newTests);
-  }
-
 
 
   const colorsPickerShow = useSharedValue(-1);
@@ -213,7 +194,6 @@ const Palette = (props) => {
   const exit = () => {
     console.log('exit')
     props.r_setHideMenu(false)
-    addTestActions('palette_back')
     props.navigation.goBack()
     //props.navigation.navigate("settingsStack", {screen: "settings", params: {newCustomPallete: true}})
   }

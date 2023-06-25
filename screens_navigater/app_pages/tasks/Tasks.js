@@ -86,10 +86,7 @@ const Tasks = (props) => {
     const [hideMenu, setHideMenu] = useState(props.hideMenu);
 
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
-
-
-
-    const [allTests, setAllTests ] = useState(props.tests)
+    
 
     store.subscribe(() => {
         const jstore = store.getState();
@@ -131,9 +128,6 @@ const Tasks = (props) => {
             setTasks(jstore.tasks);
         }
 
-        if (allTests != jstore.tests){
-            setAllTests(jstore.tests);
-        }
     })
     
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
@@ -175,18 +169,6 @@ const Tasks = (props) => {
         )
     ) 
 
-    const addTestActions = (action) => {
-        const lastIndex = Math.max(0, allTests.length-1)
-        const currentTest = allTests[lastIndex]
-        const currentAction = {title: action, checkPoint: new Date().getTime()}
-        const newActions = [...currentTest.actions,  currentAction] 
-        currentTest.actions = newActions
-
-        const newTests = [...allTests.slice(0, lastIndex), currentTest]
-        console.log('|||  NEW_ACTION', newActions)
-        props.r_setTests(newTests)
-        setAllTests(newTests);
-    }
 
     const animValueBobberButtonVisible = useSharedValue(0);
 
@@ -234,8 +216,6 @@ const Tasks = (props) => {
             resetModal();
             
         }).catch((error) => console.log(error));
-
-        addTestActions('a_task')
     }
 
     const inputTask = (data) => {
@@ -344,7 +324,6 @@ const Tasks = (props) => {
             
         }).catch((error) => console.log(error));
 
-        addTestActions('c_task'+String(some? `_${rowKey.length}` : ''))
     }
 
     const handleDeleteTask = (rowKey, some = false) => {
@@ -368,7 +347,6 @@ const Tasks = (props) => {
             
         }).catch((error) => console.log(error));
 
-        addTestActions('d_task'+String(some? `_${rowKey.length}` : ''))
     }
 
     const handleTriggerEdit = (item) => {
@@ -390,7 +368,6 @@ const Tasks = (props) => {
             
         }).catch((error) => console.log(error));
 
-        addTestActions('e_task')
     }
 
     const menuPress = () => { 
@@ -398,7 +375,6 @@ const Tasks = (props) => {
         if(appStyle.navigationMenu.type == 'not' || (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)){
             props.navigation.openDrawer()
         } else {
-            addTestActions('settingsStack')
             props.navigation.navigate('settingsStack')
         }
 

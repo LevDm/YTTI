@@ -138,7 +138,7 @@ const EVENTS = [
 const Timetable = (props) => {
 
 
-  const [tasks, setTasks] = useState(EVENTS);
+  const [events, setTasks] = useState([]);
     
   const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
   const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
@@ -188,9 +188,7 @@ const Timetable = (props) => {
           setHideMenu(jstore.hideMenu)
       }
 
-      if (allTests != jstore.tests){
-        setAllTests(jstore.tests);
-    }
+
   })
   
   const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
@@ -232,19 +230,6 @@ const Timetable = (props) => {
       )
   ) 
 
-  const addTestActions = (action) => {
-    const lastIndex = Math.max(0, allTests.length-1)
-    const currentTest = allTests[lastIndex]
-    const currentAction = {title: action, checkPoint: new Date().getTime()}
-    const newActions = [...currentTest.actions,  currentAction] 
-    currentTest.actions = newActions
-
-    const newTests = [...allTests.slice(0, lastIndex), currentTest]
-    console.log('|||  NEW_ACTION', newActions)
-    props.r_setTests(newTests)
-    setAllTests(newTests);
-  }
-
   const animValueBobberButtonVisible = useSharedValue(0);
 
   const bobberButtonPress = () => {
@@ -271,7 +256,6 @@ const Timetable = (props) => {
       if(appStyle.navigationMenu.type == 'not' || (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)){
           props.navigation.openDrawer()
       } else {
-          addTestActions('settingsStack')
           props.navigation.navigate('settingsStack')
       }
 
@@ -280,13 +264,10 @@ const Timetable = (props) => {
   return (
     <>
       <ListItems
-        tasks = {tasks}
+        tasks = {events}
 
         handleDeleteTask = {handleDeleteTask}
         clearAllTasks = { handleClearTasks}
-
-        //setModal={setModal}
-        //getDateInfo={getDateInfo}
 
         reaValueBobberButtonVisible = {animValueBobberButtonVisible}
 

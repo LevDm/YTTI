@@ -23,18 +23,12 @@ const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 const Reanimated_Text = Reanimated.createAnimatedComponent(Text);
 const Reanimated_Icon = Reanimated.createAnimatedComponent(MaterialCommunityIcons)
 
+import { ripple, getNavigateItems } from "./tools";
+
+
 function Classical(props){
     const {
-        state = {
-            index: 0, 
-            routes: [
-                {name: "tasks"},
-                {name: "timetable"},
-                {name: "notes"},
-                {name: "settingsStack"},
-                {name: "analytics"},
-            ]
-        },  
+        state,  
         route,
         navigation, 
         
@@ -50,19 +44,9 @@ function Classical(props){
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
-    
-
-
-    const ripple = (color) => ({
-        color: `${color}20`,
-        borderless: true,
-        foreground: false
-    })
 
     const MenuItem = (props) => {
         const {
-            itemIndex,
-            accentIndex,
             accentState,
             onPress,
             icons,
@@ -83,7 +67,7 @@ function Classical(props){
 
         const accentProps = useAnimatedProps(()=>{
             return {
-                name:  appStyle.navigationMenu.accentsType.filling && accent.value? icons.focus : icons.notFocus, 
+                name: icons[appStyle.navigationMenu.accentsType.filling && accent.value], 
                 size: iconSize,
                 color:  appStyle.navigationMenu.accentsType.coloring && accent.value? Theme.icons.accents.primary : Theme.icons.neutrals.secondary, 
             }
@@ -231,93 +215,39 @@ function Classical(props){
                     flexDirection: 'row',
                 }}
             >
-            {state.routes.map((route, index) => {
+            {getNavigateItems({
+                state: state,
+                LanguageAppIndex: LanguageAppIndex,
+                appConfig: appConfig
+            }).map((item, index) => {
+                
+                const  {
+                    routeName,
+                    screenTItle,
+                    iconFocus,
+                    isFocused,
+                } = item
 
-                const routes =  {
-                    tasks : {name: "tasks"},
-                    timetable: {name: "timetable"},
-                    notes : {name: "notes"},
-                    analytics : {name: "analytics"},
-                    settings : {name: "settingsStack"},
-                }
-
-                let current 
-                let uses = new Array(Object.keys(appConfig.appFunctions).length)//['','','','']
-                Object.keys(appConfig.appFunctions).map((litem, lindex)=>{
-                    if(appConfig.appFunctions[litem].useId == index){
-                        current = litem
-                    } 
-                    if(appConfig.appFunctions[litem].used){
-                        uses[appConfig.appFunctions[litem].useId] = litem
-                    } 
-                })
-
-                const croute = routes[current]
-                const cpage = appConfig.appFunctions[current]
-
-                if(!routes[current]){return null} 
-
-                const cisFocused = state.routes[state.index].name === croute.name;
-
+               
                 let size = 19;
                 size = (appStyle.navigationMenu.height-5-15)
                 size = (size > 32? 32 : size)
 
-                const iconsNames = {focus: '', notFocus: ''}
-                let screenName = ''
 
-                switch(croute.name){
-                    case "tasks":
-                        iconsNames.focus = 'sticker-check';//'home-edit';
-                        iconsNames.notFocus = 'sticker-check-outline';//'home-edit-outline';
-                        screenName = Language.TasksScreen.HeaderTitle;
-                        break;
-
-                    case "analytics":
-                        iconsNames.focus = 'circle-slice-1';
-                        iconsNames.notFocus = 'circle-outline';
-                        screenName = Language.AnalyticsScreen.HeaderTitle;
-                        break;
-
-                    case "settingsStack": 
-                        iconsNames.focus = 'cog'; 
-                        iconsNames.notFocus = 'cog-outline';
-                        screenName = Language.SettingsScreen.HeaderTitle;
-                        break;
-                    
-                    case "notes":
-                        iconsNames.focus = 'note-edit'; 
-                        iconsNames.notFocus = 'note-edit-outline';
-                        screenName = Language.NotesScreen.HeaderTitle;
-                        break;
-
-                    case "timetable":
-                        iconsNames.focus = 'timetable'; 
-                        iconsNames.notFocus = 'timetable';
-                        screenName = Language.TimetableScreen.HeaderTitle;
-                        break;
-
-                    default:
-                        iconsNames.focus = "border-none-variant"
-                        iconsNames.notFocus = "border-none-variant"
-                        screenName = 'screenName'
-                }
 
                 const navigate = () =>{
                     //console.log('PRESS', croute.name)
-                    navigation.navigate(croute.name)
+                    navigation.navigate(routeName)
                 }
 
                 return (
                     <MenuItem
-                        keyID = {`${screenName}_${index}`}
-                        itemIndex = {index}
-                        accentIndex = {state.index}
-                        accentState = {state.routes[state.index].name == croute.name}
+                        keyID = {`${routeName}_${index}`}
+                        accentState = {isFocused}
                         onPress = {navigate}
-                        icons = {iconsNames}
+                        icons = {iconFocus}
                         iconSize = {size}
-                        title = {screenName}
+                        title = {screenTItle}
                     />
                 )
             })}

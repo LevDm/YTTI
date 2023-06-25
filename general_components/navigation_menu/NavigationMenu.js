@@ -16,11 +16,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import Svg, {Path} from "react-native-svg";
 
-import themesColorsAppList from "../app_values/Themes";
-import languagesAppList from "../app_values/Languages";
+import themesColorsAppList from "../../app_values/Themes";
+import languagesAppList from "../../app_values/Languages";
 
-import Classical from "./tab_bars/Classical";
-import Hidden from "./tab_bars/Hidden";
+import Classical from "./Classical";
+import Hidden from "./Hidden";
 
 const deviceHeight = Dimensions.get('screen').height
 const deviceWidth = Dimensions.get('window').width

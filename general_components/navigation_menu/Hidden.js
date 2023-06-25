@@ -16,6 +16,9 @@ import Svg, {Path} from "react-native-svg";
 import themesColorsAppList from "../../app_values/Themes";
 import languagesAppList from "../../app_values/Languages";
 
+import { ripple, getNavigateItems } from "./tools";
+
+
 let deviceHeight = Dimensions.get('window').height
 let deviceWidth = Dimensions.get('window').width
 
@@ -119,11 +122,6 @@ const Hidden = ({
         }
     })
 
-    const ripple = (color) => ({
-        color: `${color}20`,
-        borderless: true,
-        foreground: false
-    })
 
     return (
         <Animated.View
@@ -151,78 +149,29 @@ const Hidden = ({
                 }}
             />}
             {open && <>
-            {state.routes.map((route, index) => {
-                const routes =  {
-                    tasks : {name: "tasks"},
-                    timetable: {name: "timetable"},
-                    notes : {name: "notes"},
-                    analytics : {name: "analytics"},
-                    settings : {name: "settingsStack"},
-                }
-                let current 
-                let uses = new Array(Object.keys(appConfig.appFunctions).length)//['','','','']
-                Object.keys(appConfig.appFunctions).map((litem, lindex)=>{
-                    if(appConfig.appFunctions[litem].useId == index){
-                        current = litem
-                    } 
-                    if(appConfig.appFunctions[litem].used){
-                        uses[appConfig.appFunctions[litem].useId] = litem
-                    } 
-                })
-                const croute = routes[current]
-                const cpage = appConfig.appFunctions[current]
-                if(!routes[current]){return null} 
-                const cisFocused = state.routes[state.index].name === croute.name;
+            {getNavigateItems({
+                state: state,
+                LanguageAppIndex: LanguageAppIndex,
+                appConfig: appConfig
+            }).map((item, index) => {
+                
+                const  {
+                    routeName,
+                    screenTItle,
+                    iconFocus,
+                    isFocused,
+                } = item
 
-
-                let size = 30;
-                const iconsNames = {focus: '', notFocus: ''}
-                let screenName = ''
-
-                switch(croute.name){
-                    case "tasks":
-                        iconsNames.focus = 'sticker-check';//'home-edit';
-                        iconsNames.notFocus = 'sticker-check-outline';//'home-edit-outline';
-                        screenName = Language.TasksScreen.HeaderTitle;
-                        break;
-
-                    case "analytics":
-                        iconsNames.focus = 'circle-slice-1';
-                        iconsNames.notFocus = 'circle-outline';
-                        screenName = Language.AnalyticsScreen.HeaderTitle;
-                        break;
-
-                    case "settingsStack": 
-                        iconsNames.focus = 'cog'; 
-                        iconsNames.notFocus = 'cog-outline';
-                        screenName = Language.SettingsScreen.HeaderTitle;
-                        break;
-
-                    case "notes":
-                        iconsNames.focus = 'note-edit'; 
-                        iconsNames.notFocus = 'note-edit-outline';
-                        screenName = Language.NotesScreen.HeaderTitle;
-                        break;
-
-                    case "timetable":
-                        iconsNames.focus = 'timetable'; 
-                        iconsNames.notFocus = 'timetable';
-                        screenName = Language.TimetableScreen.HeaderTitle;
-                        break;
-
-                    default:
-                        iconsNames.focus = "border-none-variant"
-                        iconsNames.notFocus = "border-none-variant"
-                        screenName = 'screenName'
-                }
+                const size = 30;
+                
 
                 return (
                     <AnimatedPressable
                         key = {`${Math.random()}`}
-                        disabled = {cisFocused}
+                        disabled = {isFocused}
                         onPress={()=>{
                             //setOpen(false)
-                            navigation.navigate(croute.name)
+                            navigation.navigate(routeName)
                         }}
                         style={[
                             transitonIcons,
@@ -237,30 +186,20 @@ const Hidden = ({
                         ]}
                         android_ripple = {appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
                     >
-                        {cisFocused && 
-                            <Animated.View 
-                                //exiting={exiting}
-                                style = {{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                                entering={entering}
-                            >
-                                <MaterialCommunityIcons name={iconsNames.focus} size={size} color = {Theme.icons.accents.primary}/>
-                            </Animated.View>        
-                        }
-                        {!cisFocused && 
-                            <Animated.View
-                                //exiting={exiting}
-                                entering={entering}
-                                style = {{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <MaterialCommunityIcons name={iconsNames.notFocus} size={size} color = {Theme.icons.neutrals.tertiary}/>
-                            </Animated.View>        
-                        }
+                        <Animated.View 
+                            //exiting={exiting}
+                            style = {{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                            entering={entering}
+                        >
+                            <MaterialCommunityIcons 
+                                name={iconFocus[isFocused]} 
+                                size={size} 
+                                color = {Theme.icons.accents.primary}
+                            />
+                        </Animated.View>        
                     </AnimatedPressable>    
 
                 );

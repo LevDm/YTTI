@@ -113,7 +113,7 @@ const WeatherComponent = (props) => {
 
   //console.log(weatherData)
 
-  const last = (weatherData && selectCity)? Math.floor((new Date().getTime()-weatherData[selectCity].lastUpdate)/(60*1000)) : 0
+  const last = (weatherData && selectCity && weatherData[selectCity]?.lastUpdate)? Math.floor((new Date().getTime()-weatherData[selectCity].lastUpdate)/(60*1000)) : 0
 
   const ripple = (color) => ({
     color: `${color}20`,

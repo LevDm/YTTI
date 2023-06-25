@@ -6,9 +6,6 @@ const statusBarHeight = Constants.statusBarHeight+1
 
 import { 
     createDrawerNavigator,
-    DrawerContentScrollView,
-    DrawerItemList,
-    DrawerItem, 
 } from '@react-navigation/drawer';
 
 import {
@@ -31,7 +28,8 @@ import Notes from './app_pages/notes/Notes';
 import Timetable from './app_pages/timetable/Timetable';
 import SettingsStack from './app_pages/settings_stack/SettingsStack';
 
-import NavigationMenu from '../general_components/NavigationMenu';
+import NavigationMenu from '../general_components/navigation_menu/NavigationMenu';
+import DrawerItemList from '../general_components/navigation_menu/Drawer';
 
 import Reanimated, {
     useSharedValue,
@@ -276,176 +274,14 @@ function CustomDrawerContent(props) {
             >
                 {(appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0) && <WeatherComponent/>}
             </View>
-            {appStyle.navigationMenu.type == 'not' && <CustomDrawerItemList {...props} />}
+            {appStyle.navigationMenu.type == 'not' && <DrawerItemList {...props} />}
             {(!appConfig.appFunctions.settings.used) && <LeadingToSettings {...props} /> }
    
         </View>
     )
 }
 
-function CustomDrawerItemList(props) {
 
-    const {
-        state = {
-            index: 0, 
-            routes: [
-                {name: "tasks"},
-                {name: "timetable"},
-                {name: "notes"},
-                {name: "settingsStack"},
-                {name: "analytics"},
-            ]
-        },  
-        route,
-        navigation, 
-
-        appStyle,
-        appConfig,
-    
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex,
-    } = props
-    
-
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex]
-
-    const ripple = (color) => ({
-        color: `${color}20`,
-        borderless: true,
-        foreground: false
-    })
-
-    const itemSize = 40
-
-    return (
-        <View
-            style={{
-                height: 5*itemSize,
-                width: '100%',
-            }}
-        >
-        {state.routes.map((route, index) => {
-            const routes =  {
-                tasks : {name: "tasks"},
-                timetable: {name: "timetable"},
-                notes : {name: "notes"},
-                analytics : {name: "analytics"},
-                settings : {name: "settingsStack"},
-            }
-
-            let current 
-            let uses = new Array(Object.keys(appConfig.appFunctions).length)//['','','','']
-            Object.keys(appConfig.appFunctions).map((litem, lindex)=>{
-                if(appConfig.appFunctions[litem].useId == index){
-                    current = litem
-                } 
-                if(appConfig.appFunctions[litem].used){
-                    uses[appConfig.appFunctions[litem].useId] = litem
-                } 
-            })
-
-            const croute = routes[current]
-            const cpage = appConfig.appFunctions[current]
-
-            if(!routes[current]){return null} 
-            const cisFocused = state.routes[state.index].name === croute.name;
-            const size = 30;
-            const iconsNames = {focus: '', notFocus: ''}
-            let screenName = ''
-
-            switch(croute.name){
-                case "tasks":
-                    iconsNames.focus = 'sticker-check';//'home-edit';
-                    iconsNames.notFocus = 'sticker-check-outline';//'home-edit-outline';
-                    screenName = Language.TasksScreen.HeaderTitle;
-                    break;
-
-                case "analytics":
-                    iconsNames.focus = 'circle-slice-1';
-                    iconsNames.notFocus = 'circle-outline';
-                    screenName = Language.AnalyticsScreen.HeaderTitle;
-                    break;
-
-                case "settingsStack": 
-                    iconsNames.focus = 'cog'; 
-                    iconsNames.notFocus = 'cog-outline';
-                    screenName = Language.SettingsScreen.HeaderTitle;
-                    break;
-
-                case "notes":
-                    iconsNames.focus = 'note-edit'; 
-                    iconsNames.notFocus = 'note-edit-outline';
-                    screenName = Language.NotesScreen.HeaderTitle;
-                    break;
-
-                case "timetable":
-                    iconsNames.focus = 'timetable'; 
-                    iconsNames.notFocus = 'timetable';
-                    screenName = Language.TimetableScreen.HeaderTitle;
-                    break;
-
-                default:
-                    iconsNames.focus = "border-none-variant"
-                    iconsNames.notFocus = "border-none-variant"
-                    screenName = 'screenName'
-            }
-
-            return (
-                <View
-                    key = {`${Math.random()}`}
-                    style = {{
-                        backgroundColor: '#00000001',
-                        alignItems: 'center',
-                        //borderRadius: appStyle.borderRadius.additional
-                    }}
-                >
-                <Pressable
-                    disabled = {cisFocused}
-                    onPress={()=>{
-                        navigation.navigate(croute.name)
-                    }}
-                    style={[{
-                            paddingHorizontal: 20,
-                            height: itemSize,
-                            width: '100%', 
-                            alignItems: 'center',
-                            justifyContent: 'flex-start',
-                            flexDirection: 'row',
-                            //backgroundColor: 'red'
-                        }
-                    ]}
-                    android_ripple = {appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
-                >
-                    <MaterialCommunityIcons 
-                        name={appStyle.navigationMenu.accentsType.filling && cisFocused? iconsNames.focus : iconsNames.notFocus} 
-                        size={size} 
-                        color = {appStyle.navigationMenu.accentsType.coloring && cisFocused? Theme.icons.accents.primary : Theme.icons.neutrals.secondary}
-                    />
-        
-                    <Text
-                        style = {[
-                            {
-                                fontSize: 14,
-                                marginLeft: 10,
-                                //width: '100%',
-                                textAlign: 'center',
-                                fontVariant: ['small-caps'],
-                                fontWeight: '600',
-                                color: appStyle.navigationMenu.accentsType.coloring && cisFocused? Theme.texts.accents.primary : Theme.texts.neutrals.secondary
-                            }
-                        ]}
-                    >
-                        {screenName}
-                    </Text>        
-                </Pressable>    
-                </View>
-            )
-            })}
-        </View>
-    )
-}
 
 function LeadingToSettings(props){
     const {

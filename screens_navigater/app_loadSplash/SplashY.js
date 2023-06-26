@@ -158,22 +158,24 @@ const SplashY = (props) => {
     return (
         <Animated.View
             style = {[StyleSheet.absoluteFill,{
-                backgroundColor: 'black'
+                backgroundColor: 'black',
+                
                 //paddingTop: Constants.statusBarHeight
             },body]}
         >   
             <Animated.View
                 style = {[{
                     flex: 1,
+                    //paddingTop: 30,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    
                 },bg]}
             >
+                
             <Animated.View
                 style = {[{position: 'absolute'},]}
             >                
-                <Svg width={148} height={148} viewBox="0 0 148 148" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <Svg width={148} height={148} viewBox="0 0 148 148" fill="red" xmlns="http://www.w3.org/2000/svg">
                 <Circle cx="35.6666" cy="45.6667" r="10" fill={iconColor}/>
                 <Circle cx="112.333" cy="45.6667" r="10" fill={iconColor}/>
                 <Circle cx="74" cy="122.333" r="10" fill={iconColor}/>

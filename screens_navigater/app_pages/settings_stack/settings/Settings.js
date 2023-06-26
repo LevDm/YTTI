@@ -40,6 +40,9 @@ import Reanimated, {
     Extrapolation 
 } from 'react-native-reanimated';
 
+import * as NavigationBar from 'expo-navigation-bar';
+
+
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 //import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -321,7 +324,10 @@ const Settings = (props) => {
         //console.log('settings open', props.hideMenu)
         //props.r_setHideMenu(false)
         //bottomSheetVisible? props.r_setHideMenu(false) : null;
-    }
+    } 
+    
+    const androidNBarHeight = NavigationBar.useVisibility() === 'visible'? Dimensions.get('screen').height - (Dimensions.get('window').height + Constants.statusBarHeight) : 0
+
 
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
 
@@ -365,6 +371,7 @@ const Settings = (props) => {
         if (appStyle != jstore.appStyle) {
             setAppStyle(jstore.appStyle);
             previewAppStyleA.value = jstore.appStyle
+            
             setBottomBord(
                 jstore.appStyle.functionButton.size 
                 + 12.5 
@@ -375,6 +382,7 @@ const Settings = (props) => {
                     : 0
                 )
             );
+            
         }
 
         if (appConfig != jstore.appConfig) {
@@ -382,7 +390,6 @@ const Settings = (props) => {
         }
 
     })
-
 
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
@@ -583,10 +590,10 @@ const Settings = (props) => {
         console.log('settings to palette', 'sheet',bottomSheetIndex.value ,'menu', props.hideMenu)  
     }
 
-
+   
     const previewToolBArHeight = 46
     const previewHeight = deviceHeight/2 + 2
-    const bottomMargin = appStyle.navigationMenu.height + bottomSheetHeadHeight
+    const bottomMargin = appStyle.navigationMenu.height + bottomSheetHeadHeight + androidNBarHeight
 
     useEffect(()=>{
         bottomSheetIndex.value = 1
@@ -620,7 +627,7 @@ const Settings = (props) => {
         return bottomSheetIndex.value != 1 && appStyle.functionButton.position != 'top'
     }, [bottomSheetIndex, appStyle])
     
-    const marginFab = useDerivedValue(()=>bottomSheetIndex.value == -1? 0 : bottomSheetHeadHeight)
+    const marginFab = useDerivedValue(()=>bottomSheetIndex.value == -1? 0 : bottomSheetHeadHeight+androidNBarHeight)
     
     return (
     <>  
@@ -1576,13 +1583,31 @@ const BasisList = (props) => {
 
     const category = useAnimatedStyle(()=>{
         const duration = 300
+
+        const textSize = interpolate(
+            animSelectorLine.value, 
+            [headerHeight-statusBarHeight, 0], 
+            [20, 18],
+            //extrapolation
+            {
+                extrapolateLeft: Extrapolation.CLAMP,
+                extrapolateRight: Extrapolation.CLAMP
+            }    
+        )
+
         return {
+            //backgroundColor: 'red',
             paddingLeft: interpolate(
                 //animSelectorLine.value+(appStyle.functionButton.position == 'top'? 37 : 0),
                 animSelectorLine.value,
                 [headerHeight-statusBarHeight, 0], 
-                [0, deviceWidth/2-((Language.StructureScreen.typesSettings.appearance.type).length * 0.375 * staticStyles.AnimatedHeaderText.fontSize)]
-                //[(appStyle.functionButton.position == 'top'? 37 : 0), deviceWidth/2-((Language.StructureScreen.typesSettings.appearance.type).length * 0.375 * staticStyles.AnimatedHeaderText.fontSize)]
+                [0, deviceWidth/2-((Language.StructureScreen.typesSettings.appearance.type).length * 0.51 * textSize)],
+
+                //extrapolation
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }   
             ),
             
             opacity: interpolate(
@@ -1591,7 +1616,7 @@ const BasisList = (props) => {
                 [1, 0]  
             ),
         }
-    })
+    },[Language])
     
     const categorysText = useAnimatedStyle(()=>{
         const duration = 300

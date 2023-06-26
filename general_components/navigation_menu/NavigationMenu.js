@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Keyboard, View, Pressable, Text, Dimensions, StyleSheet } from "react-native";
+import Constants from "expo-constants";
 
 import Animated from "react-native-reanimated";
 import {
@@ -12,7 +13,7 @@ import {
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
-
+import * as NavigationBar from 'expo-navigation-bar';
 
 import Svg, {Path} from "react-native-svg";
 
@@ -22,8 +23,10 @@ import languagesAppList from "../../app_values/Languages";
 import Classical from "./Classical";
 import Hidden from "./Hidden";
 
-const deviceHeight = Dimensions.get('screen').height
-const deviceWidth = Dimensions.get('window').width
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const screenHeight = Dimensions.get('screen').height
+
+const statusBarHeight = Constants.statusBarHeight+1
 
 const NavigationMenu = ({ 
     navigation,
@@ -53,8 +56,8 @@ const NavigationMenu = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
-    
-
+    const visibility = NavigationBar.useVisibility() === 'visible'
+    console.log('ANDROID BAR',visibility)
 
     const styleMenu = ()=> {
         const margin = 10
@@ -67,7 +70,7 @@ const NavigationMenu = ({
 
         if(appStyle.navigationMenu.type == 'classical'){
             return {
-                top: deviceHeight -appStyle.navigationMenu.height
+                top: (visibility?  (deviceHeight + statusBarHeight) : screenHeight) -appStyle.navigationMenu.height
             }
         }
         if(appStyle.navigationMenu.type == 'hidden'){

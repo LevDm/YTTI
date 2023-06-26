@@ -508,6 +508,8 @@ const ripple = (color) => ({
 })
 //====================================================================================================================================
 
+import * as NavigationBar from 'expo-navigation-bar'; 
+
 const BobberButton = (props) => {
     const {
         reaValueBobberButtonVisible,
@@ -523,6 +525,9 @@ const BobberButton = (props) => {
         ThemeColorsAppIndex,
         ThemeSchema
     } = props
+
+    const androidNBarHeight = NavigationBar.useVisibility() === 'visible'? Dimensions.get('screen').height - (Dimensions.get('window').height + Constants.statusBarHeight) : 0
+
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     
@@ -542,7 +547,7 @@ const BobberButton = (props) => {
             right: (12)
         })
         const bottom = interpolate(appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
-        const addBottom = (appStyle.navigationMenu.type == 'hidden' && appStyle.navigationMenu.position.horizontal == 'center' && appStyle.functionButton.position == 'center')? (20+bottom) : 0
+        const addBottom = androidNBarHeight + (appStyle.navigationMenu.type == 'hidden' && appStyle.navigationMenu.position.horizontal == 'center' && appStyle.functionButton.position == 'center')? (20+bottom) : 0
         return {
             height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
             width:  withTiming(appStyle.functionButton.size, {duration: duration}),
@@ -1219,7 +1224,8 @@ const ListItems = (props) => {
                 
                 <Text 
                     style = {[{
-                        flex: 7,
+                        flex: 6,
+                        marginLeft: 8,
                         textAlign: 'center',
                         fontSize: 18,
                         fontWeight: '500',

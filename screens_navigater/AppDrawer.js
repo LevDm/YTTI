@@ -237,6 +237,7 @@ function CustomDrawerContent(props) {
             style={{
                 flex: 1,
                 //width: 252,{...props} 
+                paddingBottom: 50,
                 backgroundColor: Theme.basics.neutrals.primary,
             }}
         >
@@ -267,7 +268,7 @@ function CustomDrawerContent(props) {
 
             <View
                 style={{
-                    height: 480,
+                    height: 430,
                     width: '100%',
                     //backgroundColor: '#66666630'
                 }}

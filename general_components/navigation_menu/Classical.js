@@ -39,7 +39,7 @@ function Classical(props){
         ThemeSchema,
         LanguageAppIndex,
     } = props
-
+    //console.log('route', route)
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
@@ -173,7 +173,7 @@ function Classical(props){
 
     return (
         <Reanimated.View
-            key = {`${Math.random()}`}
+            key = {`menu_${route.key}`}
             style = {
                 [{
                     height: appStyle.navigationMenu.height,
@@ -242,7 +242,7 @@ function Classical(props){
 
                 return (
                     <MenuItem
-                        keyID = {`${routeName}_${index}`}
+                        keyID = {`item_${routeName}_${index}`}
                         accentState = {isFocused}
                         onPress = {navigate}
                         icons = {iconFocus}

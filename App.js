@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { AppState, StyleSheet, SafeAreaView, View, Appearance } from 'react-native';
+import { AppState, StyleSheet, SafeAreaView, View, Appearance, Dimensions } from 'react-native';
+import Constants from "expo-constants";
 
 //import Tabs from './screens/Navigater';
 
@@ -10,6 +11,7 @@ import { AppState, StyleSheet, SafeAreaView, View, Appearance } from 'react-nati
 
 //import AppLoading from 'expo-app-loading';
 import * as SplashScreen from 'expo-splash-screen';
+import * as NavigationBar from 'expo-navigation-bar';
 //import { StatusBar } from 'expo-status-bar';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -31,11 +33,23 @@ import 'react-native-gesture-handler';
 
 //import AppStack from './screens_navigater/AppStack'
 
-import AppDrawer from "./screens_navigater/AppDrawer"
+import AppDrawer from "./screens_navigater/AppDrawer";
+
+const navigationBarHeight = Dimensions.get('screen').height - (Dimensions.get('window').height + Constants.statusBarHeight);
+
+console.log('NAV BAR HEGHT ', navigationBarHeight)
+
+//NavigationBar.setPositionAsync('relative');
+//NavigationBar.setBackgroundColorAsync("grey");
+
+
+
 const start = new Date().getTime()
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+
+  
   const [loadStatusTasks, setLoadStatusTasks] = useState(false);
   const [loadStatusStyle, setLoadStatusStyle] = useState(false);
   const [loadStatusConfig, setLoadStatusConfig] = useState(false);
@@ -47,6 +61,9 @@ export default function App() {
   const [splashStart, setSplashStart] = useState(false);
   
   const [appIsReady, setAppIsReady] = useState(false);
+
+  const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(appStyle?.palette.theme));//LanguagesAppList[LanguageAppIndex]
+
 
   store.subscribe(() => {
     const jstore = store.getState();
@@ -62,6 +79,9 @@ export default function App() {
         //console.log(jstore.appStyle);
         setAppStyle(jstore.appStyle);
         setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme)
+        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
+          setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
+        }
       }
     }
 
@@ -72,24 +92,31 @@ export default function App() {
     if (appStyle != jstore.appStyle) {
       setAppStyle(jstore.appStyle);
       setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme)
+      if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
+        setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
+      }
     }
+
+
+    
   })
 
   const [ThemeSchema, setThemeSchema] = useState(appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : appStyle.palette.scheme)
+  const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
  
   const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
-    useEffect(()=>{
-        if(listenerColorSheme){
-            if(appStyle.palette.scheme == 'auto' && listenerColorSheme != ThemeSchema){
-                console.log('app accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
-                setThemeSchema(listenerColorSheme)
-            }
-        }
-    },[listenerColorSheme])
-    
-    Appearance.addChangeListener(({colorScheme})=>{
-        setListinerColorScheme(colorScheme)
-    })
+  useEffect(()=>{
+      if(listenerColorSheme){
+          if(appStyle.palette.scheme == 'auto' && listenerColorSheme != ThemeSchema){
+              console.log('app accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
+              setThemeSchema(listenerColorSheme)
+          }
+      }
+  },[listenerColorSheme])
+  
+  Appearance.addChangeListener(({colorScheme})=>{
+      setListinerColorScheme(colorScheme)
+  })
 
   const finish = () => {
     console.log('>WAIT_LOAD')
@@ -120,7 +147,7 @@ export default function App() {
   }, []);
 
   const styleStatusBar = appStyle.palette.statusBar//(themesColorsAppList[themesApp.indexOf(appStyle.palette.theme)][ThemeSchema]).statusBar
-  //console.log('styleStatusBar', styleStatusBar)
+  console.log('styleStatusBar', styleStatusBar)
   
   const [splashVisible, setSplashVisible] = useState(true)
 
@@ -183,10 +210,20 @@ export default function App() {
     }
   }, [appIsReady, appStateVisible])
 
+
+  useEffect(()=>{
+    //NavigationBar.addVisibilityListener(({ visibility }) => {
+      console.log('>-------------------------------ANDROID BAR', Theme?.basics.neutrals.tertiary, Theme?.statusBar)
+      NavigationBar.setBackgroundColorAsync(Theme?.basics.neutrals.tertiary);
+      NavigationBar.setButtonStyleAsync(Theme?.statusBar);
+    //});
+  }, [ThemeColorsAppIndex, ThemeSchema, ])
   
-  if (!appIsReady) {
-    return null;
-  }
+  
+  
+  
+  
+  if(!appIsReady){return null}
   return (
     <Provider store = {store}>
     <View style = {staticStyles.AppContainer} onLayout={onLayoutRootView}>
@@ -207,6 +244,6 @@ export default function App() {
 const staticStyles = StyleSheet.create({
   AppContainer: {
     flex: 1,
-    
+    //marginBottom: navigationBarHeight
   }
 })

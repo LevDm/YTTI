@@ -29,8 +29,8 @@ import themesColorsAppList, { themesApp } from "../../../../../app_values/Themes
 
 const commonStaticStyles = StyleSheet.create({
     text: {
-        marginLeft: 10,
-        fontSize: 16, 
+        //marginLeft: 10,
+        fontSize: 17, 
         //fontVariant: ['small-caps'], 
         fontWeight: '400', 
         letterSpacing: 0.5
@@ -41,7 +41,7 @@ const commonStaticStyles = StyleSheet.create({
         fontVariant: ['small-caps']
     },
     adaptiveText: {
-        fontSize: 16, 
+        fontSize: 17, 
         //fontVariant: ['small-caps'], 
         fontWeight: '400', 
         letterSpacing: 0.5,
@@ -51,7 +51,7 @@ const commonStaticStyles = StyleSheet.create({
     listText: {
         //paddingLeft: 10,
         marginLeft: 5,
-        fontSize: 14, 
+        fontSize: 16, 
         //fontVariant: ['small-caps'], 
         fontWeight: '400', 
         letterSpacing: 0.5
@@ -59,11 +59,11 @@ const commonStaticStyles = StyleSheet.create({
     signaturesText: {
         //fontVariant: ['small-caps'],
         fontWeight: '400',
-        fontSize: 12,
+        fontSize: 13,
     },
     switchText: {
         textAlign: 'justify', 
-        width: '83%',
+        width: '70%',
     },
     verticalLine: {
         height: 45,
@@ -111,8 +111,8 @@ export const SwitchField = ({
     const categoryText = useAnimatedProps(()=>{
         //console.log(Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type)
         return {
-            value: `${textTitle} ${textStates[switchState.value]}`,
-            text: `${textTitle} ${textStates[switchState.value]}`,
+            value: `${textTitle}: ${textStates[switchState.value]}`,
+            text:  `${textTitle}: ${textStates[switchState.value]}`,
         }
         //,[Language, LanguageAppIndex]
     })
@@ -123,8 +123,12 @@ export const SwitchField = ({
             style = {[{
                 backgroundColor: "transparent", 
                 //marginHorizontal: 5,
-                marginLeft: 12,
-                marginRight: 15,
+                //width: '100%',
+                marginVertical: 4,
+                paddingHorizontal: 8,
+                justifyContent: 'flex-start',
+                //marginLeft: 8,
+                //marginRight: 15,
                 paddingVertical: 2.5,
                 borderRadius: appStyle.borderRadius.additional,
             }, style]}
@@ -133,11 +137,13 @@ export const SwitchField = ({
             size={22}
             designType = {appStyle.selectors.design.switch}
             style = {[{
-                justifyContent: 'space-between',
+                justifyContent: 'flex-end',
+                width: '100%',
+                //backgroundColor: 'red',
                 flexDirection: 'row-reverse',           
-                alignItems: 'center',
-                alignContent: 'center',
-                paddingHorizontal: 5,
+                //alignItems: 'center',
+                //alignContent: 'center',
+                //paddingHorizontal: 5,
             }]}
             separator = {true}
             separatorStyle = {{
@@ -146,17 +152,19 @@ export const SwitchField = ({
                 width: 1,
                 borderRadius: 0.5,
                 marginLeft: 4,
-                marginRight: 10
+                marginRight: 12
             }}
             Item = {
                 <Reanimated_TextInput     
                     editable = {false}
                     multiline={true}
-                    style = {[
-                        commonStaticStyles.text, 
-                        commonStaticStyles.switchText, {
+                    style = {[                  
+                        commonStaticStyles.text, //commonStaticStyles.switchText,
+                        {
+                            width: '74%',
+                            minHeight: 45,
                             marginLeft: 0,
-                            paddingLeft: 15,
+                            //paddingLeft: 3,
                             //backgroundColor: 'red',
                             color: Theme.texts.neutrals.secondary
                         }]}
@@ -246,19 +254,23 @@ export const BoxsField = ({
     return (
         <View
             style={{
-                marginTop: 5,
+                //width: '100%',
+                marginVertical: 4,
+                paddingHorizontal: 8,
+                justifyContent: 'flex-start'
             }}
             props={props}
 
         >
-            {title && <Text style = {[commonStaticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10}]}>
+            {title && <Text style = {[commonStaticStyles.text, {color: Theme.texts.neutrals.secondary}]}>
                 {title}
             </Text>}
             <View 
                 style = {[{
                     //marginTop: 2,
-                    marginLeft: 30,
-                    width: '85%'
+                    marginLeft: 8,
+                    //width: '100%',
+                    //marginHorizontal: 8,
                 }]}
             >
                 {groupItems.map((item, index)=>(
@@ -346,39 +358,54 @@ export const SliderField = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     return (
         <View
-            
+            //onResponderGrant={() => true}
+            //onMoveShouldSetResponder={() => true}
             //props = {props}
+            {...viewProps}
             style = {[{
                 //backgroundColor: 'red',
-                height: 60,
+                marginVertical: 4,
+                paddingHorizontal: 8,
+                //justifyContent: 'flex-start'
+                minHeight: 60,
             },]}
-            {...viewProps}
+            
+            onStartShouldSetResponder={()=>true}
+            onMoveShouldSetResponde={()=>true}
         >
-            <Text style = {[commonStaticStyles.text, {marginLeft: 20, color: Theme.texts.neutrals.secondary, paddingRight: 12}]}>
+            <Text style = {[commonStaticStyles.text, { color: Theme.texts.neutrals.secondary, }]}>
                 {title}
             </Text>
             <View
                 style = {{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    flex: 1,
+                    //backgroundColor: 'red',
+                    //flexDirection: 'row',
+                    //justifyContent: 'space-between',
+                    width: '100%',
                     height: 40,
                     paddingBottom: 15,
-                    marginHorizontal: 20,
-                    marginRight: 15,
+
+                    //marginHorizontal: 20,
+                    //marginRight: 15,
                 }}
             >
                 <Text
                     style = {[commonStaticStyles.signaturesText, {
                         position: 'absolute',
                         left: 10,
-                        bottom: 5,
+                        bottom: 3,
                         color: Theme.texts.neutrals.tertiary
                     }]}
                 >
                     {signaturesText.left}
                 </Text>
-                <R_Slider              
+                <R_Slider
+                
+                    onResponderGrant={() => true}
+                    onResponderTerminationRequest={()=>false}
+                    onStartShouldSetResponder={()=>true}
+                    onMoveShouldSetResponde={()=>true}
+
                     style = {{
                         flex: 1,
                     }}
@@ -401,7 +428,7 @@ export const SliderField = ({
                     style = {[commonStaticStyles.signaturesText, {
                         position: 'absolute',
                         right: 10,
-                        bottom: 5,
+                        bottom: 3,
                         color: Theme.texts.neutrals.tertiary
                     }]}
                 >

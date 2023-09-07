@@ -4,7 +4,7 @@ import { StyleSheet, Text, Pressable, ScrollView,FlatList, SectionList, View,But
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import Animated from "react-native-reanimated";
+import Animated, { useAnimatedReaction } from "react-native-reanimated";
 import {
     useSharedValue,
     useAnimatedProps,
@@ -18,6 +18,8 @@ import {
 import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 import { 
     BasePressable,
     BaseBox,
@@ -30,56 +32,44 @@ import { borderRadiusValues } from "../../../../../../app_values/AppDefault";
 
 import commonStaticStyles, { SwitchField, SliderField } from "../CommonElements";
 
-export default BorderRadiusRedactor = ({
-    appStyle,
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
-    //previewAppStyle,
-    //setPreviewAppStyle,
+export default BorderRadiusRedactor = (props) => {
+    const {
+        uiStyle,
+        uiTheme,
 
-    previewAppStyleA,
+        aStyle,
+        aTheme, 
+        aPalette, 
+        aScheme,
+       
+        appStyle,
+
+        tagStyle,
     
-    //getNewAppStyleObject,
-
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex   
-}) => {
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex   
+    } = props
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.fillets
 
     const settingBorderRadius = (type, value) =>{
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        if(type == "basic" ){
-            //isComplete? setSliderValueBasic(value) : null
-            newAppStyle.borderRadius.basic = Number(value);
-        }
-        if(type == "additional"){
-            //isComplete? setSliderValueAdditional(value) : null
-            newAppStyle.borderRadius.additional = Number(value);
-        }
-        newAppStyle.presetUsed = 'YTTI-custom';
-        
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
-        //setPreviewAppStyle(newAppStyle)
+        uiStyle.borderRadius[type].value = Number(value);
+        tagStyle('borderRadius.'+type)
     }
-
-    const basic = useDerivedValue(()=>previewAppStyleA.value.borderRadius.basic)
-    const additional = useDerivedValue(()=>previewAppStyleA.value.borderRadius.additional)
 
     return (
         <View
             style = {{
-                //marginBottom: 30,
-                paddingBottom: 12
+               
             }}
         >
             {['basic','additional'].map((item, index)=>(
             <SliderField
                 key = {String('slider'+item)}
-                //style = {{marginTop: 15}}
-
                 title = {Language.type[item]}
 
                 signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
@@ -87,7 +77,7 @@ export default BorderRadiusRedactor = ({
                 maximumValue={borderRadiusValues.max}
                 step = {borderRadiusValues.step}
 
-                aValue = {item === 'basic'? basic : additional}
+                aValue = {uiStyle.borderRadius[item]}
 
                 onValueChange = {(value)=>{settingBorderRadius(item, value)}}
 

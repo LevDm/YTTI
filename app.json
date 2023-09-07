@@ -12,20 +12,20 @@
         "expo-navigation-bar",
         {
           "position":  "absolute",
-          "backgroundColor": "#000000",
+          "backgroundColor": "#111111",
           "visibility": "hidden",
           "behavior": "inset-swipe"
         }
       ]
     ],
     "androidNavigationBar": {
-      "backgroundColor": "#000000"
+      "backgroundColor": "#111111"
     },
     "extra": {
       "WEATHER_API_KEY": "e2b94f1a4a4231151132fbd1a15e1633",
       "expo-navigation-bar": {
         "position": "absolute",
-        "backgroundColor": "#000000",
+        "backgroundColor": "#111111",
         "visibility": "hidden",
         "behavior": "inset-swipe"
       },
@@ -47,13 +47,13 @@
       "icon": "./assets/iconY.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/foreground_iconY.png",
-        "backgroundColor": "#000000",
+        "backgroundColor": "#111111",
         "backgroundImage": "./assets/background_iconY.png"
       },
       "splash": {
         "resizeMode": "native",
         "image": "./assets/splashY.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#111111"
       },
       "package": "com.F1F.YTTI",
       "jsEngine": "hermes"

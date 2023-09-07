@@ -2,13 +2,14 @@ import React, { useState, useEffect, useRef } from "react";
 import { Keyboard, View, Pressable, Text, Dimensions, StyleSheet } from "react-native";
 import Constants from "expo-constants";
 
-import Animated from "react-native-reanimated";
-import {
+import Reanimated, {
     useSharedValue,
     useAnimatedProps,
     useAnimatedStyle,
     interpolate,
-    withTiming
+    withTiming,
+    useAnimatedReaction,
+    runOnJS
 } from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
@@ -26,22 +27,28 @@ import Hidden from "./Hidden";
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 const screenHeight = Dimensions.get('screen').height
 
-const statusBarHeight = Constants.statusBarHeight+1
+const statusBarHeight = Constants.statusBarHeight
 
-const NavigationMenu = ({ 
-    navigation,
-    state, 
-    route,
-    keyID,
-    hideMenu,
+const NavigationMenu = (props) => {
+    const { 
+        navigation,
+        state, 
+        route,
+        keyID,
+        hideMenu,
 
-    appStyle,
-    appConfig,
+        uiStyle,
+        uiTheme,
+        uiCompositions,
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex,
-}) => {
+        appStyle,
+        appConfig,
+
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex,
+    } = props
+
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     useEffect(() => {
         const showSubscription = Keyboard.addListener("keyboardDidShow", () => {setKeyboardVisible(true);});
@@ -57,38 +64,57 @@ const NavigationMenu = ({
     const Language = languagesAppList[LanguageAppIndex]
 
     const visibility = NavigationBar.useVisibility() === 'visible'
-    console.log('ANDROID BAR',visibility)
+    //console.log('ANDROID BAR',visibility)
 
-    const styleMenu = ()=> {
-        const margin = 10
-        let h = 40
-        let size = (state.routes).length  * (h+ 2*margin)
-        if(appStyle.navigationMenu.position.horizontal != 'center'){
-            size = 40
-            h = (state.routes).length  * (size+ 2*margin)
+    const {
+        navigationMenu: {
+            type,
+            position: {
+                horizontal,
+                vertical
+            },
+            height
         }
+    } = uiStyle
 
-        if(appStyle.navigationMenu.type == 'classical'){
+    const [currentType, setCurrentType] = useState(type.value)
+
+    useAnimatedReaction(()=>type.value, (newValue, oldValue)=>{
+        runOnJS(setCurrentType)(newValue)
+    })
+
+    const areaMenu = useAnimatedStyle(()=>{
+        if(type.value == 'classical'){
             return {
-                top: (visibility?  (deviceHeight + statusBarHeight) : screenHeight) -appStyle.navigationMenu.height
+                bottom: 0// (visibility?  (deviceHeight + statusBarHeight) : screenHeight) -height.value
             }
         }
-        if(appStyle.navigationMenu.type == 'hidden'){
-            const marginBord = 7
-            let left = appStyle.navigationMenu.position.horizontal == 'left'? marginBord : deviceWidth - size -marginBord
+        return {}
+        if(type.value  == 'hidden'){
             
-            let top = deviceHeight - 10 - h - (deviceHeight/2) - appStyle.navigationMenu.position.vertical
+            const margin = 10
+            let h = 40
+            let size = (state.routes).length  * (h+ 2*margin)
+            if(horizontal.value != 'center'){
+                size = 40
+                h = (state.routes).length  * (size+ 2*margin)
+            }
+
+            const marginBord = 7
+            let left = horizontal.value == 'left'? marginBord : deviceWidth - size -marginBord
+            
+            let top = deviceHeight - 10 - h - (deviceHeight/2) - vertical.value 
             if(appStyle.navigationMenu.position.horizontal == 'center'){
                 left = deviceWidth/2 - size/2
-                let bottom = interpolate(appStyle.navigationMenu.position.vertical, [-150, 150] , [5, 35])
+                let bottom = interpolate(vertical.value , [-150, 150] , [5, 35])
                 top = deviceHeight - bottom - h
             }
             let align = 'center'
             let just = 'flex-end'
-            if(appStyle.navigationMenu.position.horizontal == 'right'){
+            if(horizontal.value  == 'right'){
                 align = 'flex-end'
                 just = 'center'
-            } else if (appStyle.navigationMenu.position.horizontal == 'left'){
+            } else if (horizontal.value  == 'left'){
                 align = 'flex-start'
                 just = 'center'
             }
@@ -101,34 +127,24 @@ const NavigationMenu = ({
                 alignItems: align
             }       
         }
-    }
+    })
 
-    if(!keyboardVisible && !hideMenu){
+
+
+    //if(!keyboardVisible && !hideMenu){} else {return null}
     return (
-        <View
-            key={keyID}
-            style = {[
-                {
-                    position: 'absolute',
-                },
-                styleMenu()
-            ]}
-        >
-            {appStyle.navigationMenu.type == 'classical' && 
-            <Classical
-                state = {state}
-                route = {route}  
-                navigation = {navigation}
-                
-                appStyle={appStyle}
-                appConfig={appConfig}
+        <Reanimated.View
+            //key={keyID}
+            style = {[areaMenu, {
+                position: 'absolute',
 
-                ThemeColorsAppIndex={ThemeColorsAppIndex}
-                ThemeSchema={ThemeSchema}
-                LanguageAppIndex={LanguageAppIndex}
-            />
-            }
-            {appStyle.navigationMenu.type == 'hidden' && 
+            }]}
+        >
+            {currentType == 'classical' && <Classical {...props}/>}
+
+            {currentType == 'hidden' &&
+            <Text style={{backgroundColor: 'red'}}>THIS MENU TYPE NOT READY</Text>
+            /* 
             <Hidden
                 state = {state}
                 route = {route}  
@@ -140,10 +156,15 @@ const NavigationMenu = ({
                 ThemeColorsAppIndex={ThemeColorsAppIndex}
                 ThemeSchema={ThemeSchema}
                 LanguageAppIndex={LanguageAppIndex}
-            />
+            />*/ 
             }
-        </View>
+        </Reanimated.View>
     )
-    } else {return null}
+    
 }
 export default NavigationMenu;
+
+/*
+
+
+*/

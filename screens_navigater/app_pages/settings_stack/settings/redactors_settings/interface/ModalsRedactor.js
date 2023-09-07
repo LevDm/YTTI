@@ -31,49 +31,53 @@ import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
 import { modalsHorizontalProximity } from "../../../../../../app_values/AppDefault";
 
-export default ModalsRedactor = ({
-    appStyle,
- 
-    //setPreviewAppStyle,
-    //getNewAppStyleObject,
+export default ModalsRedactor = (props) => {
+    const {
+        uiStyle,
+        uiTheme,
 
-    previewAppStyleA,
+        showAllSettings,
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex   
-}) => {
+        tagStyle,
+
+        aStyle,
+        aTheme, 
+        aPalette, 
+        aScheme,
+
+        appStyle,
+        appConfig,
+        redactorsSet,
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex
+    } = props
+
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.modals
 
     const params = Object.keys(appStyle.modals.highlightMethods) // ['outline', 'dimOutDark', 'gradient']
     //const paramsGroup =  Object.values(appStyle.modals.highlightMethods)
-    const toIndexs = (group) => {
-        'worklet';
-        return (group.map((item, index)=> item? index : -1).filter(item => item >= 0));
-    }
+    
 
     const items = [Language.dimOutDark, Language.gradient, Language.outline, ]
 
-    const horizProximity = useDerivedValue(()=>previewAppStyleA.value.modals.fullWidth)
-    const highlight = useDerivedValue(()=>toIndexs(Object.values(previewAppStyleA.value.modals.highlightMethods)))
+
+    const highlight = useDerivedValue(()=>{
+        const toIndexs = (group) => group.map((item, index)=> item.value? index : -1).filter(item => item >= 0)
+        return toIndexs(Object.values(uiStyle.modals.highlightMethods))
+    })
     
     const changeHorizontalProximity = (value) => { 
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.modals.fullWidth = value;
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        uiStyle.modals.fullWidth.value = value;
+        tagStyle('modals.fullWidth')
     }
 
     const settingMethods = (indexs) => {   
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         for (let i = 0; i < params.length; i++){
-            newAppStyle.modals.highlightMethods[params[i]] = indexs.includes(i)
-        }            
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+            uiStyle.modals.highlightMethods[params[i]].value = indexs.includes(i)
+            tagStyle('modals.highlightMethods.'+params[i])
+        }
     }
 
     return (<View style={{paddingBottom: 12}}>
@@ -81,7 +85,7 @@ export default ModalsRedactor = ({
             textTitle = {Language.horizontalProximity}
             textStates = {Language.horizontalProximityState}
             //text = {`${Language[`horizontalProximity`]} ${Language[`horizontalProximityState`][`${horizontalProximity}`]}`}
-            aValue={horizProximity}
+            aValue={uiStyle.modals.fullWidth}
             onChange={changeHorizontalProximity}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
@@ -96,7 +100,7 @@ export default ModalsRedactor = ({
             aValue = {highlight}
             groupSize = {params.length}
             groupItems = {items}         
-            onPress = {(activeIndexs)=>{settingMethods(activeIndexs)}}          
+            onPress = {settingMethods}          
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}

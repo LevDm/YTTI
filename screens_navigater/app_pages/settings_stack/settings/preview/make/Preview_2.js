@@ -14,6 +14,7 @@ import {
     interpolateColor,
     interpolateNode,
     Extrapolate,
+    convertToRGBA,
     withTiming
 } from 'react-native-reanimated';
 
@@ -63,40 +64,30 @@ const SkiaLinearGradient = (props) => {
     const skiaFirstColor = useValue([noneColor, noneColor]);
     const skiaBorderRadius = useValue(0);
     
-    useSharedValueEffect(() => {
-        skiaFirstColor.current = previewAppStyleA.value.modals.highlightMethods.gradient? [previewAppPalette.value.basics.accents.quaternary, previewAppPalette.value.basics.neutrals.quaternary] : [noneColor, noneColor]
-
-    }, [previewAppStyleA, previewAppPalette]); // you can pass other shared values as extra parameters
-    
-
-    const generalRect = useComputedValue(() => {
-        //console.log('s?', size.current)
-        return rrect(rect(
-          0, 
-          0, 
-          deviceWidth-(previewAppStyleA.value.modals.fullWidth? 0 : horizontalProximity), 
-          100), 
-          previewAppStyleA.value.borderRadius.additional, 
-          previewAppStyleA.value.borderRadius.additional
-        )
-    }, [previewAppStyleA]);
-
-    const colors = useComputedValue(() => {
-        return skiaFirstColor.current
-    }, [skiaFirstColor])
-
     //console.log()
+    const c = useDerivedValue(()=>convertToRGBA(previewAppStyleA.value.modals.highlightMethods.gradient? [previewAppPalette.value.basics.accents.quaternary, previewAppPalette.value.basics.neutrals.quaternary] : [noneColor, noneColor]) )
+
+
+    const w = useDerivedValue(()=>deviceWidth-(previewAppStyleA.value.modals.fullWidth? 0 : horizontalProximity))
+    const r = useDerivedValue(()=>previewAppStyleA.value.borderRadius.additional)
 
     return (
         <Canvas 
             style={{flex: 1, }}
         >
-        <RoundedRect rect={generalRect}>
+        <RoundedRect
+            x={0}
+            y={0}
+            width={w}
+            height={100}
+            r={r}
+            //color={c}
+        >
           <LinearGradient
             start={vec(0, 0)}
             end={vec(0, 100)}
             //positions={[0,1]}
-            colors={colors}
+            colors={c}
           />
         </RoundedRect>
       </Canvas>
@@ -108,14 +99,14 @@ export default Preview = (props) => {
         previewAppStyleA,
         previewAppPalette,
         //ThemeSchema,
-        frameColor,
-        index,
-        animatedValue 
+        //frameColor,
+        //index,
+        aScale: animatedValue 
     } = props
     //console.log('preview',appStyle, previewAppStyle)
     //console.log('preview props',props.appStyle, props.previewAppStyle)
     const animatedState = useDerivedValue(()=>{
-        return animatedValue.value[index]
+        return animatedValue.value//[index]
     }, [animatedValue])
     //const animatedState = useSharedValue(false)
     const duration = 400
@@ -388,17 +379,18 @@ export default Preview = (props) => {
     return (
         <Phone
             //key = {props.key}
-            index = {index}
-            animatedValue = {animatedValue}
-            previewAppStyleA={previewAppStyleA}
-            previewAppPalette={previewAppPalette}
-            frameColor = {frameColor}
+            //index = {index}
+            //animatedValue = {animatedValue}
+            //previewAppStyleA={previewAppStyleA}
+            //previewAppPalette={previewAppPalette}
+            //frameColor = {frameColor}
             //ThemeSchema={ThemeSchema}
             //onPress={()=>{
             //    onPress != undefined? onPress() : NaN
 
             //    newAnimatedState(!animatedState.value)
             //}}
+            {...props}
         >
             <Reanimated.View
                 key = {'modalGroud'}

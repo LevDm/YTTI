@@ -963,7 +963,7 @@ const Palette = (props) => {
           />
       </View>
     </View>}
-    {true && 
+    {false && 
     <StyleChangePreview
       previewAppStyleA = {previewAppStyleA}
       previewAppPalette = {previewAppPalette}

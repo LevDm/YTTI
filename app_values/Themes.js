@@ -1,7 +1,7 @@
 const greenFun_l = {
     "theme":"oliveBook",
     "scheme":"light",
-    "statusBar":"dark",
+    "statusBar":"light",
     "basics":{
         "accents":{"primary":"#50c878","secondary":"#77d47d","tertiary":"#9ee0a2","quaternary":"#c4edc7"},
         "neutrals":{"primary":"#ebf4e9","secondary":"#ffffff","tertiary":"#fafafa","quaternary":"#ffffff"}
@@ -25,7 +25,7 @@ const greenFun_l = {
 const greenFun_d = {
     "theme":"OleveBook",
     "scheme":"dark",
-    "statusBar":"lightt",
+    "statusBar":"light",
     "basics":{
         "accents":{"primary":"#50c878","secondary":"#37ae3f","tertiary":"#2b8731","quaternary":"#1e6123"},
         "neutrals":{"primary":"#0a0a0a","secondary":"#191919","tertiary":"#2c2c2f","quaternary":"#191919"}
@@ -50,7 +50,7 @@ const greenFun_d = {
 const morpPinkBlue_l = {
     "theme":"morpPinkBlue",
     "scheme":"light",
-    "statusBar":"dark",
+    "statusBar":"light",
     "basics":{
         "accents":{"primary":"#e896ff","secondary":"#cdb1f2","tertiary":"#93c7f2","quaternary":"#bfd8f9"},
         "neutrals":{"primary":"#EEF2FB","secondary":"#F3F3FD","tertiary":"#F3F3FD","quaternary":"#EEF2FB"}
@@ -98,7 +98,7 @@ const morpPinkBlue_d = {
 const vk_l = {
     "theme":"vk",
     "scheme":"light",
-    "statusBar":"dark",
+    "statusBar":"light",
     "basics":{
         "accents":{"primary":"#0077ff","secondary":"#3392ff","tertiary":"#8ec3ff","quaternary":"#9bc9ff"},
         "neutrals":{"primary":"#edecf1","secondary":"#ffffff","tertiary":"#fafafa", "quaternary":"#ffffff"}
@@ -241,7 +241,7 @@ const instagram_d = {
 const whatsapp_l = {
     "theme":"whatsapp",
     "scheme":"light",
-    "statusBar":"dark",
+    "statusBar":"light",
     "basics":{
         "accents":{"primary":"#01816A","secondary":"#01A985","tertiary":"#00bc9c","quaternary":"#effffc"},
         "neutrals":{"primary":"#F7F8FA","secondary":"#ffffff","tertiary":"#ffffff","quaternary":"#ffffff"}
@@ -289,7 +289,7 @@ const whatsapp_d = {
 const telegram_l = {
     "theme":"telegram",
     "scheme":"light",
-    "statusBar":"dark",
+    "statusBar":"light",
     "basics":{
         "accents":{"primary":"#517DA2","secondary":"#50A3E7","tertiary":"#599ED5","quaternary":"#D6ECFF"},
         "neutrals":{"primary":"#F3F3F3","secondary":"#ffffff","tertiary":"#ffffff","quaternary":"#ffffff"}
@@ -337,7 +337,7 @@ const telegram_d = {
 const oliveBook_l = {
     "theme":"oliveBook",
     "scheme":"light",
-    "statusBar":"dark",
+    "statusBar":"light",
     "basics":{
         "accents": {"primary":'#6b8e23',"secondary":"#85a04a","tertiary":"#9eb36d","quaternary":"#b6c590"},
         "neutrals":{"primary":"#E7DED5","secondary":"#E7DED5","tertiary":"#E4DED2","quaternary":"#ECE2D9"}

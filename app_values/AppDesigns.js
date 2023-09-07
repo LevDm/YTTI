@@ -2,7 +2,7 @@
 export const instagram = {
     "borderRadius": {"additional": 12, "basic": 0}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "none"}, 
-    "functionButton": {"invertColors": false, "outline": true, "position": "right", "size": 64, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
+    "functionButton": {"invertColors": false, "outline": true, "position": "bottom", "size": 64, "bottomPosition": 1, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": true, "invertColorsHeader": false, "proximity": 0.25, "textSize": 14}, 
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -20,7 +20,7 @@ export const instagram = {
 export const vk = {
     "borderRadius": {"additional": 35, "basic": 22}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "none"}, 
-    "functionButton": {"invertColors": true, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': true}}, 
+    "functionButton": {"invertColors": true, "outline": false, "position": "bottom", "size": 70, "bottomPosition": 1, 'topSignatures': true, 'ignoredShadows': {'disable': true}}, 
     "lists": {"fullWidth": true, "invertColorsHeader": true, "proximity": 2, "textSize": 14}, 
     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -38,7 +38,7 @@ export const vk = {
 export const tincoff = {
     "borderRadius": {"additional": 26, "basic": 28}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "full"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 62, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "bottom", "size": 62, "bottomPosition": 1, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 6.5, "textSize": 14}, 
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}},
     "navigationMenu": {
@@ -56,7 +56,7 @@ export const tincoff = {
 export const whatsapp = {
     "borderRadius": {"additional": 29, "basic": 0}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "material"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 68, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "bottom", "size": 68, "bottomPosition": 1, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": true, "invertColorsHeader": false, "proximity": 0.25, "textSize": 14}, 
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -74,7 +74,7 @@ export const whatsapp = {
 export const telegram = {
     "borderRadius": {"additional": 31, "basic": 0}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "none"},
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': true}}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "bottom", "size": 70, "bottomPosition": 1, 'topSignatures': true, 'ignoredShadows': {'disable': true}}, 
     "lists": {"fullWidth": true, "invertColorsHeader": false, "proximity": 0.25, "textSize": 14}, 
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -92,7 +92,7 @@ export const telegram = {
 export const pbNeomorphism = {
     "borderRadius": {"additional": 9, "basic": 18}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "neomorphism"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "bottom", "size": 70, "bottomPosition": 1, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 10, "textSize": 14}, 
     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": false, "gradient": true, "outline": false}}, 
     "navigationMenu": {
@@ -110,7 +110,7 @@ export const pbNeomorphism = {
 export const oliveBook = {
     "borderRadius": {"additional": 29, "basic": 16}, 
     "effects": {"blur": false, "ripple": "some", "shadows": "neomorphism"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 68, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "bottom", "size": 68, "bottomPosition": 1, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 6.5, "textSize": 14}, 
     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": false, "gradient": false, "outline": true}}, 
     "navigationMenu": {
@@ -128,7 +128,7 @@ export const oliveBook = {
 export const stock = {
     "borderRadius": {"additional": 36, "basic": 0}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "material"}, 
-    "functionButton": {"invertColors": true, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': false}},
+    "functionButton": {"invertColors": true, "outline": false, "position": "bottom", "size": 70, "bottomPosition": 1, 'topSignatures': true, 'ignoredShadows': {'disable': false}},
     "lists": {"fullWidth": true, "invertColorsHeader": true, "proximity": 2.75, "textSize": 14},
     "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}},
     "navigationMenu": {
@@ -146,7 +146,7 @@ export const stock = {
 export const greenFun = {
     "borderRadius": {"additional": 18, "basic": 18}, 
     "effects": {"blur": true, "ripple": "all", "shadows": "material"}, 
-    "functionButton": {"ignoredShadows": {"disable": false}, "invertColors": false, "outline": false, "position": "top", "size": 70, "topSignatures": true}, 
+    "functionButton": {"ignoredShadows": {"disable": false}, "invertColors": false, "outline": false, "position": "top", "bottomPosition": 1, "size": 70, "topSignatures": true}, 
     "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 7.25, "textSize": 14},
     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": true}}, 
     "navigationMenu": {
@@ -163,7 +163,7 @@ export const greenFun = {
 export const cyber =  {
     "borderRadius": {"additional": 1, "basic": 1}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "neomorphism"},
-     "functionButton": {"ignoredShadows": {"disable": false}, "invertColors": false, "outline": false, "position": "top", "size": 70, "topSignatures": true}, 
+     "functionButton": {"ignoredShadows": {"disable": false}, "invertColors": false, "outline": false, "position": "top", "bottomPosition": 1, "size": 70, "topSignatures": true}, 
      "lists": {"fullWidth": false, "invertColorsHeader": false, "proximity": 9, "textSize": 14}, 
      "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": false, "gradient": true, "outline": true}}, 
      "navigationMenu": {
@@ -181,7 +181,7 @@ export const cyber =  {
 export const nineties =  {
     "borderRadius": {"additional": 0, "basic": 0}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "square"},
-     "functionButton": {"ignoredShadows": {"disable": false}, "invertColors": false, "outline": false, "position": "top", "size": 70, "topSignatures": true}, 
+     "functionButton": {"ignoredShadows": {"disable": false}, "invertColors": false, "outline": false, "position": "top", "bottomPosition": 1, "size": 70, "topSignatures": true}, 
      "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 12, "textSize": 14}, 
      "modals": {"fullWidth": true, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": true}}, 
      "navigationMenu": {
@@ -199,7 +199,7 @@ export const nineties =  {
 export const extra =  {
     "borderRadius": {"additional": 36, "basic": 36}, 
     "effects": {"blur": false, "ripple": "all", "shadows": "neomorphism"}, 
-    "functionButton": {"invertColors": false, "outline": false, "position": "right", "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
+    "functionButton": {"invertColors": false, "outline": false, "position": "bottom", "bottomPosition": 1, "size": 70, 'topSignatures': true, 'ignoredShadows': {'disable': false}}, 
     "lists": {"fullWidth": false, "invertColorsHeader": true, "proximity": 5.75, "textSize": 14}, 
     "modals": {"fullWidth": false, "highlightMethods": {"dimOutDark": true, "gradient": false, "outline": false}}, 
     "navigationMenu": {
@@ -233,13 +233,13 @@ export default presets = [
     {
         name: 'YTTI-oliveBook',
         imageSource: require(pathImages+'oliveBook.png'),
-        imageLowScale: 1,
+        imageLowScale: 1.1,
         options: oliveBook
     },
     {
         name: 'YTTI-extra',
         imageSource: require(pathImages+'cake.png'),
-        imageLowScale: 1,
+        imageLowScale: 0.9,
         options: extra
     },
     {
@@ -257,7 +257,8 @@ export default presets = [
     {
         name: 'YTTI-cyber',
         imageSource: require(pathImages+'chip.png'),
-        imageLowScale: 1,
+        coloring: 'black',
+        imageLowScale: 1.1,
         options: cyber
     },
     {

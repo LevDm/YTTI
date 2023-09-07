@@ -45,7 +45,7 @@ const LanguageStoreRu = {
     },
     SettingsScreen: {
       HeaderTitle: 'настройки',
-      app: 'приложения',
+      //app: 'приложения',
       preview: {
         title: 'предпросмотр',
         //apply: 'Принять изменения',
@@ -105,19 +105,22 @@ const LanguageStoreRu = {
       },
       StructureScreen: {
         typesSettings: {
+          app: {
+            type: "приложения",
+          },
           appearance: {
             type: 'интерфейса',
             category: 'интерфейс'
           },
 
           functions: {
-            type: 'функционала',
+            type: 'функций',
             category: 'функционал'
           },
           
           additional: {
             type: 'для каждого',
-            category: 'распространение'
+            category: 'информация'
           },
         },
 
@@ -145,7 +148,7 @@ const LanguageStoreRu = {
           selectors: 'переключатели',
           navigationMenu: "меню навигации", 
           loadAnimation: "Заставка",
-          lists: "экраны",
+          lists: "страницы",
           bobberButton:"плавающие кнопки",
           modals: 'модальные окна',
           language: "язык",
@@ -159,7 +162,10 @@ const LanguageStoreRu = {
       },
       Redactors: {
         presets: {
-          appAs: 'Дизайн интерфейса данного приложения'
+          appAs: 'Дизайн интерфейса приложения',
+          saveFAB: 'Настройка "плавающие кнопоки" будет сохранена в новом дизайне',
+          saveNavigation: 'Настройка "меню навигации" будет сохранена в новом дизайне',
+          stateSave: {true: "включено", false: "выключено"},
         },
         themes: {
           colorMode: "Тема",
@@ -172,25 +178,27 @@ const LanguageStoreRu = {
             dark: 'Tемный'
           },
           palette: "Палитра",
+          painter: "Редактор палитры",
           openPainter: "редактор"
         },
         fillets: {
           synhronous: "Синхронизация значений",
           synhronousState: {true: "включена", false: "выключена"},
           type: {
-            basic: "Углы первичных элементов", 
-            additional: "Углы вторичных элементов"
+            basic: "Первичные углы", 
+            additional: "Вторичные углы"
           },
           slider: {min: "прямее", max: "круглее"}
         },
         effects: {
           ripple: 'Пульсации',
           ripples: ['Все', 'Основные', 'Выключены'],
-          shadows: 'Тени элементов',
-          shadowsTypes: ['Стандартные','Полные','Неоморфические','Грубые','Выключены'],
+          shadows: 'Стиль теней',
+          shadowsTypes: ['','','','','Выключены'],
+           //['Стандартные','Полные','Неоморфические','Грубые','Выключены'],
           //shadowsTypes: ['Выключены','Неоморфические','Грубые','Полные','Стандартные','Основные стандартные',],
-          blur: 'Эффект стекла поверхностных элементов',
-          blurState: {true: "включена", false: "выключена"},
+          blur: 'Эффекты стекла',
+          blurState: {true: "включены", false: "выключены"},
           warningBlur: '! В активном состоянии данный параметр может вызвать проблемы с производительностью'
         },
         selectors: {
@@ -204,10 +212,10 @@ const LanguageStoreRu = {
           type: "Тип меню",
           types: ["Классическое нижнее", "Боковая выдвижная панель","Скрытое",],
           menuParams: "Параметры меню",
-          height: "Высота",
+          height: "Высота меню",
           slider: {min: "ниже", max: "выше"},
-          signature: "Подписи иконок",
-          signatureState: {true: "включены", false: "выключены"},
+          signature: "Подпись значков",
+          signatureState: {true: "включена", false: "выключена"},
           verticalPosition: "Вертикальное положение",
           horizontalPosition: "Горизонтальное положение",
           horizontalPositions: ["Слева","По центру","Справа"],
@@ -215,8 +223,8 @@ const LanguageStoreRu = {
           horizontalPositionsDrawer: ["Слева","Справа"],
           accentsType: 'Способ акцентирования',
           accentsTypes: {
-            coloring: 'Цветная окраска',
-            filling: 'Заливка значка',
+            coloring: 'Изменение цвета',
+            filling: 'Изменение значка',
           }
         },
         loadAnimation: {
@@ -229,29 +237,31 @@ const LanguageStoreRu = {
         lists: {
           textSize: "Размер текста в элементах списка",
           slider: {min: "меньше", max: "больше"},
-          proximity: "Вертикальные отступы между элементами списка",
-          fullWidth: "Элементы списка занимают всю ширину экрана",
-          fullWidthState: {true: "включено", false: "выключено"},
-          invertColorsHeader: 'Нейтральная палитра заголовка' ,
-          invertColorsHeaderState: {true: "включена", false: "выключена"},
+          proximity: "Вертикальные отступы ",
+          fullWidth: "Горизонтальный отступ",
+          fullWidthState: {true: "включен", false: "выключен"},
+          invertColorsHeader: 'Нейтральные цвета заголовка' ,
+          invertColorsHeaderState: {true: "включены", false: "выключены"},
         },
         bobberButton: {
           position: "Положение на экране",
-          positions: ["Снизу слева","Снизу по центру","Снизу справа", "Сверху в заголовке"],
+          positions: ["Сверху (в заголовке)", "Снизу"],
+          bottomPosition: "Горизонтальное положение",
+          bottomPositionSlider: {min: 'левее', max: 'правее'},
           signatures: 'Подписи к значкам',
           signaturesState: {true: "включены", false: "выключены"},
           disabledShadows: 'Игнорирование полного отключения теней',
           disabledShadowsState: {true: "включено", false: "выключено"},
-          size: "Размер кнопки",
+          size: "Размер",
           slider: {min: "меньше", max: "больше"},
-          invertColors: 'Нейтральная палитра кнопки' ,
-          invertColorsState: {true: "включена", false: "выключена"},
-          outline: 'Контур кнопки',
+          invertColors: 'Нейтральные цвета' ,
+          invertColorsState: {true: "включены", false: "выключены"},
+          outline: 'Контур',
           outlineState: {true: "включен", false: "выключен"},
         },
         modals: {
-          horizontalProximity: 'Окно занимает всю ширину экрана',
-          horizontalProximityState: {true: "включено", false: "выключено"},
+          horizontalProximity: 'Горизонтальный отступ окна',
+          horizontalProximityState: {true: "включен", false: "выключен"},
           outline: 'Контур окна',
           outlineState: {true: "включен", false: "выключен"},
           dimOut: 'Затемнение вне окна при открытие',
@@ -266,16 +276,16 @@ const LanguageStoreRu = {
           thisLanguage: 'Использовать русский'
         },
         weather: {
-          type: 'Тип отображения погоды',
+          type: 'Способ отображения погоды',
           types: {
             panel: 'Виджет в боковой панеле',
-            lists: 'Начальный элемент в списке главного экрана', 
-            widget: 'Значок в заголовке главного экрана', 
+            lists: 'Элемент на главном экране', 
+            //widget: 'Значок в заголовке главного экрана', 
             off: 'Выключена'
           },
-          locations: 'Используемые местоположения',
-          add: 'Добавление нового местоположения',
-          replace: 'Замена выбранного местоположения',
+          locations: 'Местоположение',
+          add: 'Добавить новое',
+          replace: 'Замена',
           //location: 'местоположение',
           network: 'Определено сетью',
           device: 'Определено устройством',
@@ -322,6 +332,13 @@ const LanguageStoreRu = {
         edit: 'Редактировать',
         done: 'Выполнено',
         add: 'Добавить'
+      },
+      categorys: {
+        today: 'сегодня',
+        tomorrow: 'завтра',
+        week: 'недельные',
+        later: 'позднее',
+        overdue: 'пропущеные'
       },
       pointer: {
         ClickAdd: 'Нажми, чтобы добавить задачу',
@@ -436,7 +453,7 @@ const LanguageStoreEng = {
     },
     SettingsScreen: {
       HeaderTitle: 'settings',
-      app: 'for app',
+      //app: 'for app',
       preview: {
         title: 'preview',
         toolbar: {
@@ -495,6 +512,10 @@ const LanguageStoreEng = {
       },
       StructureScreen: {
         typesSettings: {
+          app: {
+            type: "for app",
+          },
+
           appearance: {
             type: 'interface',
             category: 'interface'
@@ -543,7 +564,10 @@ const LanguageStoreEng = {
       },
       Redactors: {
         presets: {
-          appAs: 'Interface design of this application'
+          appAs: 'Interface design of this application',
+          saveFAB: 'The current "floating buttons" setting will be carried over to the new design',
+          saveNavigation: 'The current "navigation menu" setting will be carried over to the new design',
+          stateSave: {true: "enabled", false: "disabled"},
         },
         themes: {
           colorMode: "Color mode",
@@ -556,6 +580,7 @@ const LanguageStoreEng = {
             dark: 'Dark'
           },
           palette: "Palette",
+          painter: 'Рalette editor',
           openPainter: "redactor"
         },
         fillets: {
@@ -621,7 +646,9 @@ const LanguageStoreEng = {
         },
         bobberButton: {
           position: "Position on screen",
-          positions: ["Left","Center","Right","Above"],
+          positions: ["Above","Below"],
+          bottomPosition: "Нorizontal position of the button at the bottom",
+          bottomPositionSlider: {min: 'to the left', max: 'to the right'},
           signatures: 'Icon captions',
           signaturesState: {true: "on", false: "off"},
           disabledShadows: 'Ignore completely disabling shadows',
@@ -654,7 +681,7 @@ const LanguageStoreEng = {
           types: {
             panel: 'In panel',
             lists: 'In lists', 
-            widget: 'Widget', 
+            //widget: 'Widget', 
             off: 'Off'
           },
           locations: 'Used Locations',
@@ -706,6 +733,13 @@ const LanguageStoreEng = {
         edit: 'Edit',
         done: 'Done',
         add: 'Add'
+      },
+      categorys: {
+        today: 'today',
+        tomorrow: 'tomorrow',
+        week: 'week',
+        later: 'later',
+        overdue: 'overdue'
       },
       pointer: {
         ClickAdd: 'Click to add a task',

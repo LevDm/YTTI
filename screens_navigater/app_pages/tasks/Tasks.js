@@ -76,6 +76,13 @@ const horizontalProximity = listsHorizontalProximity['true']
 
 const Tasks = (props) => {
 
+    const {
+        openSettingsWindow,
+        aTheme: global_aTheme,
+        aStyle: global_aStyle,
+    } = props
+
+    
     const [tasks, setTasks] = useState(props.tasks);
     
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
@@ -86,7 +93,8 @@ const Tasks = (props) => {
     const [hideMenu, setHideMenu] = useState(props.hideMenu);
 
     const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
-    
+
+ 
 
     store.subscribe(() => {
         const jstore = store.getState();
@@ -169,6 +177,15 @@ const Tasks = (props) => {
         )
     ) 
 
+    const aStyle = useDerivedValue(()=>{
+        //console.log('TASK STYLE', global_aStyle.value? '1' : '2')
+        return global_aStyle.value? global_aStyle.value : appStyle
+    })
+
+    const aTheme = useDerivedValue(()=>{
+        //console.log('TASK Palette', global_aTheme.value)
+        return global_aTheme.value? global_aTheme.value : Theme
+    })
 
     const animValueBobberButtonVisible = useSharedValue(0);
 
@@ -375,7 +392,8 @@ const Tasks = (props) => {
         if(appStyle.navigationMenu.type == 'not' || (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)){
             props.navigation.openDrawer()
         } else {
-            props.navigation.navigate('settingsStack')
+            openSettingsWindow()
+            //props.navigation.navigate('settingsStack')
         }
 
     }
@@ -450,7 +468,8 @@ const Tasks = (props) => {
 
             <BobberButton 
                 enabled={appStyle.functionButton.position != 'top'}
-        
+                aStyle={aStyle}
+                aTheme={aTheme}
                 bottomBord = {bottomBord}
                 reaValueBobberButtonVisible = {animValueBobberButtonVisible}
 
@@ -517,7 +536,8 @@ const BobberButton = (props) => {
         enabled,
 
         onPress,
- 
+        aStyle,
+        aTheme,
         appConfig,
         LanguageAppIndex,
 
@@ -560,6 +580,16 @@ const BobberButton = (props) => {
         }
     })
 
+    const r = useDerivedValue(()=>{
+        if(aStyle && aStyle.value){
+            //console.log('RRRR', aStyle.value)
+            
+        }
+        return aStyle.value.borderRadius.additional
+    })
+
+    const bgc = useDerivedValue(()=>aStyle.value.functionButton.invertColors? aTheme.value.basics.neutrals.tertiary : aTheme.value.basics.accents.secondary)
+
     return(
         <Reanimated.View 
             style = {[dynamicStyleBobberButton, {
@@ -584,6 +614,8 @@ const BobberButton = (props) => {
                 <SkiaViewDisign
                     isGeneralObject={true} 
                     borderRadius = {appStyle.borderRadius.additional}
+                    aBorderRadius = {r}
+                    aBGColor = {bgc}
                     backgroundColor = {(appStyle.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary)}
                     shadowColors = {Theme.specials.shadow}
                     shadowMargin={{horizontal: 5, vertical: 5}}
@@ -592,6 +624,10 @@ const BobberButton = (props) => {
                     innerShadow={{
                         used: true,
                         borderWidth: 0.5
+                    }}
+                    initSize = {{
+                        height: appStyle.functionButton.size,
+                        width: appStyle.functionButton.size
                     }}
                 />
                 {appStyle.effects.blur && 
@@ -1087,7 +1123,10 @@ const ListItems = (props) => {
                 }]}
                 onPress = {()=>setWeatherModal(true)}
             >
+                {/*
                 <WeatherComponent type = {'lists'} />
+                */}
+                    
             </Pressable>
         </View>
     )

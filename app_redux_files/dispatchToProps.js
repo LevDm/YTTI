@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 function mapDispatchToProps(component) { 
     switch(component) {
         case "SETTINGS_SCREEN": return function(dispatch) {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
             return {
                 r_setAppStyle: (value) => dispatch({type: 'SET_STYLE_APP', value: value}),
                 r_setAppConfig: (value) => dispatch({type: 'SET_CONFIG_APP', value: value}),
@@ -14,7 +14,7 @@ function mapDispatchToProps(component) {
             };
         };
         case "N_SCREEN": return function(dispatch) {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
             return {
                 //r_setAppStyle: (value) => dispatch({type: 'SET_STYLE_APP', value: value}),
                 //r_setAppConfig: (value) => dispatch({type: 'SET_CONFIG_APP', value: value}),
@@ -26,7 +26,7 @@ function mapDispatchToProps(component) {
         };
 
         case "NFC_SCREEN": return function(dispatch) {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
             return {
                 r_setAppStyle: (value) => dispatch({type: 'SET_STYLE_APP', value: value}),
                 r_setAppConfig: (value) => dispatch({type: 'SET_CONFIG_APP', value: value}),
@@ -34,7 +34,7 @@ function mapDispatchToProps(component) {
             };
         }; 
         case "PALETTE_SCREEN": return function(dispatch) {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
             return {
                 r_setAppStyle: (value) => dispatch({type: 'SET_STYLE_APP', value: value}),
                 r_setAppConfig: (value) => dispatch({type: 'SET_CONFIG_APP', value: value}),
@@ -45,7 +45,7 @@ function mapDispatchToProps(component) {
             };
         };   
         case "NAVIGATER": return function(dispatch) {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
             return {
                 r_setAppStyle: (value) => dispatch({type: 'SET_STYLE_APP', value: value}),
 
@@ -54,7 +54,7 @@ function mapDispatchToProps(component) {
             };
         };
         case "SPLASH": return function(dispatch) {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-FUNCTIONS')
             return {
                 r_setSplash: (value) => dispatch({type: 'SET_SPLASH', value: value}),
             };

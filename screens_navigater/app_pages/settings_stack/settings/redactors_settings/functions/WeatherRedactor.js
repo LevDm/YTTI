@@ -392,7 +392,7 @@ export default WeatherRedactor = ({
                 style={{
                     backgroundColor: '#00000001',
                     borderRadius: appStyle.borderRadius.additional,
-                    marginLeft: 30,
+                    marginLeft: 16,
                     width: '85%',
                 }}
             >
@@ -502,9 +502,9 @@ export default WeatherRedactor = ({
         {appConfig.weather.locationInfo.length < 2 && 
             <View
                 style = {{
-                    height: 22,
+                    height: 30,
                     paddingBottom: 10,
-                    marginLeft: 30,
+                    marginLeft: 16,
                     width: '85%',
                     justifyContent: 'space-between',
                 }}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, Appearance } from 'react-native';
 
 import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { connect } from 'react-redux';
@@ -16,16 +17,22 @@ import Settings from './settings/Settings';
 import Palette from './palette/Palette';
 import NFC from './NFC_dropper/NFC_rw_screen';
 
-const Stack = createStackNavigator();
+//const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 function SettingsStack(props) {
+
+    const {
+ 
+    } = props
+
     const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
     const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
 
     const [appStyle, setAppStyle] = useState(props.appStyle);
     const [appConfig, setAppConfig] = useState(props.appConfig);
 
-    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
+    //const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
     
     store.subscribe(() => {
         let jstore = store.getState();
@@ -37,10 +44,10 @@ function SettingsStack(props) {
         if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
             setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
         }
-
+        /* 
         if(ThemeSchema != jstore.appStyle.palette.scheme){
             setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
-        }
+        }*/
 
         if (appStyle != jstore.appStyle) {
             setAppStyle(jstore.appStyle);
@@ -51,6 +58,7 @@ function SettingsStack(props) {
         }
     })
 
+    /* 
     const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
     useEffect(()=>{
         if(listenerColorSheme){
@@ -64,10 +72,16 @@ function SettingsStack(props) {
     Appearance.addChangeListener(({colorScheme})=>{
         setListinerColorScheme(colorScheme)
     })
+    */
+
+    const listenerColorSheme = Appearance.getColorScheme()
+    const ThemeSchema = listenerColorSheme? appStyle.palette.scheme == 'auto'? listenerColorSheme : appStyle.palette.scheme : ThemeSchema
+    
     
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
+    console.log('@@@@@ SETTINGS STACK RENDER')
     return (
         <Stack.Navigator
             initialRouteName = {"settings"}
@@ -80,7 +94,7 @@ function SettingsStack(props) {
                 animationEnabled: false,
                 gestureEnabled: false,
                 cardStyle: {
-                    backgroundColor: Theme.basics.neutrals.primary
+                    //backgroundColor: Theme.basics.neutrals.primary
                 },
             }}
         >

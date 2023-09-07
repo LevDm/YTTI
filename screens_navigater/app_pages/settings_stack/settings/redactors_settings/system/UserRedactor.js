@@ -43,15 +43,9 @@ import commonStaticStyles, { SwitchField, ripple } from "../CommonElements";
 
 export default UserRedactor = ({
     appStyle,
-    //setAppStyle,
 
     appConfig,
     r_setAppConfig,
-
-    //r_setLanguageApp,
-    //getNewAppStyleObject,
-    //getNewAppConfigObject,
-    //LanguageStore,
 
     ThemeColorsAppIndex,
     ThemeSchema,

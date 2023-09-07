@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, Component} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
@@ -28,20 +28,16 @@ import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
 export default LanguageRedactor = ({
     appStyle,
-    //setAppStyle,
 
     appConfig,
     r_setAppConfig,
-
-    //r_setLanguageApp,
-    //getNewAppStyleObject,
-    getNewAppConfigObject,
-    //LanguageStore,
 
     ThemeColorsAppIndex,
     ThemeSchema,
     LanguageAppIndex  
 }) => {
+
+    const [_, set_] = useState()
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.languages
@@ -62,22 +58,24 @@ export default LanguageRedactor = ({
         return items
     }
     
-    return (<View style={{paddingBottom: 12}}>
-        <BoxsField
-            //  'one'>true || 'multiple'>false
-            isChoiceOne={true}
-            title = {false}
-            //  'one'>index || 'multiple'>[indexs]
-            primaryValue = {LanguageAppIndex} 
-            groupSize = {languagesApp.length}
-            groupItems = {getItems()}         
-            onPress = {(activeIndex)=>{languageSetting(activeIndex)}}          
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />
-    </View>)
-}
+    return (
+        <View style={{paddingBottom: 12}}>
+            <BoxsField
+                //  'one'>true || 'multiple'>false
+                isChoiceOne={true}
+                title = {false}
+                //  'one'>index || 'multiple'>[indexs]
+                primaryValue = {LanguageAppIndex} 
+                groupSize = {languagesApp.length}
+                groupItems = {getItems()}         
+                onPress = {(activeIndex)=>{languageSetting(activeIndex)}}          
+                appStyle = {appStyle}
+                ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                ThemeSchema = {ThemeSchema}
+            />
+        </View>
+    )
+}   
 
 const staticStyles = StyleSheet.create({
     ...commonStaticStyles

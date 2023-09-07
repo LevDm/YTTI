@@ -44,16 +44,13 @@ export default Preview = (props) => {
     const {
         previewAppStyleA,
         previewAppPalette,
-        //ThemeSchema,
-        frameColor,
-        index,
-        animatedValue 
+        aScale: animatedValue 
     } = props
     //console.log('preview',appStyle, previewAppStyle)
     //console.log('preview props',props.appStyle, props.previewAppStyle)
 
     const animatedState = useDerivedValue(()=>{
-        return animatedValue.value[index]
+        return animatedValue.value//[index]
     }, [animatedValue])
 
     //const animatedState = useSharedValue(false)
@@ -549,17 +546,18 @@ export default Preview = (props) => {
     return (
         <Phone
             //key = {props.key}
-            index={index}
-            animatedValue = {animatedValue}
-            previewAppStyleA={previewAppStyleA}
-            previewAppPalette={previewAppPalette}
-            frameColor = {frameColor}
+            //index={index}
+            //animatedValue = {animatedValue}
+            //previewAppStyleA={previewAppStyleA}
+            //previewAppPalette={previewAppPalette}
+            //frameColor = {frameColor}
             //ThemeSchema={ThemeSchema}
             //onPress={()=>{
             //    onPress != undefined? onPress() : NaN
 
             //    newAnimatedState(!animatedState.value)
             //}}
+            {...props}
         >
                 <Reanimated.View
                     key = {'head'}

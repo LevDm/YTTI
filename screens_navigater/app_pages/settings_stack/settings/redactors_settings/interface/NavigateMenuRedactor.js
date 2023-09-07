@@ -24,183 +24,84 @@ import {
 
 import commonStaticStyles, { SwitchField, SliderField, BoxsField } from "../CommonElements";
 
-//const menuTypes = ['classical','classical_animated','hidden', 'not'];
-//const positionNavigateMenu = {min: 20, max: 80, step: 5}
-//const valuePosition = ['left','center','right']
-//const heightNavigateMenu = {min: 35, max: 65, step: 5}
 import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu, drawerPositions } from "../../../../../../app_values/AppDefault";
 
-export default NavigateMenuRedactor = ({
-    appStyle,
-    appConfig,
-    //r_setAppStyle,
+export default NavigateMenuRedactor = (props) => {
+    const {
+        uiStyle,
+        uiTheme,
 
-    //previewAppStyle,
-    //setPreviewAppStyle,
+        showAllSettings,
+        tagStyle,
+        aStyle,
+        aTheme, 
+        aPalette, 
+        aScheme,
 
-    previewAppStyleA,
+        appStyle,
+        appConfig,
+        redactorsSet,
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex
+    } = props
 
-    //getNewAppStyleObject,
-
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex  
-}) => {
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.navigationMenu
 
     
 
     const accents = Object.keys(appStyle.navigationMenu.accentsType) // 
-    const accentsGroup =  Object.values(appStyle.navigationMenu.accentsType) // 
-    const toIndexs = (group) => {'worklet'; return(group.map((item, index)=> item? index : -1).filter(item => item >= 0))};
-    /*
-    const [previewMenuType, setPreviewMenuType] = useState(menuTypes.indexOf(appStyle.navigationMenu.type))
-    const [heightMenu, setHeightMenu] = useState(appStyle.navigationMenu.height)
-    const [signatures, setSignatures] = useState(appStyle.navigationMenu.signatureIcons)
-    const [position, setPosition] = useState(drawerPositions.indexOf(appStyle.navigationMenu.drawerPosition))
-    const [accentsMethods, setAccentsMethods] = useState(toIndexs(Object.values(appStyle.navigationMenu.accentsType)))
-    const [vertPos, setVertPos] = useState(appStyle.navigationMenu.position.vertical)
-    const [horPos, setHorPos] = useState(valuePosition.indexOf(appStyle.navigationMenu.position.horizontal))
- */
 
-    
-    const previewMenuType = useDerivedValue(()=>menuTypes.indexOf(previewAppStyleA.value.navigationMenu.type))
-    const heightMenu = useDerivedValue(()=>previewAppStyleA.value.navigationMenu.height)
-    const signatures = useDerivedValue(()=>previewAppStyleA.value.navigationMenu.signatureIcons)
-    const position = useDerivedValue(()=>drawerPositions.indexOf(previewAppStyleA.value.navigationMenu.drawerPosition))
-    const accentsMethods = useDerivedValue(()=>toIndexs(Object.values(previewAppStyleA.value.navigationMenu.accentsType)))
-    const vertPos = useDerivedValue(()=>previewAppStyleA.value.navigationMenu.position.vertical)
-    const horPos = useDerivedValue(()=>valuePosition.indexOf(previewAppStyleA.value.navigationMenu.position.horizontal))
-    /*
-    useEffect(()=>{
-        appStyle.navigationMenu.type != previewMenuType? setPreviewMenuType(appStyle.navigationMenu.type) : null
-    },[appStyle])
-    */
-    
-    /* 
+    const accentsMethods = useDerivedValue(()=>{
+        const toIndexs = (group) => group.map((item, index)=> item.value? index : -1).filter(item => item >= 0)
+        return toIndexs(Object.values(uiStyle.navigationMenu.accentsType))
+    })
 
-    useDerivedValue(()=>{
-        const usedType = 
-        if(usedType != previewMenuType){
-            runOnJS(setPreviewMenuType)(usedType)
-        }
+    const previewMenuType = useDerivedValue(()=>menuTypes.indexOf(uiStyle.navigationMenu.type.value))
+    const position = useDerivedValue(()=>drawerPositions.indexOf(uiStyle.navigationMenu.drawerPosition.value))    
+    const horPos = useDerivedValue(()=>valuePosition.indexOf(uiStyle.navigationMenu.position.horizontal.value))
 
-        const usedHeight = 
-        if(usedHeight != heightMenu){
-            runOnJS(setHeightMenu)(usedHeight)
-        }
 
-        const usedSignature = 
-        if(usedSignature != previewMenuType){
-            runOnJS(setSignatures)(usedSignature)
-        }
-        
-        const usedAccents = 
-        if(JSON.stringify(usedAccents) != JSON.stringify(accentsMethods)){
-            runOnJS(setAccentsMethods)(usedAccents)
-        }
-
-        const usedPosition = 
-        if(usedPosition != position){
-            runOnJS(setPosition)(usedPosition)
-        }
-
-        const usedVert = 
-        if(usedVert != vertPos){
-            runOnJS(setVertPos)(usedVert)
-        }
-
-        const usedHor = 
-        if(usedHor != horPos){
-            runOnJS(setHorPos)(usedHor)
-        }
-    
-    },[previewAppStyleA, previewMenuType, heightMenu,  signatures, accentsMethods, position])
-    */
 
     const checkBoxPress = (activeIndex) => {
         const type = menuTypes[activeIndex]
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         if(type == "hidden" || type =="not"){
-            newAppStyle.navigationMenu.height = 0
+            uiStyle.navigationMenu.height.value = 0
         } else {
-            //console.log('new select class')
-            newAppStyle.navigationMenu.height = 50
-            //setSliderValueMenuHeight(50)
+            uiStyle.navigationMenu.height.value = 50
         }
-        newAppStyle.navigationMenu.type = type
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA);
-        previewAppStyleA.value = newAppStyle;
-
-        //setPreviewMenuType(type)
-    };
+        uiStyle.navigationMenu.type.value = type
+        tagStyle('navigationMenu.type')
+    }
 
     const signatureChange = (value) =>{
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.navigationMenu.signatureIcons = value;//!signature;
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA);
-        previewAppStyleA.value = newAppStyle;
+        uiStyle.navigationMenu.signatureIcons.value = value
+        tagStyle('navigationMenu.signatureIcons')
     }
 
     const setPrewBasicVertPos = (value) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.navigationMenu.position.vertical = Number(value);
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA);
-        previewAppStyleA.value = newAppStyle;
+        uiStyle.navigationMenu.position.vertical.value = Number(value);
+        tagStyle('navigationMenu.position')
     }
 
     const setPrewBasicMenuHeight = (value) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.navigationMenu.height = Number(value);
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA);
-        previewAppStyleA.value = newAppStyle;
+        uiStyle.navigationMenu.height.value = Number(value);
+        tagStyle('navigationMenu.height')
     }
 
     const horizontalPositionSetting = (index) => {
-        const positionType = valuePosition[index]
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.navigationMenu.position.horizontal = positionType
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA);
-        previewAppStyleA.value = newAppStyle;
-    };
+        uiStyle.navigationMenu.position.horizontal.value = valuePosition[index]
+        tagStyle('navigationMenu.position.horizontal')
+    }
 
     const drawerPositionSetting = (index) => {
-        const drawerPosition =  drawerPositions[index]     
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.navigationMenu.drawerPosition = drawerPosition
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA);
-        previewAppStyleA.value = newAppStyle;
-    };
+        uiStyle.navigationMenu.drawerPosition.value = drawerPositions[index] 
+        tagStyle('navigationMenu.drawerPosition')
+    }
 
-    
-    const entering = (targetValues) => {
-        'worklet';
-        const animations = {
-          opacity: withTiming(1, { duration: tingDuration }),
-          transform: [
-            {scale: withTiming(1, { duration: tingDuration })}
-          ]
-        };
-        const initialValues = {
-          opacity: 0,
-          transform: [
-            {scale: .97}
-          ]
-        };
-        return {
-          initialValues,
-          animations,
-        };
-    };
 
-    const tingDuration = 350
+    const tingDuration = 300
     const up = 0.25
     const down = 0.75
     
@@ -240,156 +141,139 @@ export default NavigateMenuRedactor = ({
     
 
     const settingAccents = (indexs) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        //newAppStyle.navigationMenu.accentsType = {'filling': false, 'coloring': false}
-        for (let i = 0; i < accents.length; i++){newAppStyle.navigationMenu.accentsType[accents[i]] = indexs.includes(i)}            
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        for(let i = 0; i < accents.length; i++){uiStyle.navigationMenu.accentsType[accents[i]].value = indexs.includes(i)}  
     }
 
     return (
     <View 
         style ={{
-            paddingBottom: 12
+            
         }}
     >
-    <BoxsField
-        //  'one'>true || 'multiple'>false
-        isChoiceOne={true}
-        title = {Language.type}
-        //  'one'>index || 'multiple'>[indexs]
-        aValue = {previewMenuType} 
-        groupSize = {menuTypes.length}
-        groupItems = { appConfig.user.role == 'a'? Language.types : Language.types.slice(0, 2)}         
-        onPress = {(activeIndex)=>{checkBoxPress(activeIndex)}}          
-        appStyle = {appStyle}
-        ThemeColorsAppIndex = {ThemeColorsAppIndex}
-        ThemeSchema = {ThemeSchema}
-    />
-    {false && 
-    <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, marginTop: 10, paddingLeft: 10}]}>
-        {Language.menuParams}
-    </Text>}
+        <BoxsField
+            //  'one'>true || 'multiple'>false
+            isChoiceOne={true}
+            title = {Language.type}
+            //  'one'>index || 'multiple'>[indexs]
+            aValue = {previewMenuType} 
+            groupSize = {menuTypes.length}
+            groupItems = { showAllSettings? Language.types : Language.types.slice(0, 2)}         
+            onPress = {checkBoxPress}          
+            appStyle = {appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+        />
+        <View
+            style = {[{
+                height: 250,
+                marginTop: 8,
+                width: '100%'
+            }]}
+        >   
+            <Reanimated.View 
+                style = {[blindClassical, {position: 'absolute',height: '100%', width: '100%'}]}
+            >
+                <SliderField
+                    title = {Language.height}
+                    signaturesText = {{left: Language.slider.min, right: Language.slider.max}}     
+                    minimumValue={heightNavigateMenu.min}
+                    maximumValue={heightNavigateMenu.max}
+                    step = {heightNavigateMenu.step}
+                    aValue = {uiStyle.navigationMenu.height}
+                    //onSlidingComplete = {setPrewBasicMenuHeight}
+                    onValueChange = {setPrewBasicMenuHeight}
+                    appStyle = {appStyle}
+                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                    ThemeSchema = {ThemeSchema}
+                />
+                <SwitchField
+                    textTitle = {Language.signature}
+                    textStates = {Language.signatureState}
+                    //text = {`${Language.signature} ${Language.signatureState[signature]}`}
+                    aValue={uiStyle.navigationMenu.signatureIcons}
+                    onChange={signatureChange}
+                    appStyle = {appStyle}
+                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                    ThemeSchema = {ThemeSchema}
+                />    
+                <BoxsField
+                    //  'one'>true || 'multiple'>false
+                    isChoiceOne={false}
+                    title = {Language.accentsType}
+                    //  'one'>index || 'multiple'>[indexs]
+                    aValue = {accentsMethods}
+                    groupSize = {accents.length}
+                    groupItems = {Object.values(Language.accentsTypes)}        
+                    onPress = {settingAccents}          
+                    appStyle = {appStyle}
+                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                    ThemeSchema = {ThemeSchema}
+                />
+            </Reanimated.View>  
 
+            <Reanimated.View 
+                style={[blindNot, {position: 'absolute'}]}
+            >
+                <BoxsField
+                    //  'one'>true || 'multiple'>false
+                    isChoiceOne={true}
+                    title = {Language.horizontalPositionDrawer}
+                    //  'one'>index || 'multiple'>[indexs]
+                    aValue = {position} 
+                    groupSize = {drawerPositions.length}
+                    groupItems = {Language.horizontalPositionsDrawer}         
+                    onPress = {(activeIndex)=>{drawerPositionSetting(activeIndex)}}          
+                    appStyle = {appStyle}
+                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                    ThemeSchema = {ThemeSchema}
+                /> 
+                <BoxsField
+                    //  'one'>true || 'multiple'>false
+                    isChoiceOne={false}
+                    title = {Language.accentsType}
+                    //  'one'>index || 'multiple'>[indexs]
+                    aValue = {accentsMethods}
+                    groupSize = {accents.length}
+                    groupItems = {Object.values(Language.accentsTypes)}        
+                    onPress = {(activeIndexs)=>{settingAccents(activeIndexs)}}          
+                    appStyle = {appStyle}
+                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                    ThemeSchema = {ThemeSchema}
+                />
+            </Reanimated.View>
 
-    
-    
-    <View
-        style = {[{
-            height: 180,
-        }]}
-    >   
-        <Reanimated.View 
-            //exiting={exiting} {(previewMenuType == 0 || previewMenuType == 1) && 
-            //entering={entering}
-            //style = {{height: 80}}
-            style = {[blindClassical, {position: 'absolute'}]}
-        >
-            <SliderField
-                title = {Language.height}
-                signaturesText = {{left: Language.slider.min, right: Language.slider.max}}     
-                minimumValue={heightNavigateMenu.min}
-                maximumValue={heightNavigateMenu.max}
-                step = {heightNavigateMenu.step}
-                aValue = {heightMenu}
-                onSlidingComplete = {setPrewBasicMenuHeight}
-                onValueChange = {setPrewBasicMenuHeight}
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            />
-            <SwitchField
-                textTitle = {Language.signature}
-                textStates = {Language.signatureState}
-                //text = {`${Language.signature} ${Language.signatureState[signature]}`}
-                aValue={signatures}
-                onChange={signatureChange}
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            />    
-            <BoxsField
-                //  'one'>true || 'multiple'>false
-                isChoiceOne={false}
-                title = {Language.accentsType}
-                //  'one'>index || 'multiple'>[indexs]
-                aValue = {accentsMethods}
-                groupSize = {accents.length}
-                groupItems = {Object.values(Language.accentsTypes)}        
-                onPress = {(activeIndexs)=>{settingAccents(activeIndexs)}}          
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            />
-        </Reanimated.View>  
-
-        <Reanimated.View 
-            //exiting={exiting} {previewMenuType == 2 && 
-            //entering={entering}
-            style={[blindNot, {position: 'absolute'}]}
-        >
-            <BoxsField
-                //  'one'>true || 'multiple'>false
-                isChoiceOne={true}
-                title = {Language.horizontalPositionDrawer}
-                //  'one'>index || 'multiple'>[indexs]
-                aValue = {position} 
-                groupSize = {drawerPositions.length}
-                groupItems = {Language.horizontalPositionsDrawer}         
-                onPress = {(activeIndex)=>{drawerPositionSetting(activeIndex)}}          
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            /> 
-            <BoxsField
-                //  'one'>true || 'multiple'>false
-                isChoiceOne={false}
-                title = {Language.accentsType}
-                //  'one'>index || 'multiple'>[indexs]
-                aValue = {accentsMethods}
-                groupSize = {accents.length}
-                groupItems = {Object.values(Language.accentsTypes)}        
-                onPress = {(activeIndexs)=>{settingAccents(activeIndexs)}}          
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            />
-        </Reanimated.View>
-
-        <Reanimated.View 
-            //exiting={exiting}  {previewMenuType == 2 && 
-            //entering={entering}
-            style={[blindHidden, {position: 'absolute'}]}
-        >
-            <SliderField
-                style = {{marginTop: 10}}
-                title = {Language.verticalPosition}
-                signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
-                minimumValue={positionNavigateMenu.min}
-                maximumValue={positionNavigateMenu.max}
-                step = {positionNavigateMenu.step}
-                aValue = {vertPos}
-                onSlidingComplete = {setPrewBasicVertPos}
-                onValueChange = {setPrewBasicVertPos}
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            />
-            <BoxsField
-                //  'one'>true || 'multiple'>false
-                isChoiceOne={true}
-                title = {Language.horizontalPosition}
-                //  'one'>index || 'multiple'>[indexs]
-                aValue = {horPos} 
-                groupSize = {valuePosition.length}
-                groupItems = {Language.horizontalPositions}         
-                onPress = {(activeIndex)=>{horizontalPositionSetting(activeIndex)}}          
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            />
-        </Reanimated.View>
-    </View>
+            <Reanimated.View 
+                style={[blindHidden, {position: 'absolute'}]}
+            >
+                <SliderField
+                    style = {{marginTop: 10}}
+                    title = {Language.verticalPosition}
+                    signaturesText = {{left: Language.slider.min, right: Language.slider.max}}
+                    minimumValue={positionNavigateMenu.min}
+                    maximumValue={positionNavigateMenu.max}
+                    step = {positionNavigateMenu.step}
+                    aValue = {uiStyle.navigationMenu.position.vertical}
+                    onSlidingComplete = {setPrewBasicVertPos}
+                    onValueChange = {setPrewBasicVertPos}
+                    appStyle = {appStyle}
+                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                    ThemeSchema = {ThemeSchema}
+                />
+                <BoxsField
+                    //  'one'>true || 'multiple'>false
+                    isChoiceOne={true}
+                    title = {Language.horizontalPosition}
+                    //  'one'>index || 'multiple'>[indexs]
+                    aValue = {horPos} 
+                    groupSize = {valuePosition.length}
+                    groupItems = {Language.horizontalPositions}         
+                    onPress = {(activeIndex)=>{horizontalPositionSetting(activeIndex)}}          
+                    appStyle = {appStyle}
+                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
+                    ThemeSchema = {ThemeSchema}
+                />
+            </Reanimated.View>
+        </View>
     </View>)
 }
 

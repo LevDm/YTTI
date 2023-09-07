@@ -23,57 +23,52 @@ import { rippleValues, shadowsValues } from "../../../../../../app_values/AppDef
 import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 import SkiaViewDisign from "../../../../../../general_components/base_components/SkiaViewDisign";
 
-export default EffectsRedactor = ({
-    appStyle,
-    appConfig,
-    previewAppStyleA,
+export default EffectsRedactor = (props) => {
+    const {
+        uiStyle,
+        uiTheme,
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex  
-}) => {
+        showAllSettings,
+
+        aStyle,
+        aTheme, 
+        aPalette, 
+        aScheme,
+
+        tagStyle,
+
+        appStyle,
+        appConfig,
+        redactorsSet,
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex
+    } = props
+
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.effects
 
-    const shadows = useDerivedValue(()=>shadowsValues.indexOf(previewAppStyleA.value.effects.shadows))
-    const ripples = useDerivedValue(()=>rippleValues.indexOf(previewAppStyleA.value.effects.ripple))
-    const blur = useDerivedValue(()=>previewAppStyleA.value.effects.blur)
-
-
-    const rippleSetting = (index) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.effects.ripple = rippleValues[index];
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
-    }
-
     const shadowsSetting = (index) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.effects.shadows = shadowsValues[index];
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        uiStyle.effects.shadows.value = shadowsValues[index];
+        tagStyle('effects.shadows')
     }
 
     
     const blurChange = (value) =>{
-        //let newAppStyle = getNewAppStyleObject();
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.effects.blur = value;//!blur;
-        newAppStyle.presetUsed = 'YTTI-custom';
-        //setPreviewAppStyle(newAppStyle);
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
-        //setBlur(!blur)
+        uiStyle.effects.blur.value = value;
+        tagStyle('effects.blur')
     }
+    
+    const shadows = useDerivedValue(()=>shadowsValues.indexOf(uiStyle.effects.shadows.value))
+
 
     const ShadowItem = (accentState, index) =>{
         return (
             <View
                 style = {{
-                    width: '75%',
-                    height: 40,
+                    //width: '75%',
+                    height: 26,
+                    width: 200,
                     //flexDirection: 'row',
                     //justifyContent: 'space-between',
                     alignItems: 'center',
@@ -91,6 +86,7 @@ export default EffectsRedactor = ({
                         used: true,
                         borderWidth: 2
                     }}
+                    initSize = {{height: 26, width: 200}}
                 />
                 <Text style = {[commonStaticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{Language.shadowsTypes[index]}</Text> 
             </View>
@@ -100,8 +96,7 @@ export default EffectsRedactor = ({
     return (
     <View 
         style = {{
-            //marginBottom: 30,
-            paddingBottom: 12
+
         }}
     >
         <BoxsField
@@ -114,32 +109,17 @@ export default EffectsRedactor = ({
             groupSize = {shadowsValues.length}
             groupItems = {Language.shadowsTypes}   
             Item = {ShadowItem}
-            onPress = {(activeIndex)=>{shadowsSetting(activeIndex)}}          
+            onPress = {shadowsSetting}          
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
-        {appConfig.user.role == 'a' && 
-        <BoxsField
-            //  'one'>true || 'multiple'>false
-            isChoiceOne={true}
-            title = {Language.ripple}
-            //  'one'>index || 'multiple'>[indexs]
-            //primaryValue = {ripples} 
-            aValue={ripples}
-            groupSize = {rippleValues.length}
-            groupItems = {Language.ripples}         
-            onPress = {(activeIndex)=>{rippleSetting(activeIndex)}}          
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />}
-        {appConfig.user.role == 'a' && <>
+        {showAllSettings && <>
         <SwitchField
             textTitle = {Language.blur}
             textStates = {Language.blurState}
             //primeValue={blur}
-            aValue = {blur}
+            aValue = {uiStyle.effects.blur}
             onChange={blurChange}
             style = {{
                 marginTop: 10
@@ -152,8 +132,8 @@ export default EffectsRedactor = ({
             style={{
                 color: Theme.texts.neutrals.tertiary,
                 fontSize: 10,
-                width: '85%',
-                marginLeft: 30
+                //width: '85%',
+                marginHorizontal: 8
             }}
         >
            {Language.warningBlur}

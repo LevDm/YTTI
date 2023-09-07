@@ -26,54 +26,51 @@ import { listsTextSize, listsProximity } from "../../../../../../app_values/AppD
 
 import commonStaticStyles, { SwitchField, SliderField } from "../CommonElements";
 
-export default ListsRedactor = ({
-    appStyle,
-    appConfig,
-    //setPreviewAppStyle,
-    //getNewAppStyleObject,
-    previewAppStyleA,
+export default ListsRedactor = (props) => {
+    const {
+        uiStyle,
+        uiTheme,
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex  
-}) => {
+        showAllSettings,
+
+        tagStyle,
+
+        aStyle,
+        aTheme, 
+        aPalette, 
+        aScheme,
+
+        appStyle,
+        appConfig,
+        redactorsSet,
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex
+    } = props
+
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.lists
 
-    const vertProximity = useDerivedValue(()=>previewAppStyleA.value.lists.proximity)
-    const fullWidth = useDerivedValue(()=>previewAppStyleA.value.lists.fullWidth)
-    const invertedHeader = useDerivedValue(()=>previewAppStyleA.value.lists.invertColorsHeader)
-
+    
     const setPrewProximity = (value) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.lists.proximity = Number(value);
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        uiStyle.lists.proximity.value = Number(value);
+        tagStyle('lists.proximity')
     }
     
     const fullWidthChange = (value) =>{
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.lists.fullWidth = value;//!fullWidth;
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        uiStyle.lists.fullWidth.value = value;
+        tagStyle('lists.fullWidth')
     }
 
     const invertChange = (value) =>{
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.lists.invertColorsHeader = value;//!invertColors;
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        uiStyle.lists.invertColorsHeader.value = value;
+        tagStyle('lists.invertColorsHeader')
     }
-
 
     return (
     <View 
         style={{
-            //marginBottom: 30,
-            paddingBottom: 12
+            
         }}
     >
         <SliderField
@@ -83,8 +80,8 @@ export default ListsRedactor = ({
             minimumValue={listsProximity.min}
             maximumValue={listsProximity.max}
             step = {listsProximity.step}
-            aValue = {vertProximity}
-            onSlidingComplete = {setPrewProximity}
+            aValue = {uiStyle.lists.proximity}
+            //onSlidingComplete = {setPrewProximity}
             onValueChange = {setPrewProximity}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
@@ -94,7 +91,7 @@ export default ListsRedactor = ({
             textTitle = {Language.fullWidth}
             textStates = {Language.fullWidthState}
             //text = {`${Language.fullWidth} ${Language.fullWidthState[`${fullWidth}`]}`}
-            aValue={fullWidth}
+            aValue={uiStyle.lists.fullWidth}
             onChange={fullWidthChange}
             style = {{
                 marginTop: 10
@@ -103,12 +100,12 @@ export default ListsRedactor = ({
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
-        {appConfig.user.role == 'a' && 
+        {showAllSettings && 
         <SwitchField
             textTitle = {Language.invertColorsHeader}
             textStates = {Language.invertColorsHeaderState}
             //text = {`${Language.invertColorsHeader} ${Language.invertColorsHeaderState[invertColors]}`}
-            aValue={invertedHeader}
+            aValue={uiStyle.lists.invertColorsHeader}
             onChange={invertChange}
             style = {{
                 marginTop: 10
@@ -123,4 +120,4 @@ export default ListsRedactor = ({
 const staticStyles = StyleSheet.create({
 
     ...commonStaticStyles
-});
+})

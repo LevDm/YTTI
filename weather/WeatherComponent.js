@@ -17,6 +17,8 @@ import {
 } from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 
+import Reanimated, { FadeOut, useAnimatedStyle } from "react-native-reanimated";
+
 import { connect } from 'react-redux';
 import store from "../app_redux_files/store";
 import mapStateToProps from "../app_redux_files/stateToProps";
@@ -35,21 +37,172 @@ import WeatherItem from "./WeatherItem";
 
 import * as Location from 'expo-location';
 
-import { Transition, Transitioning } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-
-const transition = (
-    <Transition.Together>
-        <Transition.In type = "fade" duration = {500}/>
-        <Transition.Change/>
-        <Transition.Out type = "fade" duration = {500}/>
-    </Transition.Together>
-)
-
+import { ImageComponent } from "react-native";
 
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
+import ContentLoader, { Rect, Circle } from 'react-content-loader/native';
+
+const RPressable = Reanimated.createAnimatedComponent(Pressable);
+
+const DrawerLoader = (props) => {
+  const {
+    size, 
+    bc,
+    fc
+  } = props
+
+  return (
+    <ContentLoader 
+      speed={2}
+      width={280}
+      height={400}
+      viewBox="0 0 280 400"
+      backgroundColor={bc.value}
+      foregroundColor={fc.value}
+    >
+      <Rect x="12" y="48" rx="12" ry="12" width="256" height="340" /> 
+      <Rect x="48" y="12" rx="12" ry="12" width="220" height="24" />
+    </ContentLoader>
+  )
+}
+
+const RectLoader = (props) => {
+  const {
+    size, 
+    bc,
+    fc
+  } = props
+  
+  return (
+  <ContentLoader 
+    speed={2}
+    width={size.w}
+    height={size.h}
+    viewBox="0 0 300 400"
+    backgroundColor={bc.value}
+    foregroundColor={fc.value}
+  >
+    <Rect x="0" y="0" rx="0" ry="0" width="300" height="400"/> 
+  </ContentLoader>
+)}
+
 const WeatherComponent = (props) => {
+
+  const {
+    uiStyle,
+    uiTheme,
+    uiComposition,
+
+    componentSize
+  } = props
+
+  const {
+    h: componentHeight, 
+    w: componentWidht
+  } = componentSize
+
+  //console.log('wather component', componentSize)
+
+  const {
+    basics: {
+      neutrals: {
+        primary: basicNP,
+        secondary: basicNS,
+        tertiary: basicNT,
+      },
+      accents: {
+        primary: basicAP,
+        secondary: basicAS,
+        tertiary: basicAT,
+        quaternary: basicAQ
+      }
+    },
+    texts: {
+      neutrals: {
+        primary: textNP,
+        secondary: textNS,
+        tertiary: textNT,
+      },
+      accents: {
+        primary: textAP,
+        secondary: textAS,
+        tertiary: textAT,
+      }
+    },
+    icons: {
+      neutrals: {
+        primary: iconNP,
+        secondary: iconNS,
+        tertiary: iconNT,
+      },
+      accents: {
+        primary: iconAP,
+        secondary: iconAS,
+        tertiary: iconAT,
+      }
+    },
+    specials: {
+      separator
+    }
+  } = uiTheme
+
+  const {
+    borderRadius:{
+      additional: addRadius
+    }
+  } = uiStyle
+
+  const textColorAP = useAnimatedStyle(()=>({
+    color: textAP.value
+  }))
+
+  const textColorAT = useAnimatedStyle(()=>({
+    color: textAT.value
+  }))
+
+  const textColorNP = useAnimatedStyle(()=>({
+    color: textNP.value
+  }))
+
+  const textColorNS = useAnimatedStyle(()=>({
+    color: textNS.value
+  }))
+
+  const textColorNT = useAnimatedStyle(()=>({
+    color: textNT.value
+  }))
+  const iconColorNP = useAnimatedStyle(()=>({
+    color: iconNP.value
+  })) 
+
+  const iconColorNS = useAnimatedStyle(()=>({
+    color: iconNS.value
+  })) 
+
+  const iconColorAP = useAnimatedStyle(()=>({
+    color: iconAP.value
+  })) 
+
+  const iconColorAT = useAnimatedStyle(()=>({
+    color: iconAT.value
+  })) 
+
+  const separatorColor = useAnimatedStyle(()=>({
+    color: separator.value
+  })) 
+
+  const ripleProps = useAnimatedStyle(()=>({
+    color: `${textAT.value}20`,
+    borderless: true,
+    foreground: false
+  }))
+
+  const borderStyle = useAnimatedStyle(()=>({
+    borderRadius: addRadius.value
+  }))
+
   const [ weatherData, setWeatherData ] = useState(props.weatherData)
 
   const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
@@ -107,19 +260,11 @@ const WeatherComponent = (props) => {
   const Theme  = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
   const Language = languagesAppList[LanguageAppIndex].Weather
   
-  const netConnectInfo = useNetInfo();
+  
 
   const [selectCity, setSelectCity] = useState(props.appConfig.weather.locationInfo[0].city)
 
-  //console.log(weatherData)
-
   const last = (weatherData && selectCity && weatherData[selectCity]?.lastUpdate)? Math.floor((new Date().getTime()-weatherData[selectCity].lastUpdate)/(60*1000)) : 0
-
-  const ripple = (color) => ({
-    color: `${color}20`,
-    borderless: true,
-    foreground: false
-  })
 
   const {
     type = 'full'
@@ -127,69 +272,54 @@ const WeatherComponent = (props) => {
 
   //console.log(weatherData)
 
+  
+  const networkCheck = useNetInfo();
+
+  const locationsCheck = appConfig.weather.locationInfo.length > 0
+
+  const LoadIndicator = (type) => {
+
+    const title = locationsCheck? 
+                    networkCheck? 
+                      'load data'//Language.loadingData 
+                      : 'no network connect' //Language.netConnectError 
+                  : 'none location'
+
+    return (
+      <Reanimated.View
+        exiting={FadeOut}
+        style = {{alignItems: 'center', justifyContent: 'center'}}
+      >
+        {type == 'rect' && 
+          <RectLoader size={componentSize} bc={basicAQ} fc={basicNS}/>
+        }
+        {type == 'drawer' && 
+        <DrawerLoader 
+          size = {{h: componentHeight-30, width: componentWidht}}
+          bc={basicNT}
+          fc={basicAT}
+        />}
+
+        <Reanimated.Text
+          style={[
+            type == 'rect'? textColorNP : textColorAP,
+            {
+              position: 'absolute',
+              width: 33,
+              textAlign: 'center'
+            }
+          ]}
+        >
+          {(!locationsCheck) && <MaterialCommunityIcons name="map-marker-alert-outline" size={32}/>}
+          {(!networkCheck) && <MaterialCommunityIcons name="wifi-alert" size={32}/>}
+        </Reanimated.Text>
+      </Reanimated.View>
+    )
+  }
+
   if(type == 'widget'){
     const localCity = (appConfig.weather.locationInfo[0].city)
-    return (
-      <View
-        style = {{
-          flex: 1,
-          //backgroundColor: 'blue',
-          borderRadius: appStyle.borderRadius.basic
-        }}
-      >
-        {!weatherData  && 
-        <View style = {{alignItems: 'center'}}>
-          <ActivityIndicator size={30} color={Theme.icons.accents.primary}/>
-          <Text
-            color = {Theme.texts.accents.primary}
-          >
-            {netConnectInfo?Language.loadingData:Language.netConnectError}</Text>
-        </View>}
-
-        {weatherData && <>
-        <View
-          style = {{}}
-        >
-          <WeatherItem 
-            item = {weatherData[localCity].weather.hourly[0]} 
-            elements = {"min"} 
-            //{...props}
-            appStyle={appStyle}
-            appConfig={appConfig}
-            ThemeColorsAppIndex={ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-            LanguageAppIndex = {LanguageAppIndex}
-          />
-        </View>
-
-        <View 
-          style = {{
-            position: 'absolute',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            left: 5
-          }}
-        >
-          <MaterialCommunityIcons name="weather-partly-cloudy" size={15} color={appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary} />
-          <Text 
-            style = {{
-              fontSize: 14, 
-              fontWeight: '400', 
-              fontVariant: ['small-caps'],
-              letterSpacing: 0.7, 
-              paddingHorizontal: 3,
-              color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-            }}
-            //
-          >
-            {localCity.toLowerCase()}
-          </Text>
-        </View>
-        
-        </>}
-      </View>
-    )
+    return null 
   }
 
   if(type == 'lists'){
@@ -202,67 +332,54 @@ const WeatherComponent = (props) => {
           borderRadius: appStyle.borderRadius.basic
         }}
       >
-        {!weatherData  && 
-        <View style = {{alignItems: 'center'}}>
-          <ActivityIndicator size={50} color={Theme.icons.accents.primary}/>
-          <Text
-            color = {Theme.texts.accents.primary}
-          >
-            {netConnectInfo?Language.loadingData:Language.netConnectError}</Text>
-        </View>}
+        <Reanimated.Text style={[iconColorNP, {position: 'absolute', zIndex: 1, top: 4, left: 16}]}>
+          <MaterialCommunityIcons name="weather-partly-cloudy" size={20}/>
+        </Reanimated.Text>
 
-        {weatherData && <>
-        <View
-          style = {{flexDirection: 'row',alignItems: 'center'}}
-        >
+        {!weatherData &&  LoadIndicator('rect')}
+
+        {weatherData && 
+         <>
+          <View 
+            style = {{
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 20,
+              marginTop: 4,
+              marginLeft: 24
+              //left: 80
+            }}
+          > 
+            <Reanimated.Text 
+              style = {[textColorNP, {
+                fontSize: 12, 
+                fontWeight: '400', 
+                fontVariant: ['small-caps'],
+                letterSpacing: 0.7, 
+                paddingHorizontal: 3,
+              }]}
+            >
+              {localCity.toLowerCase()}
+            </Reanimated.Text>
+          </View>
           <WeatherItem 
             item = {weatherData[localCity].weather.hourly[0]} 
             elements = {"full_list"} 
             //{...props}
-            appStyle={appStyle}
-            appConfig={appConfig}
-            ThemeColorsAppIndex={ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-            LanguageAppIndex = {LanguageAppIndex}
-          />
-          <View style={{backgroundColor: Theme.specials.separator,width: 1,height: 60, opacity: 0.3}}/>
-          <WeatherItem 
-            item = {weatherData[localCity].weather.hourly[1]} 
-            elements = {"short_list"} 
-            //{...props}
-            appStyle={appStyle}
-            appConfig={appConfig}
-            ThemeColorsAppIndex={ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-            LanguageAppIndex = {LanguageAppIndex}
-          />
-        </View>
 
-        <View 
-          style = {{
-            position: 'absolute',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            left: 80
-          }}
-        >
-          <MaterialCommunityIcons name="weather-partly-cloudy" size={20} color={Theme.texts.neutrals.primary} />
-          <Text 
-            style = {{
-              fontSize: 14, 
-              fontWeight: '400', 
-              fontVariant: ['small-caps'],
-              letterSpacing: 0.7, 
-              paddingHorizontal: 3,
-              color: Theme.texts.neutrals.primary
+            size={{
+              h: componentHeight-24,
+              w: componentWidht
             }}
-            //
-          >
-            {localCity.toLowerCase()}
-          </Text>
-        </View>
-        
+
+            {...props}
+
+            appStyle={appStyle}
+            appConfig={appConfig}
+            ThemeColorsAppIndex={ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+            LanguageAppIndex = {LanguageAppIndex}
+          />
         </>}
       </View>
     )
@@ -271,147 +388,128 @@ const WeatherComponent = (props) => {
   //props.type = 'full'
   return (
     <View
-      style = {styles.base}
+      style = {[styles.base,]}
     >
-      <View style = {{flexDirection: 'row',alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10}}>
-        <MaterialCommunityIcons name="weather-partly-cloudy" size={24} color={Theme.icons.accents.primary} />
-        <Text 
-          style = {{
+      <View style = {{flexDirection: 'row',alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10, height: 30}}>
+        <Reanimated.Text style={iconColorAP}>
+          <MaterialCommunityIcons name="weather-partly-cloudy" size={24}/>
+        </Reanimated.Text>
+        <Reanimated.Text 
+          style = {[textColorAP, {
             fontSize: 18, 
             fontWeight: 'bold', 
             fontVariant: ['small-caps'], 
             letterSpacing: 3, 
-            color: Theme.texts.accents.primary
-          }}
+          }]}
         >
           {Language.actualWeather}
-        </Text>
+        </Reanimated.Text>
       </View>
 
-      {!weatherData  && 
-      <View style = {{alignItems: 'center'}}>
-        <ActivityIndicator size={50} color={Theme.icons.accents.primary}/>
-        <Text
-          color = {Theme.texts.accents.primary}
-        >
-          {netConnectInfo?Language.loadingData:Language.netConnectError}</Text>
-      </View>}
+      {!weatherData && LoadIndicator('drawer')}
 
-      {weatherData && <>
-      <View style = {{justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 30, height: 30}}>
-        <MaterialCommunityIcons name="map-marker-radius-outline" size={24} color={Theme.icons.accents.tertiary} />
+      {weatherData && 
+      <>
+      <View style = {{justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, height: 24}}>
+        <Reanimated.Text style={iconColorAT}>
+          <MaterialCommunityIcons name="map-marker-radius-outline" size={24}/>
+        </Reanimated.Text>
         {appConfig.weather.locationInfo.map((item, index)=>{
           if(!item.used){return null}
           return (
-            <View
+            <Reanimated.View
               key={`${item.city}_${index}`}
-              style={{
-                borderRadius: appStyle.borderRadius.additional,
-                backgroundColor: '#00000001', 
-              }}
+              style={[borderStyle, {
+                backgroundColor: '#00000001',
+                marginLeft: 6 
+              }]}
             >
-            <Pressable
+            <RPressable
               onPress={()=>{if(selectCity != item.city){setSelectCity(item.city)}}}
-              android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.texts.neutrals.secondary ) : false}
+              animatedProps={ripleProps}
             >
-              <Text 
-                style = {{
+              <Reanimated.Text 
+                style = {[textColorAT, {
                   fontSize: 14, 
                   fontWeight: '400', 
                   fontVariant: ['small-caps'],
-                  letterSpacing: 0.7, 
+                  letterSpacing: 0.5, 
                   paddingHorizontal: 3,
                   textDecorationLine: selectCity == item.city? 'underline' : 'none',
-                  color: Theme.texts.neutrals.secondary 
-                }}
-                //
+                }]}
               >
                 {(item.city).toLowerCase()}
-              </Text>
-            </Pressable>
-            </View>
+              </Reanimated.Text>
+            </RPressable>
+            </Reanimated.View>
           )
         })}
       </View>
-      <View height = {290}>
-        <FlatList
-          data={weatherData[selectCity].weather.hourly.slice(2)}
-          contentContainerStyle = {{
-            paddingBottom: 15
+      <ScrollView 
+        style={{
+          height: componentHeight-30-24,
+          width: componentWidht,
+        }}
+        contentContainerStyle={{
+          //paddingBottom: 16,
+          paddingHorizontal: 4
+        }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
           }}
-          numColumns={3}
-          showsHorizontalScrollIndicator = {true}
-          ListHeaderComponent={
-            <View style = {{flexDirection: 'row'}}>
-              <WeatherItem 
-                item = {weatherData[selectCity].weather.hourly[0]} 
-                elements = {"full"} 
-                //{...props}
-                appStyle={appStyle}
-                appConfig={appConfig}
-                ThemeColorsAppIndex={ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-                LanguageAppIndex = {LanguageAppIndex}
-              />
-              <WeatherItem 
-                item = {weatherData[selectCity].weather.hourly[1]} 
-                elements = {"short"} 
-                //{...props}
-                appStyle={appStyle}
-                appConfig={appConfig}
-                ThemeColorsAppIndex={ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-                LanguageAppIndex = {LanguageAppIndex}
-              />
-            </View>
-          }
-          renderItem = {({ item, index }) => (
-            <WeatherItem 
+        >
+          {weatherData[selectCity].weather.hourly.map((item, index)=>(
+            <WeatherItem
+              key = {item.key} 
               item = {item} 
               index = {index} 
-              elements = {"short"} 
-              //{...props}
+              elements = {index == 0? "full" :"short"} 
+
+              size={{
+                h: 90,
+                w: ((componentWidht-8)/3) * (index == 0? 2 : 1)
+              }}
+
+              {...props}
               appStyle={appStyle}
               appConfig={appConfig}
               ThemeColorsAppIndex={ThemeColorsAppIndex}
               ThemeSchema = {ThemeSchema}
               LanguageAppIndex = {LanguageAppIndex}
             />
-          )}
-        />
-        <LinearGradient 
-          style = {{
-            position: 'absolute',
-            bottom: 0,
-            height: 20,
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            paddingHorizontal: 3,
-            paddingBottom: 3,
-          }}
-          locations={[0,.55]}//
-          colors={['transparent', Theme.basics.neutrals.primary]}
-          //start={{x: 0, y: 0}}
+          ))}
+        </View>
+      </ScrollView>
+      <View
+        style = {{
+          //position: 'absolute',
+          bottom: 0,
+          height: 16,
+          width: '100%',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          paddingHorizontal: 6,
+          paddingBottom: 3,
+        }}
+      >
+        <Reanimated.Text
+          style={[textColorNT, {
+            fontSize: 8,
+          }]}
         >
-          <Text
-            style={{
-              fontSize: 8,
-              color: Theme.texts.neutrals.tertiary,
-            }}
-          >
-            {Language.lastUpdate}{`(`}{weatherData[selectCity].requestLanguage}{`)`} {last < 60? last : Math.floor(last/60)} {Language[last < 60? 'min' : 'hour']} {Language.ago}
-          </Text>
-          <Text
-            style={{
-              fontSize: 8,
-              color: Theme.texts.neutrals.tertiary,
-            }}
-          >
-            {Language.dataSource}: OpenWeather
-          </Text>
-        </LinearGradient>
+          {Language.lastUpdate}{`(`}{weatherData[selectCity].requestLanguage}{`)`} {last < 60? last : Math.floor(last/60)} {Language[last < 60? 'min' : 'hour']} {Language.ago}
+        </Reanimated.Text>
+        <Reanimated.Text
+          style={[textColorNT, {
+            fontSize: 8,
+          }]}
+        >
+          {Language.dataSource}: OpenWeather
+        </Reanimated.Text>
       </View>
       </>}
     </View>
@@ -424,6 +522,7 @@ export default connect(mapStateToProps("WEATHER_C"))(WeatherComponent); //mapDis
 const styles = StyleSheet.create({
   base: {
     flex: 1,
-    justifyContent: 'flex-start', 
+    justifyContent: 'flex-start',
+
   },
 })

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, Dimensions, Appearance } from 'react-native';
+import { View, Text, Pressable, Dimensions, Appearance,TouchableOpacity } from 'react-native';
 import Constants from "expo-constants";
-const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('screen');
 const statusBarHeight = Constants.statusBarHeight+1
 
 import { 
@@ -33,19 +33,36 @@ import DrawerItemList from '../general_components/navigation_menu/Drawer';
 
 import Reanimated, {
     useSharedValue,
+    useDerivedValue,
     useAnimatedProps,
     useAnimatedStyle,
-    withTiming
+    withTiming,
+    useAnimatedReaction,
+    runOnJS
 } from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
-const Drawer = createDrawerNavigator();
+import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+const Tab = createBottomTabNavigator();
+
+import DrawerLayout from 'react-native-gesture-handler/DrawerLayout';
+const RDrawerLayout = Reanimated.createAnimatedComponent(DrawerLayout)
+
+import CustomDrawer from './app_pages/CustomDrawer';
 
 function AppDrawer(props) {
-
     const {
+        openSettingsWindow,
+        updateFullTheme,
+        aTheme,
+        aStyle,
+        uiStyle,
+        uiTheme,
+        uiScheme,
+        uiCompositions,
         r_setAppStyle,
     } = props
 
@@ -104,70 +121,166 @@ function AppDrawer(props) {
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
+    const handleDrawerSlide = (status) => {
+        // outputs a value between 0 and 1
+        console.log(status);
+      };
+
+    const openSettings = () => {
+        closeDrawer()
+        openSettingsWindow()
+    }
+    
+    const renderDrawer = () => {
+        return (
+            <CustomDrawerContent {...props}
+                appStyle={appStyle}
+                //r_setAppStyle={r_setAppStyle}
+                appConfig={appConfig}
+
+                openSettings={openSettings}
+                screenOpen={screenOpen}
+
+                ThemeColorsAppIndex={ThemeColorsAppIndex}
+                ThemeSchema={ThemeSchema}
+                LanguageAppIndex={LanguageAppIndex}
+                
+            />
+        )
+      }
+
+    const refDr = useRef()
+    const navigationRef = useNavigationContainerRef()
 
 
-    return (
+    const drawer = useSharedValue('close')
+    const openDrawer = () => {
+        drawer.value = 'open'
+        //refDr.current.openDrawer()
+    }
+
+    const closeDrawer = () => {
+        drawer.value = 'close'
+    }
+
+
+    const screenOpen = (screenName) => {
+        const screenCheck = "tasks" || "timetable" || "analytics" || 'notes'
+        if(navigationRef.isReady() && screenCheck){
+            const route = navigationRef.getCurrentRoute();
+            if(route.name != screenName){
+                navigationRef.navigate(screenName)
+            }
+            //refDr.current.closeDrawer()
+            closeDrawer()
+        }
         
-        <Drawer.Navigator 
-            //useLegacyImplementation
-            //detachInactiveScreens={false}
+        return screenCheck
+    }
+
+    const {
+        navigationMenu:{
+            drawerPosition,
+            type
+        }
+    } = uiStyle
+
+    const {
+        basics: {neutrals: {primary}},
+        specials: {
+            dimout
+        }
+    } = uiTheme
+
+    const overlay = useDerivedValue(()=>`${dimout.value}60`)
+
+    const enabledDrawer = useDerivedValue(()=>{
+        return type.value == 'not' || (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0) 
+    })
+
+    const bg = useAnimatedStyle(()=>({
+        backgroundColor: primary.value
+    }))
+    
+    //console.log('DRAWER')
+    return (
+        <Reanimated.View flex={1} style={bg}>
+        <CustomDrawer
+            stateVisible = {drawer}
+            drawerWidth={280}
+            edgeWidth = {deviceWidth/2}
+            drawerType="front"
+            renderNavigationView={renderDrawer}
+            aDrawerPosition={drawerPosition}
+            aOverlayColor={overlay}
+            aEnabledDrawer={enabledDrawer}
+        >
+        <NavigationContainer ref={navigationRef}>    
+        <Tab.Navigator
+            sceneContainerStyle={{backgroundColor: 'transparent'}}
             initialRouteName={
                 appConfig.screenSubsequence[0]? 
                     (appConfig.screenSubsequence[0] == "settings"? appConfig.screenSubsequence[0]+'Stack' : appConfig.screenSubsequence[0]) 
                 : 
                     "settingsStack"
             }
-            drawerContent={(props) => 
-                <CustomDrawerContent {...props}
+            tabBar = {props => 
+                <NavigationMenu
+                    keyID={String(Math.random())}
+
+                    uiStyle={uiStyle}
+                    uiTheme={uiTheme}
+                    uiCompositions = {uiCompositions}
+
                     appStyle={appStyle}
-                    r_setAppStyle={r_setAppStyle}
                     appConfig={appConfig}
 
                     ThemeColorsAppIndex={ThemeColorsAppIndex}
                     ThemeSchema={ThemeSchema}
                     LanguageAppIndex={LanguageAppIndex}
-                     
+                    
+                    {...props}
                 />
             }
             screenOptions = {{
-                swipeEnabled: (appStyle.navigationMenu.type == 'not' || (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)), 
-                drawerPosition: appStyle.navigationMenu.drawerPosition,// === 'left'? 'left' : 'right',
-                swipeEdgeWidth: deviceWidth/2,
-                overlayColor:`${Theme.specials.dimout}40`,
-                header: ({ navigation, route }) => {
-                    return (
-                    <NavigationMenu
-                        keyID={String(Math.random())}
-                        state = {navigation.getState()}
-                        route = {route}  
-                        navigation = {navigation}
-
-                        hideMenu = {hideMenu}
-
-                        appStyle={appStyle}
-                        appConfig={appConfig}
-
-                        ThemeColorsAppIndex={ThemeColorsAppIndex}
-                        ThemeSchema={ThemeSchema}
-                        LanguageAppIndex={LanguageAppIndex}
-                    />
-                  );
-                },
-                sceneContainerStyle: {
-                    backgroundColor: Theme.basics.neutrals.primary
-                },
+                headerShown: false
             }}
-            
-            
         >
-            <Drawer.Screen name="tasks" component={Tasks} />
-            <Drawer.Screen name="timetable" component={Timetable} />
-            <Drawer.Screen name="analytics" component={Analytic} />
-            <Drawer.Screen name="notes" component={Notes} />
-            <Drawer.Screen name="settingsStack" component={SettingsStack} options={{swipeEnabled: false}}/>
-        </Drawer.Navigator>
-    );
+            <Tab.Screen 
+                name="tasks" 
+                //component={Tasks}
+            > 
+                {(props)=> 
+                <Tasks 
+                    {...props} 
+                    openSettingsWindow = {openSettingsWindow}
+                    aTheme={aTheme}
+                    aStyle={aStyle}
+                />}
+            </Tab.Screen>
+            <Tab.Screen 
+                name="timetable" 
+                //component={Timetable} 
+            >
+                {(props)=><Timetable 
+                    {...props} 
+                    openDrawer={openDrawer}
+
+                    openSettingsWindow = {openSettingsWindow}
+                    uiStyle={uiStyle}
+                    uiTheme={uiTheme}
+                    uiCompositions = {uiCompositions}
+                />}
+            </Tab.Screen>
+            <Tab.Screen name="analytics" component={Analytic} />
+            <Tab.Screen name="notes" component={Notes} />
+        </Tab.Navigator>
+        </NavigationContainer>
+        </CustomDrawer>
+        </Reanimated.View>
+    )
 }
+
 import ColorShemeSwitch from '../general_components/ColorShemeSwitch';
 import SkiaViewDisign from '../general_components/base_components/SkiaViewDisign';
 function SchemeSwitch (props) {
@@ -178,16 +291,45 @@ function SchemeSwitch (props) {
         ThemeSchema,
         r_setAppStyle,
         LanguageAppIndex,
+
+        uiStyle,
+        uiTheme,
+        uiScheme,
+        updateFullTheme,
     }= props
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
+    const {
+        lists: {
+            invertColorsHeader
+        },
+        palette: {
+            scheme
+        }
+    } = uiStyle
+
+    const {
+        icons: {
+            neutrals: {
+                primary: iconNP,
+                secondary: iconNS,
+                quaternary: iconNQ
+            }
+        }
+    } = uiTheme
+
     const switching = (scheme)=>{   
-        const newAppStyle = JSON.parse(JSON.stringify(appStyle));
-        newAppStyle.palette.scheme = scheme
-        r_setAppStyle(newAppStyle);
-        dataRedactor("storedAppStyle",newAppStyle);
+        //const newAppStyle = JSON.parse(JSON.stringify(appStyle));
+        //newAppStyle.palette.scheme = scheme
+        //r_setAppStyle(newAppStyle);
+        //dataRedactor("storedAppStyle",newAppStyle);
+
+        updateFullTheme('current', scheme)
     }
+
+    const colorPrimaryIcon = useDerivedValue(()=>invertColorsHeader.value? iconNS.value : iconNP.value)
+    const colorSecondaryIcon = useDerivedValue(()=>iconNQ.value)
 
     return(
         <View
@@ -197,17 +339,20 @@ function SchemeSwitch (props) {
                 height: 54,
                 width: 54,
                 justifyContent: 'center',
-                alignItems: 'center'
+                alignItems: 'center',
+                //backgroundColor: 'blue'
             }}
         >
-        <ColorShemeSwitch 
+        <ColorShemeSwitch
+            aStyleScheme = {scheme}
+            aScheme = {uiScheme}
+            aColorPrimaryIcon = {colorPrimaryIcon}
+            aColorSecondaryIcon = {colorSecondaryIcon}
+        
             scheme = {ThemeSchema}
             sizeIcon = {32}
             colorIcon ={appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary}
             invertColorIcon = {Theme.icons.neutrals.quaternary}
-            pressableStyle = {{
-                flex: 1
-            }}
             switching = {switching}
         />
         </View>
@@ -215,73 +360,304 @@ function SchemeSwitch (props) {
 }
 
 import WeatherComponent from '../weather/WeatherComponent';
+import { useRef } from 'react';
 
 function CustomDrawerContent(props) {
 
     const {
+
+        uiStyle,
+        uiTheme,
+        uiScheme,
+        uiCompositions,
+
         appStyle,
         appConfig,
         ThemeColorsAppIndex,
         ThemeSchema,
         LanguageAppIndex,
     }= props
+    //console.log('DRAVER VIEW')
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
     const drawerHeaderHeight = 77
 
+    const {
+        navigationMenu: {
+            drawerPosition
+        },
+        lists:{
+            invertColorsHeader
+        }
+    } = uiStyle
+
+    const {
+        basics: {
+            neutrals: {
+                primary: basicNP,
+                secondary: basicNS,
+            },
+            accents: {
+                primary: basicAP,
+            }
+        }
+    } = uiTheme
+
+    const panelBG = useAnimatedStyle(()=>({
+        backgroundColor: basicNP.value
+    }))
+
+    const panelHeaderBG = useAnimatedStyle(()=>({
+        backgroundColor: invertColorsHeader.value? basicNS.value : basicAP.value
+    }))
+
+    const schemeSwitchStyle = useAnimatedStyle(()=>(
+        drawerPosition.value == 'left'? {
+            right: 10,
+        } : {
+            left: 10
+        }
+    ))
+
     //console.log(props)
     return (
-        <View 
-            style={{
+        <Reanimated.View 
+            style={[panelBG, {
                 flex: 1,
-                //width: 252,{...props} 
-                paddingBottom: 50,
-                backgroundColor: Theme.basics.neutrals.primary,
-            }}
+                paddingBottom: 60,
+            }]}
         >
-            <View
-                style={{
+            <Reanimated.View
+                style={[panelHeaderBG, {
                     height: (statusBarHeight+3)+drawerHeaderHeight,
                     width: '100%',
-                    backgroundColor: appStyle.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary,
-                    //justifyContent: 'center',
-                    //alignItems: appStyle.navigationMenu.drawerPosition == 'left'? 'flex-end' : 'flex-start',
                     paddingHorizontal: 10,
                     paddingTop: (statusBarHeight+3)
-                }}
+                }]}
             >   
-                <View
-                    style={{
-                        flex: 1,
-                        //backgroundColor: Theme.basics.accents.primary,
+                <Reanimated.View
+                    style={[schemeSwitchStyle, {
+                        position: 'absolute',
+                        bottom: 10,
+                        //backgroundColor: 'red',
                         justifyContent: 'center',
-                        alignItems: appStyle.navigationMenu.drawerPosition == 'left'? 'flex-end' : 'flex-start',
-                        //paddingHorizontal: 10
-                    }}
+                        alignItems: 'center'
+                    }]}
                 >  
                     <SchemeSwitch {...props}/>
-                </View>
+                </Reanimated.View>
+            </Reanimated.View>
 
-            </View>
+            <DrawerWeather {...props} />
+            
+            <DrawerMenu {...props} />
+            <LeadingToSettings {...props} />
+        </Reanimated.View>
+    )
+}
 
-            <View
-                style={{
-                    height: 430,
-                    width: '100%',
-                    //backgroundColor: '#66666630'
-                }}
-            >
-                {(appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0) && <WeatherComponent/>}
-            </View>
-            {appStyle.navigationMenu.type == 'not' && <DrawerItemList {...props} />}
-            {(!appConfig.appFunctions.settings.used) && <LeadingToSettings {...props} /> }
-   
+const DrawerWeather = (props) => {
+    const {
+        appConfig
+    } = props
+
+    return (
+        <View
+            style={{
+                height: 430,
+                width: '100%',
+                //backgroundColor: '#66666630'
+            }}
+        >
+            {(appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0) && <></>}
+            <WeatherComponent componentSize={{h: 430, w: 280}} {...props}/>
+        </View>
+    )
+    
+}
+
+//<DrawerItemList {...props} />
+const RPressable = Reanimated.createAnimatedComponent(Pressable)
+
+const ITEM_MENU_HEIGHT = 40
+const ITEM_ICON_SIZE = 30
+
+import { getNavigateItems } from '../general_components/navigation_menu/tools';
+
+const DrawerMenu = (props) => {
+    const {
+        state = {
+            index: 0, 
+            routes: [
+                {name: "tasks"},
+                {name: "timetable"},
+                {name: "notes"},
+                //{name: "settingsStack"},
+                {name: "analytics"},
+            ]
+        },  
+        //route,
+        //navigation, 
+        screenOpen,
+        appStyle,
+        appConfig,
+
+        uiStyle,
+        uiTheme,
+        uiScheme,
+        uiCompositions,
+    
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex,
+    } = props
+    
+    const {
+        texts: {
+            neutrals: {
+                secondary: textNS
+            }
+        },
+        icons: {
+            neutrals: {
+                secondary: iconNS
+            }
+        },
+    } = uiTheme
+
+    const {
+        navigationMenu: {
+            type
+        }
+    } = uiStyle
+
+    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const Language = languagesAppList[LanguageAppIndex]
+
+    const [hideDrawerMenu, setHideDrawerMenu] = useState(type.value != 'not')
+
+    useAnimatedReaction(()=>type.value != 'not', (newValue)=>{runOnJS(setHideDrawerMenu)(newValue)})
+
+    if(hideDrawerMenu){return null}
+    return (
+        <View
+            style={{
+                height: 4*ITEM_MENU_HEIGHT,
+                width: '100%',
+            }}
+        >
+        {getNavigateItems({
+                //state: state,
+                LanguageAppIndex: LanguageAppIndex,
+                appConfig: appConfig
+            })
+        .map((item, index) => (
+            <ItemMenuDrawer
+                key = {item.routeName+"_menu_item"} 
+                keyID = {item.routeName+"_menu_item"} 
+                title = {item.screenTItle}
+                icon = {item.iconFocus[false]}
+                onPress = {()=>{screenOpen(item.routeName)}}
+
+                uiTheme={uiTheme}
+                uiStyle={uiStyle}
+            />
+        ))}
         </View>
     )
 }
 
+
+const ItemMenuDrawer = (props) => {
+    const {
+        title,
+        icon,
+        keyID = "menu_item",
+        uiStyle,
+        uiTheme,
+        uiScheme,
+
+        onPress
+    } = props
+
+    const {
+        texts: {
+            neutrals: {
+                secondary: textNS
+            }
+        },
+        icons: {
+            neutrals: {
+                secondary: iconNS
+            }
+        },
+    } = uiTheme
+
+    const {
+        navigationMenu: {
+            type
+        }
+    } = uiStyle
+
+    const iconColor = useAnimatedStyle(()=>({
+        color: iconNS.value
+    }))
+
+    const textColor = useAnimatedStyle(()=>({
+        color: textNS.value
+    }))
+
+    const rippleProps = useAnimatedProps(()=>({
+        android_ripple: {
+            color: `${iconNS.value}20`,
+            borderless: false,
+            foreground: false
+        }
+    }))
+
+    return (
+        <View
+            key = {keyID}
+            style = {{
+                backgroundColor: '#00000001',
+                alignItems: 'center',
+            }}
+        >
+            <RPressable
+                onPress={onPress}
+                style={[{
+                    paddingHorizontal: 20,
+                    height: ITEM_MENU_HEIGHT,
+                    width: '100%', 
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    flexDirection: 'row',
+                }]}
+                animatedProps={rippleProps}
+            >
+                <Reanimated.Text style={iconColor}>
+                    <MaterialCommunityIcons 
+                        name={icon} //Focus[appStyle.navigationMenu.accentsType.filling && isFocused]
+                        size={ITEM_ICON_SIZE} 
+                    />
+                </Reanimated.Text>
+                <Reanimated.Text
+                    style = {[textColor, {
+                        fontSize: 14,
+                        marginLeft: 12,
+                        textAlign: 'center',
+                        fontVariant: ['small-caps'],
+                        fontWeight: '600',
+                    }]}
+                >
+                    {title}
+                </Reanimated.Text>        
+            </RPressable>    
+        </View>
+    )
+}
 
 
 function LeadingToSettings(props){
@@ -291,6 +667,11 @@ function LeadingToSettings(props){
         appStyle,
         appConfig,
 
+        uiTheme,
+        uiStyle,
+
+        openSettings,
+
         ThemeColorsAppIndex,
         ThemeSchema,
         LanguageAppIndex,
@@ -299,61 +680,15 @@ function LeadingToSettings(props){
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex]
 
-    const ripple = (color) => ({
-        color: `${color}20`,
-        borderless: true,
-        foreground: false
-    })
-
-    const itemSize = 40
-    const size = 30
-
     return (
-        <View
-            style = {{
-                backgroundColor: '#00000001',
-                alignItems: 'center',
-            }}
-        >
-            <Pressable
-                onPress={()=>{
-                    navigation.navigate("settingsStack")
-                }}
-                style={[{
-                        paddingHorizontal: 20,
-                        height: itemSize,
-                        width: '100%', 
-                        alignItems: 'center',
-                        justifyContent: 'flex-start',
-                        flexDirection: 'row',
-                        //backgroundColor: 'red'
-                    }
-                ]}
-                android_ripple = {appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
-            >
-                <MaterialCommunityIcons 
-                    name={"cog"} 
-                    size={size} 
-                    color = {Theme.icons.neutrals.secondary}
-                />
-    
-                <Text
-                    style = {[
-                        {
-                            fontSize: 14,
-                            marginLeft: 10,
-                            //width: '100%',
-                            textAlign: 'center',
-                            fontVariant: ['small-caps'],
-                            fontWeight: '600',
-                            color: Theme.texts.neutrals.secondary
-                        }
-                    ]}
-                >
-                    {Language.SettingsScreen.HeaderTitle}
-                </Text>        
-            </Pressable>    
-        </View>
+        <ItemMenuDrawer 
+            title = {Language.SettingsScreen.HeaderTitle}
+            icon = {"cog-outline"}
+            onPress = {()=>{openSettings()}}
+
+            uiTheme={uiTheme}
+            uiStyle={uiStyle}
+        />
     )
 }
  

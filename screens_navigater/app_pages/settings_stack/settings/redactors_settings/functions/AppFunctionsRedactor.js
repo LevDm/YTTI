@@ -18,8 +18,8 @@ import {
     Vibration
 } from 'react-native';
 
-import Animated from "react-native-reanimated";
-import {
+import Reanimated, {
+    useDerivedValue,
     useSharedValue,
     useAnimatedProps,
     useAnimatedStyle,
@@ -62,10 +62,16 @@ export default AppFunctionsRedactor = ({
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors
 
+    const settingsIndex = Object.keys(appConfig.appFunctions).indexOf('settings')
+
     const getGroup = (changeIndex = -1) => {
+        'worklet';
         let group = []
-        if(checkGroup){
-            checkGroup.map((item, index)=>{
+        
+        //if(checkGroup){
+        if(cg?.value){
+            //checkGroup.map((item, index)=>{
+            cg?.value.map((item, index)=>{
                 if(changeIndex != -1){
                     group.push(changeIndex == index? !item : item)
                 } else {
@@ -87,8 +93,20 @@ export default AppFunctionsRedactor = ({
 
     const [checkGroup, setCheckGroup] = useState(getGroup())
 
+    const cg = useDerivedValue(()=>{
+        //aValue? console.log('UPDATE', groupItems, aValue.value) : null
+        return getGroup()
+    }, [appConfig.appFunctions, appConfig.screenSubsequence])
+
+
+    const splash = useDerivedValue(()=>{
+        //aValue? console.log('UPDATE', groupItems, aValue.value) : null
+        return [appConfig.splash.show]
+    }, [appConfig.splash.show])
+
     const settingFunctions = (index, subsequence) => {
-        const newGroup = index != undefined? getGroup(index) : checkGroup
+        //const newGroup = index != undefined? getGroup(index) : checkGroup
+        const newGroup = index != undefined? getGroup(index) : cg.value
         const newAppConfig = JSON.parse(JSON.stringify(appConfig));//getNewAppConfigObject();
         let usedSubsequence = []
         
@@ -116,12 +134,12 @@ export default AppFunctionsRedactor = ({
                 }
             })
 
-            setCheckGroup(newGroup)
-
+            //setCheckGroup(newGroup)
+            cg.value = newGroup
             
             dataRedactor("storedAppConfig", newAppConfig);
-            r_setAppConfig(newAppConfig);
-
+            
+            setTimeout(()=>{r_setAppConfig(newAppConfig);}, 100)
 
             if(usedSubsequence.length == 1 && appStyle.navigationMenu.type == 'classical'){menuDisplay(0)}
             else if(usedSubsequence.length >= 1 && (appStyle.navigationMenu.type == 'classical' && appStyle.navigationMenu.height == 0)){menuDisplay(50)}
@@ -184,8 +202,11 @@ export default AppFunctionsRedactor = ({
     const loadSplashShowSetting = (value) =>{
         const newAppConfig = JSON.parse(JSON.stringify(appConfig));
         newAppConfig.splash.show = value;//(!loadSplash);
-        r_setAppConfig(newAppConfig);
+
+        splash.value = [value]
+        
         dataRedactor("storedAppConfig", newAppConfig);
+        setTimeout(()=>{r_setAppConfig(newAppConfig);}, 80)
     }
 
     const renderItem = ({ item, drag = undefined, isActive = false }) => {
@@ -238,7 +259,9 @@ export default AppFunctionsRedactor = ({
                     }}
                     android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
                     Item = {<BoxItem childItem={item}/>}
-                    check = {checkGroup[index]}
+                    //check = {checkGroup[index]}
+                    boxId = {index}
+                    aCheck = {cg}
                     onPress = {()=>{settingFunctions(index)}}
                     boxBorderRadius = {appStyle.borderRadius.additional}
                     designType = {appStyle.selectors.design.checkBox}
@@ -290,7 +313,8 @@ export default AppFunctionsRedactor = ({
                     }}
                     android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
                     Item = {<BoxItem childItem={'loadSplash'}/>}
-                    check = {appConfig.splash.show}
+                    //check = {appConfig.splash.show}
+                    aCheck={splash}
                     onPress = {()=>{loadSplashShowSetting(!appConfig.splash.show)}}
                     boxBorderRadius = {appStyle.borderRadius.additional}
                     designType = {appStyle.selectors.design.checkBox}
@@ -308,7 +332,7 @@ export default AppFunctionsRedactor = ({
             keyExtractor={(item) => item}
             renderItem={renderItem}
         />
-        <View 
+        {false && <View 
             style={{
                 backgroundColor: '#00000001',
                 borderRadius: appStyle.borderRadius.additional,
@@ -342,7 +366,9 @@ export default AppFunctionsRedactor = ({
                     }}
                     android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
                     Item = {<BoxItem childItem={'settings'}/>}
-                    check = {checkGroup[Object.keys(appConfig.appFunctions).indexOf('settings')]}
+                    //check = {checkGroup[Object.keys(appConfig.appFunctions).indexOf('settings')]}
+                    aCheck={cg}
+                    boxId={settingsIndex}
                     onPress = {()=>{settingFunctions(Object.keys(appConfig.appFunctions).indexOf('settings'))}}
                     boxBorderRadius = {appStyle.borderRadius.additional}
                     designType = {appStyle.selectors.design.checkBox}
@@ -353,7 +379,7 @@ export default AppFunctionsRedactor = ({
                     }}
                 />
             </View>
-        </View>
+        </View>}
     </View>)
 }
 

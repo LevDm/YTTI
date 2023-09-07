@@ -38,20 +38,32 @@ const ReanimatedText = Reanimated.createAnimatedComponent(Text)
 export default Phone = (props) => {
 
     const {
-        index,
-        animatedValue,
+        //index,
+        //animatedValue,
+        aScale,
         previewAppStyleA,
+        //aPreviewAppSchema,//={aPreviewAppSchema}
         previewAppPalette, //= {palette: {theme: 'stock', scheme: 'auto', statusbar: 'auto'}}
-        frameColor = 'black',
+        frameColor = '#222',
+        size = {}
         //ThemeSchema
     } = props
 
-    const animatedState = useDerivedValue(()=>{
-        return animatedValue.value[index]
-    }, [animatedValue])
-    
+    const borderWidth = 5
     const duration = 400
     const scale = 2
+
+    const {
+        h1 = (deviceHeight/scale)+2*borderWidth,
+        h2 = deviceHeight,
+        w1 = (deviceWidth/scale)+2*borderWidth,
+        w2 = deviceWidth,
+    } = size
+
+    const animatedState = useDerivedValue(()=>{
+        return aScale.value//[index]
+    }, [aScale])
+    
     /*
     useEffect(()=>{
         //console.log(props.animatedValue)
@@ -66,9 +78,10 @@ export default Phone = (props) => {
         //const ThemeIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
         //const Theme = themesColorsAppList[ThemeIndex][Schema]
         //console.log(Theme, previewAppStyleA.value)
+        const aTheme = previewAppPalette.value
         return {
             
-            backgroundColor: previewAppPalette.value.basics.neutrals.primary,
+            backgroundColor: aTheme.basics.neutrals.primary,
             /* 
             withTiming( 
                 interpolateColor(
@@ -82,50 +95,42 @@ export default Phone = (props) => {
                 interpolate(
                     animatedState.value, 
                     [ 0, 1 ],
-                    [ 32, 0],
+                    [ 32, 5],
                     { extrapolateRight: Extrapolate.CLAMP }
-                ),
-                {duration: duration}
-            ),
+                )),
         }
     },[previewAppStyleA, previewAppPalette])
 
     const animStylePhone = useAnimatedStyle(()=>{
-        const borderWidth = 5
+        
 
         const heightValue = deviceHeight
-        const heightHalfValue = heightValue/scale
+        const heightHalfValue = (heightValue/scale)+2*borderWidth
 
-        const widthValue = (deviceWidth+2*borderWidth)
-        const widthHalfValue = (widthValue/scale)//-0.1
+        const widthValue = (deviceWidth)//+2*borderWidth)
+        const widthHalfValue = (widthValue/scale)+2*borderWidth//-0.1
         return {
             height: withTiming( 
                 interpolate(
                     animatedState.value, 
                     [ 0, 1 ],
-                    [ heightHalfValue, heightHalfValue+2*borderWidth],
+                    [ h1, h2],
                     { extrapolateRight: Extrapolate.CLAMP }
-                ),
-                {duration: duration}
-            ),
+                )),
             width: withTiming( 
                 interpolate(
                     animatedState.value, 
                     [ 0, 1 ],
-                    [ widthHalfValue, widthValue],
+                    [ w1, w2],
                     { extrapolateRight: Extrapolate.CLAMP }
-                ),
-                {duration: duration}
-            ),
+                )),
             borderRadius: withTiming( 
                 interpolate(
                     animatedState.value, 
                     [ 0, 1 ],
-                    [ 20, 0],
+                    [ 20, 5],
                     { extrapolateRight: Extrapolate.CLAMP }
-                ),
-                {duration: duration}
-            ),
+                )),
             borderColor: frameColor
         }
     })
@@ -134,7 +139,7 @@ export default Phone = (props) => {
         <Reanimated.View
             key = {props.key}
             style = {[animStyleBG,{
-                top: 1,
+                top: 0,//1,
                 //borderRadius: 32,
             }]}
         >
@@ -142,7 +147,7 @@ export default Phone = (props) => {
                 style = {[animStylePhone,{
                     //top: 1,
                     //borderColor: 'black',
-                    left: -0.1,
+                    left: 0,//-0.1,
                     //backgroundColor: themesColorsAppList[0].ground,
                     alignItems: 'center',
                     borderWidth: 5,

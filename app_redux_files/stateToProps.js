@@ -1,7 +1,7 @@
 function mapStateToProps(component) {
     switch(component) {       
         case "HOME_SCREEN": {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
             return function(state) {
                 return {
                     appStyle: state.appStyle,
@@ -16,7 +16,7 @@ function mapStateToProps(component) {
             }
         }
         case "N_SCREEN": {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
             return function(state) {
                 return {
                     testing: state.testing,
@@ -25,7 +25,7 @@ function mapStateToProps(component) {
             }
         }
         case "NFC_SCREEN": {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
             return function(state) {
                 return {
                     appStyle: state.appStyle,
@@ -35,7 +35,7 @@ function mapStateToProps(component) {
             }
         }    
         case "PALETTE_SCREEN": {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
             return function(state) {
                 return {
                     appStyle: state.appStyle,
@@ -48,7 +48,7 @@ function mapStateToProps(component) {
             }
         }
         case "SETTINGS_SCREEN": {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
             return function(state) {
                 return {
                     appStyle: state.appStyle,
@@ -62,7 +62,7 @@ function mapStateToProps(component) {
             }
         }
         case "NAVIGATER": {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
             return function(state) {
                 return {
                     appStyle: state.appStyle,
@@ -76,7 +76,7 @@ function mapStateToProps(component) {
             }
         }
         case "WEATHER_C": {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
             return function(state) {
                 return {
                     appStyle: state.appStyle,
@@ -87,7 +87,7 @@ function mapStateToProps(component) {
             }
         }
         case "SPLASH": {
-            console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
             return function(state) {
                 return {
                     appStyle: state.appStyle,

@@ -6,25 +6,25 @@ import dataCleaner from './data_cleaner';
 import themesColorsAppList from '../app_values/Themes';
 
 const dataLoader = ()  => {
-  console.log('>ASYNC_LOADING_APP_DATA>')
+  console.log('>ASYNC_LOADING_APP_DATA:')
 
   AsyncStorage.getItem("storedAppStyle").then(data =>{
     //data = String(null) //hard-reset
     if (data !== String(null) && data !== null){
-      console.log('>>LOAD_STYLE')
+      console.log('>>LOAD_STYLE:')
       let styleData = JSON.parse(data)
-      console.log(styleData)
+      //console.log(styleData)
       
       if(styleData.customTheme){
-        console.log('>>FINDED_CUSTOM_THEME')
+        console.log('>>>FINDED_CUSTOM_THEME')
         themesColorsAppList.splice(0,1, styleData.customTheme)
-        console.log(JSON.stringify(styleData.customTheme))
+        //console.log(JSON.stringify(styleData.customTheme))
       }
 
       store.dispatch({type: 'SET_STYLE_APP', value: styleData})
       store.dispatch({type: 'SET_LOAD_STATUS_STYLE_APP', value: true})
     } else {
-      console.log('>>NOT_DATA_STYLE_LOAD_'+data)
+      console.log('>>>NOT_DATA_STYLE_LOADED_'+data)
       store.dispatch({type: 'SET_LOAD_STATUS_STYLE_APP', value: true})
     }
   }).catch((error) => console.log(error));
@@ -33,14 +33,14 @@ const dataLoader = ()  => {
   AsyncStorage.getItem("storedAppConfig").then(data =>{
     //data = String(null) //hard-reset
     if (data !== String(null) && data !== null){
-      console.log('>>LOAD_CONFIG')
+      console.log('>>LOAD_CONFIG:')
       let configData = JSON.parse(data)
-      console.log(configData)
+      //console.log(configData)
       store.dispatch({type: 'SET_CONFIG_APP', value: configData})
       store.dispatch({type: 'SET_LOAD_STATUS_CONFIG_APP', value: true})
       if(configData.weather.type != 'off'){WeatherAPI(configData)}
     } else {
-      console.log('>>NOT_DATA_CONFIG_LOAD_'+data)
+      console.log('>>>NOT_DATA_CONFIG_LOADED_'+data)
       store.dispatch({type: 'SET_LOAD_STATUS_CONFIG_APP', value: true})
     }
   }).catch((error) => console.log(error));
@@ -55,7 +55,7 @@ const dataLoader = ()  => {
       store.dispatch({type: 'SET_LOAD_STATUS_TASKS_APP', value: true})
     } else {
       store.dispatch({type: 'SET_LOAD_STATUS_TASKS_APP', value: true})
-      console.log('>>NOT_DATA_TASKS_LOAD_'+data)
+      console.log('>>>NOT_DATA_TASKS_LOADED_'+data)
     }   
   }).catch((error) => console.log(error));
 }
@@ -86,13 +86,13 @@ export const WeatherAPI = async (appConfig, load = true) => {
         const time = date.getTime()/1000
         const hour = date.getHours()
         const day = date.getDate()
-        console.log('>>LOAD_WEATHER')
+        console.log('>>LOAD_WEATHER:')
         for(const cityKey in loadData){
           const weatherObjectInfo = loadData[cityKey]
           const newData = []
 
           if(weatherObjectInfo.requestTime[0] <= time && time < Math.min(weatherObjectInfo.requestTime[0]+3600*UPDATE_FREQUENCY, weatherObjectInfo.requestTime[1])){
-            console.log('>>>WEATHER_AGE_TRUE_'+weatherObjectInfo.locationInfo.city)
+            console.log('>>>WEATHER_AGE_TRUE_FOR_CITY_'+weatherObjectInfo.locationInfo.city)
             update = false; //
             for(let i = 0; i < DATA_VOLUME; i++){
               const dateHourlyDay = new Date(weatherObjectInfo.weather.hourly[i].dt*1000)
@@ -116,12 +116,12 @@ export const WeatherAPI = async (appConfig, load = true) => {
             }
             weatherData[cityKey] = resultWeatherObjectInfo
           } else {
-            console.log('>>>WEATHER_AGE_FALSE_'+weatherObjectInfo.locationInfo.city)
+            console.log('>>>WEATHER_AGE_FALSE_FOR_CITY_'+weatherObjectInfo.locationInfo.city)
             update = true;
           }
         }
       } else {
-        console.log('>>NOT_DATA_WEATHER_LOAD_'+data)
+        console.log('>>>NOT_DATA_WEATHER_LOADED_'+data)
       }
       //console.log((locationInfo.filter((item)=>item.used == true)).length, Object.keys(weatherData).length )
       if((locationInfo.filter((item)=>item.used == true)).length != Object.keys(weatherData).length )(update = true)
@@ -159,12 +159,12 @@ export const WeatherAPI = async (appConfig, load = true) => {
         lastUpdate: new Date().getTime(),
         requestLanguage: languageApp
       }
-      console.log('>>>WEATHER_UPDATE_'+location.city)
+      console.log('>>>WEATHER_UPDATE_FOR_CITY_'+location.city)
       weatherData[location.city] = resultWeatherObjectInfo
     }
     
     await AsyncStorage.setItem("storedWeather", JSON.stringify(weatherData)).then(() => {
-      console.log('>>WEATHER_SAVE')
+      console.log('>>>UPDATE_WEATHER_SAVED')
       
     }).catch((error) => console.log(error));
   }

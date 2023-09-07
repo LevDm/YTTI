@@ -567,7 +567,7 @@ const ColorPicker = (props) => {
 
     const kontur = useAnimatedStyle(()=>{
       return({
-        borderColor: currentSelectColor.value,
+        //borderColor: currentSelectColor.value,
         //color: currentSelectColor.value,
       })
     })

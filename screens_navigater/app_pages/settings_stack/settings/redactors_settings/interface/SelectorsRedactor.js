@@ -36,7 +36,6 @@ const SW_Item = (props) => {
 
         item,
         index,
-
         sw,
 
         swPress,
@@ -295,32 +294,38 @@ const RB_Item = (props) => {
     )
 }
 
+const itemSize = 70
 
-export default SelectorsRedactor = ({
-    appStyle,
-    appConfig,
-    //setPreviewAppStyle,
-    //getNewAppStyleObject,
+export default SelectorsRedactor = (props) => {
+    const {
+        uiStyle,
+        uiTheme,
 
-    previewAppStyleA,
+        showAllSettings,
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex   
-}) => {
+        tagStyle,
+
+        aStyle,
+        aTheme, 
+        aPalette, 
+        aScheme,
+
+        appStyle,
+        appConfig,
+        redactorsSet,
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex
+    } = props
+
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.selectors
 
 
     const designSetting = (type, option) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.selectors.design[type] = option;
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        uiStyle.selectors.design[type].value = option;
+        tagStyle('selectors.design.'+type)
     }
-
-    const itemSize = 70
 
     const getGroup = (activeIndex, groupSize) => {
         'worklet';
@@ -329,49 +334,35 @@ export default SelectorsRedactor = ({
         return newGroup
     }
 
-    //const [checkGroupSW, setCheckGroupSW] = useState(getGroup(switchDisign.indexOf(appStyle.selectors.design.switch), switchDisign.length));
     const swPress = (index) => {
-        const newGroup = getGroup(index, switchDisign.length)
         designSetting('switch', switchDisign[index])
-        //setCheckGroupSW(newGroup);
     }
 
-    //const [checkGroupCB, setCheckGroupCB] = useState(getGroup(checkBoxDisign.indexOf(appStyle.selectors.design.checkBox), checkBoxDisign.length));
     const cbPress = (index) => {
-        const newGroup = getGroup(index, checkBoxDisign.length)
         designSetting('checkBox', checkBoxDisign[index])
-        //setCheckGroupCB(newGroup);
     }
 
-    //const [checkGroupRB, setCheckGroupRB] = useState(getGroup(radioButtonDisign.indexOf(appStyle.selectors.design.radioButton), radioButtonDisign.length));
     const rbPress = (index) => {
-        const newGroup = getGroup(index, radioButtonDisign.length)
         designSetting('radioButton', radioButtonDisign[index])
-        //setCheckGroupRB(newGroup);
     }
 
-    const disShadows = useDerivedValue(()=>previewAppStyleA.value.selectors.ignoredShadows.disable)
 
-    const sw = useDerivedValue(()=>getGroup(switchDisign.indexOf(previewAppStyleA.value.selectors.design.switch), switchDisign.length))
-    const cb = useDerivedValue(()=>getGroup(checkBoxDisign.indexOf(previewAppStyleA.value.selectors.design.checkBox), checkBoxDisign.length))
-    const rb = useDerivedValue(()=>getGroup(radioButtonDisign.indexOf(previewAppStyleA.value.selectors.design.radioButton), radioButtonDisign.length))
+    const sw = useDerivedValue(()=>getGroup(switchDisign.indexOf(uiStyle.selectors.design.switch.value), switchDisign.length))
+    const cb = useDerivedValue(()=>getGroup(checkBoxDisign.indexOf(uiStyle.selectors.design.checkBox.value), checkBoxDisign.length))
+    const rb = useDerivedValue(()=>getGroup(radioButtonDisign.indexOf(uiStyle.selectors.design.radioButton.value), radioButtonDisign.length))
 
     const disableChange = (value) =>{
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.selectors.ignoredShadows.disable = value;
-        newAppStyle.presetUsed = 'YTTI-custom';
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        uiStyle.selectors.ignoredShadows.disable.value = value;
     }
 
     return (<View style={{paddingBottom: 12}}>
-        {appConfig.user.role == 'a' && 
+        {showAllSettings && 
         <SwitchField
             textTitle = {Language.disabledShadows}
             textStates = {Language.disabledShadowsState}
             //text = {`${Language.invertColors} ${Language.invertColorsState[invertColors]}`}
             //primeValue={disabledShadows}
-            aValue={disShadows}
+            aValue={uiStyle.selectors.ignoredShadows.disable}
             onChange={disableChange}
             style = {{
                 marginTop: 10
@@ -384,7 +375,8 @@ export default SelectorsRedactor = ({
 
         <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10, marginTop: 5}]}>{Language.switchs}</Text>
         <FlatList 
-            horizontal
+            //horizontal
+            numColumns={4}
             data={switchDisign}
             style={{
                 marginLeft: 30
@@ -410,7 +402,8 @@ export default SelectorsRedactor = ({
 
         <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10, marginTop: 5}]}>{Language.checkBoxs}</Text>
         <FlatList 
-            horizontal
+            //horizontal
+            numColumns={4}
             data={checkBoxDisign}
             style={{
                 marginLeft: 30
@@ -436,7 +429,8 @@ export default SelectorsRedactor = ({
 
         <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10, marginTop: 5}]}>{Language.radioButtons}</Text>
         <FlatList 
-            horizontal
+            //horizontal
+            numColumns={4}
             data={radioButtonDisign}
             style={{
                 marginLeft: 30

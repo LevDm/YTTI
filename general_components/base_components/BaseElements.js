@@ -111,8 +111,8 @@ export const BasePressable = ({
                     //flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    minHeight: 30,
-                    minWidth: 30,
+                    //minHeight: 30,
+                    //minWidth: 30,
                     //alignContent: 'center',
                     //borderRadius: 12,
                     //backgroundColor: 'blue',
@@ -195,6 +195,10 @@ export const BaseSlider = ({
                 paddingBottom: 15
                 //backgroundColor: 'red'
             }, areaStyle]}
+            //onResponderGrant={() => true}
+            //onMoveShouldSetResponder={() => true}
+            //onStartShouldSetResponder={()=>true}
+            //onMoveShouldSetResponde={()=>true}
         >
             <Text
                 style = {[signaturesStyle, {
@@ -209,7 +213,11 @@ export const BaseSlider = ({
                 style = {{
                     flex: 1,
                 }}
-                //animatedProps={dynamicColors}
+                //onResponderGrant={() => true}
+                ///onResponderTerminationRequest={()=>false}
+                //onStartShouldSetResponder={()=>true}
+                //onMoveShouldSetResponde={()=>true}
+
                 maximumTrackTintColor = {maximumTrackTintColor}
                 minimumTrackTintColor = {minimumTrackTintColor}
                 thumbTintColor = {thumbTintColor}
@@ -474,13 +482,24 @@ export const BaseSwitch = ({
             android_ripple = {android_ripple? android_ripple : {}}
             onPress = {onPress}
         >
+        <View 
+            style = {{
+                minHeight: size,
+                minWidth: size*2.2,
+                justifyContent: 'center',
+                alignItems: 'center',
+                //backgroundColor: 'red',
+            }}
+        >
+
+        
         <Reanimated.View
             style = {[{
                 justifyContent: 'center',
-
+                
                 height: (designType == 'type_3'? size : (size*0.7))+4,
                 width: (designType == 'type_3'? 2*size : (size*1.2))+4,
-                marginRight: designType == 'type_3'? size/4 : size/2,
+                //marginRight: designType == 'type_3'? size/4 : size/2,
             },]}
         >
             <SkiaViewDisign
@@ -494,6 +513,10 @@ export const BaseSwitch = ({
                 innerShadow={{
                     used: true,
                     borderWidth: 1
+                }}
+                initSize={{
+                    height: (designType == 'type_3'? size : (size*0.7))+4,
+                    width: (designType == 'type_3'? 2*size : (size*1.2))+4
                 }}
             />
  
@@ -520,6 +543,10 @@ export const BaseSwitch = ({
                         used: true,
                         borderWidth: 0
                     }}
+                    initSize={{
+                        height: (designType == 'type_3'? size*0.5 : size)+4,
+                        width: (designType == 'type_3'? size*0.5 : size)+4,
+                    }}
                 />
                 <Reanimated.View
                     style = {[{
@@ -532,6 +559,7 @@ export const BaseSwitch = ({
                 />
             </Reanimated.View>
         </Reanimated.View>
+        </View>
         {separator && <View style={separatorStyle}/>}
         {Item}
         </Pressable>

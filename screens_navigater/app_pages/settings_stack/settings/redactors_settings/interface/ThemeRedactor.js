@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect, memo} from "react";
 
 import {
+    Appearance,
     StyleSheet, 
     Text, 
     Pressable, 
@@ -56,6 +57,8 @@ import {
     BaseSlider,
     BaseSwitch 
 } from "../../../../../../general_components/base_components/BaseElements";
+
+import ColorPicker, {ColorPointer} from "./PaletteMod";
 
 import commonStaticStyles, { BoxsField } from "../CommonElements";
 
@@ -197,56 +200,45 @@ const ThemeItem = ({
     )
 }
 
-export default ThemeRedacor = ({
-    goToPalleteScreen,
+export default ThemeRedacor = (props) => {
+    const {
+        uiStyle,
+        uiTheme,
+        uiScheme,
+        updateFullStyle,
+        updateFullTheme,
 
-    appStyle,
-    appConfig,
-    //previewAppStyle,
-    //setPreviewAppStyle,
-    //getNewAppStyleObject,
+        showAllSettings,
 
-    previewAppStyleA,
+        tagStyle,
 
-    //setAppStyle,
-    //r_setAppStyle,
+        aPalette, 
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex  
-}) => {
+        appStyle,
+        appConfig,
+        ThemeColorsAppIndex,
+        ThemeSchema,
+        LanguageAppIndex
+    } = props
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.themes
 
     const flatListRef = useAnimatedRef()
     
+    const listenerColorSheme = Appearance.getColorScheme()
 
     const itemSize = 68
     const outlineSize = 2
     
-    const selectIndex = useDerivedValue(()=>{
-        const newIndex = themesApp.indexOf(previewAppStyleA.value.palette.theme)
-        const scrollIndex = Math.max((newIndex-1), 0)
-        scrollTo(
-            flatListRef, //ref
-            scrollIndex*(itemSize), //x offset
-            0, //y offset
-            true //animate
-        )
-        return newIndex
-    })
-    const selectSchema = useDerivedValue(()=>{ 
-        //console.log()
-        return  schemes.indexOf(previewAppStyleA.value.palette.scheme)
-    })
-    const selectStatusBar = useDerivedValue(()=>statusBarStyles.indexOf(previewAppStyleA.value.palette.statusBar))
+    const selectIndex = useDerivedValue(()=>themesApp.indexOf(uiStyle.palette.theme.value))
+    const selectSchema = useDerivedValue(()=>schemes.indexOf(uiStyle.palette.scheme.value))
+    const selectStatusBar = useDerivedValue(()=>statusBarStyles.indexOf(uiStyle.palette.statusBar.value))
 
     const pressItem = (index) => {
         console.log('THEME PressItem', index)
         if(selectIndex.value != index){
             changeThema(index)
-            //flatListRef.current.scrollToIndex({index: index})
         }
     }
 
@@ -257,77 +249,43 @@ export default ThemeRedacor = ({
         if(index == 0 && themesColorsAppList[0]==null){
             console.log('not custom theme for redactors')
         } else {
-            goToPalleteScreen(index, 1)
         }
         
     }
 
+
+    const settingTheme = (themeIndex) => {
+        uiStyle.palette.theme.value = themesApp[themeIndex]
+        tagStyle('palette.theme')
+        updateFullTheme(themesApp[themeIndex])
+    }
     
 
     const changeThema = (themeIndex)=>{
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
         if(themeIndex != 0){
-            //let newAppStyle = getNewAppStyleObject();
-            //console.log('app theme ok', themesColorsAppList[themeIndex].light)
-            
-            newAppStyle.palette.theme = themesApp[themeIndex]
-            newAppStyle.presetUsed = 'YTTI-custom';
-            //setPreviewAppStyle(newAppStyle)
-            cancelAnimation(previewAppStyleA)
-            previewAppStyleA.value = newAppStyle
-
-            //setPreviewThemeIndex(themeIndex)
+            settingTheme(themeIndex)
         } else {
             if(!themesColorsAppList[0]){
                 console.log('not custom theme')
             } else {
-                console.log('custom theme ok', themesColorsAppList[themeIndex])
-                //let newAppStyle = getNewAppStyleObject();
-                newAppStyle.palette.theme = themesApp[themeIndex]
-                newAppStyle.presetUsed = 'YTTI-custom';
-                //setPreviewAppStyle(newAppStyle)
-                cancelAnimation(previewAppStyleA)
-                previewAppStyleA.value = newAppStyle
-
-                //setPreviewThemeIndex(themeIndex)
+                console.log('custom theme ok')
+                settingTheme(themeIndex)
             }
         }
-        
     }
     
-
-    const createCustomTheme = ()=>{
-        const grounThemeIndex = selectIndex.value
-        goToPalleteScreen(grounThemeIndex, 0)
-    }
-
-    /*
-    const switching = ()=>{   
-        let index = schemes.indexOf(schema)
-        index = (index+1) == schemes.length? 0 : index+1
-        setSchema(schemes[index])
-        let newAppStyle = getNewAppStyleObject();
-        newAppStyle.palette.scheme = schemes[index]
-        setPreviewAppStyle(newAppStyle)
-    }
-    */
-
     const shemaSetting = (index) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.palette.scheme = schemes[index]
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        console.log('shemaSetting', index)
+        uiStyle.palette.scheme.value = schemes[index]
+        const themeIndex = selectIndex.value
+        updateFullTheme(themesApp[themeIndex], schemes[index])
     }
 
     const barSetting = (index) => {
-        const newAppStyle = JSON.parse(JSON.stringify(previewAppStyleA.value));
-        newAppStyle.palette.statusBar = statusBarStyles[index]
-        cancelAnimation(previewAppStyleA)
-        previewAppStyleA.value = newAppStyle
+        uiStyle.palette.statusBar.value = statusBarStyles[index]
     }
 
     const RENDER_ITEMS = ({item, index})=>{
-        const indexUsedTheme = themesApp.indexOf(appStyle.palette.theme)
         const schemaThisItem = 'light'
         const ThemeThisItem = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem] : Theme
         const title = themesColorsAppList[index]? themesColorsAppList[index][schemaThisItem].theme : item
@@ -372,7 +330,7 @@ export default ThemeRedacor = ({
     return (
     <View
         style={{
-            paddingBottom: 16
+            
         }}
     >   
         <BoxsField
@@ -383,13 +341,13 @@ export default ThemeRedacor = ({
             aValue = {selectSchema}
             //primaryValue = {schemes.indexOf(previewAppStyleA.value.palette.scheme)} 
             groupSize = {schemes.length}
-            onPress = {(activeIndex)=>{shemaSetting(activeIndex)}}
+            onPress = {shemaSetting}
             groupItems = {Object.values(Language.colorsMods)}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
             ThemeSchema = {ThemeSchema}
         />
-        {appConfig.user.role == 'a' && 
+        {showAllSettings && 
         <BoxsField
             //  'one'>true || 'multiple'>false
             isChoiceOne={true}
@@ -398,7 +356,7 @@ export default ThemeRedacor = ({
             aValue = {selectStatusBar}
             //primaryValue = {statusBarStyles.indexOf(previewAppStyleA.value.palette.statusBar)} 
             groupSize = {statusBarStyles.length}
-            onPress = {(activeIndex)=>{barSetting(activeIndex)}}
+            onPress = {barSetting}
             groupItems = {Object.values(Language.barStyles)}
             appStyle = {appStyle}
             ThemeColorsAppIndex = {ThemeColorsAppIndex}
@@ -407,74 +365,68 @@ export default ThemeRedacor = ({
         <Text
             style = {[staticStyles.text, {
                 color: Theme.texts.neutrals.secondary,
-                paddingLeft: 10,
-                marginTop: 10,
+                paddingLeft: 8,
+                marginTop: 4,
             }]}
         >
             {Language.palette}
         </Text> 
         <View
             style={{  
-                flex: 1, 
+                //flex: 1, 
                 alignItems: "center"
             }}
         >
-        <FlatList
-            ref = {flatListRef}
-            initialNumToRender={15}
-            style={{        
-                width: 5*itemSize,
-                height: itemSize,
-            }}
-            horizontal = {true}
-            showsHorizontalScrollIndicator = {false}
-            decelerationRate = {'fast'}
-            contentContainerStyle = {{
-                //paddingRight: itemSize,
-            }}
-            snapToInterval={itemSize}
-            getItemLayout={(data, index) => (
-                {length: itemSize, offset: itemSize * index, index: index}
-            )}
-            initialScrollIndex = {ThemeColorsAppIndex}
-            data = {themesApp}         
-            keyExtractor={(item, index) => {
-                return item + index
-            }}
-            ListHeaderComponent={
-                <Pressable 
-                    style = {{
-                        width: itemSize,
-                        height: itemSize,
-
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: appStyle.borderRadius.additional,
-                        borderWidth:  outlineSize,
-                        borderColor: Theme.texts.neutrals.secondary,
-                        transform: [{scale: .95}],
-                        paddingTop: 6
-                    }}
-                    onPress={createCustomTheme}
-                >
-                    <MaterialCommunityIcons name="palette-advanced" size={35} color={Theme.texts.neutrals.secondary} />
-                    <Text
-                        style = {{
-                            top: -5,
-                            color: Theme.texts.neutrals.secondary,
-                            fontSize: 10,
-                            fontWeight: 'bold',
-                            letterSpacing: 0,
-                            fontVariant: ['small-caps'],
-                        }}
-                    >
-                        {Language.openPainter}
-                    </Text>
-                </Pressable>
-            }
-            renderItem={RENDER_ITEMS}
-        />
+            <FlatList
+                ref = {flatListRef}
+                initialNumToRender={15}
+                style={{        
+                    width: 4*itemSize,
+                    //height: itemSize,
+                    marginBottom: 8
+                    
+                }}
+                numColumns={4}
+                //horizontal = {true}
+                showsHorizontalScrollIndicator = {false}
+                decelerationRate = {'fast'}
+                contentContainerStyle = {{
+                    //paddingRight: itemSize,
+                }}
+                snapToInterval={itemSize}
+                getItemLayout={(data, index) => (
+                    {length: itemSize, offset: itemSize * index, index: index}
+                )}
+                //initialScrollIndex = {ThemeColorsAppIndex}
+                data = {themesApp}         
+                keyExtractor={(item, index) => {
+                    return item + index
+                }}
+                renderItem={RENDER_ITEMS}
+            />
         </View>
+        <Text
+            style = {[staticStyles.text, {
+                color: Theme.texts.neutrals.secondary,
+                paddingLeft: 8,
+                marginVertical: 4,
+            }]}
+        >
+            {Language.painter}
+        </Text> 
+        {true && 
+        <ColorPicker
+            aPalette = {aPalette}
+            uiTheme = {uiTheme}
+            uiScheme = {uiScheme}
+            
+            appStyle={appStyle}
+            ThemeColorsAppIndex = {ThemeColorsAppIndex}
+            ThemeSchema = {ThemeSchema}
+            LanguageAppIndex = {LanguageAppIndex}
+        />}
+
+        
     </View>)
 }
 

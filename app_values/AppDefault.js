@@ -4,7 +4,7 @@ export const borderRadiusValues = {min: 0, max: 36, step: 1}
 export const menuTypes = ['classical','not','hidden' ];
 export const positionNavigateMenu = {min: -150, max: 150, step: 10}
 export const valuePosition = ['left','center','right']
-export const heightNavigateMenu = {min: 36, max: 66, step: 2}
+export const heightNavigateMenu = {min: 40, max: 66, step: 2}
 export const drawerPositions = ['left', 'right']
 export const accentsType = ['filling', 'coloring']
 //lists
@@ -13,10 +13,10 @@ export const listsProximity = {min: 0, max: 10, step: 0.25}
 export const listsHorizontalProximity = {'true': 16, 'false': 0}
 //bobber button
 export const sizeButton = {min: 54, max: 72, step: 2}
-export const positionFAB = ['left','center','right', 'top']
+export const positionFAB =  ['top','bottom'] //['left','center','right', 'top']
+export const FAB_bottomPosition = {min: 0, max: 1, step: 0.0625}
 
-export const weatherTypes = ['panel', 'lists',  'widget', 'off']
-
+export const weatherTypes = ['panel', 'lists', 'off'] //['panel', 'lists',  'widget', 'off']
 export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
 //effects
 export const rippleValues = ['all', 'some', 'none']

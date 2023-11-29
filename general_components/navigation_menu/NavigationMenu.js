@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Keyboard, View, Pressable, Text, Dimensions, StyleSheet } from "react-native";
-import Constants from "expo-constants";
 
 import Reanimated, {
     useSharedValue,
@@ -18,35 +17,19 @@ import * as NavigationBar from 'expo-navigation-bar';
 
 import Svg, {Path} from "react-native-svg";
 
-import themesColorsAppList from "../../app_values/Themes";
-import languagesAppList from "../../app_values/Languages";
-
 import Classical from "./Classical";
 import Hidden from "./Hidden";
 
-const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
-const screenHeight = Dimensions.get('screen').height
-
-const statusBarHeight = Constants.statusBarHeight
 
 const NavigationMenu = (props) => {
     const { 
         navigation,
         state, 
         route,
-        keyID,
-        hideMenu,
 
         uiStyle,
         uiTheme,
         uiCompositions,
-
-        appStyle,
-        appConfig,
-
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex,
     } = props
 
     const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -57,11 +40,9 @@ const NavigationMenu = (props) => {
         return () => {
             showSubscription.remove();
             hideSubscription.remove();
-        };
+        }
     }, []);
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex]
 
     const visibility = NavigationBar.useVisibility() === 'visible'
     //console.log('ANDROID BAR',visibility)
@@ -69,11 +50,6 @@ const NavigationMenu = (props) => {
     const {
         navigationMenu: {
             type,
-            position: {
-                horizontal,
-                vertical
-            },
-            height
         }
     } = uiStyle
 
@@ -84,12 +60,13 @@ const NavigationMenu = (props) => {
     })
 
     const areaMenu = useAnimatedStyle(()=>{
-        if(type.value == 'classical'){
+        if(type.value == 'type_1'){
             return {
                 bottom: 0// (visibility?  (deviceHeight + statusBarHeight) : screenHeight) -height.value
             }
         }
         return {}
+        /* 
         if(type.value  == 'hidden'){
             
             const margin = 10
@@ -127,6 +104,7 @@ const NavigationMenu = (props) => {
                 alignItems: align
             }       
         }
+        */
     })
 
 
@@ -140,9 +118,9 @@ const NavigationMenu = (props) => {
 
             }]}
         >
-            {currentType == 'classical' && <Classical {...props}/>}
+            {currentType == 'type_1' && <Classical {...props}/>}
 
-            {currentType == 'hidden' &&
+            {currentType == 'type_3' &&
             <Text style={{backgroundColor: 'red'}}>THIS MENU TYPE NOT READY</Text>
             /* 
             <Hidden

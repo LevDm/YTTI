@@ -32,46 +32,45 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import dataRedactor from "../../../../../../app_async_data_manager/data_redactor";
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
-
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSwitch 
-} from "../../../../../../general_components/base_components/BaseElements";
-
+import BaseBox from "../../../../../../general_components/base_components/BaseBox";
 
 import commonStaticStyles, { SwitchField, BoxsField, ripple } from "../CommonElements";
 
+import useLanguage from "../../../../../../app_hooks/useLanguage";
 
+export default AppFunctionsRedactor = (props) => {
+    const {
+        uiComposition,
 
-export default AppFunctionsRedactor = ({
-    appStyle,
-    r_setAppStyle,
-    //setAppStyle,
+        r_uiStyle,
+        Theme,
+        
+    } = props
 
-    appConfig,
-    r_setAppConfig,
+    const {
+        appFunctions
+    } = uiComposition
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex  
-}) => {
+    //const Theme = r_uiPalette[ThemeSchema]
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors
+    const screenSubsequence = () => {
+        const subsequence = new Array(Object.keys(appFunctions).length)
+        for(const key in appFunctions){
+            const item = appFunctions[key]
+            subsequence[item.useId.value] = key// item.used.value
+        }
+        return subsequence
+    }
 
-    const settingsIndex = Object.keys(appConfig.appFunctions).indexOf('settings')
-
+    
     const getGroup = (changeIndex = -1) => {
         'worklet';
         let group = []
         
         //if(checkGroup){
-        if(cg?.value){
+        if(usedScreens?.value){
             //checkGroup.map((item, index)=>{
-            cg?.value.map((item, index)=>{
+            usedScreens?.value.map((item, index)=>{
                 if(changeIndex != -1){
                     group.push(changeIndex == index? !item : item)
                 } else {
@@ -79,108 +78,80 @@ export default AppFunctionsRedactor = ({
                 }
             })
         } else {
-            Object.keys(appConfig.appFunctions).map((item, index)=>{
-                let value = appConfig.appFunctions[item].used
+            Object.keys(appFunctions).map((key, index)=>{
+                const isUsed = appFunctions[key].used.value
                 if(changeIndex != -1){
-                    group.push(changeIndex == index? !value : value)
+                    group.push(changeIndex == index? !isUsed : isUsed)
                 } else {
-                    group.push(value)
+                    group.push(isUsed)
                 }
             })
         }
         return group
     };
 
-    const [checkGroup, setCheckGroup] = useState(getGroup())
 
-    const cg = useDerivedValue(()=>{
+    const usedScreens = useDerivedValue(()=>{
         //aValue? console.log('UPDATE', groupItems, aValue.value) : null
         return getGroup()
-    }, [appConfig.appFunctions, appConfig.screenSubsequence])
+    }, [appFunctions])
+ 
+    const [screenOrder, setScreensOrder] = useState(screenSubsequence());
 
+    //console.log('screens', screenOrder, usedScreens.value)
 
-    const splash = useDerivedValue(()=>{
-        //aValue? console.log('UPDATE', groupItems, aValue.value) : null
-        return [appConfig.splash.show]
-    }, [appConfig.splash.show])
 
     const settingFunctions = (index, subsequence) => {
-        //const newGroup = index != undefined? getGroup(index) : checkGroup
-        const newGroup = index != undefined? getGroup(index) : cg.value
-        const newAppConfig = JSON.parse(JSON.stringify(appConfig));//getNewAppConfigObject();
-        let usedSubsequence = []
+        const newGroup = index != undefined? getGroup(index) : usedScreens.value
+        const usedSubsequence = subsequence? subsequence : screenOrder
+
+        const countScreens = (newGroup.filter((el)=>el)).length
+
+        if(countScreens == 0){return}
+        //console.log('usedSubsequence', usedSubsequence)
+        //console.log('usedSubsequence', newGroup, countScreens)
         
-        if(subsequence){
-            newAppConfig.screenSubsequence = subsequence
-            subsequence.map((item, index)=>{
-                if(newGroup[Object.keys(newAppConfig.appFunctions).indexOf(item)]){
-                    usedSubsequence.push(item)
-                }
-            }) 
-        } else {
-            newAppConfig.screenSubsequence.map((item, index)=>{
-                if(newGroup[Object.keys(newAppConfig.appFunctions).indexOf(item)]){
-                    usedSubsequence.push(item)
-                }
-            }) 
+
+        Object.keys(appFunctions).map((item, index)=>{
+            appFunctions[item].used.value = newGroup[index]
+            appFunctions[item].useId.value = usedSubsequence.indexOf(item)
+        })
+
+        if((usedScreens.value).join() != newGroup.join()){
+            usedScreens.value = newGroup
         }
-        if((usedSubsequence.includes('settings') && usedSubsequence.length >= 2) || (!usedSubsequence.includes('settings') && usedSubsequence.length >= 1)){
-            console.log('usedSubsequence', usedSubsequence)
-            Object.keys(newAppConfig.appFunctions).map((item, index)=>{
-                newAppConfig.appFunctions[item].used = newGroup[index]
-                !newGroup[index]? newAppConfig.appFunctions[item].useId = null : null
-                if(usedSubsequence && newGroup[index]){
-                    newAppConfig.appFunctions[item].useId = usedSubsequence.indexOf(item)
-                }
-            })
-
-            //setCheckGroup(newGroup)
-            cg.value = newGroup
-            
-            dataRedactor("storedAppConfig", newAppConfig);
-            
-            setTimeout(()=>{r_setAppConfig(newAppConfig);}, 100)
-
-            if(usedSubsequence.length == 1 && appStyle.navigationMenu.type == 'classical'){menuDisplay(0)}
-            else if(usedSubsequence.length >= 1 && (appStyle.navigationMenu.type == 'classical' && appStyle.navigationMenu.height == 0)){menuDisplay(50)}
+        if(screenOrder.join() != usedSubsequence.join()){
+            setScreensOrder(usedSubsequence)
         }
-    }
-
-    const menuDisplay = (value) => {
-        const newAppStyle = JSON.parse(JSON.stringify(appStyle));
-        newAppStyle.navigationMenu.height = value
-        dataRedactor("storedAppStyle",newAppStyle);
-        r_setAppStyle(newAppStyle);
-    }
-
-    const [data, setData] = useState(appConfig.screenSubsequence);
-
-    const endDrag = ({ data }) => {
-        console.log('funcs', data)
-        settingFunctions(undefined, data)
-        setData(data)
     }
     
+    const endDrag = ({ data }) => {
+        //console.log('funcs', data)
+        settingFunctions(undefined, data)
+    }
+    
+    const ItemTitle = (props) => {
+        const Language = useLanguage()
+        const titles = {
+            'tasks':       Language.TasksScreen.HeaderTitle,
+            "analytics":   Language.AnalyticsScreen.HeaderTitle,
+            "notes":       Language.NotesScreen.HeaderTitle,
+            "timetable":   Language.TimetableScreen.HeaderTitle
+        } 
+        const title = titles[props.title].charAt(0).toUpperCase() + titles[props.title].slice(1)
+        return (
+            <Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{title}</Text>
+        )
+    }
 
     const BoxItem = ({childItem}) => {
         const icons = {
-            'loadSplash': "animation-play",
-            'settings' : 'cog-outline',
             'tasks': 'sticker-check-outline',
             "analytics": 'circle-outline',
             "notes": 'note-edit-outline',
             "timetable": 'timetable'
         }
-        const titles = {
-            'loadSplash': languagesAppList[LanguageAppIndex].SettingsScreen.StructureScreen.params.loadAnimation,
-            'settings' :  languagesAppList[LanguageAppIndex].SettingsScreen.HeaderTitle,
-            'tasks': languagesAppList[LanguageAppIndex].TasksScreen.HeaderTitle,
-            "analytics": languagesAppList[LanguageAppIndex].AnalyticsScreen.HeaderTitle,
-            "notes": languagesAppList[LanguageAppIndex].NotesScreen.HeaderTitle,
-            "timetable": languagesAppList[LanguageAppIndex].TimetableScreen.HeaderTitle
-        } 
-        const title = titles[childItem].charAt(0).toUpperCase() + titles[childItem].slice(1)
-
+   
         return(
             <View
                 style = {{
@@ -194,37 +165,23 @@ export default AppFunctionsRedactor = ({
                     size={18} 
                     color = {Theme.texts.neutrals.secondary}
                 />
-                <Text style = {[staticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{title}</Text>
+                <ItemTitle title = {childItem}/>
             </View>
         )
     }
 
-    const loadSplashShowSetting = (value) =>{
-        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        newAppConfig.splash.show = value;//(!loadSplash);
-
-        splash.value = [value]
-        
-        dataRedactor("storedAppConfig", newAppConfig);
-        setTimeout(()=>{r_setAppConfig(newAppConfig);}, 80)
-    }
-
     const renderItem = ({ item, drag = undefined, isActive = false }) => {
-        //const useIndex = getIndex()
-        const index = Object.keys(appConfig.appFunctions).indexOf(item)
-        //console.log('funcs inex', index, useIndex)
+        const index = Object.keys(appFunctions).indexOf(item)
         const longPress = () => {
-            //console.log('funcs longpress', props)
             Vibration.vibrate([5,10])
             drag? drag() : null
         }
-        if(item == 'settings'){return null}
         return (
         <ScaleDecorator>
             <View 
                 style={{
                     backgroundColor: '#00000001',
-                    borderRadius: appStyle.borderRadius.additional,
+                    borderRadius: r_uiStyle.borderRadius.secondary,
                     marginLeft: 30,
                     width: '85%',
                 }}
@@ -241,11 +198,11 @@ export default AppFunctionsRedactor = ({
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         flexDirection: 'row',
-                        borderRadius: appStyle.borderRadius.additional,
+                        borderRadius: r_uiStyle.borderRadius.secondary,
                         backgroundColor: isActive ? `${Theme.basics.neutrals.tertiary}10` : 'transparent',
                     },
                 ]}
-                android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.basics.neutrals.tertiary) : false}
+                android_ripple={ripple(Theme.basics.neutrals.tertiary)}
             >
                 <BaseBox
                     key = {`functions_${item}`}
@@ -255,132 +212,39 @@ export default AppFunctionsRedactor = ({
                         width: '80%',
                         //marginTop: index > 0 ? 4 : 0,
                         backgroundColor: 'transparent',
-                        borderRadius: appStyle.borderRadius.additional,
+                        borderRadius: r_uiStyle.borderRadius.secondary,
                     }}
-                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
+                    android_ripple={ripple(Theme.icons.accents.secondary)}
                     Item = {<BoxItem childItem={item}/>}
                     //check = {checkGroup[index]}
                     boxId = {index}
-                    aCheck = {cg}
+                    aCheck = {usedScreens}
                     onPress = {()=>{settingFunctions(index)}}
-                    boxBorderRadius = {appStyle.borderRadius.additional}
-                    designType = {appStyle.selectors.design.checkBox}
+                    boxBorderRadius = {r_uiStyle.borderRadius.secondary}
+                    designType = {r_uiStyle.selectors.design.checkBox}
                     colors={{
                         background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary: Theme.icons.accents.quaternary,
+                        primary: Theme.specials.selector.primary,
+                        secondary: Theme.specials.selector.quaternary,
                     }}
                 />
                 <MaterialCommunityIcons name="drag-horizontal-variant" size={26} color={Theme.icons.neutrals.secondary} />
             </Pressable>
             </View>
-            </ScaleDecorator>
+        </ScaleDecorator>
         )
     }
 
-    return (<View style={{paddingBottom: 12}}>
-        <View 
-            style={{
-                backgroundColor: '#00000001',
-                borderRadius: appStyle.borderRadius.additional,
-                marginLeft: 30,
-                width: '85%',
-            }}
-        >
-            <View
-                style={[
-                    { 
-                        height: 32,
-                        //marginLeft: 30,
-                        //width: '85%',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexDirection: 'row',
-                        borderRadius: appStyle.borderRadius.additional,
-                        backgroundColor: 'transparent',
-                    },
-                ]}
-                
-            >
-                <BaseBox
-                    isCheckBox={true}
-                    style = {{
-                        //flex: 4,
-                        width: '80%',
-                        //marginTop: index > 0 ? 4 : 0,
-                        backgroundColor: 'transparent',
-                        borderRadius: appStyle.borderRadius.additional,
-                    }}
-                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
-                    Item = {<BoxItem childItem={'loadSplash'}/>}
-                    //check = {appConfig.splash.show}
-                    aCheck={splash}
-                    onPress = {()=>{loadSplashShowSetting(!appConfig.splash.show)}}
-                    boxBorderRadius = {appStyle.borderRadius.additional}
-                    designType = {appStyle.selectors.design.checkBox}
-                    colors={{
-                        background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary: Theme.icons.accents.quaternary,
-                    }}
-                />
-            </View>
+    return (
+        <View style={{paddingBottom: 12}}>
+            <DraggableFlatList
+                data={screenOrder}
+                onDragEnd={endDrag}
+                keyExtractor={(item) => item}
+                renderItem={renderItem}
+            />
         </View>
-        <DraggableFlatList
-            data={data}
-            onDragEnd={endDrag}
-            keyExtractor={(item) => item}
-            renderItem={renderItem}
-        />
-        {false && <View 
-            style={{
-                backgroundColor: '#00000001',
-                borderRadius: appStyle.borderRadius.additional,
-                marginLeft: 30,
-                width: '85%',
-            }}
-        >
-            <View
-                style={[
-                    { 
-                        height: 32,
-                        //marginLeft: 30,
-                        //width: '85%',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexDirection: 'row',
-                        borderRadius: appStyle.borderRadius.additional,
-                        backgroundColor: 'transparent',
-                    },
-                ]}
-                
-            >
-                <BaseBox
-                    isCheckBox={true}
-                    style = {{
-                        //flex: 4,
-                        width: '80%',
-                        //marginTop: index > 0 ? 4 : 0,
-                        backgroundColor: 'transparent',
-                        borderRadius: appStyle.borderRadius.additional,
-                    }}
-                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
-                    Item = {<BoxItem childItem={'settings'}/>}
-                    //check = {checkGroup[Object.keys(appConfig.appFunctions).indexOf('settings')]}
-                    aCheck={cg}
-                    boxId={settingsIndex}
-                    onPress = {()=>{settingFunctions(Object.keys(appConfig.appFunctions).indexOf('settings'))}}
-                    boxBorderRadius = {appStyle.borderRadius.additional}
-                    designType = {appStyle.selectors.design.checkBox}
-                    colors={{
-                        background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary: Theme.icons.accents.quaternary,
-                    }}
-                />
-            </View>
-        </View>}
-    </View>)
+    )
 }
 
 const staticStyles = StyleSheet.create({

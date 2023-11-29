@@ -15,14 +15,6 @@ import {
     cancelAnimation
 } from 'react-native-reanimated';
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSwitch,
-    BaseSlider 
-} from "../../../../../../general_components/base_components/BaseElements";
 
 import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 
@@ -30,6 +22,7 @@ import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 //import { borderRadiusValues } from "../../../../../app_values/AppDefault";
 
 import { modalsHorizontalProximity } from "../../../../../../app_values/AppDefault";
+import useLanguage from "../../../../../../app_hooks/useLanguage";
 
 export default ModalsRedactor = (props) => {
     const {
@@ -40,43 +33,40 @@ export default ModalsRedactor = (props) => {
 
         tagStyle,
 
-        aStyle,
-        aTheme, 
-        aPalette, 
-        aScheme,
-
-        appStyle,
-        appConfig,
-        redactorsSet,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex
+        r_uiStyle,
+        Theme
     } = props
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.modals
+    const Language = useLanguage().SettingsScreen.Redactors.modals
 
-    const params = Object.keys(appStyle.modals.highlightMethods) // ['outline', 'dimOutDark', 'gradient']
+    const params = Object.keys(r_uiStyle.modals.highlight) // ['outline', 'dimOutDark', 'gradient']
     //const paramsGroup =  Object.values(appStyle.modals.highlightMethods)
     
+    const {
+        modals: {
+            highlight: highlightMethods
+        }
+    } = uiStyle
 
     const items = [Language.dimOutDark, Language.gradient, Language.outline, ]
 
+    const hrz_proximity = useDerivedValue(()=>uiStyle.modals.proximity.h.value === 12)
+    
 
     const highlight = useDerivedValue(()=>{
         const toIndexs = (group) => group.map((item, index)=> item.value? index : -1).filter(item => item >= 0)
-        return toIndexs(Object.values(uiStyle.modals.highlightMethods))
+        return toIndexs(Object.values(highlightMethods))
     })
     
     const changeHorizontalProximity = (value) => { 
-        uiStyle.modals.fullWidth.value = value;
-        tagStyle('modals.fullWidth')
+        uiStyle.modals.proximity.h.value = value ? 12 : 0;
+        tagStyle('modals.proximity.h')
     }
 
     const settingMethods = (indexs) => {   
         for (let i = 0; i < params.length; i++){
-            uiStyle.modals.highlightMethods[params[i]].value = indexs.includes(i)
-            tagStyle('modals.highlightMethods.'+params[i])
+            uiStyle.modals.highlight[params[i]].value = indexs.includes(i)
+            tagStyle('modals.highlight.'+params[i])
         }
     }
 
@@ -85,11 +75,10 @@ export default ModalsRedactor = (props) => {
             textTitle = {Language.horizontalProximity}
             textStates = {Language.horizontalProximityState}
             //text = {`${Language[`horizontalProximity`]} ${Language[`horizontalProximityState`][`${horizontalProximity}`]}`}
-            aValue={uiStyle.modals.fullWidth}
+            aValue={hrz_proximity}
             onChange={changeHorizontalProximity}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
 
         <BoxsField
@@ -101,9 +90,8 @@ export default ModalsRedactor = (props) => {
             groupSize = {params.length}
             groupItems = {items}         
             onPress = {settingMethods}          
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
     </View>)
 }

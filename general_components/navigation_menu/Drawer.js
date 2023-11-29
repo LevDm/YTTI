@@ -1,119 +1,200 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Keyboard, View, Pressable, Text, Dimensions, StyleSheet } from "react-native";
 
+import Reanimated, {
+    useSharedValue,
+    useAnimatedProps,
+    useAnimatedStyle,
+    withTiming,
+    useDerivedValue,
+    useAnimatedReaction,
+    runOnJS,
+    FadeIn,
+    runOnUI,
+    CurvedTransition,
+    FadingTransition,
+    FadeOut,
+    SequencedTransition,
+    Layout
+} from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
-import themesColorsAppList from "../../app_values/Themes";
-import languagesAppList from "../../app_values/Languages";
+import { ripple, getNavigateItems, fromSharedObject } from "./tools";
+import useLanguage from "../../app_hooks/useLanguage";
 
-import { ripple, getNavigateItems } from "./tools";
+const ITEM_MENU_HEIGHT = 40
+const ITEM_ICON_SIZE = 30
 
-function DrawerItemList(props) {
-
+export default DrawerMenu = (props) => {
     const {
-        state = {
-            index: 0, 
-            routes: [
-                {name: "tasks"},
-                {name: "timetable"},
-                {name: "notes"},
-                {name: "settingsStack"},
-                {name: "analytics"},
-            ]
-        },  
-        route,
-        navigation, 
+        screenOpen,
 
-        appStyle,
-        appConfig,
-    
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex,
+        uiStyle,
+        uiTheme,
+        uiScheme,
+        uiComposition,
     } = props
     
+    const {
+        texts: {
+            neutrals: {
+                secondary: textNS
+            }
+        },
+        icons: {
+            neutrals: {
+                secondary: iconNS
+            }
+        },
+    } = uiTheme
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex]
+    const {
+        navigationMenu: {
+            type
+        }
+    } = uiStyle
+
+    const {
+        appFunctions
+    } = uiComposition
 
 
-    const itemSize = 40
-    const iconSize = 30
+    const [showFunction, setShowFunction] = useState(fromSharedObject(appFunctions, fromSharedObject))
+
+    useAnimatedReaction(()=>fromSharedObject(appFunctions, fromSharedObject),
+        (newValue, oldValue)=>{
+            if(JSON.stringify(newValue) != JSON.stringify(showFunction)){
+                runOnJS(setShowFunction)(newValue) 
+            } 
+        }
+    )
+
 
     return (
-        <View
+        <Reanimated.View
             style={{
-                height: 5*itemSize,
                 width: '100%',
             }}
+            layout={SequencedTransition}
         >
-        {getNavigateItems({
-            state: state,
-            LanguageAppIndex: LanguageAppIndex,
-            appConfig: appConfig
-        }).map((item, index) => {
-            
-            const  {
-                routeName,
-                screenTItle,
-                iconFocus,
-                isFocused,
-            } = item
+        {getNavigateItems({appFunctions: showFunction})
+        .map((item, index) => (
+            <ItemMenuDrawer
+                key = {item.routeName+"_menu_item"} 
+                keyID = {item.routeName+"_menu_item"} 
+                title = {item.screenName}
+                icon = {item.iconFocus[false]}
+                onPress = {()=>{screenOpen(item.routeName)}}
 
-            return (
-                <View
-                    key = {`${Math.random()}`}
-                    style = {{
-                        backgroundColor: '#00000001',
-                        alignItems: 'center',
-                        //borderRadius: appStyle.borderRadius.additional
-                    }}
-                >
-                <Pressable
-                    disabled = {isFocused}
-                    onPress={()=>{
-                        navigation.navigate(routeName)
-                    }}
-                    style={[{
-                            paddingHorizontal: 20,
-                            height: itemSize,
-                            width: '100%', 
-                            alignItems: 'center',
-                            justifyContent: 'flex-start',
-                            flexDirection: 'row',
-                            //backgroundColor: 'red'
-                        }
-                    ]}
-                    android_ripple = {appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
-                >
-                    <MaterialCommunityIcons 
-                        name={iconFocus[appStyle.navigationMenu.accentsType.filling && isFocused]} 
-                        size={iconSize} 
-                        color = {appStyle.navigationMenu.accentsType.coloring && isFocused? Theme.icons.accents.primary : Theme.icons.neutrals.secondary}
-                    />
-        
-                    <Text
-                        style = {[
-                            {
-                                fontSize: 14,
-                                marginLeft: 10,
-                                //width: '100%',
-                                textAlign: 'center',
-                                fontVariant: ['small-caps'],
-                                fontWeight: '600',
-                                color: appStyle.navigationMenu.accentsType.coloring && isFocused? Theme.texts.accents.primary : Theme.texts.neutrals.secondary
-                            }
-                        ]}
-                    >
-                        {screenTItle}
-                    </Text>        
-                </Pressable>    
-                </View>
-            )
-            })}
-        </View>
+                uiTheme={uiTheme}
+                uiStyle={uiStyle}
+            />
+        ))}
+        </Reanimated.View>
     )
 }
 
-export default DrawerItemList;
+const RPressable = Reanimated.createAnimatedComponent(Pressable)
+
+export const ItemMenuDrawer = (props) => {
+    const {
+        title,
+        icon,
+        keyID = "menu_item",
+        uiStyle,
+        uiTheme,
+        uiScheme,
+
+        onPress
+    } = props
+
+    const {
+        texts: {
+            neutrals: {
+                secondary: textNS
+            }
+        },
+        icons: {
+            neutrals: {
+                secondary: iconNS
+            }
+        },
+    } = uiTheme
+
+    const {
+        navigationMenu: {
+            type
+        }
+    } = uiStyle
+
+    const iconColor = useAnimatedStyle(()=>({
+        color: iconNS.value
+    }))
+
+    const textColor = useAnimatedStyle(()=>({
+        color: textNS.value
+    }))
+
+    const rippleProps = useAnimatedProps(()=>({
+        android_ripple: {
+            color: `${iconNS.value}20`,
+            borderless: false,
+            foreground: false
+        }
+    }))
+
+
+    const Signature = (props) => {
+        const Language = useLanguage()
+
+        return (
+            <Reanimated.Text
+                style = {[textColor, {
+                    fontSize: 16,
+                    letterSpacing: 0.2,
+                    marginLeft: 12,
+                    textAlign: 'center',
+                    fontVariant: ['small-caps'],
+                    fontWeight: '500',
+                }]}
+            >
+                {Language[props.title].HeaderTitle}
+            </Reanimated.Text>
+        )
+    }
+
+    return (
+        <Reanimated.View
+            key = {keyID}
+            style = {{
+                backgroundColor: '#00000001',
+                alignItems: 'center',
+            }}
+            exiting={FadeOut}
+            layout={Layout}
+            entering={FadeIn}
+        >
+            <RPressable
+                onPress={onPress}
+                style={[{
+                    paddingHorizontal: 20,
+                    height: ITEM_MENU_HEIGHT,
+                    width: '100%', 
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    flexDirection: 'row',
+                }]}
+                animatedProps={rippleProps}
+            >
+                <Reanimated.Text style={iconColor}>
+                    <MaterialCommunityIcons 
+                        name={icon} //Focus[appStyle.navigationMenu.accentsType.filling && isFocused]
+                        size={ITEM_ICON_SIZE} 
+                    />
+                </Reanimated.Text>
+                <Signature  title={title}/>      
+            </RPressable>    
+        </Reanimated.View>
+    )
+}

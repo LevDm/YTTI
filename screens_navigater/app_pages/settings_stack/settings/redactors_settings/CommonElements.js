@@ -18,22 +18,18 @@ import Reanimated, {
     useDerivedValue
 } from 'react-native-reanimated';
 
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSwitch,
-    BaseSlider 
-} from "../../../../../general_components/base_components/BaseElements";
+import BaseBox from "../../../../../general_components/base_components/BaseBox";
+import BaseSwitch from "../../../../../general_components/base_components/BaseSwitch";
 
 import themesColorsAppList, { themesApp } from "../../../../../app_values/Themes";
 
 const commonStaticStyles = StyleSheet.create({
     text: {
         //marginLeft: 10,
-        fontSize: 17, 
+        fontSize: 16, 
         //fontVariant: ['small-caps'], 
         fontWeight: '400', 
-        letterSpacing: 0.5
+        letterSpacing: 0.6
     },
     themeName: {
         fontSize: 14,
@@ -55,6 +51,11 @@ const commonStaticStyles = StyleSheet.create({
         //fontVariant: ['small-caps'], 
         fontWeight: '400', 
         letterSpacing: 0.5
+    },
+    signaturesSwitch: {
+        //fontVariant: ['small-caps'],
+        fontWeight: '400',
+        fontSize: 13,
     },
     signaturesText: {
         //fontVariant: ['small-caps'],
@@ -91,12 +92,13 @@ export const SwitchField = ({
     viewProps,
     style,
     appStyle,
-    ThemeColorsAppIndex,
-    ThemeSchema,
+    Theme
 }, props) => {
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
-    const switchState = useDerivedValue(()=>aValue? aValue.value : primeValue)
+    const switchState = useDerivedValue(()=>{
+        //console.log('UPDATE  SwitchField', textTitle)
+        return aValue? aValue.value : primeValue
+    })
     //console.log(switchValue, primeValue, textStates)
 
     
@@ -111,8 +113,8 @@ export const SwitchField = ({
     const categoryText = useAnimatedProps(()=>{
         //console.log(Language.StructureScreen.typesSettings[`${structure[accentCategory.value].category}`].type)
         return {
-            value: `${textTitle}: ${textStates[switchState.value]}`,
-            text:  `${textTitle}: ${textStates[switchState.value]}`,
+            value: `${textStates[switchState.value]}`,
+            text:  `${textStates[switchState.value]}`,
         }
         //,[Language, LanguageAppIndex]
     })
@@ -130,7 +132,7 @@ export const SwitchField = ({
                 //marginLeft: 8,
                 //marginRight: 15,
                 paddingVertical: 2.5,
-                borderRadius: appStyle.borderRadius.additional,
+                borderRadius: 0, //appStyle.borderRadius.additional,
             }, style]}
         >
         <BaseSwitch
@@ -155,36 +157,47 @@ export const SwitchField = ({
                 marginRight: 12
             }}
             Item = {
-                <Reanimated_TextInput     
-                    editable = {false}
-                    multiline={true}
+                <Text    
                     style = {[                  
                         commonStaticStyles.text, //commonStaticStyles.switchText,
                         {
-                            width: '74%',
+                            width: '70%',
                             minHeight: 45,
                             marginLeft: 0,
-                            //paddingLeft: 3,
+                            color: Theme.texts.neutrals.secondary,
                             //backgroundColor: 'red',
-                            color: Theme.texts.neutrals.secondary
+                            textAlignVertical: 'center'
+                        }]}
+                >
+                    {textTitle}
+                </Text>
+            }
+            StateItem={
+                <Reanimated_TextInput     
+                    editable = {false}
+                    multiline={false}
+                    style = {[                  
+                        commonStaticStyles.signaturesSwitch,
+                        {
+                            color: Theme.texts.neutrals.tertiary,
+                            //backgroundColor: 'red',
+                            marginTop: 4,
+                            height: 16,
+                            textAlign: 'center',
+
                         }]}
                     animatedProps={categoryText}
                 />
             }
-            android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
-            borderRadius={appStyle.borderRadius.additional}
+            android_ripple={ripple(Theme.icons.accents.secondary)}
+            borderRadius={appStyle.borderRadius.secondary}
             colors={{
-                background: Theme.basics.neutrals.secondary,
-                primary: Theme.icons.accents.secondary,
-                secondary: Theme.icons.accents.tertiary,
-                tertiary: Theme.icons.neutrals.tertiary,
-                quaternary: Theme.icons.neutrals.quaternary,
+                background: Theme.basics.neutrals.primary,
+                primary: Theme.specials.selector.primary,
+                secondary: Theme.specials.selector.secondary,
+                tertiary: Theme.specials.selector.tertiary,
+                quaternary: Theme.specials.selector.quaternary,
             }}
-            shadow = {{
-                style: appStyle.effects.shadows == 'none' && appStyle.selectors.ignoredShadows.disable? 'material' : appStyle.effects.shadows,
-                colors: Theme.specials.shadow
-            }}
-            //primeValue={switchValue}
             aValue = {switchState}
             onChange={onPress}
         />
@@ -207,10 +220,8 @@ export const BoxsField = ({
     onPress,
     
     appStyle,
-    ThemeColorsAppIndex,
-    ThemeSchema,
+    Theme,
     }, props) => {
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
 
     const getGroup = (activeIndex) => {
         'worklet';
@@ -230,7 +241,7 @@ export const BoxsField = ({
     }
 
     const cg = useDerivedValue(()=>{
-        //aValue? console.log('UPDATE', groupItems, aValue.value) : null
+        //console.log('UPDATE  BoxsField',title)
         return getGroup(aValue? aValue.value : value)
     }, [aValue, value])
 
@@ -246,8 +257,8 @@ export const BoxsField = ({
     const checkBoxPress = (index) => {
         const newGroup = isChoiceOne? getGroup(index) : reGroup(index, JSON.parse(JSON.stringify(cg.value)))
         onPress(isChoiceOne? index : toIndexs(newGroup))
-        console.log(newGroup)
-        cg.value = newGroup
+        //console.log(newGroup)
+        //cg.value = newGroup
         //setCheckGroup(newGroup);
     }
 
@@ -279,10 +290,10 @@ export const BoxsField = ({
                     key = {'boxs_field_'+Math.random()}
                     style = {{
                         marginTop: index? 2 : 0,
-                        borderRadius: appStyle.borderRadius.additional,
-                        backgroundColor: 'transparent'
+                        borderRadius: appStyle.borderRadius.secondary,
+                        backgroundColor: '#ffffff00'
                     }}
-                    android_ripple={appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.secondary) : false}
+                    android_ripple={ripple(Theme.icons.accents.secondary)}
                     Item = {
                         !renderItem? 
                             <Text style = {[commonStaticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{groupItems[index]}</Text> 
@@ -294,21 +305,13 @@ export const BoxsField = ({
                     aCheck = {cg}
                     //check = {[index]}
                     onPress = {()=>{checkBoxPress(index)}}
-                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    boxBorderRadius = {appStyle.borderRadius.secondary}
                     designType = {isChoiceOne? appStyle.selectors.design.radioButton : appStyle.selectors.design.checkBox}
                     colors={{
                         background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary: Theme.icons.neutrals.tertiary,
-                        //tertiary: Theme.icons.accents.quaternary,
-                        //quaternary: Theme.icons.neutrals.tertiary,
+                        primary: Theme.specials.selector.primary,
+                        secondary: Theme.specials.selector.quaternary,
                     }}
-                    /*
-                    shadow = {{
-                        style: appStyle.effects.shadows,
-                        colors: Theme.specials.shadow
-                    }}
-                    */
                 />
                 ))}
             </View>
@@ -336,9 +339,8 @@ export const SliderField = ({
 
     aValue = undefined,
 
+    Theme,
     appStyle,
-    ThemeColorsAppIndex,
-    ThemeSchema,
 }, props) => {
 
     /* 
@@ -348,14 +350,10 @@ export const SliderField = ({
         sliderValue != value? setSliderValue(value) : null
     }, [value])
     */
-    const aSlider = useDerivedValue(()=>{
-        //aValue? console.log('UPDATE', title, aValue.value) : null
-        return aValue? aValue.value : value
-    }, [aValue, value])
+    const aSlider = aValue? aValue : useDerivedValue(()=>value)
 
     const sliderValue = useAnimatedProps(()=>({value: aSlider.value}))
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
     return (
         <View
             //onResponderGrant={() => true}
@@ -409,9 +407,9 @@ export const SliderField = ({
                     style = {{
                         flex: 1,
                     }}
-                    minimumTrackTintColor = {Theme.icons.accents.tertiary}
-                    maximumTrackTintColor = {Theme.icons.accents.quaternary}
-                    thumbTintColor = {Theme.icons.accents.secondary}
+                    minimumTrackTintColor = {Theme.specials.selector.secondary}
+                    maximumTrackTintColor = {Theme.specials.selector.quaternary}
+                    thumbTintColor = {Theme.specials.selector.primary}
 
                     
                     maximumValue = {maximumValue}
@@ -421,8 +419,8 @@ export const SliderField = ({
                     onSlidingComplete = {onSlidingComplete}
                     onValueChange = {onValueChange}
                     
-                    //value = {sliderValue}
-                    animatedProps={sliderValue}
+                    value = {aSlider}
+                    //animatedProps={sliderValue}
                 />
                 <Text
                     style = {[commonStaticStyles.signaturesText, {

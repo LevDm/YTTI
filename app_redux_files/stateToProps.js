@@ -1,101 +1,79 @@
 function mapStateToProps(component) {
     switch(component) {       
-        case "HOME_SCREEN": {
-            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+        case "TASKS": {
             return function(state) {
                 return {
-                    appStyle: state.appStyle,
-                    appConfig: state.appConfig,
-                    languageApp: state.languageApp,
-                    tasks: state.tasks,
-
-                    testing: state.testing,
-                    tests: state.tests,
-
-                };
+                    tasksData: state.tasksData
+                }
             }
         }
-        case "N_SCREEN": {
-            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+        case "TASKS_LIST": {
             return function(state) {
                 return {
-                    testing: state.testing,
-                    tests: state.tests,
-                };
+                    tasksData: state.tasksData
+                }
             }
         }
-        case "NFC_SCREEN": {
-            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+        case "UI_PROVIDER": {
             return function(state) {
                 return {
-                    appStyle: state.appStyle,
-                    appConfig: state.appConfig,
-                    hideMenu: state.hideMenu
-                };
-            }
-        }    
-        case "PALETTE_SCREEN": {
-            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
-            return function(state) {
-                return {
-                    appStyle: state.appStyle,
-                    appConfig: state.appConfig,
-                    hideMenu: state.hideMenu,
-
-                    testing: state.testing,
-                    tests: state.tests,
-                };
+                    r_uiStyle: state.uiStyle,
+                    r_uiPalette: state.uiPalette,
+                    r_uiComposition: state.uiComposition,
+                }
             }
         }
-        case "SETTINGS_SCREEN": {
-            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+        case "UI_SETTINGS": {
             return function(state) {
                 return {
-                    appStyle: state.appStyle,
-                    appConfig: state.appConfig,
-                    hideMenu: state.hideMenu,
-
-
-                    testing: state.testing,
-                    tests: state.tests,
-                };
+                    r_uiStyle: state.uiStyle,
+                    r_uiPalette: state.uiPalette,
+                    r_uiComposition: state.uiComposition,
+                }
             }
         }
-        case "NAVIGATER": {
-            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+        case "WEATHER_SETTINGS": {
             return function(state) {
                 return {
-                    appStyle: state.appStyle,
-                    appConfig: state.appConfig,
-                    hideMenu: state.hideMenu,
-
-
-                    testing: state.testing,
-                    tests: state.tests,
-                };
+                    weatherConfig: state.weatherConfig,
+                }
             }
         }
-        case "WEATHER_C": {
-            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+        case "USER_SETTINGS": {
             return function(state) {
                 return {
-                    appStyle: state.appStyle,
-                    appConfig: state.appConfig,
+                    userData: state.userData,
+                }
+            }
+        }
+
+        case "WEATHER": {
+            return function(state) {
+                return {
+                    weatherConfig: state.weatherConfig,
                     weatherData: state.weatherData
-                    //hideMenu: state.hideMenu
-                };
+                }
             }
         }
-        case "SPLASH": {
-            //console.log('>'+component+'_FILE_LINK_REDUX_PROPS-VARIABLES')
+        case "WELCOME": {
             return function(state) {
                 return {
-                    appStyle: state.appStyle,
-                    appConfig: state.appConfig,
-                };
-            };
-        };
-        default: return undefined;
+                    userData: state.userData,
+                }
+            }
+        }
+        case "LANGUAGE_HOOK": {
+            return function(state) {
+                return {
+                    appLanguage: state.appLanguage,
+                }
+            }
+        }
+        default: return function(state) {
+            return {
+
+            }
+        }
     }
 }
 

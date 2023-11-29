@@ -13,7 +13,7 @@ import {
 
 import TapticalPicker from "./TapticalPicker";
 
-import languagesAppList from "../../app_values/Languages";
+import languagesAppList from "../../app_values/languages/Languages";
 
 export function DatePicker(props){
     const currenDate = new Date()

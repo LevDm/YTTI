@@ -27,28 +27,10 @@ import Reanimated, {
     useDerivedValue
 } from 'react-native-reanimated';
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
 import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-const deviceHeight = Dimensions.get('window').height
-const deviceWidth = Dimensions.get('window').width
-
-//<MaterialCommunityIcons name="white-balance-sunny" size={24} color="black" />
-
-//<MaterialCommunityIcons name="weather-sunny" size={24} color="black" />
-//<MaterialCommunityIcons name="moon-waning-crescent" size={24} color="black" />
-//<MaterialCommunityIcons name="theme-light-dark" size={24} color="black" />
-
-import dataRedactor from "../../../../../../app_async_data_manager/data_redactor";
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSlider,
-    BaseSwitch 
-} from "../../../../../../general_components/base_components/BaseElements";
 
 import commonStaticStyles, { BoxsField, SwitchField } from "../CommonElements";
 
@@ -57,29 +39,36 @@ const Reanimated_Pressable = Reanimated.createAnimatedComponent(Pressable)
 const schemes = ['auto', 'light', 'dark'] 
 
 import presets, {presetsNames} from "../../../../../../app_values/AppDesigns";
+import useLanguage from "../../../../../../app_hooks/useLanguage";
 
-const PresetItem = memo(function PresetItem ({
-    preset,
-
-    //primaryCheck,
-    boxIndex, 
-    currentIndex,
-
-    onPress,
-    onLongPress,
-
-    itemSize,
-    outlineSize,
-    backgroundColor = 'white',
-
-    borderRadius
-},props) {
-    //console.log('--RENDER PRESET', boxIndex)
+const PresetItem = memo((props) => {
     const {
-        name,
-        imageSource,
-        imageLowScale,
-        coloring,
+        preset,
+
+        //primaryCheck,
+        boxIndex, 
+        currentIndex,
+
+        onPress,
+        onLongPress,
+
+        itemSize,
+        outlineSize,
+        backgroundColor = 'white',
+
+        borderRadius
+    } = props
+
+
+    const {
+        icon = {
+            name: "border-none-variant",
+            color: 'black'
+        },
+        fill = {
+            colors: ['white', 'white'],
+            locs: [0,1]
+        },
         options,
     } = preset
 
@@ -91,13 +80,18 @@ const PresetItem = memo(function PresetItem ({
         })
     })
 
-    const presetTheme = options? themesColorsAppList[themesApp.indexOf(options.palette.theme)].light : undefined
+    const indexTheme = themesApp.indexOf(options.palette)
+    const itemThemeIndex = indexTheme == 0? 1 : indexTheme
+
+    const presetTheme = options? themesColorsAppList[itemThemeIndex].light : undefined
 
     const colors = {
-        gradient: presetTheme? Object.values(presetTheme.basics.accents) : ['#00000060','#00000040','#00000020','#0000000a'],
-        title: presetTheme? presetTheme.texts.neutrals.primary : 'white',
+        gradient: fill.colors,
+        icon:  presetTheme? presetTheme.icons.neutrals.primary : 'black',
         background: backgroundColor 
     }
+
+
 
     const longPressed = useSharedValue(0)
 
@@ -120,7 +114,7 @@ const PresetItem = memo(function PresetItem ({
 
     return (
         <Reanimated_Pressable
-            key = {props.key}
+            key = {props.keyID}
             //disabled = {primaryCheck} 
             style={[{
                 height: itemSize,
@@ -144,7 +138,7 @@ const PresetItem = memo(function PresetItem ({
                 colors={colors.gradient}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 1}}
-                locations={[.3,.6,.8,1]}
+                locations={presetTheme? fill.locs : [.3,.6,1]}
                 style={{
                     position: 'absolute',
                     height: itemSize,
@@ -155,26 +149,18 @@ const PresetItem = memo(function PresetItem ({
                 }}
             />
 
-            <Image
-                source={imageSource}
+            <View
                 style={{
                     position: 'absolute',
-                    height: itemSize/imageLowScale,
-                    width: itemSize/imageLowScale,
-                    borderRadius: borderRadius,
+                    opacity: 0.86,
                 }}
-                {...coloring? {tintColor: coloring} : null}
-            />
-
-            {false && 
-            <Text 
-                style={[staticStyles.themeName, {
-                    color: 'red',
-                    position: 'absolute',
-                }]}
             >
-                {name}
-            </Text>}
+                <MaterialCommunityIcons 
+                    size={32}
+                    color={colors.icon}
+                    {...icon}
+                />
+            </View>
 
             <Reanimated.View
                 style={[{
@@ -203,34 +189,35 @@ export default PresetsSelector = (props) => {
 
         tagStyle,
 
-        aStyle,
-        aTheme, 
-        aPalette, 
-        aScheme,
-
-        appStyle,
-        appConfig,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex
+        r_uiStyle,
+        Theme
     } = props
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.presets
-
-    //const [_, set_] = useState()
-    /* 
-    const [previewIndex, setPreviewIndex] = useState(presetsNames.indexOf(appStyle.presetUsed))
-    useEffect(()=>{
-        console.log('ue',appStyle.presetUsed)
-        const newIndex = presetsNames.indexOf(appStyle.presetUsed)
-        newIndex != previewIndex? setPreviewIndex(newIndex) : null
-    }, [appStyle])
-    */
+    const Language = useLanguage().SettingsScreen.Redactors.presets
 
     const previewPresetIndex = useDerivedValue(()=>presetsNames.indexOf(uiStyle.presetUsed.value))
 
     //console.log('PRESET:', previewIndex)
+    const fabSave = useSharedValue(false);
+    const fabChange = (value) => {
+        fabSave.value = value
+    }
+
+    const nmSave = useSharedValue(false);
+    const nmChange = (value) => {
+        nmSave.value = value
+    }
+
+    const getIgnored = () => {
+        const values = []
+        if(fabSave.value){
+            values.push('fab')
+        }
+        if(nmSave.value){
+            values.push('navigationMenu')
+        }
+        return values
+    }
 
     const flatListRef = useRef()
 
@@ -238,46 +225,18 @@ export default PresetsSelector = (props) => {
     const outlineSize = 2
 
     const pressItem = (index) => {
-
         Vibration.vibrate([1,1])
         console.log('preset PressItem', index, presetsNames[index])
-
-        /* 
-        if(index == 0 || presets[index].options){
-            const newAppStyle = (index == 0? appStyle : presets[index].options)
-            newAppStyle.customTheme = appStyle.customTheme
-            newAppStyle.palette.scheme = appStyle.palette.scheme
-            newAppStyle.presetUsed = presetsNames[index]
-            
-            if(appConfig.screenSubsequence.length == 1 && newAppStyle.navigationMenu.type == 'classical'){
-                newAppStyle.navigationMenu.height = 0
-            }
-        }
-        */
-
         uiStyle.presetUsed.value = presetsNames[index]
-        updateFullStyle(index)
+
+        const ignored = getIgnored()
+
+        updateFullStyle(index, ignored)
     }
 
     const longPressItem = (index) => {
-        //if(index != previewPresetIndex.value){
-            Vibration.vibrate([5,10, 20, 10, 20, 10])
-            console.log('preset longPressItem', index)
-            /* 
-            if(index == 0 || presets[index].options){
-                const newAppStyle = (index == 0? appStyle : presets[index].options)
-                newAppStyle.customTheme = appStyle.customTheme
-                newAppStyle.presetUsed = presetsNames[index]
-                newAppStyle.palette.scheme = appStyle.palette.scheme
-
-                if(appConfig.screenSubsequence.length == 1 && newAppStyle.navigationMenu.type == 'classical'){
-                    newAppStyle.navigationMenu.height = 0
-                }
-
-                r_setAppStyle(newAppStyle)
-                dataRedactor("storedAppStyle",newAppStyle);
-            }*/
-        //}
+        Vibration.vibrate([5,10, 20, 10, 20, 10])
+        console.log('preset longPressItem', index)
     }
 
     const RENDER_ITEMS = ({item, index})=>{
@@ -285,13 +244,18 @@ export default PresetsSelector = (props) => {
         return (
         <PresetItem
             key = {String(`theme_selector_${item.name+index}`)} 
-
+            keyID = {String(`theme_selector_${item.name+index}`)} 
             preset={index == 0? {
-                name: item.name,
-                imageSource: item.imageSource,
-                imageLowScale: item.imageLowScale,
-                //coloring: item.coloring,
-                options: appStyle 
+                ...item,
+                options: r_uiStyle,
+                fill: {
+                    colors: [Theme.basics.accents.primary,Theme.basics.accents.secondary, Theme.basics.accents.tertiary],
+                    locs: [0.3, 0.6, 1]
+                },
+                icon: {
+                    ...item.icon,
+                    color: Theme.icons.neutrals.primary
+                }
             }: item}
 
             onPress = {()=>{pressItem(index)}}
@@ -301,9 +265,9 @@ export default PresetsSelector = (props) => {
             currentIndex = {previewPresetIndex}
             //primaryCheck = {index == previewIndex}//{(JSON.stringify(index == 0? appStyle : item.options) === JSON.stringify(previewAppStyleA.value))}
 
-            backgroundColor = {Theme.basics.neutrals.secondary}
+            backgroundColor = {Theme.basics.neutrals.quaternary}
            
-            borderRadius = {appStyle.borderRadius.additional}   
+            borderRadius = {r_uiStyle.borderRadius.secondary}   
                 
             itemSize={itemSize}
             outlineSize={outlineSize}
@@ -311,14 +275,7 @@ export default PresetsSelector = (props) => {
         )
     }
 
-    const fabSave = useSharedValue(false);
-    const fabChange = (value) => {
-        fabSave.value = value
-    }
-    const nmSave = useSharedValue(false);
-    const nmChange = (value) => {
-        nmSave.value = value
-    }
+    
 
     console.log('----> RENDER r presets')
     return (
@@ -333,9 +290,8 @@ export default PresetsSelector = (props) => {
             textStates = {Language.stateSave}
             aValue={fabSave}
             onChange={fabChange}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
 
         <SwitchField
@@ -343,9 +299,8 @@ export default PresetsSelector = (props) => {
             textStates = {Language.stateSave}
             aValue={nmSave}
             onChange={nmChange}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
         
         <Text

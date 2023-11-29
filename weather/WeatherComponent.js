@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect, useRef, memo} from "react";
 
 import {
   Appearance,
@@ -19,7 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import Reanimated, { FadeOut, useAnimatedStyle } from "react-native-reanimated";
 
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import store from "../app_redux_files/store";
 import mapStateToProps from "../app_redux_files/stateToProps";
 import mapDispatchToProps from "../app_redux_files/dispatchToProps";
@@ -29,10 +29,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import NetInfo, {useNetInfo} from '@react-native-community/netinfo';
 
-import themesColorsAppList, {themesApp} from "../app_values/Themes";
-import languagesAppList, {languagesApp} from "../app_values/Languages";
 
-import { BasePressable } from "../general_components/base_components/BaseElements";
 import WeatherItem from "./WeatherItem";
 
 import * as Location from 'expo-location';
@@ -40,9 +37,9 @@ import * as Location from 'expo-location';
 import { LinearGradient } from "expo-linear-gradient";
 import { ImageComponent } from "react-native";
 
-const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
 import ContentLoader, { Rect, Circle } from 'react-content-loader/native';
+import useLanguage from "../app_hooks/useLanguage";
 
 const RPressable = Reanimated.createAnimatedComponent(Pressable);
 
@@ -55,7 +52,7 @@ const DrawerLoader = (props) => {
 
   return (
     <ContentLoader 
-      speed={2}
+      speed={1}
       width={280}
       height={400}
       viewBox="0 0 280 400"
@@ -77,7 +74,7 @@ const RectLoader = (props) => {
   
   return (
   <ContentLoader 
-    speed={2}
+    speed={1}
     width={size.w}
     height={size.h}
     viewBox="0 0 300 400"
@@ -88,22 +85,33 @@ const RectLoader = (props) => {
   </ContentLoader>
 )}
 
-const WeatherComponent = (props) => {
 
+const WeatherComponent = memo((props) => {
   const {
     uiStyle,
     uiTheme,
     uiComposition,
 
-    componentSize
+    componentSize,
+
+
+    weatherData,
+    weatherConfig: {
+      locationInfo: locations
+    },
+
   } = props
+
+  //const weatherData = useSelector(state=>state.weatherData) //useWeatherData() //r_weatherData //
+  //const locations = useSelector(state=>state.weatherConfig.locationInfo) //useWeatherLocations() //r_weatherConfig//
+  const selectCity = locations[0]?.city
+
 
   const {
     h: componentHeight, 
     w: componentWidht
   } = componentSize
 
-  //console.log('wather component', componentSize)
 
   const {
     basics: {
@@ -150,7 +158,7 @@ const WeatherComponent = (props) => {
 
   const {
     borderRadius:{
-      additional: addRadius
+      secondary: addRadius
     }
   } = uiStyle
 
@@ -201,97 +209,46 @@ const WeatherComponent = (props) => {
 
   const borderStyle = useAnimatedStyle(()=>({
     borderRadius: addRadius.value
-  }))
-
-  const [ weatherData, setWeatherData ] = useState(props.weatherData)
-
-  const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
-  const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
-
-  const [appStyle, setAppStyle] = useState(props.appStyle);
-  const [appConfig, setAppConfig] = useState(props.appConfig);
-
-  const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
-
-  store.subscribe(() => {
-    const jstore = store.getState();
-
-    if(LanguageAppIndex != languagesApp.indexOf(jstore.appConfig.languageApp)){
-        setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
-    }
-
-    if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
-        setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
-    }
-
-    if(ThemeSchema != jstore.appStyle.palette.scheme){
-        setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
-    }
-
-    if (appStyle != jstore.appStyle){
-        setAppStyle(jstore.appStyle);
-    }
-
-    if (appConfig != jstore.appConfig){
-        setAppConfig(jstore.appConfig);
-        setSelectCity(jstore.appConfig.weather.locationInfo[0].city)
-    }
-
-    if (weatherData != jstore.weatherData){
-      setWeatherData(jstore.weatherData)
-    }
-  })
-
-  const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
-    useEffect(()=>{
-        if(listenerColorSheme){
-            if(appStyle.palette.scheme == 'auto' && listenerColorSheme != ThemeSchema){
-                console.log('drawer accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
-                setThemeSchema(listenerColorSheme)
-            }
-        }
-    },[listenerColorSheme])
-    
-    Appearance.addChangeListener(({colorScheme})=>{
-        setListinerColorScheme(colorScheme)
-    })
-
-  
-  const Theme  = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-  const Language = languagesAppList[LanguageAppIndex].Weather
-  
+  })) 
   
 
-  const [selectCity, setSelectCity] = useState(props.appConfig.weather.locationInfo[0].city)
+  
 
-  const last = (weatherData && selectCity && weatherData[selectCity]?.lastUpdate)? Math.floor((new Date().getTime()-weatherData[selectCity].lastUpdate)/(60*1000)) : 0
 
   const {
     type = 'full'
   } = props
 
-  //console.log(weatherData)
+  console.log('#', selectCity, type)
 
-  
-  const networkCheck = useNetInfo();
 
-  const locationsCheck = appConfig.weather.locationInfo.length > 0
+  const NetInfoIcon = () => {
+    const networkCheck = useNetInfo().isConnected
+    if(networkCheck){return null}
+    return <MaterialCommunityIcons name={networkCheck == null? "wifi-sync" : "wifi-alert"} size={32}/>
+  }
 
-  const LoadIndicator = (type) => {
+  const LoadIndicator = (props) => {
+    const {
+      type,
+      children
+    } = props
 
-    const title = locationsCheck? 
-                    networkCheck? 
-                      'load data'//Language.loadingData 
-                      : 'no network connect' //Language.netConnectError 
-                  : 'none location'
-
+    if(weatherData && selectCity){
+      return React.cloneElement(children, {
+        city: selectCity,
+        data: weatherData,
+        locs: locations
+      })
+    }
+    
     return (
       <Reanimated.View
         exiting={FadeOut}
         style = {{alignItems: 'center', justifyContent: 'center'}}
       >
         {type == 'rect' && 
-          <RectLoader size={componentSize} bc={basicAQ} fc={basicNS}/>
+          <RectLoader size={componentSize} bc={basicAS} fc={basicNS}/>
         }
         {type == 'drawer' && 
         <DrawerLoader 
@@ -310,60 +267,44 @@ const WeatherComponent = (props) => {
             }
           ]}
         >
-          {(!locationsCheck) && <MaterialCommunityIcons name="map-marker-alert-outline" size={32}/>}
-          {(!networkCheck) && <MaterialCommunityIcons name="wifi-alert" size={32}/>}
+          {(selectCity == undefined) && <MaterialCommunityIcons name="map-marker-alert-outline" size={32}/>}
+          <NetInfoIcon />
         </Reanimated.Text>
       </Reanimated.View>
     )
   }
 
-  if(type == 'widget'){
-    const localCity = (appConfig.weather.locationInfo[0].city)
-    return null 
-  }
 
-  if(type == 'lists'){
-    const localCity = (appConfig.weather.locationInfo[0].city)
+  const ListComponent = (lprops) => {
+    const {
+      data, //weatherData[selectCity].weather.hourly[0]
+      city, //selectCity
+    } = lprops
     return (
-      <View
-        style = {{
-          flex: 1,
-          //backgroundColor: 'blue',
-          borderRadius: appStyle.borderRadius.basic
-        }}
-      >
-        <Reanimated.Text style={[iconColorNP, {position: 'absolute', zIndex: 1, top: 4, left: 16}]}>
-          <MaterialCommunityIcons name="weather-partly-cloudy" size={20}/>
-        </Reanimated.Text>
-
-        {!weatherData &&  LoadIndicator('rect')}
-
-        {weatherData && 
-         <>
+        <>
           <View 
             style = {{
               alignItems: 'center',
               justifyContent: 'center',
               height: 20,
               marginTop: 4,
-              marginLeft: 24
+              marginLeft: 16
               //left: 80
             }}
           > 
             <Reanimated.Text 
               style = {[textColorNP, {
-                fontSize: 12, 
-                fontWeight: '400', 
-                fontVariant: ['small-caps'],
-                letterSpacing: 0.7, 
+                fontSize: 13, 
+                fontWeight: '500', 
+                fontVariant: ['small-caps'], 
                 paddingHorizontal: 3,
               }]}
             >
-              {localCity.toLowerCase()}
+              {city.toLowerCase()}
             </Reanimated.Text>
           </View>
           <WeatherItem 
-            item = {weatherData[localCity].weather.hourly[0]} 
+            item = {data[city].weather.hourly[0]} 
             elements = {"full_list"} 
             //{...props}
 
@@ -373,69 +314,52 @@ const WeatherComponent = (props) => {
             }}
 
             {...props}
-
-            appStyle={appStyle}
-            appConfig={appConfig}
-            ThemeColorsAppIndex={ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-            LanguageAppIndex = {LanguageAppIndex}
           />
-        </>}
-      </View>
+        </>
     )
   }
 
-  //props.type = 'full'
-  return (
-    <View
-      style = {[styles.base,]}
-    >
-      <View style = {{flexDirection: 'row',alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10, height: 30}}>
-        <Reanimated.Text style={iconColorAP}>
-          <MaterialCommunityIcons name="weather-partly-cloudy" size={24}/>
-        </Reanimated.Text>
-        <Reanimated.Text 
-          style = {[textColorAP, {
-            fontSize: 18, 
-            fontWeight: 'bold', 
-            fontVariant: ['small-caps'], 
-            letterSpacing: 3, 
-          }]}
-        >
-          {Language.actualWeather}
-        </Reanimated.Text>
-      </View>
 
-      {!weatherData && LoadIndicator('drawer')}
+  const DrawerComponent = (lprops) => {
+    const {
+      city,
+      locs,
+      data,
+    } = lprops
 
-      {weatherData && 
+
+    const [selectCityIndex, setSelectCityIndex] = useState(0)
+
+    const showingCity = locs[selectCityIndex].city ?? city
+
+    return (
       <>
       <View style = {{justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, height: 24}}>
         <Reanimated.Text style={iconColorAT}>
           <MaterialCommunityIcons name="map-marker-radius-outline" size={24}/>
         </Reanimated.Text>
-        {appConfig.weather.locationInfo.map((item, index)=>{
+        {locs.map((item, index)=>{
           if(!item.used){return null}
           return (
             <Reanimated.View
               key={`${item.city}_${index}`}
               style={[borderStyle, {
                 backgroundColor: '#00000001',
-                marginLeft: 6 
+                marginLeft: 2 
               }]}
             >
             <RPressable
-              onPress={()=>{if(selectCity != item.city){setSelectCity(item.city)}}}
+              onPress={()=>{if(showingCity != item.city){setSelectCityIndex(index)}}}
               animatedProps={ripleProps}
             >
               <Reanimated.Text 
                 style = {[textColorAT, {
                   fontSize: 14, 
-                  fontWeight: '400', 
+                  fontWeight: '600', 
                   fontVariant: ['small-caps'],
                   letterSpacing: 0.5, 
                   paddingHorizontal: 3,
-                  textDecorationLine: selectCity == item.city? 'underline' : 'none',
+                  textDecorationLine: showingCity == item.city? 'underline' : 'none',
                 }]}
               >
                 {(item.city).toLowerCase()}
@@ -461,7 +385,7 @@ const WeatherComponent = (props) => {
             flexWrap: 'wrap',
           }}
         >
-          {weatherData[selectCity].weather.hourly.map((item, index)=>(
+          {data[showingCity].weather.hourly.map((item, index)=>(
             <WeatherItem
               key = {item.key} 
               item = {item} 
@@ -474,15 +398,57 @@ const WeatherComponent = (props) => {
               }}
 
               {...props}
-              appStyle={appStyle}
-              appConfig={appConfig}
-              ThemeColorsAppIndex={ThemeColorsAppIndex}
-              ThemeSchema = {ThemeSchema}
-              LanguageAppIndex = {LanguageAppIndex}
             />
           ))}
         </View>
       </ScrollView>
+      <SourceInfo />
+      </>
+    )
+  }
+
+  if(type == 'widget'){
+    return null 
+  }
+
+  if(type == 'lists'){
+    
+    return (
+      <View
+        style = {{
+          flex: 1,
+        }}
+      >
+        <Reanimated.Text style={[iconColorNP, {position: 'absolute', zIndex: 1, top: 4, left: 16}]}>
+          <MaterialCommunityIcons name="weather-partly-cloudy" size={20}/>
+        </Reanimated.Text>
+        <LoadIndicator type='rect'>
+          <ListComponent />
+        </LoadIndicator>
+      </View>
+    )
+  }
+
+  const Header = () => {
+    const Language = useLanguage().Weather
+    return (
+      <Reanimated.Text 
+        style = {[textColorAP, {
+          fontSize: 18, 
+          fontWeight: 'bold', 
+          fontVariant: ['small-caps'], 
+          letterSpacing: 3, 
+        }]}
+      >
+        {Language.actualWeather}
+      </Reanimated.Text>
+    )
+  }
+
+  const SourceInfo = () => {
+    const Language = useLanguage().Weather
+    const last = (weatherData && locations.length > 0 && weatherData[selectCity]?.lastUpdate)? Math.floor((new Date().getTime()-weatherData[selectCity].lastUpdate)/(60*1000)) : 0
+    return (
       <View
         style = {{
           //position: 'absolute',
@@ -511,13 +477,56 @@ const WeatherComponent = (props) => {
           {Language.dataSource}: OpenWeather
         </Reanimated.Text>
       </View>
-      </>}
+    )
+  }
+
+  //props.type = 'full'
+  return (
+    <View
+      style = {[styles.base,]}
+    >
+      <View style = {{flexDirection: 'row',alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10, height: 30}}>
+        <Reanimated.Text style={iconColorAP}>
+          <MaterialCommunityIcons name="weather-partly-cloudy" size={24}/>
+        </Reanimated.Text>
+        <Header />
+      </View>
+
+      <LoadIndicator type='drawer'>
+        <DrawerComponent />
+      </LoadIndicator>
     </View>
-  );
-    
+  )
+}, 
+  (prev, next)=>{
+    return weatherDataEqual(prev.weatherData, next.weatherData) && weatherLocationsEqual(prev.weatherConfig.locationInfo, next.weatherConfig.locationInfo)
+  }
+)
+export default connect(mapStateToProps("WEATHER"))(WeatherComponent); //mapDispatchToProps("WEATHER_C")
+
+
+const weatherDataEqual = (obj_1, obj_2) => {
+  let answer
+  for(const key in obj_1){
+    if(obj_1[key]?.lastUpdate == obj_2[key]?.lastUpdate){         
+      answer = (answer == undefined? true : (answer && true))
+    }
+  }
+  return answer?? false
 }
 
-export default connect(mapStateToProps("WEATHER_C"))(WeatherComponent); //mapDispatchToProps("WEATHER_C")
+const weatherLocationsEqual = (obj_1, obj_2) => {
+  let answer
+  let i = 0
+  for(const loc of obj_1){
+    if(JSON.stringify(loc?.coords) == JSON.stringify(obj_2[i]?.coords)){
+      answer = (answer == undefined? true : (answer && true))
+    }
+    i += 1;
+  }
+  return answer?? false
+}
+
 
 const styles = StyleSheet.create({
   base: {

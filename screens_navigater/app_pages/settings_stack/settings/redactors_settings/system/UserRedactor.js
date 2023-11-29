@@ -29,66 +29,63 @@ import {
 //import ThemesColorsAppList, {themesApp} from "../../../../../styles/ColorsApp";
 import dataRedactor from "../../../../../../app_async_data_manager/data_redactor";
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
-
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSwitch,
-    BaseTextInput 
-} from "../../../../../../general_components/base_components/BaseElements";
+import BaseTextInput from "../../../../../../general_components/base_components/BaseTextInput";
 
 import commonStaticStyles, { SwitchField, ripple } from "../CommonElements";
+import useLanguage from "../../../../../../app_hooks/useLanguage";
+import { connect, useSelector } from "react-redux";
+import mapStateToProps from "../../../../../../app_redux_files/stateToProps";
+import mapDispatchToProps from "../../../../../../app_redux_files/dispatchToProps";
 
-export default UserRedactor = ({
-    appStyle,
+const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
-    appConfig,
-    r_setAppConfig,
+const UserRedactor = (props) => {
+    const {
+        uiComposition,
+        showAllSettings,
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex  
-}) => {
+        Theme,
+        r_uiStyle,
+        
+        userData,
+        r_setUserData
+    } = props
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors
+    const Language = useLanguage().SettingsScreen.Redactors
+    //const userData = useSelector((state)=>state.userData)
 
-    const [textInputValue, setTextInputValue] = useState(appConfig.user.name? appConfig.user.name : null)
+    const [textInputValue, setTextInputValue] = useState(userData.name)
 
     const exit = (text)=>{
         console.log('>>User name input:', text,textInputValue)
-        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        //let newAppConfig = getNewAppConfigObject();
-        //console.log('this',newAppConfig)
-        
-        let ROLE = undefined
-        if(text == 'SET_ROLE_ADMIN'){
-            newAppConfig.user.name = 'admin'
-            setTextInputValue('admin')
-            ROLE = 'a'
-        } else if (text == 'SET_ROLE_USER'){
-            newAppConfig.user.name = 'user'
-            setTextInputValue('user')
-            ROLE = 'u'
-        } else {
-            newAppConfig.user.name = typeof text === 'string'? text : '';
-        }
+        const copyUserData = JSON.parse(JSON.stringify(userData))
+        //copyUserData.updated = true
+        if(text && typeof text === 'string'){
+            let ROLE = undefined
+            if(text == 'SET_ROLE_ADMIN'){
+                copyUserData.name = 'admin'
+                setTextInputValue('admin')
+                ROLE = 'a'
+            } else if (text == 'SET_ROLE_USER'){
+                copyUserData.name = 'user'
+                setTextInputValue('user')
+                ROLE = 'u'
+            } else {
+                copyUserData.name = text 
+            }
 
-        if(ROLE){
-            console.log('SET_ROLE_'+ROLE)
-            newAppConfig.user.role = ROLE
+            if(ROLE){
+                console.log('SET_ROLE_'+ROLE)
+                copyUserData.role = ROLE
+            }
+        } else {
+            copyUserData.name = null
         }
-        r_setAppConfig(newAppConfig);
-        dataRedactor("storedAppConfig", newAppConfig);
+        r_setUserData(copyUserData)
     }
 
     const welcomeUsedSetting = (value) => {
-        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        newAppConfig.splash.welcome = value;// !welcomeUsed
-        r_setAppConfig(newAppConfig);
-        dataRedactor("storedAppConfig", newAppConfig);
+        uiComposition.welcome.show.value = value // value
     }
 
 
@@ -119,7 +116,7 @@ export default UserRedactor = ({
                 
                 placeholder: Language.user.name,
                 placeholderTextColor: Theme.texts.neutrals.tertiary,
-                maxLength: 70,
+                maxLength: 25,
 
                 selectionColor: Theme.texts.accents.primary,
 
@@ -130,50 +127,54 @@ export default UserRedactor = ({
             basePressableProps={{
                 style: {
                     height: 50,
-                    marginLeft: 5,
+                    marginLeft: 6,
+                    width: (deviceWidth -60 -24),
                     //paddingLeft: 10,
-                    borderRadius: appStyle.borderRadius.additional
+                    borderRadius: r_uiStyle.borderRadius.secondary
                     //backgroundColor: 'red',                  
                 },
                 styleItemContainer: {
                     justifyContent: 'flex-end',
-                    paddingRight: 15,
+                    paddingHorizontal: 6,
                     flexDirection: 'row-reverse'
                     //alignItems: 'center'
                 },
                 textStyle: [{
                     color: textInputValue? Theme.texts.neutrals.secondary : Theme.texts.neutrals.tertiary,
+                    width: (deviceWidth -60 -25 -24 -12),
                 }, staticStyles.text],
                 textProps: {
                     numberOfLines: 2,
                 },
-                android_ripple: appStyle.effects.ripple != 'none'? ripple(Theme.icons.accents.primary) : false,
+                android_ripple: ripple(Theme.icons.accents.primary),
                 type: 'ti', 
                 icon: {
-                    name: textInputValue? "account-box-outline" : "pencil-outline", 
+                    name: textInputValue? "account-box-outline" : "pencil", 
                     size: 25, 
                     color: textInputValue? Theme.icons.accents.secondary : Theme.texts.neutrals.tertiary
                 }
             }}
         />
-        {appConfig.user.role == 'a' && 
+        {showAllSettings && 
         <SwitchField
             textTitle = {Language.loadAnimation.welcome}
             textStates = {Language.loadAnimation.welcomeState}
             //text = {`${Language.welcome} ${Language.welcomeState[`${welcomeUsed}`]}`}
-            primeValue={appConfig.splash.welcome}
+            aValue={uiComposition.welcome.show}
+            //primeValue={appConfig.splash.welcome}
             onChange={welcomeUsedSetting}
             style={{
                 //height: 60,
                 //flex: 1
             }}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme={Theme}
         />}
     </View>
     </>)
 }
+export default connect(mapStateToProps('USER_SETTINGS'))(UserRedactor);
+
 
 const staticStyles = StyleSheet.create({
 

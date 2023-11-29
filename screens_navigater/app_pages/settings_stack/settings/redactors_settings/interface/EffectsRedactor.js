@@ -2,16 +2,8 @@ import React, {useState, useRef, useEffect} from "react";
 
 import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList, View,Button, Dimensions, Switch, ActivityIndicator} from 'react-native';
 
-import { cancelAnimation, useDerivedValue, runOnJS } from "react-native-reanimated";
+import { cancelAnimation, useDerivedValue, runOnJS, useSharedValue } from "react-native-reanimated";
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSlider,
-    BaseSwitch 
-} from "../../../../../../general_components/base_components/BaseElements";
 
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
@@ -23,33 +15,116 @@ import { rippleValues, shadowsValues } from "../../../../../../app_values/AppDef
 import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
 import SkiaViewDisign from "../../../../../../general_components/base_components/SkiaViewDisign";
 
+import useLanguage from "../../../../../../app_hooks/useLanguage";
+
+
+
+
+const curStyle = 'full'//'square' //'neomorphism'//"material"
+
+const shadowStyles = {
+    none: {
+        design: 'none',
+        inner: {
+            use: false,
+            opacity: 0
+        },
+        countColors: 0,
+        blur: 0,
+        opacity: 0,
+        pos: {
+            x1:0,
+            y1:0,
+            x2:0, 
+            y2:0
+        }
+    },
+    material: {
+        design: 'material',
+        inner: {
+            use: false,
+            opacity: 0
+        },
+        countColors: 1,
+        blur: 0.42,
+        opacity: 0.19,
+        pos: {
+            x1:0,
+            y1:0.33,
+            x2:0, 
+            y2:0
+        }
+    }, 
+    neomorphism: {
+        design: 'neomorphism',
+        inner: {
+            use: true,
+            opacity: 0.1
+        },
+        countColors: 2,
+        blur: 0.31,
+        opacity: 0.32,
+        pos: {
+            x1:0.39,
+            y1:0.39,
+            x2:-0.39, 
+            y2:-0.39
+        }
+    }, 
+    full: {
+        design: 'full',
+        inner: {
+            use: false,
+            opacity: 0
+        },
+        countColors: 1,
+        blur: 0.52,
+        opacity: 0.18,
+        pos: {
+            x1:0,
+            y1:0,
+            x2:0, 
+            y2:0
+        }
+    },
+    square: {
+        design: 'square',
+        inner: {
+            use: false,
+            opacity: 0
+        },
+        countColors: 1,
+        blur: 0.1,
+        opacity: 0.54,
+        pos: {
+            x1:0.71,
+            y1:0.71,
+            x2:0, 
+            y2:0
+        }
+    }, 
+}
+
 export default EffectsRedactor = (props) => {
     const {
         uiStyle,
         uiTheme,
 
         showAllSettings,
-
-        aStyle,
-        aTheme, 
-        aPalette, 
-        aScheme,
-
+        setShadowsStyle,
         tagStyle,
 
-        appStyle,
-        appConfig,
-        redactorsSet,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex
+        r_uiStyle,
+  
+        Theme
     } = props
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.effects
+    const Language = useLanguage().SettingsScreen.Redactors.effects
 
     const shadowsSetting = (index) => {
-        uiStyle.effects.shadows.value = shadowsValues[index];
+        //uiStyle.effects.shadows.design.value = shadowsValues[index];
+        console.log('shadowsSetting', shadowsValues[index])
+        setShadowsStyle(shadowStyles[shadowsValues[index]])
         tagStyle('effects.shadows')
     }
 
@@ -58,8 +133,8 @@ export default EffectsRedactor = (props) => {
         uiStyle.effects.blur.value = value;
         tagStyle('effects.blur')
     }
-    
-    const shadows = useDerivedValue(()=>shadowsValues.indexOf(uiStyle.effects.shadows.value))
+    console.log('design', uiStyle.effects.shadows.design.value)
+    const shadows = useDerivedValue(()=>shadowsValues.indexOf(uiStyle.effects.shadows.design.value))
 
 
     const ShadowItem = (accentState, index) =>{
@@ -76,19 +151,21 @@ export default EffectsRedactor = (props) => {
                 }}
             >
                 <SkiaViewDisign 
-                    borderRadius = {appStyle.borderRadius.basic}
+                    borderRadius = {r_uiStyle.borderRadius.primary}
                     backgroundColor = {Theme.basics.neutrals.secondary}
                     shadowColors = {Theme.specials.shadow}
                     shadowMargin={{horizontal: 5, vertical: 5}}
-                    shadowStyle = {shadowsValues[index]}
+                    
                     adaptiveSizeForStyle={false}
                     innerShadow={{
                         used: true,
-                        borderWidth: 2
+                        borderWidth: 0
                     }}
                     initSize = {{height: 26, width: 200}}
+
+                    shadowStyle = {shadowStyles[shadowsValues[index]]}
+        
                 />
-                <Text style = {[commonStaticStyles.listText, {color: Theme.texts.neutrals.secondary}]}>{Language.shadowsTypes[index]}</Text> 
             </View>
         )
     }
@@ -110,9 +187,8 @@ export default EffectsRedactor = (props) => {
             groupItems = {Language.shadowsTypes}   
             Item = {ShadowItem}
             onPress = {shadowsSetting}          
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
         {showAllSettings && <>
         <SwitchField
@@ -124,9 +200,8 @@ export default EffectsRedactor = (props) => {
             style = {{
                 marginTop: 10
             }}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
         <Text 
             style={{

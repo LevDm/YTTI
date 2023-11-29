@@ -14,19 +14,14 @@ import Reanimated, {
     cancelAnimation
 } from 'react-native-reanimated';
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSwitch,
-    BaseSlider 
-} from "../../../../../../general_components/base_components/BaseElements";
+import BaseBox from "../../../../../../general_components/base_components/BaseBox";
+import BaseSwitch from "../../../../../../general_components/base_components/BaseSwitch";
 
 import commonStaticStyles, { BoxsField, SwitchField } from "../CommonElements";
 
 import { switchDisign, checkBoxDisign, radioButtonDisign } from "../../../../../../app_values/AppDefault";
 import { render } from "react-dom";
+import useLanguage from "../../../../../../app_hooks/useLanguage";
 
 const Reanimated_Pressable = Reanimated.createAnimatedComponent(Pressable)
 
@@ -41,12 +36,9 @@ const SW_Item = (props) => {
         swPress,
 
         appStyle,
-        ThemeColorsAppIndex,
-        ThemeSchema
+        Theme
     } = props
     
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-
     const itemAccent = useDerivedValue(()=> sw.value[index])
 
     const accentStyle = useAnimatedStyle(()=>{
@@ -64,7 +56,7 @@ const SW_Item = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginRight: 10,
-                borderRadius: appStyle.borderRadius.additional,
+                borderRadius: appStyle.borderRadius.secondary,
             }}
         >
             <Reanimated_Pressable
@@ -73,9 +65,7 @@ const SW_Item = (props) => {
                     width: itemSize,
                     justifyContent: 'center',
                     alignItems: 'center',
-
-                    paddingLeft: 8,
-                    borderRadius: appStyle.borderRadius.additional,
+                    borderRadius: appStyle.borderRadius.secondary,
                     borderWidth: 2,
                     //borderColor: checkGroupSW[index]? Theme.icons.accents.secondary : 'transparent'
                 }, accentStyle]}
@@ -83,38 +73,32 @@ const SW_Item = (props) => {
                 onPress={()=>{swPress(index)}}
             >
                 <BaseSwitch
+                    style={{marginBottom: 3,}}
                     size={22}
                     designType = {item}
-                    borderRadius={appStyle.borderRadius.additional}
-                    Item={false}
+                    borderRadius={appStyle.borderRadius.secondary}
+                    Item={null}
                     colors={{
-                        background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary: Theme.icons.accents.tertiary,
-                        tertiary: Theme.icons.neutrals.tertiary,
-                        quaternary: Theme.icons.neutrals.quaternary,
-                    }}
-                    shadow = {{
-                        style: appStyle.effects.shadows == 'none' && appStyle.selectors.ignoredShadows.disable? 'material' : appStyle.effects.shadows,
-                        colors: Theme.specials.shadow
+                        background: Theme.basics.neutrals.quaternary,
+                        primary: Theme.specials.selector.primary,
+                        secondary: Theme.specials.selector.secondary,
+                        tertiary: Theme.specials.selector.tertiary,
+                        quaternary: Theme.specials.selector.quaternary,
                     }}
                     primeValue={false}
                 />
+
                 <BaseSwitch
                     size={22}
                     designType = {item}
-                    borderRadius={appStyle.borderRadius.additional}
-                    Item={false}
+                    borderRadius={appStyle.borderRadius.secondary}
+                    Item={null}
                     colors={{
-                        background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary: Theme.icons.accents.tertiary,
-                        tertiary: Theme.icons.neutrals.tertiary,
-                        quaternary: Theme.icons.neutrals.quaternary,
-                    }}
-                    shadow = {{
-                        style: appStyle.effects.shadows == 'none' && appStyle.selectors.ignoredShadows.disable? 'material' : appStyle.effects.shadows,
-                        colors: Theme.specials.shadow
+                        background: Theme.basics.neutrals.quaternary,
+                        primary: Theme.specials.selector.primary,
+                        secondary: Theme.specials.selector.secondary,
+                        tertiary: Theme.specials.selector.tertiary,
+                        quaternary: Theme.specials.selector.quaternary,
                     }}
                     primeValue={true}
                 />
@@ -136,12 +120,9 @@ const CB_Item = (props) => {
         cbPress,
 
         appStyle,
-        ThemeColorsAppIndex,
-        ThemeSchema
+        Theme
     } = props
     
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-
     const itemAccent = useDerivedValue(()=> cb.value[index])
 
     const accentStyle = useAnimatedStyle(()=>{
@@ -159,7 +140,7 @@ const CB_Item = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginRight: 10,
-                borderRadius: appStyle.borderRadius.additional,
+                borderRadius: appStyle.borderRadius.secondary,
             }}
         >
             <Reanimated_Pressable
@@ -170,7 +151,7 @@ const CB_Item = (props) => {
                     alignItems: 'center',
 
                     //paddingLeft: 8,
-                    borderRadius: appStyle.borderRadius.additional,
+                    borderRadius: appStyle.borderRadius.secondary,
                     borderWidth: 2,
                     //borderColor: checkGroupSW[index]? Theme.icons.accents.secondary : 'transparent'
                 }, accentStyle]}
@@ -182,12 +163,12 @@ const CB_Item = (props) => {
                     style={{marginRight: 24}}
                     Item = {false}
                     check = {false}
-                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    boxBorderRadius = {appStyle.borderRadius.secondary}
                     designType = {item}
                     colors={{
                         background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary: Theme.icons.neutrals.tertiary,
+                        primary: Theme.specials.selector.primary,
+                        secondary: Theme.specials.selector.quaternary,
                     }}
                 />
                 <BaseBox
@@ -195,12 +176,12 @@ const CB_Item = (props) => {
                     style={{marginLeft: 24}}
                     Item = {false}
                     check = {true}
-                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    boxBorderRadius = {appStyle.borderRadius.secondary}
                     designType = {item}
                     colors={{
                         background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary:  Theme.icons.neutrals.tertiary,
+                        primary: Theme.specials.selector.primary,
+                        secondary: Theme.specials.selector.quaternary,
                     }}
                 />
                 <View style={{position: 'absolute',height: itemSize, width: itemSize, backgroundColor: 'transparent'}}/>
@@ -221,12 +202,9 @@ const RB_Item = (props) => {
         rbPress,
 
         appStyle,
-        ThemeColorsAppIndex,
-        ThemeSchema
+        Theme,
     } = props
     
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-
     const itemAccent = useDerivedValue(()=> rb.value[index])
 
     const accentStyle = useAnimatedStyle(()=>{
@@ -244,7 +222,7 @@ const RB_Item = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginRight: 10,
-                borderRadius: appStyle.borderRadius.additional,
+                borderRadius: appStyle.borderRadius.secondary,
             }}
         >
             <Reanimated_Pressable
@@ -255,7 +233,7 @@ const RB_Item = (props) => {
                     alignItems: 'center',
 
                     //paddingLeft: 8,
-                    borderRadius: appStyle.borderRadius.additional,
+                    borderRadius: appStyle.borderRadius.secondary,
                     borderWidth: 2,
                     //borderColor: checkGroupSW[index]? Theme.icons.accents.secondary : 'transparent'
                 }, accentStyle]}
@@ -267,12 +245,12 @@ const RB_Item = (props) => {
                     style={{marginRight: 24}}
                     Item = {false}
                     check = {false}
-                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    boxBorderRadius = {appStyle.borderRadius.secondary}
                     designType = {item}
                     colors={{
                         background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary:  Theme.icons.neutrals.tertiary,
+                        primary: Theme.specials.selector.primary,
+                        secondary: Theme.specials.selector.quaternary,
                     }}
                 />
                 <BaseBox
@@ -280,12 +258,12 @@ const RB_Item = (props) => {
                     style={{marginLeft: 24}}
                     Item = {false}
                     check = {true}
-                    boxBorderRadius = {appStyle.borderRadius.additional}
+                    boxBorderRadius = {appStyle.borderRadius.secondary}
                     designType = {item}
                     colors={{
                         background: Theme.basics.neutrals.secondary,
-                        primary: Theme.icons.accents.secondary,
-                        secondary:  Theme.icons.neutrals.tertiary,
+                        primary: Theme.specials.selector.primary,
+                        secondary: Theme.specials.selector.quaternary,
                     }}
                 />
                 <View style={{position: 'absolute',height: itemSize, width: itemSize, backgroundColor: 'transparent'}}/>
@@ -305,21 +283,11 @@ export default SelectorsRedactor = (props) => {
 
         tagStyle,
 
-        aStyle,
-        aTheme, 
-        aPalette, 
-        aScheme,
-
-        appStyle,
-        appConfig,
-        redactorsSet,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex
+        r_uiStyle,
+        Theme,
     } = props
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.selectors
+    const Language = useLanguage().SettingsScreen.Redactors.selectors
 
 
     const designSetting = (type, option) => {
@@ -351,28 +319,8 @@ export default SelectorsRedactor = (props) => {
     const cb = useDerivedValue(()=>getGroup(checkBoxDisign.indexOf(uiStyle.selectors.design.checkBox.value), checkBoxDisign.length))
     const rb = useDerivedValue(()=>getGroup(radioButtonDisign.indexOf(uiStyle.selectors.design.radioButton.value), radioButtonDisign.length))
 
-    const disableChange = (value) =>{
-        uiStyle.selectors.ignoredShadows.disable.value = value;
-    }
 
     return (<View style={{paddingBottom: 12}}>
-        {showAllSettings && 
-        <SwitchField
-            textTitle = {Language.disabledShadows}
-            textStates = {Language.disabledShadowsState}
-            //text = {`${Language.invertColors} ${Language.invertColorsState[invertColors]}`}
-            //primeValue={disabledShadows}
-            aValue={uiStyle.selectors.ignoredShadows.disable}
-            onChange={disableChange}
-            style = {{
-                marginTop: 10
-            }}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />}
-
-
         <Text style = {[staticStyles.text, {color: Theme.texts.neutrals.secondary, paddingLeft: 10, marginTop: 5}]}>{Language.switchs}</Text>
         <FlatList 
             //horizontal
@@ -393,9 +341,8 @@ export default SelectorsRedactor = (props) => {
 
                     sw = {sw}
 
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema={ThemeSchema}
+                    appStyle = {r_uiStyle}
+                    Theme = {Theme}
                 />
             )}
         />
@@ -420,9 +367,8 @@ export default SelectorsRedactor = (props) => {
 
                     cb = {cb}
 
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema={ThemeSchema}
+                    appStyle = {r_uiStyle}
+                    Theme = {Theme}
                 />         
             )}
         />
@@ -447,9 +393,8 @@ export default SelectorsRedactor = (props) => {
 
                     rb = {rb}
 
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema={ThemeSchema}
+                    appStyle = {r_uiStyle}
+                    Theme = {Theme}
                 />   
             )}
         />

@@ -24,38 +24,33 @@ import Reanimated, {
     withSpring,
     withRepeat,
     FadeOut,
-    withSequence
+    withSequence,
 } from 'react-native-reanimated';
 
-import themesColorsAppList, {themesApp} from "../../app_values/Themes";
-import languagesAppList, {languagesApp} from "../../app_values/Languages";
 
-import { connect, useSelector } from "react-redux";
-import store from "../../app_redux_files/store"
-import mapDispatchToProps from "../../app_redux_files/dispatchToProps";
-import mapStateToProps from "../../app_redux_files/stateToProps";
-
-import Svg, { Circle, Rect, Ellipse, Path  } from "react-native-svg";
+import  {Svg, Path, RadialGradient, LinearGradient, Stop , Defs, Rect,  } from "react-native-svg";
 
 const RPath = Reanimated.createAnimatedComponent(Path);
 
-/*
-    "M183.321 197.675C170.488 200.008 164.488 189.841 164.488 189.841L135.821 139.841C132.488 134.675 138.321 130.008 142.488 132.675L171.488 152.841",
-    "M188.492 164.685C199.992 172.018 196.992 183.685 196.992 183.685L184.492 239.352C183.459 245.413 175.992 245.185 174.659 240.018L166.992 205.852",
-    "M164.763 170.072C165.43 168.739 168.597 166.072 168.597 166.072L215.597 133.239C220.478 129.5 225.919 134.704 223.597 139.072L205.93 169.905" 
-*/
-
 
 const paths = [
-    "M178.976 200.635C170.058 200.635 163.688 188.404 163.688 188.404L137.187 141.901C135.149 136.804 140.755 131.836 145.851 135.658L166.236 152.221",
-    "M171.332 215.923L175.154 237.582C176.428 242.378 184.072 242.378 185.346 237.582L195.648 192.753C195.648 192.753 199.361 181.524 194.264 175.154",
-    
-    "M210.827 167.51L226.115 143.303C227.389 138.207 222.293 135.659 217.197 138.207L171.332 170.058",
+    "M195.538 186.62C190.442 198.087 173.115 202.8 163.687 185.346L138.207 144.577C134.385 138.207 142.029 133.11 147.125 136.932L176.428 157.572",
+    "M185.346 163.688L189.168 166.236C195.538 171.332 198.341 175.154 195.793 187.894C195.674 187.52 186.62 235.034 186.62 235.034C185.346 241.404 175.154 241.404 173.88 235.034L165.705 192.99",
+    "M200.635 178.976L222.293 143.303C224.841 138.207 218.471 131.837 212.101 136.934L172.606 164.962C172.606 164.962 161.139 171.969 164.197 184.072",
 ]
 
-const STROKE_WIDTH = 10.1923
+const lens = [
+    141.35824584960938,
+    137.03329467773438,
+    129.37606811523438,
+]
+
+const STROKE_WIDTH = 12.7404
 
 const ORIGINAL_COLORS = ["#FFF", "#FFF", "#F11"];
+
+const colorsForStroks = [["spaint4_linear", "spaint5_radial"], ["spaint0_radial", "spaint1_radial"], ["spaint2_linear", "spaint3_radial"]] 
+
 
 const SplashY = (props) => {
     const {
@@ -68,9 +63,6 @@ const SplashY = (props) => {
     //const iconColorSecondary = Theme.icons.accents.primary
     //const iconColorPrimary = Theme.icons.accents.secondary
 
-    
-    const colors2 = ORIGINAL_COLORS// [iconColorPrimary, iconColorPrimary, iconColorSecondary];
-
     const animationState = useSharedValue(1)
     const colorsAnimation = useSharedValue(0)
 
@@ -78,16 +70,14 @@ const SplashY = (props) => {
         "worklet";
         const duration = 1000
 
-        //colorsAnimation.value = withDelay(duration*(0.3), withTiming(1, {duration: 0})) //{duration: duration/2, easing: Easing.inOut}
-
         animationState.value = withSequence(
             withTiming(2, {duration: duration*0.3, easing: Easing.linear}),
             withTiming(0, {duration: 0}),
             withRepeat(
                 withSequence(
-                    withTiming(1, {duration: duration*0.55, easing: Easing.linear}),
-                    withTiming(1, {duration: duration*0.15, easing: Easing.linear}),
-                    withTiming(2, {duration: duration*0.3, easing: Easing.linear})
+                    withTiming(1, {duration: duration*0.5, easing: Easing.linear}),
+                    withTiming(1, {duration: duration*0.24, easing: Easing.linear}),
+                    withTiming(2, {duration: duration*0.26, easing: Easing.linear}),
                 ),
                 -1,
                 false,
@@ -98,6 +88,55 @@ const SplashY = (props) => {
     useEffect(()=>{
         startAnimation()
     }, [])
+
+
+    const Fills = () => {
+        const colorB = 'white'
+        const colorF = '#ff1111'
+
+        return (
+            <Defs>
+                <RadialGradient id={"spaint0_radial"} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(180.25 180.25) rotate(90) scale(42.0433 42.5547)">
+                <Stop stopColor={colorB} stopOpacity="0"/>
+                <Stop offset="0.571915" stopColor={colorB} stopOpacity="0"/>
+                <Stop offset="1" stopColor={colorB}/>
+                </RadialGradient>
+                <RadialGradient id={"spaint1_radial"} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(199.361 192.99) rotate(-149.931) scale(27.9709 65.2407)">
+                <Stop offset="0.460095" stopColor={colorB}/>
+                <Stop offset="1" stopColor={colorB} stopOpacity="0"/>
+                </RadialGradient>
+
+
+                <LinearGradient id={"spaint2_linear"} x1="181.524" y1="162.413" x2="189.168" y2="175.154" gradientUnits="userSpaceOnUse">
+                <Stop stopColor={colorF}/>
+                <Stop offset="1" stopColor={colorF} stopOpacity="0"/>
+                </LinearGradient>
+                <RadialGradient id={"spaint3_radial"} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(180.25 180.25) rotate(-20.8545) scale(28.6305 28.463)">
+                <Stop stopColor={colorF} stopOpacity="0"/>
+                <Stop offset="0.800957" stopColor={colorF} stopOpacity="0"/>
+                <Stop offset="1" stopColor={colorF}/>
+                </RadialGradient>
+
+
+                <LinearGradient id={"spaint4_linear"} x1="173.88" y1="157.317" x2="170.058" y2="152.221" gradientUnits="userSpaceOnUse">
+                <Stop stopColor={colorB} stopOpacity="0"/>
+                <Stop offset="1" stopColor={colorB}/>
+                </LinearGradient>
+                <RadialGradient id={"spaint5_radial"} cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(187.894 152.221) rotate(85.8151) scale(52.3752 29.8813)">
+                <Stop offset="0.66209" stopColor={colorB} stopOpacity="0"/>
+                <Stop offset="1" stopColor={colorB}/>
+                </RadialGradient>                                       
+            </Defs>
+        )
+    }
+
+    const opacityStyle = useAnimatedStyle(()=>({
+        opacity: interpolate(
+            animationState.value,
+            [0, 1, 2],
+            [0, 2.5, 0]
+        )
+    }))
 
     return (
         <Reanimated.View
@@ -110,7 +149,7 @@ const SplashY = (props) => {
             onLayout={onLayout}
         >   
             <Reanimated.View
-                style={[
+                style={[opacityStyle,
                     //stock,
                     {
                     position: 'absolute',
@@ -122,24 +161,10 @@ const SplashY = (props) => {
                     viewBox="0 0 360 360" 
                     fill="none"
                 >
-                    {paths.map((d, index) => (<AnimatedStroke order={index} animationState={animationState} colors={ORIGINAL_COLORS} d={d} key={index} />))}            
-                </Svg>
+                    {[2, 0, 1].map((index, _) => (<AnimatedStroke order={index} animationState={animationState} colors={ORIGINAL_COLORS} d={paths[index]} key={index} />))} 
+                    <Fills/>
+                </Svg>          
             </Reanimated.View>
-            {/* 
-            <Reanimated.View
-                style={[users, {
-                    position: 'absolute',
-                }]}
-            >
-                <Svg 
-                    width="360" 
-                    height="360" 
-                    viewBox="0 0 360 360" 
-                    fill="none"
-                >
-                    {paths.map((d, index) => (<AnimatedStroke order={index} animationState={animationState} colors={colors2} d={d} key={index} />))}            
-                </Svg>
-            </Reanimated.View>*/}
         </Reanimated.View>
     )
 }
@@ -147,14 +172,8 @@ const SplashY = (props) => {
 export default SplashY//connect(mapStateToProps('SPLASH'), mapDispatchToProps('SPLASH'))(SplashY);
 
 
-const lens = [
-    //128.32154846191406,
-    //128.24142456054688,
-    //112.24468231201172,
-    114.88301086425781,
-    99.656982421875,
-    97.82520294189453,
-]
+const offsets = [0, 0, 0]//[0.26, 0.175, 0.24]
+const startOrder = [0.01, 0.01, 0.01]
 
 const AnimatedStroke = (props) => {
     const {
@@ -162,61 +181,69 @@ const AnimatedStroke = (props) => {
         d, 
         animationState,
         colors, 
+        //stroks,
     } = props
 
-    const rotation = order > 0 ? (1) : (-1)
+    const color = colorsForStroks[order]
 
-    const earlyStarting = -(order>0? 0.12 : 0)
-    const currentAnimState = useDerivedValue(()=>(
+    const primary_a = String(`url(#${color[0]})`)
+    const secondary_a = String(`url(#${color[1]})`)
+
+    const rotation = order > 1 ? (1) : (-1)
+
+    const earlyStarting = -(order>0? 0 : 0) //0.12
+    const currentAnimState = useDerivedValue(()=>{
+        const phase = 1//paths.length // 1 //
+        const start = startOrder[order] // 0 //
+        return (
         interpolate(
-            paths.length*animationState.value, 
-            [order+earlyStarting, (order+1), paths.length + order + earlyStarting, paths.length + (order+1)], 
+            phase*animationState.value, 
+            [start+earlyStarting, (start +1), phase + start  + earlyStarting, phase + (start +1)], 
             [ 0, 1, 1, 2], 
             {extrapolateLeft: Extrapolation.CLAMP, extrapolateRight: Extrapolation.CLAMP}
         )
-    ))
+    )})
 
     const backgroundState = useDerivedValue(()=>(2*Easing.bezier(0.61, 1, 0.88, 1).factory()(interpolate(currentAnimState.value, [0,2], [0,1]))))
-    const foregroundState = useDerivedValue(()=>(2*Easing.bezier(0.37, 0, 0.63, 1).factory()(interpolate(currentAnimState.value, [0,2], [0,1]))))
+    const foregroundState = useDerivedValue(()=>(2*Easing.bezier(0.37, 0, 0.63, 1).factory()(interpolate(currentAnimState.value, [0,2], [0,1])))) //0.37, 0, 0.63, 1
 
-    const length = lens[order]
+    const length = lens[order] 
+    
+    const input = [ 0, 1, 2]
+    const bord_l = ((2-rotation)*length )
+    const bord_r = ((2+rotation)*length )
+
+    const offset_l =(length*offsets[order] )*((2-rotation) > 1? -1 : 1)
+    const offset_r =(length*offsets[order] )*((2+rotation) > 1? -1 : 1)
+
+
+    const out = [ bord_l+offset_l, 2*length, bord_r ]
  
-    //const [length, setLength] = useState(0);
+
     const ref = useRef(null);
     const animatedBGProps = useAnimatedProps(() => ({
         strokeDashoffset: interpolate(
             backgroundState.value,
-            [ 0, 1, 2], 
-            [(2-rotation)*length, 2*length, (2+rotation)*length]
+            input,
+            out,
+            {extrapolateLeft: Extrapolation.CLAMP, extrapolateRight: Extrapolation.CLAMP}
         ),
-        strokeWidth: 0.04 < currentAnimState.value && currentAnimState.value < 1.96? STROKE_WIDTH : 0, 
+        //strokeWidth: 0.04 < currentAnimState.value && currentAnimState.value < 1.96? STROKE_WIDTH : 0, 
     }))
     const animatedProps = useAnimatedProps(() => {
         return ({
             strokeDashoffset: interpolate(
                 foregroundState.value,
-                [ 0, 1, 2],
-                [(2-rotation)*length, 2*length, (2+rotation)*length]
+                input,
+                out,
+                {extrapolateLeft: Extrapolation.CLAMP, extrapolateRight: Extrapolation.CLAMP}
             ),
-            strokeWidth: 0.03 < currentAnimState.value && currentAnimState.value < 1.96? STROKE_WIDTH : 0,
+            //strokeWidth: 0.03 < currentAnimState.value && currentAnimState.value < 1.96? STROKE_WIDTH : 0,
         })
     })
     
     return (
-        <>
-        <RPath
-            d={d}
-            strokeDasharray={`${length} ${length}`}
-            stroke={colors[order]}
-            
-            fill="none"
-            strokeWidth={STROKE_WIDTH}
-            strokeLinecap="round"     
-            strokeLinejoin="round"
-            strokeOpacity={0.5}
-            animatedProps={animatedBGProps}
-            
-        />
+        <> 
         <RPath
             ref={ref}
             d={d}
@@ -226,13 +253,25 @@ const AnimatedStroke = (props) => {
                 //console.log('layout len', len)
                 //setLength(len)
             }} 
-            stroke={colors[order]}
+            stroke={primary_a}
             strokeWidth={STROKE_WIDTH}
             strokeLinecap="round" 
             strokeLinejoin="round"
-
+            //fill="none"
             animatedProps={animatedProps}
         />
+
+        <RPath
+            d={d}
+            strokeDasharray={`${length} ${length}`}
+            stroke={secondary_a}
+            strokeWidth={STROKE_WIDTH}
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            animatedProps={animatedProps}
+        />
+
+        
         </>
     )
 }

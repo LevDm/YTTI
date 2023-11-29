@@ -9,7 +9,11 @@ import Reanimated, {
     useDerivedValue,
     useAnimatedReaction,
     runOnJS,
-    FadeIn
+    FadeIn,
+    runOnUI,
+    CurvedTransition,
+    FadingTransition,
+    FadeOut
 } from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
@@ -18,21 +22,17 @@ import Svg, {Path} from "react-native-svg";
 
 import { BlurView } from "@react-native-community/blur";
 
-import themesColorsAppList from "../../app_values/Themes";
-import languagesAppList from "../../app_values/Languages";
-
-const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
 const Reanimated_Text = Reanimated.createAnimatedComponent(Text);
 const Reanimated_Icon = Reanimated.createAnimatedComponent(MaterialCommunityIcons)
 const RBlurView = Reanimated.createAnimatedComponent(BlurView);
 const RPressable = Reanimated.createAnimatedComponent(Pressable);
 
-import { ripple, getNavigateItems } from "./tools";
+import { ripple, getNavigateItems, fromSharedObject } from "./tools";
 
 import * as NavigationBar from 'expo-navigation-bar';
-const OS_NAVIGATION_BAR_HEIGHT = Dimensions.get('screen').height - (Dimensions.get('window').height + Constants.statusBarHeight)
-
+import useLanguage from "../../app_hooks/useLanguage";
+import useSizes from "../../app_hooks/useSizes";
 
 function Classical(props){
     const {
@@ -42,34 +42,19 @@ function Classical(props){
 
         uiStyle,
         uiTheme,
-        uiCompositions,
-        
-        appStyle,
-        appConfig,
-
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex,
+        uiComposition,
+    
     } = props
     //console.log('route', route)
-
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex]
 
 
     const {
         navigationMenu: {
-            type,
-            position: {
-                horizontal,
-                vertical
-            },
-            height,
-            accentsType: {
-                coloring,
-                filling
-            },
-            signatureIcons
+            height: menuHeight,
+            icons: {
+                highlight: {coloring, filling},
+                signature: iconSignature
+            }
         },
         effects:{
             blur: uiBlur
@@ -87,7 +72,8 @@ function Classical(props){
                 primary: textAP
             },
             neutrals: {
-                secondary: textNS
+                secondary: textNS,
+                tertiary: textNT,
             }
         },
         icons: {
@@ -95,7 +81,8 @@ function Classical(props){
                 primary: iconAP
             },
             neutrals: {
-                secondary: iconNS
+                secondary: iconNS,
+                tertiary: iconNT,
             }
         },
         specials:{
@@ -103,12 +90,56 @@ function Classical(props){
         }
     } = uiTheme
 
+    const {
+        appFunctions
+    } = uiComposition
+
+    
+    const getEnabled = (sharedAppFunctions) => {
+        'worklet';
+        return ((Object.values(sharedAppFunctions).filter((el)=>el.used.value)).length > 1)
+    }
+
+    const [ menuEnabled, setMenuEnabled ] = useState(getEnabled(appFunctions))
+
+    useAnimatedReaction(()=>getEnabled(appFunctions),
+        (newValue, oldValue)=>{
+            if(newValue != menuEnabled){
+                runOnJS(setMenuEnabled)(newValue)
+            }      
+        }
+    )
 
     const osBarVisibility = NavigationBar.useVisibility() === 'visible'
-    console.log('ANDROID BAR', NavigationBar.useVisibility(), osBarVisibility, OS_NAVIGATION_BAR_HEIGHT)
 
 
-    const MenuItem = (props) => {
+    const {height, width, osHeights: {navigationBar}} = useSizes()
+
+
+    const menu = useAnimatedStyle(()=>{
+        const addHeight = (menuEnabled && osBarVisibility)? navigationBar : 0
+        return ({
+            height: menuHeight.value + withTiming(addHeight), //enabled? withTiming(addHeight) :
+            borderColor: `${separator.value}25`,
+            paddingBottom: withTiming(addHeight) //enabled? withTiming(addHeight) : 
+        })
+    })
+
+    const bg = useAnimatedStyle(()=>{
+        const aBlur = uiBlur.value
+        return {backgroundColor: `${basicNT.value}${aBlur? '68' : 'ff'}`}
+    })
+
+    
+
+    const heightRow = useAnimatedStyle(()=>{
+        return ({
+            height: menuHeight.value
+        })
+    })
+    
+
+    const MenuItem = React.memo((props) => {
         const {
             accentState,
             onPress,
@@ -118,15 +149,15 @@ function Classical(props){
 
         const accentStyle = useAnimatedStyle(()=>{
             return {
-                color: coloring.value && accentState? textAP.value  : textNS.value ,
+                color: coloring.value? (accentState? textAP.value : textNT.value) : textNS.value ,
             }
         })
 
         const iconStyle = useAnimatedStyle(()=>{
-            const iconSize = Math.min((height.value-5-15 +(signatureIcons.value? 0 : 4)), 33)// [20, 33]
+            const iconSize = Math.min((menuHeight.value-5-15 +(iconSignature.value? 0 : 4)), 33)// [20, 33]
             //console.log('menu', height.value)
             return ({
-                color: coloring.value && accentState? iconAP.value : iconNS.value , 
+                color: coloring.value ? (accentState? iconAP.value : iconNT.value ) : iconNS.value , 
                 //backgroundColor: 'green',
                 transform: [
                     {scale: iconSize/20},
@@ -138,7 +169,7 @@ function Classical(props){
         })
 
         const size = useAnimatedStyle(()=>{
-            const iconSize = Math.min((height.value-5-15 +(signatureIcons.value? 0 : 4)), 33)// [20, 33]
+            const iconSize = Math.min((menuHeight.value-5-15 +(iconSignature.value? 0 : 4)), 33)// [20, 33]
             return ({
                 //backgroundColor: 'red',
                 height: iconSize,
@@ -168,7 +199,7 @@ function Classical(props){
         }
 
         const pressableStyle = useAnimatedStyle(()=>({
-            paddingTop: height.value > 55? 8 : 3,
+            paddingTop: menuHeight.value > 55? 8 : 3,
         }))
 
         const pressableProps = useAnimatedProps(()=>({
@@ -179,20 +210,43 @@ function Classical(props){
             }
         }))
 
-        const [signature, setSignature] = useState(signatureIcons.value)
 
-        useAnimatedReaction(()=>signatureIcons.value, (newValue)=>{runOnJS(setSignature)(newValue)})
+       
 
+        const Signature = (props) => {
+            const Language = useLanguage()
+            const [signature, setSignature] = useState(iconSignature.value)
+            useAnimatedReaction(()=>iconSignature.value, (newValue)=>{runOnJS(setSignature)(newValue)})
 
+            if(!signature){return null}
+            return (
+                <Reanimated.Text
+                    style = {[
+                        {
+                            fontSize: 13,
+                            width: '100%',
+                            textAlign: 'center',
+                            fontVariant: ['small-caps'],
+                            fontWeight: '500',
+                        },
+                        accentStyle
+                    ]}
+                >
+                    {Language[props.title].HeaderTitle.toLowerCase()}
+                </Reanimated.Text>
+            )
+        }
 
         return (
-            <View
+            <Reanimated.View
                 key = {props.keyID}
                 style = {{
                     flex: 1, 
                     backgroundColor: 'transparent',
                     //borderRadius: appStyle.borderRadius.additional
                 }}
+                entering={accentState? FadeIn : undefined}
+                exiting={FadeOut}
             >
                 <RPressable
                     onPress={onPress}
@@ -214,93 +268,82 @@ function Classical(props){
                         }}
                     >
                         <MenuIcon />
-                        {signature &&
-                        <Reanimated.Text
-                            style = {[
-                                {
-                                    fontSize: 10,
-                                    width: '100%',
-                                    textAlign: 'center',
-                                    fontVariant: ['small-caps'],
-                                    fontWeight: '500',
-                                },
-                                accentStyle
-                            ]}
-                        >
-                            {title}
-                        </Reanimated.Text>}
+                        <Signature title={title}/>
                     </Reanimated.View>        
                 </RPressable>    
-            </View>
+            </Reanimated.View>
+        )
+    })
+
+    //console.log('menu', enabled, osBarVisibility)
+
+    const ItemsRow = () => {
+        const [showFunction, setShowFunction] = useState(fromSharedObject(appFunctions, fromSharedObject))
+
+        useAnimatedReaction(()=>fromSharedObject(appFunctions, fromSharedObject),
+            (newValue, oldValue)=>{
+                if(JSON.stringify(newValue) != JSON.stringify(showFunction)){
+                    runOnJS(setShowFunction)(newValue) 
+                } 
+            }
+        )
+
+        return (
+            <Reanimated.View
+                style = {[heightRow, {
+                    flex: 1, 
+                    maxWidth: 400,
+                    flexDirection: 'row',
+                }]}
+            >
+                {getNavigateItems({
+                    state: state,
+                    appFunctions: showFunction
+                }).map((item, index) => {
+                    const  {
+                        routeName,
+                        screenName,
+                        iconFocus,
+                        isFocused,
+                    } = item
+                    //console.log(index, routeName, isFocused)
+                    const navigate = () =>{
+                        //console.log('PRESS', croute.name)
+                        navigation.navigate(routeName)
+                    }
+
+                    return (
+                        <MenuItem
+                            key = {`item_${routeName}_${index}`}
+                            keyID = {`item_${routeName}_${index}`}
+                            accentState = {isFocused}
+                            onPress = {navigate}
+                            icons = {iconFocus}
+                            //iconSize = {iconSize}
+                            title = {screenName}
+                        />
+                    )
+                })}
+            </Reanimated.View>
         )
     }
 
     
-
-    const menu = useAnimatedStyle(()=>{
-        const addHeight = osBarVisibility? OS_NAVIGATION_BAR_HEIGHT : 0
-        return ({
-            height: addHeight+ height.value, 
-            borderColor: `${separator.value}25`,
-            paddingBottom: addHeight
-            //backgroundColor: Theme.basics.neutrals.tertiary,
-        })
-    })
-
-    const bg = useAnimatedStyle(()=>{
-        const aBlur = uiBlur.value
-        return {backgroundColor: `${basicNT.value}${aBlur? '68' : 'ff'}`}
-    })
-
-
     return (
+        <>
+        {menuEnabled && 
         <Reanimated.View
             style = {[menu, {
-                width: deviceWidth,
+                width: width,
+                borderTopWidth: 0.4,
+                alignItems: 'center',
             }]}
         >   
             <BlurFill uiStyle={uiStyle}/>
             <Reanimated.View style={[StyleSheet.absoluteFillObject, bg, {}]}/> 
-
-            {true && 
-            <Reanimated.View
-                style = {{
-                    flex: 1, 
-                    flexDirection: 'row',
-                }}
-            >
-            {getNavigateItems({
-                state: state,
-                LanguageAppIndex: LanguageAppIndex,
-                appConfig: appConfig
-            }).map((item, index) => {
-                
-                const  {
-                    routeName,
-                    screenTItle,
-                    iconFocus,
-                    isFocused,
-                } = item
-
-                const navigate = () =>{
-                    //console.log('PRESS', croute.name)
-                    navigation.navigate(routeName)
-                }
-
-                return (
-                    <MenuItem
-                        key = {`item_${routeName}_${index}`}
-                        keyID = {`item_${routeName}_${index}`}
-                        accentState = {isFocused}
-                        onPress = {navigate}
-                        icons = {iconFocus}
-                        //iconSize = {iconSize}
-                        title = {screenTItle}
-                    />
-                )
-            })}
-            </Reanimated.View>}
-        </Reanimated.View>
+            <ItemsRow />
+        </Reanimated.View>}
+        </>
     )
 }
 export default Classical;
@@ -323,7 +366,6 @@ const BlurFill = (props) => {
     useAnimatedReaction(
         ()=>uiBlur.value,
         (newValue, oldValue)=>{
-            console.log('reaction blur')
             if(newValue && !blur){
                 runOnJS(setBlur)(true)
             }

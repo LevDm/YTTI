@@ -1,4 +1,3 @@
-import languagesAppList from "../../app_values/Languages";
 
 
 export const ripple = (color) => ({
@@ -6,6 +5,19 @@ export const ripple = (color) => ({
     borderless: true,
     foreground: false
 })
+
+export const fromSharedObject = (obj, rec) => {
+    'worklet'
+    const newObj = {}
+    for(const key in obj){
+        if(obj[key].value != undefined){
+            newObj[key] = obj[key].value
+        } else {
+            newObj[key] = rec(obj[key], rec)
+        }
+    }
+    return newObj
+}
 
 export const getNavigateItems = (props) => {
     const {
@@ -15,17 +27,17 @@ export const getNavigateItems = (props) => {
                 {name: "tasks"},
                 {name: "timetable"},
                 {name: "notes"},
-                {name: "settingsStack"},
                 {name: "analytics"},
             ]
         },
         LanguageAppIndex,
-        appConfig
+        appFunctions
     } = props
 
-    const Language = languagesAppList[LanguageAppIndex]
 
     const answer = []
+
+    //console.log(appFunctions)
 
     state.routes.map((route, index) => {
         const routes =  {
@@ -33,25 +45,20 @@ export const getNavigateItems = (props) => {
             timetable: {name: "timetable"},
             notes : {name: "notes"},
             analytics : {name: "analytics"},
-            settings : {name: "settingsStack"},
         }
 
         let current 
-        const uses = new Array(Object.keys(appConfig.appFunctions).length)//['','','','']
-        Object.keys(appConfig.appFunctions).map((litem, lindex)=>{
-            if(appConfig.appFunctions[litem].useId == index){
+        Object.keys(appFunctions).map((litem, lindex)=>{
+            if(appFunctions[litem].useId == index){
                 current = litem
-            } 
-            if(appConfig.appFunctions[litem].used){
-                uses[appConfig.appFunctions[litem].useId] = litem
             } 
         })
 
+        
         const croute = routes[current]
-        const cpage = appConfig.appFunctions[current]
+        const useScreen = appFunctions[croute.name].used
 
-        if(routes[current]){
-            
+        if(useScreen){
             const cisFocused = state.routes[state.index].name === croute.name;
             const iconsNames = {focus: '', notFocus: ''}
             let screenName = ''
@@ -60,31 +67,25 @@ export const getNavigateItems = (props) => {
                 case "tasks":
                     iconsNames.focus = 'sticker-check';//'home-edit';
                     iconsNames.notFocus = 'sticker-check-outline';//'home-edit-outline';
-                    screenName = Language.TasksScreen.HeaderTitle;
+                    screenName = 'TasksScreen'
                     break;
 
                 case "analytics":
                     iconsNames.focus = 'circle-slice-1';
                     iconsNames.notFocus = 'circle-outline';
-                    screenName = Language.AnalyticsScreen.HeaderTitle;
-                    break;
-
-                case "settingsStack": 
-                    iconsNames.focus = 'cog'; 
-                    iconsNames.notFocus = 'cog-outline';
-                    screenName = Language.SettingsScreen.HeaderTitle;
+                    screenName = 'AnalyticsScreen'
                     break;
 
                 case "notes":
                     iconsNames.focus = 'note-edit'; 
                     iconsNames.notFocus = 'note-edit-outline';
-                    screenName = Language.NotesScreen.HeaderTitle;
+                    screenName = 'NotesScreen'
                     break;
 
                 case "timetable":
                     iconsNames.focus = 'timetable'; 
                     iconsNames.notFocus = 'timetable';
-                    screenName = Language.TimetableScreen.HeaderTitle;
+                    screenName = 'TimetableScreen'
                     break;
 
                 default:
@@ -95,7 +96,7 @@ export const getNavigateItems = (props) => {
 
             const item = {
                 routeName: croute.name,
-                screenTItle: screenName,
+                screenName: screenName,
                 iconFocus: {'true': iconsNames.focus, 'false': iconsNames.notFocus},
                 isFocused: cisFocused
             }

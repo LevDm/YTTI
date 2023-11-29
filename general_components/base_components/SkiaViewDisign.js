@@ -47,6 +47,7 @@ import Reanimated, {
   SequencedTransition,
   CurvedTransition,
   FadingTransition,
+  FadeOut,
 } from 'react-native-reanimated';
 
 const RCanvas = Reanimated.createAnimatedComponent(Canvas)
@@ -57,7 +58,10 @@ function SkiaViewDisign(props) {
       aBGColor,
       fullShadowMargin,// = {l: 10, r: 10, t: 10, b: 10}
       aSize,
-      aShadows,
+
+      aShadowColors,
+      aShadowStyle,
+
 
       borderRadius = 16,
       backgroundColor = 'white',
@@ -68,19 +72,80 @@ function SkiaViewDisign(props) {
         primary: '#000000',
         secondary: '#ffffff',
       },
-      shadowStyle = 'material',//'neomorphism', 
+      shadowStyle = {
+          inner: {
+              use: false,
+              opacity: 0
+          },
+          countColors: 1,
+          blur: 0.42,
+          opacity: 0.19,
+          pos: {
+              x1:0,
+              y1:0.33,
+              x2:0, 
+              y2:0
+          }
+      }, 
+     
       
        
       adaptiveSizeForStyle = false,
       innerShadow = {
-        show: false,
+        used: false,
         borderWidth: 5,
       },
       isGeneralObject = false,
       timing = true
     } = props//useValue(props).current
 
+
+    const {
+      inner: {
+        use: innerUse, // true, false
+        opacity: innerOpacity
+      },
+      countColors, // 0,1,2
+      opacity, //0-1
+      blur, // coef
+      pos: {
+        x1, // coef 
+        y1, // coef
+
+        x2, // coef 
+        y2, // coef
+      }
+    } = aShadowStyle ?? {
+      inner: {
+        use: useSharedValue(shadowStyle.inner.use),
+        opacity: useSharedValue(shadowStyle.inner.opacity)
+      },
+      countColors: useSharedValue(shadowStyle.countColors), // 0,1,2
+      opacity: useSharedValue(shadowStyle.opacity), //0-1
+      blur: useSharedValue(shadowStyle.blur), // coef
+      pos: {
+        x1: useSharedValue(shadowStyle.pos.x1), // coef 
+        y1: useSharedValue(shadowStyle.pos.y1), // coef
+
+        x2: useSharedValue(shadowStyle.pos.x2), // coef 
+        y2: useSharedValue(shadowStyle.pos.y2), // coef
+      }
+    }
+
+    const {
+      primary,
+      secondary,
+    } = aShadowColors ?? {
+      primary: useSharedValue(shadowColors.primary),
+      secondary: useSharedValue(shadowColors.secondary),
+    }
+
+
+    
+
+
     const margin = useDerivedValue(()=>{
+      //console.log("skia margin")
       const sm = {l: shadowMargin.horizontal, r: shadowMargin.horizontal, t: shadowMargin.vertical, b: shadowMargin.vertical}
       return (fullShadowMargin && fullShadowMargin.value)? fullShadowMargin.value : sm
     })
@@ -100,6 +165,58 @@ function SkiaViewDisign(props) {
     const sh2_cp = useSharedValue(TRANSPARENT)
     const sh2_cs = useSharedValue(TRANSPARENT)
 
+    const hexOpacity = (value) => {
+      "worklet";
+      return ((value*255) | 1<<8).toString(16).slice(1)
+    }
+    const getColor = (hex, opacity) => {
+      "worklet";
+      return `${hex}${hexOpacity(opacity)}`
+    }
+
+    useDerivedValue(()=>{
+      sh_x.value = minMargin.value * x1.value
+      sh_y.value = minMargin.value * y1.value
+
+      sh2_x.value = minMargin.value * x2.value
+      sh2_y.value = minMargin.value * y2.value
+
+      sh_blur.value = minMargin.value * blur.value
+
+      const dOpacity = opacity.value
+      const dInnerOpacity = innerOpacity.value
+
+      if(!innerUse.value){
+        sh2_cp.value = TRANSPARENT
+        sh2_cs.value = TRANSPARENT
+      }
+
+      if(countColors.value === 0){
+        sh_cp.value = TRANSPARENT
+        sh_cs.value = TRANSPARENT
+
+      } else if(countColors.value === 1){
+        sh_cp.value = getColor(primary.value, dOpacity)
+        sh_cs.value = TRANSPARENT
+
+        if(innerUse.value){
+          sh2_cp.value = getColor(primary.value, dInnerOpacity)
+          sh2_cs.value = TRANSPARENT
+        }
+        
+      } else if(countColors.value === 2) {
+        sh_cp.value = getColor(primary.value, dOpacity)
+        sh_cs.value = getColor(secondary.value, dOpacity)
+        
+        if(innerUse.value){
+          sh2_cp.value = getColor(primary.value, dInnerOpacity)
+          sh2_cs.value = getColor(secondary.value, dInnerOpacity)
+        }
+      }
+    })
+  
+
+    /**
     useDerivedValue(()=>{
       //console.log('skia upd')
       const currentStyleShadows = (aShadows && aShadows.value)? aShadows.value.style : shadowStyle
@@ -111,19 +228,24 @@ function SkiaViewDisign(props) {
         sh2_cs.value = TRANSPARENT
 
       } else {
-        let defaultBlur = minMargin.value /2
+        let defaultBlur = minMargin.value /2.4
         let defaultOpacity = '30'
 
         if(currentStyleShadows == 'neomorphism'){
+          defaultBlur = minMargin.value /3.2
+          defaultOpacity = '50'
+          
           sh_x.value = minMargin.value /2.6
           sh_y.value = minMargin.value /2.6
+
+          const innerOpacity = '0c'
 
           sh2_x.value = -minMargin.value /2.6
           sh2_y.value = -minMargin.value /2.6
 
-          sh_cs.value = `${(aShadows && aShadows.value)? aShadows.value.colors.secondary : shadowColors.secondary}30`
-          sh2_cp.value = `${(aShadows && aShadows.value)? aShadows.value.colors.primary : shadowColors.primary}10`
-          sh2_cs.value = `${(aShadows && aShadows.value)? aShadows.value.colors.secondary : shadowColors.secondary}10`
+          sh_cs.value = `${(aShadows && aShadows.value)? aShadows.value.colors.secondary : shadowColors.secondary}${defaultOpacity}`
+          sh2_cp.value = `${(aShadows && aShadows.value)? aShadows.value.colors.primary : shadowColors.primary}${innerOpacity}`
+          sh2_cs.value = `${(aShadows && aShadows.value)? aShadows.value.colors.secondary : shadowColors.secondary}${innerOpacity}`
 
         } else {
           sh2_x.value = 0
@@ -135,7 +257,7 @@ function SkiaViewDisign(props) {
 
           if(currentStyleShadows == 'material' || (isGeneralObject && shadowStyle == 'materialSome')){
             sh_x.value = 0
-            sh_y.value = minMargin.value /3.5
+            sh_y.value = minMargin.value /3
 
           }
           if(currentStyleShadows == "full"){
@@ -156,11 +278,11 @@ function SkiaViewDisign(props) {
       }
     })
 
-
-    const sizeCanvas = useDerivedValue(()=> (aSize && aSize.value)? aSize.value : initSize) 
+    */
+    const sizeCanvas = (aSize && aSize.value != undefined)? aSize : useDerivedValue(()=>initSize) 
 
     const canvasStyle=useAnimatedStyle(()=>{
-      //console.log('canva', sizeCanvas.value)
+      //console.log('canva')
       return {
         ...sizeCanvas.value,
         //height: sizeCanvas.value.height*2,
@@ -179,8 +301,8 @@ function SkiaViewDisign(props) {
     
     const rg_x = useDerivedValue(()=>margin.value.l )
     const rg_y = useDerivedValue(()=>adaptiveSizeForStyle && shadowStyle == 'material'? 0 : margin.value.t)
-    const rg_r = useDerivedValue(()=> (aBorderRadius && aBorderRadius.value != undefined ) ? aBorderRadius.value : borderRadius) //
-    const rg_color = useDerivedValue(()=>convertToRGBA((aBGColor && aBGColor.value)? aBGColor.value : backgroundColor))
+    const rg_r = (aBorderRadius && aBorderRadius?.value != undefined)? aBorderRadius : useDerivedValue(()=>borderRadius) //
+    const rg_color = (aBGColor && aBGColor.value)? aBGColor : useDerivedValue(()=>backgroundColor) //convertToRGBA()
 
     
 
@@ -193,12 +315,17 @@ function SkiaViewDisign(props) {
     return (
       <RCanvas
         //onSize={size}
+        //mode={'continuous'}
         style={[canvasStyle, {
           position: 'absolute', 
           //backgroundColor: 'red',
         }]}
         {...timing? {layout: Layout} : {}}
         //layout={Layout}
+        /*
+        
+        */
+       //exiting={FadeOut}
       >
         <Group>
           <RoundedRect 
@@ -212,7 +339,7 @@ function SkiaViewDisign(props) {
             <Shadow dx={sh_x} dy={sh_y} blur={sh_blur} color={sh_cp} />
             <Shadow dx={sh2_x} dy={sh2_y} blur={sh_blur} color={sh_cs}/>
           </RoundedRect>
-          {innerShadow.used && 
+          {innerShadow.used &&
           <RoundedRect 
             color={rg_color}
             x={add_rg_x}
@@ -221,7 +348,7 @@ function SkiaViewDisign(props) {
             height={add_rg_h}
             r={add_rg_r}
           >
-            <Shadow dx={sh2_x} dy={sh2_y} blur={sh_blur} color={sh2_cp} inner />
+            <Shadow dx={sh_x}  dy={sh_y}  blur={sh_blur} color={sh2_cp}  inner />
             <Shadow dx={sh2_x} dy={sh2_y} blur={sh_blur} color={sh2_cs} inner />
           </RoundedRect>}
         </Group>
@@ -232,31 +359,3 @@ function SkiaViewDisign(props) {
 
 
 export default SkiaViewDisign
-
-/*
-        <Group>
-          <RoundedRect 
-            color={rg_color}
-            x={rg_x}
-            y={40} //rg_y
-            width={rg_width}
-            height={rg_height}
-            r={rg_r}
-          >
-            <Shadow dx={sh_x} dy={sh_y} blur={sh_blur} color={sh_cp} />
-            <Shadow dx={sh2_x} dy={sh2_y} blur={sh_blur} color={sh_cs}/>
-          </RoundedRect>
-          {innerShadow.used && 
-          <RoundedRect 
-            color={rg_color}
-            x={add_rg_x}
-            y={add_rg_y}
-            width={add_rg_w}
-            height={add_rg_h}
-            r={add_rg_r}
-          >
-            <Shadow dx={sh2_x} dy={sh2_y} blur={sh_blur} color={sh2_cp} inner />
-            <Shadow dx={sh2_x} dy={sh2_y} blur={sh_blur} color={sh2_cs} inner />
-          </RoundedRect>}
-        </Group>
-*/

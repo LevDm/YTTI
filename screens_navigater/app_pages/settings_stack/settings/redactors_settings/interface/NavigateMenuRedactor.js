@@ -13,18 +13,11 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSlider,
-    BaseSwitch 
-} from "../../../../../../general_components/base_components/BaseElements";
 
 import commonStaticStyles, { SwitchField, SliderField, BoxsField } from "../CommonElements";
 
 import { menuTypes, positionNavigateMenu, valuePosition, heightNavigateMenu, drawerPositions } from "../../../../../../app_values/AppDefault";
+import useLanguage from "../../../../../../app_hooks/useLanguage";
 
 export default NavigateMenuRedactor = (props) => {
     const {
@@ -33,56 +26,57 @@ export default NavigateMenuRedactor = (props) => {
 
         showAllSettings,
         tagStyle,
-        aStyle,
-        aTheme, 
-        aPalette, 
-        aScheme,
 
-        appStyle,
-        appConfig,
-        redactorsSet,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex
+        r_uiStyle,
+        Theme
     } = props
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.navigationMenu
+    const Language = useLanguage().SettingsScreen.Redactors.navigationMenu
 
-    
+    const {
+        navigationMenu: {
+            height,
+            type,
+            pos: {
+                y,
+                x: horizontal,
+                dx : drawerPosition,
+            },
+            icons: {
+                highlight: accentsType, //{"coloring": true, "filling": true},
+                signature
+            }
+        }
+    } = uiStyle
 
-    const accents = Object.keys(appStyle.navigationMenu.accentsType) // 
+    const accents = Object.keys(r_uiStyle.navigationMenu.icons.highlight) // 
 
     const accentsMethods = useDerivedValue(()=>{
         const toIndexs = (group) => group.map((item, index)=> item.value? index : -1).filter(item => item >= 0)
-        return toIndexs(Object.values(uiStyle.navigationMenu.accentsType))
+        return toIndexs(Object.values(accentsType))
     })
 
-    const previewMenuType = useDerivedValue(()=>menuTypes.indexOf(uiStyle.navigationMenu.type.value))
-    const position = useDerivedValue(()=>drawerPositions.indexOf(uiStyle.navigationMenu.drawerPosition.value))    
-    const horPos = useDerivedValue(()=>valuePosition.indexOf(uiStyle.navigationMenu.position.horizontal.value))
+    const previewMenuType = useDerivedValue(()=>menuTypes.indexOf(type.value))
+    const position = useDerivedValue(()=>drawerPositions.indexOf(drawerPosition.value))    
+    const horPos = useDerivedValue(()=>valuePosition.indexOf(horizontal.value))
 
-
+    console.log(accentsMethods.value)
 
     const checkBoxPress = (activeIndex) => {
         const type = menuTypes[activeIndex]
-        if(type == "hidden" || type =="not"){
-            uiStyle.navigationMenu.height.value = 0
-        } else {
-            uiStyle.navigationMenu.height.value = 50
-        }
+        console.log(type)
         uiStyle.navigationMenu.type.value = type
         tagStyle('navigationMenu.type')
     }
 
     const signatureChange = (value) =>{
-        uiStyle.navigationMenu.signatureIcons.value = value
-        tagStyle('navigationMenu.signatureIcons')
+        uiStyle.navigationMenu.icons.signature.value = value
+        tagStyle('navigationMenu.icons.signature')
     }
 
     const setPrewBasicVertPos = (value) => {
-        uiStyle.navigationMenu.position.vertical.value = Number(value);
-        tagStyle('navigationMenu.position')
+        uiStyle.navigationMenu.pos.y.value = Number(value);
+        tagStyle('navigationMenu.pos.y')
     }
 
     const setPrewBasicMenuHeight = (value) => {
@@ -91,13 +85,13 @@ export default NavigateMenuRedactor = (props) => {
     }
 
     const horizontalPositionSetting = (index) => {
-        uiStyle.navigationMenu.position.horizontal.value = valuePosition[index]
-        tagStyle('navigationMenu.position.horizontal')
+        uiStyle.navigationMenu.pos.x.value = valuePosition[index]
+        tagStyle('navigationMenu.pos.x')
     }
 
     const drawerPositionSetting = (index) => {
-        uiStyle.navigationMenu.drawerPosition.value = drawerPositions[index] 
-        tagStyle('navigationMenu.drawerPosition')
+        uiStyle.navigationMenu.pos.dx.value = drawerPositions[index] 
+        tagStyle('navigationMenu.pos.dx')
     }
 
 
@@ -113,7 +107,7 @@ export default NavigateMenuRedactor = (props) => {
                 withTiming(previewMenuType.value == 0? 1 : 0, {duration: tingDuration*up}),
             ),
             transform: [{scale: withDelay(tingDuration*down, withTiming(previewMenuType.value == 0? 1 : .97, {duration: tingDuration*(up+0.1)}))}], 
-            zIndex: previewMenuType.value == 0? 1 : 0, 
+            zIndex: previewMenuType.value == 0? 2 : 0, 
         }
     })
 
@@ -124,7 +118,7 @@ export default NavigateMenuRedactor = (props) => {
                 withTiming(previewMenuType.value == 1? 1 : 0, {duration: tingDuration*up}),
             ),
             transform: [{scale: withDelay(tingDuration*down, withTiming(previewMenuType.value == 1? 1 : .97, {duration: tingDuration*(up+0.1)}))}], 
-            zIndex: previewMenuType.value == 1? 1 : 0, 
+            zIndex: previewMenuType.value == 1? 2 : 0, 
         }
     })
 
@@ -135,13 +129,13 @@ export default NavigateMenuRedactor = (props) => {
                 withTiming(previewMenuType.value == 2? 1 : 0, {duration: tingDuration*up}),
             ),
             transform: [{scale: withDelay(tingDuration*down, withTiming(previewMenuType.value == 2? 1 : .97, {duration: tingDuration*(up+0.1)}))}], 
-            zIndex: previewMenuType.value == 2? 1 : 0, 
+            zIndex: previewMenuType.value == 2? 2 : 0, 
         }
     })
     
 
     const settingAccents = (indexs) => {
-        for(let i = 0; i < accents.length; i++){uiStyle.navigationMenu.accentsType[accents[i]].value = indexs.includes(i)}  
+        for(let i = 0; i < accents.length; i++){uiStyle.navigationMenu.icons.highlight[accents[i]].value = indexs.includes(i)}  
     }
 
     return (
@@ -159,9 +153,8 @@ export default NavigateMenuRedactor = (props) => {
             groupSize = {menuTypes.length}
             groupItems = { showAllSettings? Language.types : Language.types.slice(0, 2)}         
             onPress = {checkBoxPress}          
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
         <View
             style = {[{
@@ -179,22 +172,20 @@ export default NavigateMenuRedactor = (props) => {
                     minimumValue={heightNavigateMenu.min}
                     maximumValue={heightNavigateMenu.max}
                     step = {heightNavigateMenu.step}
-                    aValue = {uiStyle.navigationMenu.height}
+                    aValue = {height}
                     //onSlidingComplete = {setPrewBasicMenuHeight}
                     onValueChange = {setPrewBasicMenuHeight}
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema = {ThemeSchema}
+                    appStyle = {r_uiStyle}
+                    Theme = {Theme}
                 />
                 <SwitchField
                     textTitle = {Language.signature}
                     textStates = {Language.signatureState}
                     //text = {`${Language.signature} ${Language.signatureState[signature]}`}
-                    aValue={uiStyle.navigationMenu.signatureIcons}
+                    aValue={signature}
                     onChange={signatureChange}
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema = {ThemeSchema}
+                    appStyle = {r_uiStyle}
+                    Theme = {Theme}
                 />    
                 <BoxsField
                     //  'one'>true || 'multiple'>false
@@ -205,9 +196,8 @@ export default NavigateMenuRedactor = (props) => {
                     groupSize = {accents.length}
                     groupItems = {Object.values(Language.accentsTypes)}        
                     onPress = {settingAccents}          
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema = {ThemeSchema}
+                    appStyle = {r_uiStyle}
+                    Theme = {Theme}
                 />
             </Reanimated.View>  
 
@@ -222,24 +212,10 @@ export default NavigateMenuRedactor = (props) => {
                     aValue = {position} 
                     groupSize = {drawerPositions.length}
                     groupItems = {Language.horizontalPositionsDrawer}         
-                    onPress = {(activeIndex)=>{drawerPositionSetting(activeIndex)}}          
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema = {ThemeSchema}
+                    onPress = {drawerPositionSetting}          
+                    appStyle = {r_uiStyle}
+                    Theme = {Theme}
                 /> 
-                <BoxsField
-                    //  'one'>true || 'multiple'>false
-                    isChoiceOne={false}
-                    title = {Language.accentsType}
-                    //  'one'>index || 'multiple'>[indexs]
-                    aValue = {accentsMethods}
-                    groupSize = {accents.length}
-                    groupItems = {Object.values(Language.accentsTypes)}        
-                    onPress = {(activeIndexs)=>{settingAccents(activeIndexs)}}          
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema = {ThemeSchema}
-                />
             </Reanimated.View>
 
             <Reanimated.View 
@@ -252,12 +228,11 @@ export default NavigateMenuRedactor = (props) => {
                     minimumValue={positionNavigateMenu.min}
                     maximumValue={positionNavigateMenu.max}
                     step = {positionNavigateMenu.step}
-                    aValue = {uiStyle.navigationMenu.position.vertical}
+                    aValue = {y}
                     onSlidingComplete = {setPrewBasicVertPos}
                     onValueChange = {setPrewBasicVertPos}
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema = {ThemeSchema}
+                    appStyle = {r_uiStyle}
+                    Theme = {Theme}
                 />
                 <BoxsField
                     //  'one'>true || 'multiple'>false
@@ -267,10 +242,9 @@ export default NavigateMenuRedactor = (props) => {
                     aValue = {horPos} 
                     groupSize = {valuePosition.length}
                     groupItems = {Language.horizontalPositions}         
-                    onPress = {(activeIndex)=>{horizontalPositionSetting(activeIndex)}}          
-                    appStyle = {appStyle}
-                    ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                    ThemeSchema = {ThemeSchema}
+                    onPress = {horizontalPositionSetting}          
+                    appStyle = {r_uiStyle}
+                    Theme = {Theme}
                 />
             </Reanimated.View>
         </View>

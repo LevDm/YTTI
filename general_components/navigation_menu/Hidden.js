@@ -14,7 +14,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, {Path} from "react-native-svg";
 
 import themesColorsAppList from "../../app_values/Themes";
-import languagesAppList from "../../app_values/Languages";
 
 import { ripple, getNavigateItems } from "./tools";
 
@@ -46,7 +45,6 @@ const Hidden = ({
 }) => {
 
     const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex]
 
     const tingDuration = 200
     const entering = (targetValues) => {

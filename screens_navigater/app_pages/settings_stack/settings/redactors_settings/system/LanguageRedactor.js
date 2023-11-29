@@ -15,40 +15,40 @@ import {
 import dataRedactor from "../../../../../../app_async_data_manager/data_redactor";
 
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
+import languagesAppList, { languagesApp } from "../../../../../../app_values/languages/Languages";
 
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSwitch 
-} from "../../../../../../general_components/base_components/BaseElements";
 
 import commonStaticStyles, { SwitchField, BoxsField } from "../CommonElements";
+import { useSelector } from "react-redux";
 
-export default LanguageRedactor = ({
-    appStyle,
+import { updateWeatherConfig } from "../../../../../../weather/api";
 
-    appConfig,
-    r_setAppConfig,
+export default LanguageRedactor = (props) => {
+    const {
+        Theme,
 
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex  
-}) => {
+        r_uiStyle,
+        r_setAppLanguage
+    } = props
+    const appLanguage = useSelector((state)=>state.appLanguage)
+    const storedIndex = useSharedValue(appLanguage.storedIndex)
 
-    const [_, set_] = useState()
-
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.languages
+    const weatherConfig = useSelector((state)=>state.weatherConfig)
+    const weatherLanguageSetting = (letter) => {
+        const copy = JSON.parse(JSON.stringify(weatherConfig))
+        copy.requestLanguage = letter
+        updateWeatherConfig(copy)
+    }
 
     const languageSetting = (index) => {
-        //let newAppConfig = getNewAppConfigObject();
-        const newAppConfig = JSON.parse(JSON.stringify(appConfig));
-        newAppConfig.languageApp = languagesApp[index];
-        r_setAppConfig(newAppConfig);
-        dataRedactor("storedAppConfig", newAppConfig);
-    };
+        const newLanguage = JSON.parse(JSON.stringify(appLanguage));
+        //newLanguage.updated = true
+        newLanguage.letter = languagesApp[index]
+        newLanguage.storedIndex = index
+        storedIndex.value = index
+        r_setAppLanguage(newLanguage)
+        weatherLanguageSetting(languagesApp[index])
+    }
 
     const getItems = () => {
         const items = []
@@ -57,6 +57,8 @@ export default LanguageRedactor = ({
         }
         return items
     }
+
+
     
     return (
         <View style={{paddingBottom: 12}}>
@@ -65,13 +67,12 @@ export default LanguageRedactor = ({
                 isChoiceOne={true}
                 title = {false}
                 //  'one'>index || 'multiple'>[indexs]
-                primaryValue = {LanguageAppIndex} 
+                aValue={storedIndex}
                 groupSize = {languagesApp.length}
                 groupItems = {getItems()}         
-                onPress = {(activeIndex)=>{languageSetting(activeIndex)}}          
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
+                onPress = {languageSetting}          
+                appStyle = {r_uiStyle}
+                Theme = {Theme}
             />
         </View>
     )

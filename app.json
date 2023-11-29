@@ -13,7 +13,7 @@
         {
           "position":  "absolute",
           "backgroundColor": "#111111",
-          "visibility": "hidden",
+          "visibility": "visible",
           "behavior": "inset-swipe"
         }
       ]
@@ -22,11 +22,10 @@
       "backgroundColor": "#111111"
     },
     "extra": {
-      "WEATHER_API_KEY": "e2b94f1a4a4231151132fbd1a15e1633",
       "expo-navigation-bar": {
         "position": "absolute",
         "backgroundColor": "#111111",
-        "visibility": "hidden",
+        "visibility": "visible",
         "behavior": "inset-swipe"
       },
       "eas": {

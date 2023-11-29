@@ -5,14 +5,7 @@ import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList,
 
 import { cancelAnimation, useDerivedValue, runOnJS } from "react-native-reanimated";
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSlider,
-    BaseSwitch 
-} from "../../../../../../general_components/base_components/BaseElements";
+
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
@@ -26,6 +19,9 @@ import { listsTextSize, listsProximity } from "../../../../../../app_values/AppD
 
 import commonStaticStyles, { SwitchField, SliderField } from "../CommonElements";
 
+import useLanguage from "../../../../../../app_hooks/useLanguage";
+
+
 export default ListsRedactor = (props) => {
     const {
         uiStyle,
@@ -35,36 +31,22 @@ export default ListsRedactor = (props) => {
 
         tagStyle,
 
-        aStyle,
-        aTheme, 
-        aPalette, 
-        aScheme,
-
-        appStyle,
-        appConfig,
-        redactorsSet,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex
+        r_uiStyle,
+        Theme
     } = props
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.lists
+    const Language = useLanguage().SettingsScreen.Redactors.lists
 
+    const hrz_proximity = useDerivedValue(()=>uiStyle.lists.proximity.h.value === 12)
     
     const setPrewProximity = (value) => {
-        uiStyle.lists.proximity.value = Number(value);
-        tagStyle('lists.proximity')
+        uiStyle.lists.proximity.v.value = Number(value);
+        tagStyle('lists.proximity.v')
     }
     
     const fullWidthChange = (value) =>{
-        uiStyle.lists.fullWidth.value = value;
-        tagStyle('lists.fullWidth')
-    }
-
-    const invertChange = (value) =>{
-        uiStyle.lists.invertColorsHeader.value = value;
-        tagStyle('lists.invertColorsHeader')
+        uiStyle.lists.proximity.h.value = value? 12 : 0;
+        tagStyle('lists.proximity.h')
     }
 
     return (
@@ -80,40 +62,24 @@ export default ListsRedactor = (props) => {
             minimumValue={listsProximity.min}
             maximumValue={listsProximity.max}
             step = {listsProximity.step}
-            aValue = {uiStyle.lists.proximity}
+            aValue = {uiStyle.lists.proximity.v}
             //onSlidingComplete = {setPrewProximity}
             onValueChange = {setPrewProximity}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
         <SwitchField
             textTitle = {Language.fullWidth}
             textStates = {Language.fullWidthState}
             //text = {`${Language.fullWidth} ${Language.fullWidthState[`${fullWidth}`]}`}
-            aValue={uiStyle.lists.fullWidth}
+            aValue={hrz_proximity}
             onChange={fullWidthChange}
             style = {{
                 marginTop: 10
             }}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
-        {showAllSettings && 
-        <SwitchField
-            textTitle = {Language.invertColorsHeader}
-            textStates = {Language.invertColorsHeaderState}
-            //text = {`${Language.invertColorsHeader} ${Language.invertColorsHeaderState[invertColors]}`}
-            aValue={uiStyle.lists.invertColorsHeader}
-            onChange={invertChange}
-            style = {{
-                marginTop: 10
-            }}
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
-        />}
     </View>)
 }
 

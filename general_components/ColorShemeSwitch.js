@@ -25,12 +25,25 @@ import Reanimated, {
     interpolate,
     Extrapolate,
     runOnUI,
-    Easing 
+    Easing, 
+    createAnimatedPropAdapter
 } from 'react-native-reanimated';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const RTextInput = Reanimated.createAnimatedComponent(TextInput)
+
+const TextInputAdapter = createAnimatedPropAdapter(
+    (props) => {
+      'worklet';
+      const keys = Object.keys(props);
+      if (keys.includes('value')) {
+        props.text = props.value;
+        delete props.value;
+      }
+    },
+    ['text']
+);
 
 export default ColorSchemeSwitch = ({
 
@@ -63,14 +76,13 @@ export default ColorSchemeSwitch = ({
     const iconStyle = useAnimatedStyle(()=>({
         color: (aColorPrimaryIcon && aColorPrimaryIcon.value)? aColorPrimaryIcon.value : colorIcon
     }))
-   
+
     const letterValue = useAnimatedProps(()=>{
         const text = currentScheme.value[0].toUpperCase()
         return ({
             value: text,
-            text: text
         })
-    })
+    }, [], TextInputAdapter)
 
     return (
         <Pressable

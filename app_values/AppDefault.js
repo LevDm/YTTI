@@ -1,11 +1,11 @@
 //fillets
 export const borderRadiusValues = {min: 0, max: 36, step: 1}
 //navigation menu
-export const menuTypes = ['classical','not','hidden' ];
+export const menuTypes = ['type_1','type_2' , 'type_3']; //'classical','not','hidden' 
 export const positionNavigateMenu = {min: -150, max: 150, step: 10}
-export const valuePosition = ['left','center','right']
+export const valuePosition = [0,0.5,1]
 export const heightNavigateMenu = {min: 40, max: 66, step: 2}
-export const drawerPositions = ['left', 'right']
+export const drawerPositions = [0, 1]
 export const accentsType = ['filling', 'coloring']
 //lists
 export const listsTextSize = {min: 10, max: 20, step: 1}
@@ -13,11 +13,11 @@ export const listsProximity = {min: 0, max: 10, step: 0.25}
 export const listsHorizontalProximity = {'true': 16, 'false': 0}
 //bobber button
 export const sizeButton = {min: 54, max: 72, step: 2}
-export const positionFAB =  ['top','bottom'] //['left','center','right', 'top']
+export const positionFAB =  [0, 1] //['top','bottom']
 export const FAB_bottomPosition = {min: 0, max: 1, step: 0.0625}
 
 export const weatherTypes = ['panel', 'lists', 'off'] //['panel', 'lists',  'widget', 'off']
-export const WEATHER_API_KEY = 'e2b94f1a4a4231151132fbd1a15e1633';
+
 //effects
 export const rippleValues = ['all', 'some', 'none']
 //export const shadowsValues = ['none','neomorphism','square','full','material','materialSome',]
@@ -45,36 +45,31 @@ export const defaultAppStyle = {
 export const defaultAppConfig = {
     languageApp: 'ru',
     user: {
+        name: null,
         onboarding: 0,
-        name: '',
         role: 'u'
     },
-    splash: {
+    welcome: {
         show: true,
-        welcome: true
     },
-    screenSubsequence: ['tasks', 'timetable', 'notes', 'analytics', 'settings'],
+    screenSubsequence: ['tasks', 'timetable', 'notes', 'analytics', ], 
     appFunctions: {
-        analytics: {
-            useId: 2,
-            used: true
-        },
-        timetable: {
-            useId: 1,
-            used: true
-        },
         tasks: {
             useId: 0,
             used: true
         },
+        timetable: {
+            useId: 1,
+            used: false
+        },
         notes: {
             useId: 3,
-            used: true
-        },
-        settings: {
-            useId: null,
             used: false
-        }
+        },
+        analytics: {
+            useId: 2,
+            used: false
+        },
     },
     weather: {
         type: weatherTypes[0],

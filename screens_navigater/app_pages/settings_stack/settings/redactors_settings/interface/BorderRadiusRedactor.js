@@ -15,46 +15,30 @@ import {
     withTiming
 } from 'react-native-reanimated';
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
 
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSwitch,
-    BaseSlider 
-} from "../../../../../../general_components/base_components/BaseElements";
-
-//const borderRadiusValues = {min: 0, max: 32, step: 1}
 import { borderRadiusValues } from "../../../../../../app_values/AppDefault";
 
 import commonStaticStyles, { SwitchField, SliderField } from "../CommonElements";
 
 const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
+import useLanguage from "../../../../../../app_hooks/useLanguage";
+
 export default BorderRadiusRedactor = (props) => {
     const {
         uiStyle,
-        uiTheme,
 
-        aStyle,
-        aTheme, 
-        aPalette, 
-        aScheme,
-       
-        appStyle,
+        appLanguage,
+        r_uiStyle,
 
         tagStyle,
     
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex   
+        Theme
+  
     } = props
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.fillets
+
+    const Language = useLanguage().SettingsScreen.Redactors.fillets
 
     const settingBorderRadius = (type, value) =>{
         uiStyle.borderRadius[type].value = Number(value);
@@ -67,7 +51,7 @@ export default BorderRadiusRedactor = (props) => {
                
             }}
         >
-            {['basic','additional'].map((item, index)=>(
+            {['primary','secondary'].map((item, index)=>(
             <SliderField
                 key = {String('slider'+item)}
                 title = {Language.type[item]}
@@ -81,9 +65,8 @@ export default BorderRadiusRedactor = (props) => {
 
                 onValueChange = {(value)=>{settingBorderRadius(item, value)}}
 
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
+                appStyle = {r_uiStyle}
+                Theme = {Theme}
             />
             ))}
         </View>

@@ -11,14 +11,11 @@ import Reanimated, {
     useDerivedValue
 } from "react-native-reanimated";
 
-import themesColorsAppList, {themesApp} from "../app_values/Themes";
-import languagesAppList, {languagesApp} from "../app_values/Languages";
-
-const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
 
 import { ICONS_SET } from "../app_values/AppDefault";
 
 import SkiaViewDisign from "../general_components/base_components/SkiaViewDisign";
+import useLanguage from "../app_hooks/useLanguage";
 
 const WeatherItem = (props) => {
 
@@ -32,15 +29,8 @@ const WeatherItem = (props) => {
         uiStyle,
         uiTheme,
 
-        appStyle,
-        appConfig,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex,
     } = props
 
-    const Theme  = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex]
 
     const {
         basics: {
@@ -82,16 +72,16 @@ const WeatherItem = (props) => {
         },
         specials: {
             separator,
-            shadow: {
+            shadow/** : {
                 primary: shadowColorP,
                 secondary: shadowColorS
-            }
+            }*/
         }
     } = uiTheme
 
     const {
         borderRadius:{
-            additional: addRadius
+            secondary: addRadius
         },
         effects: {
             shadows
@@ -104,19 +94,14 @@ const WeatherItem = (props) => {
     hour = hour>9?hour: '0'+hour
     let timeItem = hour+':00'
 
-    const listDirections = Language.Weather.windFrom
-    let windFrom = '?'
-    if ( 337.5 <= item.wind_deg && item.wind_deg <= 360 ||
-        0      <= item.wind_deg && item.wind_deg < 22.5  ) {windFrom = listDirections[0]}
-    if ( 22.5  <= item.wind_deg && item.wind_deg < 67.5  ) {windFrom = listDirections[1]}
-    if ( 67.5  <= item.wind_deg && item.wind_deg < 112.5 ) {windFrom = listDirections[2]}
-    if ( 112.5 <= item.wind_deg && item.wind_deg < 157.5 ) {windFrom = listDirections[3]}
-    if ( 157.5 <= item.wind_deg && item.wind_deg < 202.5 ) {windFrom = listDirections[4]}
-    if ( 202.5 <= item.wind_deg && item.wind_deg < 247.5 ) {windFrom = listDirections[5]}
-    if ( 247.5 <= item.wind_deg && item.wind_deg < 292.5 ) {windFrom = listDirections[6]}
-    if ( 292.5 <= item.wind_deg && item.wind_deg < 337.5 ) {windFrom = listDirections[7]}
-
-
+    let windFrom = null
+    const PART_DEG = 22.5
+    for(let i = 0; i<=8; i++){
+        if((PART_DEG*i) <= item.wind_deg && item.wind_deg < (PART_DEG*(2*i+1))){
+            windFrom = (i == 8? 0 : i)
+            break
+        }
+    }
 
     const params = {
         skia: true,
@@ -204,16 +189,6 @@ const WeatherItem = (props) => {
         color: iconAT.value
     }))
 
-    const aShadows = useDerivedValue(()=>{
-        return {
-            style: shadows.value,
-            colors: {
-                primary: shadowColorP.value,
-                secondary: shadowColorS.value,
-            } 
-        }
-    })
-
     return (
         <View
             key={item.key} 
@@ -226,33 +201,24 @@ const WeatherItem = (props) => {
             <SkiaViewDisign 
                 aBorderRadius={addRadius}
                 aBGColor = {params.bg} 
-                aShadows={aShadows}
+                //aShadows={aShadows}
                 shadowMargin={{horizontal: 4, vertical: 4}}
                 adaptiveSizeForStyle={false}
                 innerShadow={{
                     used: true,
-                    borderWidth: 1
+                    borderWidth: 0
                 }}
                 initSize={{
                     width: params.size.width,
                     height: params.size.height
                 }}
-            />}
 
-            {elements == 'min' && 
-            <MinItem
-                data = {itemData}
-                {...props}
+                aShadowStyle = {shadows}
+                aShadowColor = {shadow}
             />}
 
             {elements == 'full_list' && 
             <FullListItem
-                data = {itemData}
-                {...props}
-            />}
-
-            {elements == 'short_list' && 
-            <ShortListItem
                 data = {itemData}
                 {...props}
             />}
@@ -292,15 +258,9 @@ function FullListItem(props){
         uiStyle,
         uiTheme,
 
-        appStyle,
-        appConfig,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex,
     } = props
 
-    const Theme  = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].Weather
+    const Language = useLanguage().Weather
 
     const {
         basics: {
@@ -346,9 +306,7 @@ function FullListItem(props){
     } = uiTheme
 
     const {
-        borderRadius:{
-            additional: addRadius
-        }
+
     } = uiStyle
 
     const textColorAP = useAnimatedStyle(()=>({
@@ -402,9 +360,9 @@ function FullListItem(props){
     } = data
 
     const secondaryIconsSize = 13
-    const secondaryTextSize = 12
+    const secondaryTextSize = 13
 
-    const imageSize = size.w // - 8//* 0.7
+    const imageSize = size.h // - 8//* 0.7
 
     const tempStyle = useAnimatedStyle(()=>({
         textShadowColor: textNT.value
@@ -415,6 +373,7 @@ function FullListItem(props){
                     flex: 1,
                     justifyContent: 'center', 
                     alignItems: 'center',
+                    paddingBottom: 6
                 }
             ]}
         >
@@ -426,19 +385,21 @@ function FullListItem(props){
                     bottom: 0,
                     width: imageSize,
                     height: imageSize,
-                    //opacity: 0.64
+                    opacity: 0.86
                 }}
                 source={icon}
             />
             <Reanimated.Text 
                 numberOfLines={2}
                 style = {[textColorNP, {
-                    marginTop: 2,
+                    flex: 2,
+                    //marginTop: 2,
                     width: '90%',
                     //position: 'absolute',
                     fontWeight: '500', 
                     fontVariant: ['small-caps'], 
-                    fontSize: 12, 
+                    fontSize: 13, 
+                    letterSpacing: 0.2, 
                     textAlign: 'center', 
                 }]}
             >
@@ -446,14 +407,14 @@ function FullListItem(props){
             </Reanimated.Text>
             <Reanimated.Text 
                 style = {[textColorNP, tempStyle, {
-                    marginTop: -4,
-                    //position: 'absolute',
+                    flex: 3,
+                    //marginTop: 4,
                     fontWeight: 'bold', 
                     fontSize: 48,
+                    textShadowRadius: 2,
                     marginLeft: 12,
                     textAlign: 'center',
                     shadowOffset: {height: 10, width: 10},
-                    textShadowRadius: 1.6
                 }]}
             >
                 {temp}° 
@@ -461,20 +422,24 @@ function FullListItem(props){
             
             <Reanimated.Text 
                 style = {[textColorNP, {
-                    marginTop: 8,
+                    flex: 2,
+                    //marginTop: -2,
                     //position: 'absolute',
-                    fontWeight: '600', 
+                    fontWeight: '500', 
                     fontVariant: ['small-caps'],
-                    fontSize: 12, 
+                    fontSize: 13, 
+                    letterSpacing: 0.2,
                     textAlign: 'center', 
                 }]}
             >
-                {Language.feelsLike}: <Text style={{fontSize: 15, fontWeight: 'bold'}}>{feels_like}°</Text> 
+                {Language.feelsLike}: <Text style={{fontSize: 16, fontWeight: 'bold'}}>{feels_like}°</Text> 
             </Reanimated.Text>
+
             <View 
                 style = {{
-                    marginTop: 12,
-                    width: '80%',
+                    flex: 1,
+                    //marginTop: 8,
+                    width: '94%',
                     alignItems: 'flex-start', 
                     justifyContent: 'space-around', 
                     flexDirection: 'row', 
@@ -487,7 +452,7 @@ function FullListItem(props){
                     {wind_speed != 0 && 
                     <Reanimated.Text style = {[textColorNT, {fontSize: secondaryTextSize}]}>
                         {wind_speed}
-                        <Text style = {{fontSize: 9}}>M/C</Text>
+                        <Text style = {{fontSize: 13}}>M/C</Text>
                     </Reanimated.Text>}
                     {wind_speed == 0 && 
                     <Reanimated.Text style = {[textColorNT, { fontSize: secondaryTextSize,}]}>
@@ -498,12 +463,14 @@ function FullListItem(props){
                     <Reanimated.Text style={iconColorNT}>
                         <MaterialCommunityIcons name="compass-outline" size={secondaryIconsSize}/>
                     </Reanimated.Text>
-                    <Reanimated.Text style = {[textColorNT,{ fontSize: secondaryTextSize,}]}>{wind_direction}</Reanimated.Text>
+                    <Reanimated.Text style = {[textColorNT,{ fontSize: secondaryTextSize,}]}>{wind_direction? Language.windFrom[wind_direction] : '.'}</Reanimated.Text>
                 </View>
             </View>
+
             <View 
                 style = {{
-                    width: '80%',
+                    flex: 1,
+                    width: '94%',
                     alignItems: 'flex-start', 
                     justifyContent: 'space-around', 
                     flexDirection: 'row', 
@@ -514,7 +481,7 @@ function FullListItem(props){
                         <MaterialCommunityIcons name="cloud-outline" size={secondaryIconsSize}/>
                     </Reanimated.Text>
                     <Reanimated.Text style = {[textColorNT, {fontSize: secondaryTextSize,}]}>
-                        {clouds}<Text style = {{fontSize: 10}}>%</Text>
+                        {clouds}<Text style = {{fontSize: 13}}>%</Text>
                     </Reanimated.Text>
                 </View>
                 <View style = {{flexDirection: 'row',alignItems: 'center'}}>
@@ -522,7 +489,7 @@ function FullListItem(props){
                         <MaterialCommunityIcons name="water-outline" size={secondaryIconsSize}/>
                     </Reanimated.Text>
                     <Reanimated.Text style = {[textColorNT, {fontSize: secondaryTextSize,}]}>
-                        {humidity}<Text style = {{fontSize: 10}}>%</Text>
+                        {humidity}<Text style = {{fontSize: 13}}>%</Text>
                     </Reanimated.Text>
                 </View>
             </View>
@@ -531,80 +498,6 @@ function FullListItem(props){
 }
 
 
-function ShortListItem(props){
-    const {
-        data,
-        appStyle,
-        appConfig,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex,
-    } = props
-
-    const Theme  = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].Weather
-
-    const {
-        hour,
-        temp,
-        feels_like,
-        wind_speed,
-        wind_direction,
-        icon,
-        description,
-        clouds,
-        humidity,
-    } = data
-
-    return (
-        <View
-            style={[{
-                    flex: 1,
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                }
-            ]}
-        >
-            <Text 
-                style = {{
-                    marginTop: -9,
-                    fontSize: 20, 
-                    fontWeight: '700', 
-                    fontVariant: ['small-caps'],
-                    letterSpacing: 0.6,
-                    color: Theme.texts.neutrals.primary
-                }}
-            >
-                {hour}
-            </Text>
-            <Text 
-                numberOfLines={2}
-                style = {{
-                    fontWeight: '500', 
-                    fontVariant: ['small-caps'], 
-                    fontSize: 10, 
-                    width: 110,
-                    textAlign: 'center', 
-                    color: Theme.texts.neutrals.primary
-                }}
-            >
-                {description}
-            </Text>
-            <Text 
-                style = {{
-                    fontWeight: 'bold', 
-                    fontSize: 24,
-                    textAlign: 'center',
-                    color: Theme.texts.neutrals.primary
-                }}
-            >
-                {temp}°
-                <Text style={{fontSize: 15,}} >{feels_like}° </Text>
-            </Text>
-
-        </View>                
-    )
-}
 
 function FullItem(props){
     const {
@@ -616,15 +509,9 @@ function FullItem(props){
         uiStyle,
         uiTheme,
          
-        appStyle,
-        appConfig,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex,
     } = props
 
-    const Theme  = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].Weather
+    const Language = useLanguage().Weather
 
     const {
         basics: {
@@ -675,7 +562,7 @@ function FullItem(props){
 
     const {
         borderRadius:{
-            additional: addRadius
+            secondary: addRadius
         }
     } = uiStyle
 
@@ -789,7 +676,7 @@ function FullItem(props){
                         numberOfLines={2}
                         style = {[textColorNP, {
                             marginLeft: 4,
-                            //width: 64,
+                            width: 72,
                             fontWeight: '500', 
                             fontVariant: ['small-caps'], 
                             fontSize: 10, 
@@ -804,15 +691,16 @@ function FullItem(props){
             <Reanimated.Text
                 style = {[textColorNP,{
                     position: 'absolute',
-                    bottom: 20,
+                    bottom: 26,
+                    left: 24,
                     width: '100%',
                     fontWeight: '600', 
                     fontVariant: ['small-caps'],
-                    fontSize: 12, 
+                    fontSize: 11, 
                     textAlign: 'center', 
                 }]}
             >
-                {Language.feelsLike}: <Text style={{fontSize: 15, fontWeight: 'bold'}}>{feels_like}°</Text> 
+                {Language.feelsLike}: <Text style={{fontSize: 11, fontWeight: 'bold'}}>{feels_like}°</Text> 
             </Reanimated.Text>
             
             <View 
@@ -860,7 +748,7 @@ function FullItem(props){
                     <Reanimated.Text style={iconColorNT}>
                         <MaterialCommunityIcons name="compass-outline" size={secondaryIconsSize}/>
                     </Reanimated.Text>
-                    <Reanimated.Text style = {[textColorNT,{ fontSize: secondaryTextSize,}]}>{wind_direction}</Reanimated.Text>
+                    <Reanimated.Text style = {[textColorNT,{ fontSize: secondaryTextSize,}]}>{wind_direction? Language.windFrom[wind_direction] : '.'}</Reanimated.Text>
                 </View>
             </View>
            
@@ -878,16 +766,7 @@ function ShortItem(props){
 
         uiTheme,
         uiStyle,
-         
-        appStyle,
-        appConfig,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex,
     } = props
-
-    const Theme  = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].Weather
 
     const {
         basics: {
@@ -938,7 +817,7 @@ function ShortItem(props){
 
     const {
         borderRadius:{
-            additional: addRadius
+            secondary: addRadius
         }
     } = uiStyle
 

@@ -4,15 +4,6 @@ import {StyleSheet, Text, Pressable, ScrollView,FlatList, Animated, SectionList,
 
 import Reanimated, { withTiming, cancelAnimation, useDerivedValue, runOnJS, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 
-import languagesAppList, { languagesApp } from "../../../../../../app_values/Languages";
-import themesColorsAppList, { themesApp } from "../../../../../../app_values/Themes";
-import { 
-    BasePressable,
-    BaseBox,
-    BaseSlider,
-    BaseSwitch 
-} from "../../../../../../general_components/base_components/BaseElements";
-
 import Svg, {SvgXml, Rect, Defs, RadialGradient, Stop, Path} from "react-native-svg";
 
 const deviceHeight = Dimensions.get('window').height
@@ -25,6 +16,8 @@ import { sizeButton, positionFAB, FAB_bottomPosition } from "../../../../../../a
 
 import commonStaticStyles, { SwitchField, SliderField, BoxsField } from "../CommonElements";
 
+import useLanguage from "../../../../../../app_hooks/useLanguage";
+
 export default ListsRedactor = (props) => {
     const {
         uiStyle,
@@ -34,56 +27,41 @@ export default ListsRedactor = (props) => {
 
         tagStyle,
 
-        aStyle,
-        aTheme, 
-        aPalette, 
-        aScheme,
 
-        appStyle,
-        appConfig,
-        redactorsSet,
-        ThemeColorsAppIndex,
-        ThemeSchema,
-        LanguageAppIndex
+        r_uiStyle,
+        Theme
     } = props
 
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].SettingsScreen.Redactors.bobberButton
-
+    const Language = useLanguage().SettingsScreen.Redactors.bobberButton
 
     
     const settingBottomPosition = (value) =>{
-        uiStyle.functionButton.bottomPosition.value = Number(value);
-        tagStyle('functionButton.bottomPosition')
+        uiStyle.fab.pos.x.value = Number(value);
+        tagStyle('fab.pos.x')
     }
     
     const positionButtonSetting = (index) => {
-        uiStyle.functionButton.position.value = positionFAB[index];
-        tagStyle('functionButton.position')
+        uiStyle.fab.pos.y.value = positionFAB[index]//
+        tagStyle('fab.pos.y')
     };
 
     const settingSizeButton = (value) =>{
-        uiStyle.functionButton.size.value = Number(value);
-        tagStyle('functionButton.size')
+        uiStyle.fab.size.value = Number(value);
+        tagStyle('fab.size')
     }
 
     const disableChange = (value) =>{
-        uiStyle.functionButton.ignoredShadows.disable.value = value;
-        tagStyle('functionButton.ignoredShadows.disable')
-    }
-
-    const invertChange = (value) =>{
-        uiStyle.functionButton.invertColors.value = value;
-        tagStyle('functionButton.invertColors')
+        uiStyle.fab.highlight.ignoredShadows.disable.value = value;
+        tagStyle('fab.highlight.ignoredShadows.disable')
     }
 
     const outlineChange = (value) =>{
-        uiStyle.functionButton.outline.value = value;
-        tagStyle('functionButton.outline')
+        uiStyle.fab.highlight.outline.value = value;
+        tagStyle('fab.highlight.outline')
     }
 
-    const position = useDerivedValue(()=>positionFAB.indexOf(uiStyle.functionButton.position.value))
+    const position = useDerivedValue(()=>positionFAB.indexOf(uiStyle.fab.pos.y.value))
 
     const blind = useAnimatedStyle(()=>{
         const tingDuration = 150
@@ -109,9 +87,8 @@ export default ListsRedactor = (props) => {
             groupSize = {positionFAB.length}
             groupItems = {Language.positions}         
             onPress = {positionButtonSetting}          
-            appStyle = {appStyle}
-            ThemeColorsAppIndex = {ThemeColorsAppIndex}
-            ThemeSchema = {ThemeSchema}
+            appStyle = {r_uiStyle}
+            Theme = {Theme}
         />
         <View style={{height: showAllSettings? 300 : 150}}>
         
@@ -121,11 +98,10 @@ export default ListsRedactor = (props) => {
                 minimumValue={sizeButton.min}
                 maximumValue={sizeButton.max}
                 step = {sizeButton.step}
-                aValue = {uiStyle.functionButton.size}
+                aValue = {uiStyle.fab.size}
                 onValueChange = {settingSizeButton}
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
+                appStyle = {r_uiStyle}
+                Theme = {Theme}
             />
 
             <SliderField
@@ -134,55 +110,36 @@ export default ListsRedactor = (props) => {
                 minimumValue={FAB_bottomPosition.min}
                 maximumValue={FAB_bottomPosition.max}
                 step = {FAB_bottomPosition.step}
-                aValue = {uiStyle.functionButton.bottomPosition}
+                aValue = {uiStyle.fab.pos.x}
                 onValueChange = {settingBottomPosition}
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
+                appStyle = {r_uiStyle}
+                Theme = {Theme}
             />
-
-
-            {showAllSettings && 
-            <SwitchField
-                textTitle = {Language.invertColors}
-                textStates = {Language.invertColorsState}
-                //text = {`${Language.invertColors} ${Language.invertColorsState[invertColors]}`}
-                aValue={uiStyle.functionButton.invertColors}
-                onChange={invertChange}
-                style = {{
-                    marginTop: 10
-                }}
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            />}
             {showAllSettings && 
             <SwitchField
                 textTitle = {Language.disabledShadows}
                 textStates = {Language.disabledShadowsState}
                 //text = {`${Language.invertColors} ${Language.invertColorsState[invertColors]}`}
-                aValue={uiStyle.functionButton.ignoredShadows.disable}
+                aValue={uiStyle.fab.highlight.ignoredShadows.disable}
                 onChange={disableChange}
                 style = {{
                     marginTop: 10
                 }}
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
+                appStyle = {r_uiStyle}
+                Theme = {Theme}
             />}
             {showAllSettings && 
             <SwitchField
                 textTitle = {Language.outline}
                 textStates = {Language.outlineState}
                 //text = {`${Language.outline} ${Language.outlineState[outline]}`}
-                aValue={uiStyle.functionButton.outline}
+                aValue={uiStyle.fab.highlight.outline}
                 onChange={outlineChange}
                 style = {{
                     marginTop: 10
                 }}
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
+                appStyle = {r_uiStyle}
+                Theme = {Theme}
             />}
 
             <Reanimated.View 

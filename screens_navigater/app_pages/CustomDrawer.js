@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { 
     StyleSheet,
     View,
@@ -25,11 +25,11 @@ import {
     TapGestureHandler,
     TapGestureHandlerGestureEvent,
   } from 'react-native-gesture-handler';
+import useSizes from "../../app_hooks/useSizes";
 
 const RPanGestureHandler = Reanimated.createAnimatedComponent(PanGestureHandler)
 const RTapGestureHandler = Reanimated.createAnimatedComponent(TapGestureHandler)
 
-const { height: deviceHeight, width: deviceWidth } = Dimensions.get('screen');
 
 const options = {
     velocity: 0,
@@ -55,15 +55,16 @@ const DRAG_TOSS = 0.05;
 
 
 export default CustomDrawer = (props) => {
-    const { 
+    const {
         stateVisible,
         drawerLockMode = 'unlocked', 
         edgeWidth = 20, 
         minSwipeDistance = 3,
+        initialEnabled = false,
 
         useNativeAnimations = true,
 
-        drawerPosition = 'left', 
+        drawerPosition = 0, //'left', 
         overlayColor =  'rgba(0, 0, 0, 0.7)',
         drawerBackgroundColor = "#fff",
 
@@ -78,11 +79,14 @@ export default CustomDrawer = (props) => {
         contentContainerStyle,
     } = props
 
-    const position = useDerivedValue(()=>(aDrawerPosition && aDrawerPosition.value)? aDrawerPosition.value : drawerPosition)//
-    const overlay = useDerivedValue(()=>(aOverlayColor && aOverlayColor.value)? aOverlayColor.value : overlayColor)
-    const background = useDerivedValue(()=>(aDrawerBackgroundColor && aDrawerBackgroundColor.value)? aDrawerBackgroundColor.value : drawerBackgroundColor)
+    const { height: deviceHeight, width: deviceWidth } = useSizes()
+    //const { height: deviceHeight, width: deviceWidth } = Dimensions.get('screen');
 
-    const enabled = useDerivedValue(()=>(aEnabledDrawer && aEnabledDrawer.value != undefined)? aEnabledDrawer.value : true)
+    const position = (aDrawerPosition && aDrawerPosition.value != undefined)? aDrawerPosition : useDerivedValue(()=>drawerPosition)//
+    const overlay = (aOverlayColor && aOverlayColor.value)? aOverlayColor : useDerivedValue(()=> overlayColor)
+    const background = (aDrawerBackgroundColor && aDrawerBackgroundColor.value)? aDrawerBackgroundColor : useDerivedValue(()=> drawerBackgroundColor)
+    const enabled = (aEnabledDrawer && aEnabledDrawer.value != undefined)? aEnabledDrawer : useDerivedValue(()=>initialEnabled)
+
 
     const drawerShown = useSharedValue(false); 
     const drawerState = useSharedValue(IDLE)
@@ -91,7 +95,7 @@ export default CustomDrawer = (props) => {
     const touchX = useSharedValue(0)
     const drawerTranslation = useSharedValue(0)
 
-    const containerWidth = useSharedValue(0)
+    const containerWidth = useSharedValue(deviceWidth)
     const drawerOpened = useSharedValue(false)
 
     const panGestureHandler = useRef()
@@ -101,7 +105,6 @@ export default CustomDrawer = (props) => {
             enabled: value
         })
     }
-
    
     const pointerEventsView = useRef()
     const accessibilityIsModalView = useRef()
@@ -111,7 +114,7 @@ export default CustomDrawer = (props) => {
         let eDragX = dragX.value;
         let eTouchX = touchX.value;
     
-        if (position.value !== 'left') {
+        if (position.value !== 0) {
             eDragX = (-1) * dragX.value
             eTouchX = containerWidth.value + (-1)*touchX.value,
             touchX.value = containerWidth.value
@@ -154,7 +157,7 @@ export default CustomDrawer = (props) => {
           pointerEvents: showing ? 'auto' : 'none',
         })
  
-        const fromLeft = (position.value === 'left');
+        const fromLeft = (position.value === 0);
 
         const gestureOrientation = (fromLeft ? 1 : -1) * (showing ? -1 : 1);
 
@@ -179,7 +182,7 @@ export default CustomDrawer = (props) => {
         ) => {
         "worklet";
         dragX.value = 0
-        touchX.value = (position.value === 'left' ? 0 : containerWidth.value)
+        touchX.value = (position.value === 0 ? 0 : containerWidth.value)
 
         //console.log('touchX.value', touchX.value, (position.value === 'left' ? 0 : containerWidth.value))
         
@@ -343,7 +346,7 @@ export default CustomDrawer = (props) => {
     const handleRelease = ({nativeEvent}) => {
         let { translationX: dragX, velocityX, x: touchX } = nativeEvent;
     
-        if (position.value !== 'left') {
+        if (position.value !== 0) {
           dragX = -dragX;
           touchX = containerWidth.value - touchX;
           velocityX = -velocityX;
@@ -383,7 +386,7 @@ export default CustomDrawer = (props) => {
         })
 
         const overlayStyle = useAnimatedStyle(()=>{
-            const fromLeft = (position.value === 'left');
+            const fromLeft = (position.value === 0);
             const containerSlide = drawerType !== 'front';
             const containerTranslateX = interpolate(
                     openValue.value,
@@ -403,7 +406,7 @@ export default CustomDrawer = (props) => {
         })
     
         const drawerStyle = useAnimatedStyle(()=>{
-            const fromLeft = (position.value === 'left');
+            const fromLeft = (position.value === 0);
             const reverseContentDirection = !fromLeft
             const drawerSlide = drawerType !== 'back';
             let drawerTranslateX = 0;
@@ -424,10 +427,11 @@ export default CustomDrawer = (props) => {
                     drawerTranslateX = drawerOpened.value ? 0 : closedDrawerOffset;
                 }
             }
+           
             return {
                 transform: [{ translateX: drawerTranslateX}], //  
                 //flexDirection: (position.value != 'left') ? 'row-reverse' : 'row',
-                paddingLeft: (position.value === 'left') ? 0 : containerWidth.value-drawerWidth
+                paddingLeft: (position.value === 0) ? 0 : containerWidth.value-drawerWidth
             }
         })
 
@@ -451,7 +455,7 @@ export default CustomDrawer = (props) => {
                     {translateX: interpolate(
                         openValue.value,
                         [0, 1],
-                        [0, position.value === 'left'? 4 : -4]
+                        [0, position.value === 0? 4 : -4]
                     )},
                     {translateY: interpolate(
                         openValue.value,
@@ -463,7 +467,10 @@ export default CustomDrawer = (props) => {
         })
 
         return (
-            <Reanimated.View style={styles.main} onLayout={handleContainerLayout}>
+            <Reanimated.View 
+                style={styles.main} 
+                onLayout={handleContainerLayout}
+            >
                 <Reanimated.View
                     style={[
                         drawerType === 'front'? styles.containerOnBack: styles.containerInFront,
@@ -474,12 +481,13 @@ export default CustomDrawer = (props) => {
                     animatedProps={overlayProps}
                 >
                     <Reanimated.View
-                        style={[childrenTransform, {height: deviceHeight, width: deviceWidth}]}
+                        style={[childrenTransform, {flex: 1}]} //height: deviceHeight, width: deviceWidth
                     >
                         {props.children}
                     </Reanimated.View>
                     {renderOverlay()}
                 </Reanimated.View>
+
                 <Reanimated.View
                     pointerEvents="box-none"
                     ref={accessibilityIsModalView}
@@ -498,37 +506,32 @@ export default CustomDrawer = (props) => {
     
 
     const panGestureEvent = ({nativeEvent}) => {
-        //console.log('ACTIVE')
-        dragX.value = nativeEvent.translationX
-        touchX.value = nativeEvent.x
+        //console.log('ev')
+        if(enabled.value){
+            dragX.value = nativeEvent.translationX
+            touchX.value = nativeEvent.x
+        }
+        
     }
     
 
     const openingHandlerStateChange = ({nativeEvent }) => {
-        //console.log('openingHandlerStateChange', nativeEvent)
-        if (nativeEvent.oldState === State.ACTIVE) {
-          handleRelease({ nativeEvent });
-        } else if (nativeEvent.state === State.ACTIVE) {
-          //emitStateChanged(State.DRAGGING, false);
-          drawerState.value = DRAGGING
-          //if (this.props.keyboardDismissMode === 'on-drag') {
-          //  Keyboard.dismiss();
-          //}
-          //if (this.props.hideStatusBar) {
-          //  StatusBar.setHidden(true, this.props.statusBarAnimation || 'slide');
-          //}
+        if(enabled.value){
+            if (nativeEvent.oldState === State.ACTIVE) {
+            handleRelease({ nativeEvent });
+            } else if (nativeEvent.state === State.ACTIVE) {
+            drawerState.value = DRAGGING
+            }
         }
-    };
-
-    //updateShowing(false)
+    }
 
 
     const panProps = useAnimatedProps(()=>{
-        const fromLeft = (position.value === 'left');
+        const fromLeft = (position.value === 0);
         const gestureOrientation = (fromLeft ? 1 : -1) * (drawerShown.value ? -1 : 1);
 
         const hitSlop = fromLeft
-            ? { left: 0, width:  drawerShown.value ? drawerWidth : edgeWidth } //
+            ? { left: 0,  width:  drawerShown.value ? drawerWidth : edgeWidth } //
             : { right: 0, width: drawerShown.value ? drawerWidth : edgeWidth } //
 
         //console.log('prop', hitSlop, gestureOrientation * minSwipeDistance)
@@ -536,24 +539,15 @@ export default CustomDrawer = (props) => {
         return {
             hitSlop: hitSlop,
             activeOffsetX: gestureOrientation * minSwipeDistance,
-            enabled: drawerLockMode !== 'locked-closed' && drawerLockMode !== 'locked-open'
         }
     })
 
     return (
         <RPanGestureHandler
-            // @ts-ignore could be fixed in handler types
-            //userSelect={this.props.userSelect}
-            //activeCursor={this.props.activeCursor}
             ref={panGestureHandler}
-            //hitSlop={hitSlop}
-            //activeOffsetX={gestureOrientation * minSwipeDistance}
             failOffsetY={[-15, 15]}
             onGestureEvent={panGestureEvent}
             onHandlerStateChange={openingHandlerStateChange}
-            //enableTrackpadTwoFingerGesture={this.props.enableTrackpadTwoFingerGesture }
-            //enabled={drawerLockMode !== 'locked-closed' && drawerLockMode !== 'locked-open'}
-
             animatedProps={panProps}
         >
             {renderDrawer()}

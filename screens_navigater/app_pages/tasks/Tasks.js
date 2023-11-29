@@ -1,23 +1,22 @@
-import React, { useState, useEffect, useRef } from "react";
-import { 
-    Keyboard, 
-    Appearance,
-    Dimensions,
-    StyleSheet,
-    View,
-    ScrollView,
+import React, { useState, useRef, useEffect, useMemo, useCallback, memo, forwardRef } from "react";
+import {
+    Appearance, 
+    StyleSheet, 
     Text,
-    FlatList,
-    Modal,
-    TextInput,
+    Button, 
     Pressable,
-    TouchableOpacity,
-    Vibration
-} from "react-native";
+    TextInput, 
+    FlatList, 
+    SectionList,
+    View, 
+    Dimensions,
+    ToastAndroid,
+    Keyboard,
+    BackHandler,
+    Vibration 
+} from 'react-native';
 
 import Constants from "expo-constants";
-
-import { SwipeListView } from "react-native-swipe-list-view";
 
 import Reanimated, {
     useSharedValue, 
@@ -37,360 +36,138 @@ import Reanimated, {
     Extrapolate,
     runOnUI,
     Easing,
-    Extrapolation 
+    Extrapolation,
+
+    Layout,
+    SequencedTransition,
+    CurvedTransition,
+    FadingTransition,
+    Transition,
+    FadeIn,
+    useAnimatedReaction,
+    ZoomIn,
+    FadeOut,
+    ZoomOut,
+    createAnimatedPropAdapter,
+    convertToRGBA
 } from 'react-native-reanimated';
 
+import * as NavigationBar from 'expo-navigation-bar';
+
+import { Svg, Path } from "react-native-svg";
 import { BlurView } from "@react-native-community/blur";
-import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
-import { Ionicons } from '@expo/vector-icons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import * as Application from 'expo-application';
 
 import SkiaViewDisign from "../../../general_components/base_components/SkiaViewDisign";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {connect} from 'react-redux';
+import {connect, useSelector} from 'react-redux';
 import mapStateToProps from "../../../app_redux_files/stateToProps";
 import mapDispatchToProps from "../../../app_redux_files/dispatchToProps";
 import store from "../../../app_redux_files/store";
 
 import dataRedactor from "../../../app_async_data_manager/data_redactor";
 
-import { 
-    BasePressable,
-    BaseWindow,
-    BaseCheckBox,
-    BaseSwitch 
-} from "../../../general_components/base_components/BaseElements";
-
-import themesColorsAppList, {themesApp} from "../../../app_values/Themes";
-import languagesAppList, {languagesApp} from "../../../app_values/Languages";
-
-const { height: deviceHeight, width: deviceWidth } = Dimensions.get('window');
-const statusBarHeight = Constants.statusBarHeight+1
 
 import { listsHorizontalProximity } from "../../../app_values/AppDefault";
 
-const horizontalProximity = listsHorizontalProximity['true']
+const { height: DEVICE_H, width: DEVICE_W } = Dimensions.get('window');
 
-const Tasks = (props) => {
+import { STRUCTURE, categorys, useGetTasks, getTasks, isEqual, getDateInfo } from "./tools";
 
+
+import useTasksSizes, {TRANSPARENT_COLOR} from "./common_values";
+
+
+import BobberButton from "./FAB";
+import HeaderBackground from "./HeaderBackground";
+import HeaderToolBar from "./HeaderToolBar";
+import HeaderSectionsSelector from "./HeaderSectionsSelector";
+import Item from "./ItemList";
+import HeadItemList from "./HeadItemList";
+import InputModal from "./ModalItemInput";
+
+
+import useLanguage from "../../../app_hooks/useLanguage";
+
+
+const Tasks = function(props){
     const {
         openSettingsWindow,
-        aTheme: global_aTheme,
-        aStyle: global_aStyle,
+        uiTheme, //: global_aTheme,
+        uiStyle, //: global_aStyle
+        uiComposition,
+        //uiStyle,
+        //uiTheme,
+        openDrawer,
+
+
+        appLanguage,
+        r_uiStyle,
+        r_uiPalette,
+        r_uiComposition,
+        r_setTasksData,
+        userData,
+        tasksData,
     } = props
 
-    
-    const [tasks, setTasks] = useState(props.tasks);
-    
-    const [LanguageAppIndex, setLanguageAppIndex] = useState(languagesApp.indexOf(props.appConfig.languageApp));//ThemesColorsAppList[ThemeColorsAppIndex]
-    const [ThemeColorsAppIndex, setThemeColorAppIndex] = useState(themesApp.indexOf(props.appStyle.palette.theme));//LanguagesAppList[LanguageAppIndex]
-
-    const [appStyle, setAppStyle] = useState(props.appStyle);
-    const [appConfig, setAppConfig] = useState(props.appConfig);
-    const [hideMenu, setHideMenu] = useState(props.hideMenu);
-
-    const [ThemeSchema, setThemeSchema] = useState(props.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : props.appStyle.palette.scheme)
-
- 
-
-    store.subscribe(() => {
-        const jstore = store.getState();
-
-        if(LanguageAppIndex != languagesApp.indexOf(jstore.appConfig.languageApp)){
-            setLanguageAppIndex(languagesApp.indexOf(jstore.appConfig.languageApp))
+    const {
+        weather: {
+            type: weatherType 
         }
+    } = uiComposition
 
-        if(ThemeColorsAppIndex != themesApp.indexOf(jstore.appStyle.palette.theme)){
-            setThemeColorAppIndex(themesApp.indexOf(jstore.appStyle.palette.theme));
+    const {
+        navigationMenu: {
+            type: navigaterType 
         }
+    } = uiStyle
 
-        if(ThemeSchema != jstore.appStyle.palette.scheme){
-            setThemeSchema(jstore.appStyle.palette.scheme == 'auto'? Appearance.getColorScheme() : jstore.appStyle.palette.scheme);
-        }
-
-        if (appStyle != jstore.appStyle){
-            setAppStyle(jstore.appStyle);
-            setBottomBord(
-                jstore.appStyle.functionButton.size 
-                + 12.5 
-                + jstore.appStyle.navigationMenu.height
-                + ((jstore.appStyle.navigationMenu.type == 'hidden' && jstore.appStyle.navigationMenu.position.horizontal == 'center')? 
-                    20 + interpolate(jstore.appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
-                    : 0
-                )
-            )
-        }
-
-        if (appConfig != jstore.appConfig){
-            setAppConfig(jstore.appConfig);
-        }
-
-        if(hideMenu != jstore.hideMenu){
-            setHideMenu(jstore.hideMenu)
-        }
-
-        if (tasks != jstore.tasks){
-            setTasks(jstore.tasks);
-        }
-
-    })
-    
-    const [listenerColorSheme, setListinerColorScheme] = useState(Appearance.getColorScheme())
-    useEffect(()=>{
-        if(listenerColorSheme){
-            if(appStyle.palette.scheme == 'auto' && listenerColorSheme != ThemeSchema){
-                console.log('drawer accept new color sheme', listenerColorSheme, 'used shema', appStyle.palette.scheme)
-                setThemeSchema(listenerColorSheme)
+    const {
+        basics: {
+            accents: {
+                secondary: basicAS,
+                tertiary: basicAT,
+                
+            },
+            neutrals: {
+                quaternary: basicNQ
             }
+        },
+        specials: {
+            dimout
         }
-    },[listenerColorSheme])
-    
-    Appearance.addChangeListener(({colorScheme})=>{
-        setListinerColorScheme(colorScheme)
-    })
+    } = uiTheme
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex]
+    const fabVisible = useSharedValue(0);//bottomBord
 
-    const [keyboardVisible, setKeyboardVisible] = useState(false);
+    const fabLongPress =()=>{
+        console.log('pressj')
+    }
+  
+    const backScreen = () => {
+        Vibration.vibrate([5,8])
+        //props.navigation.goBack()
+        console.log('screen_go_back')
+    }
+
     useEffect(() => {
-        const showSubscription = Keyboard.addListener("keyboardDidShow", () => {setKeyboardVisible(true);});
-        const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {setKeyboardVisible(false);});
-
-        return () => {
-            showSubscription.remove();
-            hideSubscription.remove();
+        const backAction = () => {
+            backScreen()
+            return true;
         };
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+        console.log('add even back swipe')
+        return () => backHandler.remove();
     }, []);
 
-
-    const [ bottomBord, setBottomBord ] = useState(
-        props.appStyle.functionButton.size 
-        + 12.5 
-        + props.appStyle.navigationMenu.height 
-        + ((props.appStyle.navigationMenu.type == 'hidden' && props.appStyle.navigationMenu.position.horizontal == 'center' && props.appStyle.functionButton.position == 'center')? 
-            20 + interpolate(props.appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30]) 
-            : 0
-        )
-    ) 
-
-    const aStyle = useDerivedValue(()=>{
-        //console.log('TASK STYLE', global_aStyle.value? '1' : '2')
-        return global_aStyle.value? global_aStyle.value : appStyle
-    })
-
-    const aTheme = useDerivedValue(()=>{
-        //console.log('TASK Palette', global_aTheme.value)
-        return global_aTheme.value? global_aTheme.value : Theme
-    })
-
-    const animValueBobberButtonVisible = useSharedValue(0);
-
-    const bobberButtonPress = () => {
-        setModal({
-            task: undefined,
-            modalType: 'add'
-        })
-    }
-
-    const buildDate = (item) => {
-        const time = item.toTime.split(':')
-        const date = item.toDate.split('.')
-        return new Date(date[2], date[1], date[0], time[1], time[0])
-    }
-
-    const taskSort = (a, b) => {
-        const a_c = buildDate(a).getTime()
-        const b_c = buildDate(b).getTime()
-
-        if ( a_c < b_c){
-            return -1;
-        }
-        if ( a_c > b_c ){
-            return 1;
-        }
-        return 0;
-    }
-   
-    
-    const handleClearTasks = () => {
-        //clear all
-        AsyncStorage.setItem("storedTasks", JSON.stringify([])).then(() => {
-            setTasks([]);
-        }).catch((error) => console.log(error));
-    }
-
-
-    const handleAddTask = (task) => { 
-        const newTasks = [...tasks, task].sort(taskSort);
-
-        AsyncStorage.setItem("storedTasks", JSON.stringify(newTasks)).then(() => {
-            props.r_setTasksList(newTasks)
-            setTasks(newTasks);
-            resetModal();
-            
-        }).catch((error) => console.log(error));
-    }
-
-    const inputTask = (data) => {
-        if (!modal.task) {
-            const {
-                title,
-                toTime,
-                toDate,
-                fireTarget,
-            } = data
-
-            const date = getDateInfo()
-            const keyNewTask = ((tasks[tasks.length-1] && parseInt(tasks[tasks.length-1].key)+1) || 1)
-
-            let newToTime;
-            let newToDate;
-            let newFireTarget;
-            let newTitle = title? title : ''
-
-            if (newTitle == '') {newTitle = '*'+keyNewTask}
-
-            if (toTime) {
-                newToTime = toTime
-            } else {
-                newToTime = '23:59'
-            }
-
-            if (toDate) {
-                newToDate = toDate
-            } else {
-                newToDate = date.formatDate
-            }
     
     
-            if (fireTarget) {
-                newFireTarget = fireTarget
-            } else {
-                newFireTarget = '1'
-            }
-
-            const t = newToTime.split(':')
-            const d = newToDate.split('.')
-
-            const to = new Date(date.source)
-            //to.setHours(])
-            to.setUTCHours(t[0], t[1], 59, 999)
-            to.setUTCDate(d[0])
-            //to.setMinutes()
-            //to.setDate(d[0])
-            to.setMonth(d[1]-1)
-            to.setFullYear(d[2])
-
-            const newTask = {
-                title: newTitle,
-                toTime: newToTime,
-                toDate: newToDate,
-                fireTarget: newFireTarget,
-                date: to,
-                dateString: to.toDateString(),
-                key: `${keyNewTask}`
-                //key: `${(tasks[tasks.length-1] && parseInt(tasks[tasks.length-1].key) ) }`
-            }
-            console.log('BUILD_NEW_TASK', newTask)
-            handleAddTask(newTask);
-
-        } else {
-            const {
-                title,
-                toTime,
-                toDate,
-                fireTarget,
-            } = data
-
-            const newData = {
-                title: title? title : modal.task.title,
-                toTime: toTime? toTime : modal.task.toTime,
-                toDate: toDate? toDate : modal.task.toDate,
-                fireTarget: fireTarget? fireTarget : modal.task.fireTarget,
-                date: modal.task.date,
-                key: modal.task.key
-            }
-
-            handleEditTask(newData)
-        }
-    }
-
-
-    const handleCheckTask = (rowKey, some = false) => {
-        console.log('CHECKING_TASKS', rowKey)
-        /** 
-        const newTasks = [...tasks];
-        for(const row of (some? rowKey : [rowKey])){
-            console.log(row)
-            newTasks.splice(tasks.findIndex((task) => task.key === row), 1);
-        }*/
-
-        const keyFilter = some? rowKey : [rowKey]
-
-        const newTasks = tasks.filter(task => !keyFilter.includes(task.key))
-
-
-        AsyncStorage.setItem("storedTasks", JSON.stringify(newTasks)).then(() => {
-            setTasks(newTasks);
-            props.r_setTasksList(newTasks)
-            resetModal();
-            
-        }).catch((error) => console.log(error));
-
-    }
-
-    const handleDeleteTask = (rowKey, some = false) => {
-        console.log('DELETED_TASKS', rowKey)
-        /** 
-        const newTasks = [...tasks];
-        for(const row of (some? rowKey : [rowKey])){
-            console.log(row)
-            newTasks.splice(tasks.findIndex((task) => task.key === row), 1);
-        }*/
-
-        const keyFilter = some? rowKey : [rowKey]
-
-        const newTasks = tasks.filter(task => !keyFilter.includes(task.key))
-
-
-        AsyncStorage.setItem("storedTasks", JSON.stringify(newTasks)).then(() => {
-            setTasks(newTasks);
-            props.r_setTasksList(newTasks)
-            resetModal();
-            
-        }).catch((error) => console.log(error));
-
-    }
-
-    const handleTriggerEdit = (item) => {
-        setModal({
-            task: item,
-            modalType: 'edit'
-        })
-    }
-
-    const handleEditTask = (editerTask) => {
-        const newTasks = [...tasks];
-        const taskIndex = tasks.findIndex((task) => task.key === editerTask.key);
-        newTasks.splice(taskIndex, 1, editerTask);
-
-        AsyncStorage.setItem("storedTasks", JSON.stringify(newTasks)).then(() => {
-            setTasks(newTasks);
-            props.r_setTasksList(newTasks)
-            resetModal();
-            
-        }).catch((error) => console.log(error));
-
-    }
-
     const menuPress = () => { 
         Vibration.vibrate([5,8])
-        if(appStyle.navigationMenu.type == 'not' || (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)){
-            props.navigation.openDrawer()
+        if(navigaterType.value == 'type_2' || weatherType.value == 'panel'){
+            openDrawer()
         } else {
             openSettingsWindow()
             //props.navigation.navigate('settingsStack')
@@ -398,1861 +175,781 @@ const Tasks = (props) => {
 
     }
 
-    const [ modal, setModal ] = useState({
-        modalType: undefined,
-        task: undefined
-    })
+    
+    const fabPress =()=>{
+        console.log('pressa', )
+        openModal()
+        //testTasksAdd()
+        //modalVisible.value = 1
+    }
 
-    const resetModal = () => {
-        setModal({
-            modalType: undefined,
-            task: undefined
+
+    const taskAdd = (task) => {
+        console.log('taskAdd')
+        const neystyTasks = store.getState().tasksData
+        const newTasksData = [...neystyTasks, task]
+        r_setTasksData(newTasksData)
+        dataRedactor('storedTasks', newTasksData)
+    }
+
+    
+    const taskEdit = (task) => {
+        console.log('taskEdit')
+        const newTasksData = [...store.getState().tasksData]
+        const index = newTasksData.findIndex((item)=>item.keyId == task.keyId)
+        newTasksData[index] = task
+        r_setTasksData(newTasksData)
+        dataRedactor('storedTasks', newTasksData)
+    }
+
+
+    const taskDelete = (taskPlacesList) => {
+        console.log('taskDel')
+        const deletingKeys = taskPlacesList.map((item)=>item.keyId)
+        const tasks = [...store.getState().tasksData]
+        const newTasksData = tasks.filter((item)=>!deletingKeys.includes(item.keyId))
+        r_setTasksData(newTasksData)       
+        dataRedactor('storedTasks', newTasksData) 
+    }
+
+
+    const taskCheck = (taskPlacesList) => {
+        console.log('taskCheck')
+        const checkingKeys = taskPlacesList.map((item)=>item.keyId)
+        const tasks = [...store.getState().tasksData]
+        const newTasksData = tasks.map((item)=>{
+            if(checkingKeys.includes(item.keyId)){
+                const newItem = JSON.parse(JSON.stringify(item))
+                if(!newItem.compleated){
+                    newItem.compleated = {
+                        dateList: getDateInfo()
+                    }
+                } else {
+                    newItem.compleated = null
+                }
+                return newItem
+            }
+            return item
         })
-        
+        r_setTasksData(newTasksData) 
+        dataRedactor('storedTasks', newTasksData) 
     }
 
-    const getDateInfo = () => {
-        const date = new Date()
 
-        const hours = date.getHours()
-        const minutes = date.getMinutes()
+    const fabShow = (value) => {
+        'worklet';
+        cancelAnimation(fabVisible);
+        fabVisible.value = value? 0 : 1
+    }
 
-        const month = 1+date.getMonth();
-        const day = date.getDate();
-        const year = date.getFullYear();
-
-        const currentDate = {
-
-            minutes: minutes,
-            hours:  hours,
-            numberWeekDay: date.getDay(),
-            day: day,
-            month: `${month>9?month:'0'+month}`,
-            year: year,
-            
-            string: date.toString(),
-            source: date,
-
-            formatTime: `${hours>9?hours:'0'+hours}:${minutes>9?minutes:'0'+minutes}`,
-            formatDate: `${day>9?day:'0'+day}.${month>9?month:'0'+month}.${year}`
+    const modalRef = useRef()
+    const openModal = (content) => {
+        modalRef.current.present()
+        if(content){
+            setTimeout(()=>{modalRef.current.setItemContent(content)}, 24)   
         }
-        //console.log(currentDate, date)
-        return currentDate
     }
+    
 
+    console.log('$$$$$$$ ? screen RENDER', )
     return (
-        <>
-            <ListItems
-                tasks = {tasks}
-
-                handleDeleteTask = {handleDeleteTask}
-                handleCheckTask = {handleCheckTask}
-                clearAllTasks = { handleClearTasks}
-
-                setModal={setModal}
-
-                getDateInfo={getDateInfo}
-
-                reaValueBobberButtonVisible = {animValueBobberButtonVisible}
-
-                menuPress = {menuPress}
-
-                fabPress = {bobberButtonPress}
-
-                appStyle={appStyle}
-                appConfig={appConfig}
-                ThemeColorsAppIndex={ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-                LanguageAppIndex = {LanguageAppIndex}
-            />
-
-            <BobberButton 
-                enabled={appStyle.functionButton.position != 'top'}
-                aStyle={aStyle}
-                aTheme={aTheme}
-                bottomBord = {bottomBord}
-                reaValueBobberButtonVisible = {animValueBobberButtonVisible}
-
-                onPress = {bobberButtonPress}
-
-                appStyle = {appStyle}
-                ThemeColorsAppIndex = {ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-            />
+    <>  
+        <BasisList
+            menuPress = {menuPress}
 
 
+            fabShow={fabShow}
+            fabPress = {fabPress}
+            fabLongPress = {fabLongPress}
 
-            <ModalInput
-                visible = {modal.modalType == 'add' || modal.modalType == 'edit'} 
-                task = {modal.task}
-                outModalPress = {resetModal}
+            openModal={openModal}
+            taskEdit = {taskEdit}
+            taskDelete = {taskDelete}
+            taskCheck = {taskCheck}
 
-                getDateInfo={getDateInfo}
-                inputTask={inputTask}
-
-                appStyle={appStyle}
-                appConfig={appConfig}
-                ThemeColorsAppIndex={ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-                LanguageAppIndex = {LanguageAppIndex}
-            />
-
-            <ModalItems
-                visible = {modal.modalType == 'view'}
-                task = {modal.task}
-                outModalPress = {resetModal}
-
-                handleTriggerEdit = {handleTriggerEdit}
-                handleCheckTask = {handleCheckTask}
-                handleDeleteTask = {handleDeleteTask}
-
-                appStyle={appStyle}
-                appConfig={appConfig}
-                ThemeColorsAppIndex={ThemeColorsAppIndex}
-                ThemeSchema = {ThemeSchema}
-                LanguageAppIndex = {LanguageAppIndex}
-            />
-        </>
+            {...props}
+        />
         
-    );
+        <BobberButton 
+            aVisible = {fabVisible}
+            onPress = {fabPress}
+            onLongPress = {fabLongPress}
+   
+            uiStyle={uiStyle}
+            uiTheme={uiTheme}
+            uiComposition={uiComposition}
+        />
+
+        <InputModal 
+            modalRef = {modalRef}
+
+            taskAdd = {taskAdd}
+            taskEdit = {taskEdit}
+
+            {...props}
+        />
+        
+    </>)  
 }
-export default connect(mapStateToProps('HOME_SCREEN'),mapDispatchToProps('N_SCREEN'))(Tasks);
+//mapStateToProps('TASKS'),
+export default connect(undefined, mapDispatchToProps('TASKS'))(Tasks); 
 
 //====================================================================================================================================
-
-const ripple = (color) => ({
-    color: `${color}20`,
-    borderless: true,
-    foreground: false
-})
 //====================================================================================================================================
 
-import * as NavigationBar from 'expo-navigation-bar'; 
 
-const BobberButton = (props) => {
+
+const BasisList = function (props) {
     const {
-        reaValueBobberButtonVisible,
-        bottomBord,
-        enabled,
+        fabShow,
 
-        onPress,
-        aStyle,
-        aTheme,
-        appConfig,
-        LanguageAppIndex,
+        taskDelete,
+        taskCheck,
 
-        appStyle,
-        ThemeColorsAppIndex,
-        ThemeSchema
+        uiStyle,
+        uiTheme,
     } = props
 
-    const androidNBarHeight = NavigationBar.useVisibility() === 'visible'? Dimensions.get('screen').height - (Dimensions.get('window').height + Constants.statusBarHeight) : 0
+    const {
+        borderRadius: {
+            primary: radiusP
+        },
+        lists: {
+            proximity: {
+                h: fullWidth
+            }
+        }
+    } = uiStyle
+
+    const {
+        basics: {
+            accents: {
+                primary: basicAP,
+                secondary: basicAS,
+                tertiary: basicAT
+            },
+            neutrals: {
+                primary: basicNP,
+                
+            }
+        },
+        texts: {
+            accents: {
+                primary: textAP,
+            },
+            neutrals: {
+            }
+        },
+        icons: {
+            accents: {
+            },
+            neutrals: {
+                tertiary: iconNT,
+            }
+        }
+    } = uiTheme
 
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
+    const {
+        SCREEN_PROXIMYTY_HRZ,
+
+        STYCKYS_HEIGHT,
+        HEADER_TOOL_HEIGHT,
+        SECTIONS_SELECTOR_HEIGHT,
+        PRIMARY_HEADER_HEIGHT,
+        SECONDARY_HEADER_HEIGHT,
+
+        HEAD_COMPONENT_HEIGHT,
+        LIST_ITEM_SIZE,
+
+        DEVICE_H,
+        DEVICE_W
+    } = useTasksSizes()
+
+
+
+    const sectListRef = useRef();
+
+    const animValueScrollY = useSharedValue(0)
     
-    const dynamicStyleBobberDown = useAnimatedStyle(() => {
-        const duration = 200;
-        return {
-            //opacity: withTiming(animValueBobberButtonExpand.value == 1? 1 : 0.9, {duration: duration}),
-        }
-    })
+    const logg = (info) =>{
+        'worklet';
+        console.log('lg_'+info)
+    }
 
-    const dynamicStyleBobberButton = useAnimatedStyle(()=>{
-        const duration = 300
-        const durationTranslate = 400;
-        const position =(buttonSize)=>({
-            center: (deviceWidth*0.5-(buttonSize/2)),
-            left: ((deviceWidth-12)-buttonSize),
-            right: (12)
+    const scrollSectionsList = useAnimatedScrollHandler({
+        onScroll: (event, ctx) => {
+            const isUpScroll = Math.abs(event.velocity.y).toFixed(4) != 0? (event.velocity.y).toFixed(4) < 0.0001 : false;
+            const isEnd = (event.layoutMeasurement.height + event.contentOffset.y) >= (event.contentSize.height - 5);
+            const isStart = event.contentOffset.y > -(HEADER_TOOL_HEIGHT+10);//+hht  
+            const visibleBobber = (isUpScroll && isStart) || isEnd
+            fabShow(visibleBobber)
+            const useScroll = -Math.max(event.contentOffset.y, 0)
+            cancelAnimation(animValueScrollY);
+            animValueScrollY.value = useScroll
+        },
+    }) //
+
+
+
+    const showSection = (indexSection, countItems = 0) => {
+        const offset = (
+            LIST_ITEM_SIZE.h *countItems 
+            +HEAD_COMPONENT_HEIGHT
+            //+openItem.value? : 0
+            +(Math.max(indexSection, 0)*STYCKYS_HEIGHT)
+        )
+        sectListRef.current.scrollToOffset({
+            offset: offset,
+            animated: false,
         })
-        const bottom = interpolate(appStyle.navigationMenu.position.vertical, [-150, 150] , [0, 30])
-        const addBottom = androidNBarHeight + (appStyle.navigationMenu.type == 'hidden' && appStyle.navigationMenu.position.horizontal == 'center' && appStyle.functionButton.position == 'center')? (20+bottom) : 0
-        return {
-            height:  withTiming(5+2*appStyle.functionButton.size, {duration: duration}),
-            width:  withTiming(appStyle.functionButton.size, {duration: duration}),
-            bottom:  withTiming((appStyle.navigationMenu.height+12.5+addBottom), {duration: duration}),
-            right: withTiming( (position(appStyle.functionButton.size)[appStyle.functionButton.position]), {duration: duration}),
+    }
 
-            transform: [
-                {translateY: withTiming((reaValueBobberButtonVisible.value == 0 && enabled)? 0 : bottomBord, {duration: durationTranslate})}
-            ] 
-        }
-    })
+    
 
-    const r = useDerivedValue(()=>{
-        if(aStyle && aStyle.value){
-            //console.log('RRRR', aStyle.value)
-            
-        }
-        return aStyle.value.borderRadius.additional
-    })
 
-    const bgc = useDerivedValue(()=>aStyle.value.functionButton.invertColors? aTheme.value.basics.neutrals.tertiary : aTheme.value.basics.accents.secondary)
+    const sectionExtractor = (item, index) => String(item.category + index)
+    
+    
+    const HeaderStick = memo(({keyID = 'stick_header', title})=>{
+        console.log('stick', title)
+        const colorHeaderStick = useAnimatedStyle(()=>({color: textAP.value}))
 
-    return(
-        <Reanimated.View 
-            style = {[dynamicStyleBobberButton, {
-                position: 'absolute',
-                alignItems: 'flex-end',
-                justifyContent: 'flex-end',
-            }]}
-        >   
-            <Reanimated.View
-                style = {[dynamicStyleBobberDown,{
-                    zIndex: 1,       
-                    position: 'absolute',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: appStyle.functionButton.size ,
-                    width: appStyle.functionButton.size ,
-                    
-                    //backgroundColor: 'red'
-                    //borderRadius: appStyle.borderRadius.additional,
-                }]}
-            >        
-                <SkiaViewDisign
-                    isGeneralObject={true} 
-                    borderRadius = {appStyle.borderRadius.additional}
-                    aBorderRadius = {r}
-                    aBGColor = {bgc}
-                    backgroundColor = {(appStyle.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary)}
-                    shadowColors = {Theme.specials.shadow}
-                    shadowMargin={{horizontal: 5, vertical: 5}}
-                    shadowStyle = {appStyle.effects.shadows}
-                    adaptiveSizeForStyle={false}
-                    innerShadow={{
-                        used: true,
-                        borderWidth: 0.5
-                    }}
-                    initSize = {{
-                        height: appStyle.functionButton.size,
-                        width: appStyle.functionButton.size
-                    }}
-                />
-                {appStyle.effects.blur && 
-                <View 
-                    style = {[StyleSheet.absoluteFillObject, {
-                        left: 5,
-                        top: 5,
-                        height: appStyle.functionButton.size-10,
-                        width: appStyle.functionButton.size-10,
-                        //specialty blur for android
-                        overflow: 'hidden',
-                        borderRadius: appStyle.borderRadius.additional,
+        const Title = () => {
+            const Language = useLanguage().TasksScreen
+            return (
+                <Reanimated.Text
+                    style = {[colorHeaderStick, {
+                        //color: Theme.texts.accents.primary,
+                        //flex: 1,
+                        paddingLeft: 1.5*SCREEN_PROXIMYTY_HRZ+8+12,
+                        fontSize: 19,
+                        fontWeight: '500',
+                        letterSpacing: 0.6,
+                        fontVariant: ['small-caps'],
                     }]}
                 >
-                <BlurView
-                    style = {{flex: 1, }}
-                    blurType = {'light'}
-                    blurAmount = {10}
-                    
-                    //ANDROID_PROPS
-                    overlayColor={`${appStyle.functionButton.invertColors? Theme.basics.neutrals.tertiary : Theme.basics.accents.secondary}90`}
-                    //overlayColor={'transparent'}
-                    //blurRadius	= {10}
-                    //downsampleFactor = {10}
-                />
-                </View>}  
-                <View 
-                    style={{
-                        position: 'absolute',
-                        height: appStyle.functionButton.size -10,
-                        width: appStyle.functionButton.size -10,
-                        borderWidth: appStyle.functionButton.outline? 0.5 : 0,
-                        borderColor: `${Theme.specials.separator}20`,
-                        borderRadius: appStyle.borderRadius.additional
-                    }}
-                />
-                <BasePressable
-                    type={"i"}
-                    icon={{name: 'sticker-plus-outline', size: 24, color: appStyle.functionButton.invertColors? Theme.icons.accents.primary : Theme.icons.neutrals.primary}}
-                    style={[{
-                        height: appStyle.functionButton.size-10,
-                        width: appStyle.functionButton.size-10,
-                        borderRadius: appStyle.borderRadius.additional,
-                        //backgroundColor: appStyle.effects.blur? 'transparent' : (appStyle.functionButton.invertColors? Theme.basics.neutrals.secondary : Theme.basics.accents.secondary),
-                
-                        },
-                    ]}
-                    android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.icons.accents.primary) : false}
-                    onPress={onPress}
-                />
-            </Reanimated.View>
-        </Reanimated.View>
-    )
-}
-
-//====================================================================================================================================
-const headerPanel = 55
-const headerParams = 46
-const headerFullHeight = statusBarHeight+headerPanel+headerParams
-
-const listItemHeight = 110
-
-import WeatherComponent from "../../../weather/WeatherComponent";
-
-//const Reanimated_SwipeList = Reanimated.createAnimatedComponent(SwipeListView)
-const Reanimated_FlatList = Reanimated.createAnimatedComponent(FlatList)
-const ListItems = (props) => {
-    const {
-
-    tasks, 
-
-    handleDeleteTask,
-    handleCheckTask,
-    clearAllTasks,
-
-    setModal, 
-
-    getDateInfo,
-
-    reaValueBobberButtonVisible,
-
-    menuPress,
-    fabPress,
-
-    appConfig,
-    LanguageAppIndex,
-
-    appStyle,
-    ThemeColorsAppIndex,
-    ThemeSchema
-
-    } = props
-
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].TasksScreen
-
-    const [ changesTask, setChangesTask ] = useState([])
-
-    const categorys = ['today', 'all']
-    const [category, setCategory] = useState(0)
-
-    const changeCategory = (item, index) => {
-        console.log('set',item, indicatorLine.value)
-        setCategory(index)
-    }
-
-    const taskLongPress = (key) =>{
-        Vibration.vibrate([5,8])
-        if(!changesTask.includes(key)){
-            setChangesTask([key, ...changesTask])
+                    {Language.categorys[title]}
+                </Reanimated.Text>
+            )
         }
+
+        return (
+            <Reanimated.View
+                key={keyID} 
+                style={{
+                    height: STYCKYS_HEIGHT,
+                    width: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'flex-start',
+                }}
+                entering={FadeIn}
+                exiting={FadeOut}
+            >
+                <Title />
+            </Reanimated.View> 
+        )
+    })
+
+
+    const paddingColums = useAnimatedStyle(()=>{
+        return {
+            paddingHorizontal: (fullWidth.value??0)/2
+        }
+    })
+
+    
+    const Tile = memo(({item: {category, data}}) => {
+        console.log('tile', category,)
+        return (
+            <Reanimated.View          
+                style={[ paddingColums, { 
+                    width: DEVICE_W+2,
+                    minHeight: LIST_ITEM_SIZE.h-SCREEN_PROXIMYTY_HRZ/2,
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    marginLeft: -1,
+                }]}
+                entering={FadeIn}
+                layout={Layout}    
+            >
+                {data.map((item)=>(
+                    <Item 
+                        key = {`${category}_${item.keyId}`}
+                        keyID={`${category}_${item.keyId}`}
+                        category = {category}
+                        item = {item}
+
+                        chosenItems = {chosenItems}
+                        chosesMod = {chosesMod}
+                        openItem = {openItem}
+                        onOpen = {onOpen}
+
+                        listItemChosePress = {listItemChosePress}
+                        listItemLongChosePress = {listItemLongChosePress}
+                        listItemPress = {listItemPress}
+
+                        {...props}
+                    />
+                ))}
+            </Reanimated.View>
+        )
+    }, 
+    (prevProps, nextProps)=>{
+        return isEqual(prevProps.item, nextProps.item) 
+    })
+    
+
+    const renderColums = useCallback((column)=>{
+        const  {item: {category}, index: indexSection} = column
+        console.log('Callback render colums', category)
+        return (
+            <Reanimated.View
+                key={String('column_' + category)}
+                layout={Layout}
+            >
+                {indexSection != 0 && <HeaderStick title={category}/>}
+                <Tile {...column}/>
+            </Reanimated.View>
+        )
+    })
+
+
+    const chosenItems = useRef([])
+
+    const chosesMod = useSharedValue(0)
+
+    const openItem = useSharedValue(null)
+
+    const onOpen = (value) => {
+        console.log('open', value)
+        openItem.value = value
+    }
+   
+
+    const changesClose = () => {
+        chosenItems.current = []
+        chosesMod.value = 0
     }
 
-    const taskPress = (task) =>{
-        const {
-            key
-        } = task
-        if(changesTask.length > 0){
-            let newChangesTask// = changesTask.includes(key)? changesTask.filter(item=>item != key) : [key, ...changesTask]
-            if(changesTask.includes(key)){
+
+    const listItemPress = () => {
+        
+    }
+
+    
+    const listItemChosePress = (place) => { 
+        console.log('press item', place)
+        let answer 
+        if(chosenItems.current.length > 0){
+            let newChangesTask
+            const isInclude = (chosenItems.current).findIndex((item)=>item.keyId == place.keyId) != -1
+            if(isInclude){
                 Vibration.vibrate([5,3, 30, 3])
-                newChangesTask = changesTask.filter(item=>item != key)                           
+                newChangesTask = chosenItems.current.filter(item=>JSON.stringify(item)!= JSON.stringify(place))   
+                chosesMod.value -= 1  
+                answer = false                      
             } else {
                 Vibration.vibrate([5,8])
-                newChangesTask = [key, ...changesTask]
+                newChangesTask = [place, ...chosenItems.current]
+                chosesMod.value += 1
+                answer = true
             }
-            setChangesTask(newChangesTask)
+            chosenItems.current = newChangesTask
         } else {
-            //setSwipedRow(key);
-            setModal({
-                modalType: 'view',
-                task: task
-            })
-            //setItemModalVisible(true)
+            
+        }
+        return answer 
+    }
+    
+
+    const listItemLongChosePress = (place) => {
+        if(chosenItems.current.length == 0){
+            Vibration.vibrate([5,8])
+            console.log('long press item', place)
+            chosenItems.current = [place]
+            chosesMod.value = 1
+            return true
+        } else {
+            return listItemChosePress(place)
         }
     }
 
     const changesCheck = () => {
-        handleCheckTask(changesTask, true)
-        setChangesTask([])
+        taskCheck(chosenItems.current)
+        changesClose()
     }
-
-    const changesClose = () => {
-        setChangesTask([])
-    }
-
-
     const changesDelete = () => {
-        handleDeleteTask(changesTask, true)
-        setChangesTask([])
+        taskDelete(chosenItems.current)
+        changesClose()
     }
-
-
-
-    const headerShort = useSharedValue(headerFullHeight)
-
-    const onScrollList = useAnimatedScrollHandler({
-        onScroll: (event, ctx) => {
-            const {
-                contentOffset,
-                layoutMeasurement,
-                contentSize,
-                velocity
-            } = event
-
-            let isUpScroll = false;
-            let isEnd = false;
-            let isStart = false;
-
-            if(Math.abs(velocity.y).toFixed(4) != 0){
-                isUpScroll = (velocity.y).toFixed(4) < 0.0001;
-            }
-            isEnd = (layoutMeasurement.height + contentOffset.y) >= (contentSize.height - 5);
-            isStart = contentOffset.y < 0.05//(statusBarHeight*0);
-            const visibleBobber = ((isUpScroll) || isStart || isEnd)
-
-            
-            if(reaValueBobberButtonVisible.value != (visibleBobber? 0 : 1)){
-                cancelAnimation(reaValueBobberButtonVisible);
-                reaValueBobberButtonVisible.value = visibleBobber? 0 : 1
-            }
-            
-
-            const shortHeight = headerFullHeight-headerPanel
-
-            
-            const newShortHeight = isStart? headerFullHeight : Math.min( Math.max((headerShort.value-(6*velocity.y)), shortHeight) , headerFullHeight)
-
-            if(headerShort.value != newShortHeight){
-                cancelAnimation(headerShort)
-                headerShort.value = newShortHeight
-            }
-
-        }
-    })
-
-    const dynamicHeader = useAnimatedStyle(()=>{
-        const duration = 300
-        return {
-            transform: [
-                {translateY: interpolate(
-                    headerShort.value, 
-                    [headerFullHeight-headerPanel, headerFullHeight],
-                    [-headerPanel, 0],
-                    //extrapolation
-                    {
-                        extrapolateLeft: Extrapolation.CLAMP,
-                        extrapolateRight: Extrapolation.CLAMP
-                    })
-                }
-            ],
-        }
-    })
-
-    const dynamicPanel = useAnimatedStyle(()=>{
-        const duration = 300
-        return {
-            transform: [
-                {translateY: interpolate(
-                    headerShort.value, 
-                    [headerFullHeight-headerPanel, headerFullHeight],
-                    [statusBarHeight, statusBarHeight],
-                    //extrapolation
-                    {
-                        extrapolateLeft: Extrapolation.CLAMP,
-                        extrapolateRight: Extrapolation.CLAMP
-                    })
-                }
-            ],
-        }
-    })
-
-    const dynamicParams = useAnimatedStyle(()=>{
-        const duration = 300
-        return {
-            transform: [
-                {translateY: interpolate(
-                    headerShort.value, 
-                    [ headerFullHeight-headerPanel, headerFullHeight ],
-                    [ statusBarHeight, statusBarHeight+headerPanel ],
-                    //extrapolation
-                    {
-                        extrapolateLeft: Extrapolation.CLAMP,
-                        extrapolateRight: Extrapolation.CLAMP
-                    })
-                }
-            ],
-            opacity: interpolate(
-                headerShort.value, 
-                [headerFullHeight-headerPanel, headerFullHeight],
-                [0, 1]
-            )
-        }
-    })
-
-    const areaFrameBut = 100
-    const paddingLeftCategorys = 45
-    const indicatorLine = useSharedValue({widths: [], left: []})
-    const animStyleIndicatorLine = useAnimatedStyle(() => {
-        const duration = 350; 
-        return {
-            width: withTiming(indicatorLine.value.widths.length>0? indicatorLine.value.widths[category] : 0, {duration: duration-20}),
-            left: withTiming(indicatorLine.value.left.length>0? ((0.5*(deviceWidth-areaFrameBut)*category) + indicatorLine.value.left[category]) : 0, {duration: duration, easing: Easing.bezier(0.45, 0, 0.55, 1)}),
-        }
-    }, [indicatorLine, category])
+    const changesAllDelete = () => {
+        console.log('changesAllDelete is -', )
+        changesClose()
+    }
 
     
 
-    const currentDate = getDateInfo();
-
-    const tingDuration = 300
-    const entering = (targetValues) => {
-        'worklet';
-        const animations = {
-          opacity: withTiming(1, { duration: tingDuration }),
-          transform: [
-            {scale: withTiming(1, { duration: tingDuration })}
-          ]
-        };
-        const initialValues = {
-          opacity: 0,
-          transform: [
-            {scale: .97}
-          ]
-        };
-        return {
-          initialValues,
-          animations,
-        };
-    }
-
-    const [ listFormatRow, setListFormatRow ] = useState(true)
 
 
-    const renderTasks = ({index, item }) => {
-        const {
-            key,
-            date,
-            fireTarget,
-            title,
-            toDate,
-            toTime,
-        } = item
-        
-        const taskDate = new Date(date)
-        console.log(key, toDate, currentDate.formatDate)
-       
-        //const TODAY = taskDate.getDate() == (currentDate.day-1) && taskDate.getMonth() == parseInt(currentDate.month)-1 && taskDate.getFullYear() == currentDate.year
-        const TODAY = toDate == currentDate.formatDate
-        //TODAY 
-        if( category == 0 && !TODAY){ return null}
-        
-        let timeInFire = 'none';
 
-        let burnProgress = 0
+    const HeadComponent = memo(() => {
 
-        let across = (taskDate - currentDate.source)/3600000
-
-        //console.log((taskDate.getTime() - currentDate.source.getTime())/3600000,across)
-
-        if(across >= 0 && across <= 24){ // 
-            timeInFire = 'soon';
+        const br = useAnimatedStyle(()=>{
+            const r = interpolate(
+                animValueScrollY.value, 
+                [0, -HEAD_COMPONENT_HEIGHT], 
+                [radiusP.value, 0],
+                {
+                    extrapolateLeft: Extrapolation.CLAMP,
+                    extrapolateRight: Extrapolation.CLAMP
+                }  
+            )
+            return ({
+                borderTopLeftRadius: r,
+                borderTopRightRadius: r,
+            })
             
-        } 
-        if(across >= 0 && across <= parseInt(fireTarget)){
-            timeInFire = 'burn';
-            const procent = (fireTarget-across)/fireTarget
-            burnProgress =  Math.min(Math.max(procent, 0), 1)
-        }
-        if(across < 0){ 
-            timeInFire = 'burnOut';
-        }
+        })
 
-        //console.log(across, fireTarget, burnProgress,(fireTarget-across)/fireTarget)
+        const bordersPanel = useAnimatedStyle(()=>({
+            backgroundColor: basicNP.value,
+        }))
+
+        const container = useAnimatedStyle(()=>{
+            return {
+                transform: [
+                    {translateY: interpolate(
+                        animValueScrollY.value, 
+                        [0, -HEAD_COMPONENT_HEIGHT], 
+                        [0, HEAD_COMPONENT_HEIGHT],
+                        {
+                            extrapolateLeft: Extrapolation.CLAMP,
+                            extrapolateRight: Extrapolation.CLAMP
+                        }  
+                    )}
+                ]
+            }
+        })
+
+        const gradientColors = useDerivedValue(()=>([
+            basicAP.value, basicAT.value
+        ]))
 
         return (
-            <View 
-                style = {[{
-                    height: listItemHeight * (listFormatRow? 1 : 2),
-                    width:  deviceWidth  * (listFormatRow? 1 : 0.5),
-                    marginVertical: listFormatRow? appStyle.lists.proximity : appStyle.lists.fullWidth? 0.5 : 5,
-                    backgroundColor: '#00000001'
+            <Reanimated.View
+                style={[{
+                    width: '100%',
+                    height: HEAD_COMPONENT_HEIGHT+SECTIONS_SELECTOR_HEIGHT,
+                    //marginBottom: SECTIONS_SELECTOR_HEIGHT,
+                    overflow: 'hidden'
                 }]}
-            >
-                <SkiaViewDisign 
-                    borderRadius = {appStyle.borderRadius.basic}
-                    backgroundColor = {Theme.basics.neutrals.secondary}
-                    shadowColors = {Theme.specials.shadow}
-                    shadowMargin={{
-                        horizontal: appStyle.lists.fullWidth? 1 : horizontalProximity, 
-                        vertical: listFormatRow? appStyle.lists.proximity : appStyle.lists.fullWidth? 0.5 : 5,
-                    }}
-                    shadowStyle = {appStyle.effects.shadows}
-                    adaptiveSizeForStyle={false}
-                    innerShadow={{
-                        used: true,
-                        borderWidth: 2
-                    }}
+            >   
+                <GradientBackground 
+                    colors={ gradientColors}
+                    size={{height: HEAD_COMPONENT_HEIGHT+SECTIONS_SELECTOR_HEIGHT, width: DEVICE_W}} 
+                    container={container}
                 />
-                <View 
-                    style = {[{
-                        flex: 1,
-                        marginHorizontal: appStyle.lists.fullWidth? 0 : horizontalProximity,
-                        marginVertical:  listFormatRow? appStyle.lists.proximity : appStyle.lists.fullWidth? 0.5 : 5,
-                        borderRadius: appStyle.borderRadius.basic,
-                        backgroundColor: '#00000001'
+                <HeadItemList container={container} {...props}/>
+                <Reanimated.View 
+                    style={[bordersPanel, br, {
+                        position: 'absolute',
+                        bottom: 0,         
+                        height: SECTIONS_SELECTOR_HEIGHT,
+                        width: '100%',
                     }]}
-                >
-                <Pressable 
-                    style = {{
-                        flex: 1,
-                        paddingHorizontal: 10,
-                        paddingTop: 5,
-                        paddingBottom: appStyle.borderRadius.basic * (15/35),
-                    }}
-                    android_ripple={appStyle.effects.ripple == 'all'? ripple(Theme.basics.accents.quaternary) : false}
-                    unstable_pressDelay = {300}
-                    onLongPress = {() => {taskLongPress(key)}}
-                    onPress = {() => {taskPress(item)}}
-                    //backgroundColor = 'red'
-                >   
-                    <View
-                        style = {{
-                            flexDirection: 'row',
-                            //backgroundColor: 'red',
-                            justifyContent: 'flex-end',
-                            alignItems: 'center'
-                        }}
-                    >
-                        <MaterialCommunityIcons 
-                            style={{
-                                height: 16,
-                                width: 16,
-                                position: 'absolute',
-                                left: 0,
-                                borderRadius: appStyle.borderRadius.additional,
-                                padding: 2,
-                                backgroundColor: changesTask.includes(key)? Theme.icons.accents.primary : 'transparent'
-                            }}
-                            name = {'check'} 
-                            size={12} 
-                            color={changesTask.includes(key)? Theme.basics.neutrals.secondary : 'transparent'} 
-                        />
-                        <Text 
-                            style = {[styles.TaskDate,{
-                                textDecorationLine: timeInFire == 'burnOut'?'line-through':'none',
-                                color: Theme.texts.neutrals.tertiary
-                            }]}
-                        >
-                            {Language.listItems.to}: {toTime}  {toDate} 
-                        </Text>
-                        {timeInFire != 'none' &&
-                        <View style = {{marginLeft: 10}}>
-
-                            <MaterialCommunityIcons 
-                                name = {timeInFire == 'burnOut'?"timer-off-outline":"timer-outline"} 
-                                size={20} 
-                                color={Theme.icons.neutrals.tertiary} 
-                            />
-                            
-                            <MaskedView
-                                androidRenderingMode = {'software'}
-                                style={{
-                                    width: 16, 
-                                    height: 16,
-                                    position: 'absolute', 
-                                    bottom: 6, 
-                                    left: -5,
-                                    justifyContent: 'flex-end', 
-                                    backgroundColor: (timeInFire == 'burn')? Theme.specials.fire.secondary : 'transparent'
-                                }}
-                                maskElement={<MaterialCommunityIcons //timeInFire == 'burn'?Theme.specials.fire.primary:Theme.specials.fire.secondary
-                                    name="fire" 
-                                    size={16} 
-                                    color = {'black'}
-                                />}
-                            >
-                            {/* COLOR*/}
-                            <View 
-                                style={[{
-                                    width: 16,
-                                    height: 16*burnProgress,
-                                    backgroundColor: Theme.specials.fire.primary
-                                }]}
-                            />  
-                            </MaskedView>
-                        </View>}                 
-                    </View> 
-                    <View flex = {1}>
-                        <Text 
-                            numberOfLines = {(listFormatRow? 2 : 8)} 
-                            style = {[styles.TaskText, {color: Theme.texts.neutrals.secondary}]}
-                        >
-                            {title}
-                        </Text> 
-                    </View>
-                </Pressable> 
-                </View>                                    
-            </View>
+                />
+            </Reanimated.View> 
         )
-    }
+    })
 
-    const [weatherModal, setWeatherModal] = useState(false)
 
-    const primaryComponent = (
-        <View 
-            style = {[{
-                height: listItemHeight,
-                width: deviceWidth,
-                marginVertical: appStyle.lists.proximity,
-                backgroundColor: '#00000001'
+    // GENERAL RENDER style={generalBG}
+    return(
+        <>
+        {console.log('########## BASE LIST GENERAL RENDER')}
+        <DataListItems
+            reff={sectListRef}
+
+            style={{
+                paddingTop: PRIMARY_HEADER_HEIGHT-0.4, //0.4 - borderWidth
+            }}
+            layout={Layout}
+
+            showsVerticalScrollIndicator={false}
+            onScroll={scrollSectionsList}
+
+            //data={tasks}
+            keyExtractor={sectionExtractor}
+            
+            ListHeaderComponent={HeadComponent}
+            ListEmptyComponent={<TaskIntro uiStyle={uiStyle} uiTheme={uiTheme} />}
+            renderItem={renderColums}    
+        />
+        <HeaderBackground 
+            animValueScrollY={animValueScrollY} 
+            {...props}
+        />
+        <HeaderSectionsSelector
+            animValueScrollY={animValueScrollY}
+            openItem={openItem}
+            showSection={showSection}
+            {...props}
+        />
+        <HeaderToolBar
+            chosesMod = {chosesMod}
+            changesClose = {changesClose} 
+
+            changesCheck = {changesCheck}
+            changesDelete = {changesDelete}
+            changesAllDelete = {changesAllDelete}
+
+
+            {...props}
+        />
+    </>)
+}
+
+const RCanvas = Reanimated.createAnimatedComponent(Canvas)
+
+const GradientBackground = (props) => {
+    const {
+        size,
+        colors,
+        container
+    } = props
+
+    return (
+        <RCanvas
+            style={[container, {
+                ...size,
+                position: 'absolute',
+                top: 0,
+                left: 0
             }]}
         >
-            <SkiaViewDisign 
-                borderRadius = {appStyle.borderRadius.basic}
-                backgroundColor = {Theme.basics.accents.tertiary}
-                shadowColors = {Theme.specials.shadow}
-                shadowMargin={{horizontal: appStyle.lists.fullWidth? 0 : horizontalProximity, vertical: appStyle.lists.proximity}}
-                shadowStyle = {appStyle.effects.shadows}
-                adaptiveSizeForStyle={false}
-                innerShadow={{
-                    used: true,
-                    borderWidth: 2
-                }}
-            />
-            <Pressable
-                style = {[{
-                    flex: 1,
-                    marginHorizontal: appStyle.lists.fullWidth? 0 : horizontalProximity,
-                    marginVertical:  appStyle.lists.proximity,
-                    borderRadius: appStyle.borderRadius.basic,
-                    backgroundColor: '#00000001'
-                }]}
-                onPress = {()=>setWeatherModal(true)}
-            >
-                {/*
-                <WeatherComponent type = {'lists'} />
-                */}
-                    
-            </Pressable>
-        </View>
-    )
-
-    //const horizontalProximityModal = 10
-    const cogButtonVisible = !(appConfig.appFunctions.settings.used && appStyle.navigationMenu.type == 'classical') ||
-                            appStyle.navigationMenu.type == 'not' ||
-                            (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)
-
-    const cogIconType = ((appStyle.navigationMenu.type == 'classical' && (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0)))? "weather-partly-snowy-rainy" 
-    : appStyle.navigationMenu.type == 'not'? "menu" : 'cog'
-
-    console.log(cogButtonVisible, cogIconType)
-    console.log(!(appConfig.appFunctions.settings.used && appStyle.navigationMenu.type == 'classical'),
-        appStyle.navigationMenu.type == 'not',
-        (appConfig.weather.type == 'panel' && appConfig.weather.locationInfo.length>0))
-    console.log(appConfig.appFunctions.settings.used , appStyle.navigationMenu.type)
-
-    const iconsSize = 28
-    
- 
-    return (
-        <>
-        <Reanimated.View
-            style={[   
-                {   
-                    top: 0,
-                    zIndex: 1,
-                    position: 'absolute',
-                    borderColor: appStyle.effects.blur? 'transparent' : `${Theme.specials.separator}25`,
-                    borderBottomWidth: 0.4,
-                    width: deviceWidth,
-                    height: headerFullHeight,
-                    alignItems: 'flex-end'                    
-                },
-                appStyle.effects.blur? {} : {
-                    backgroundColor: appStyle.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary,
-                },
-                dynamicHeader
-            ]}
-        >
-            {appStyle.effects.blur && 
-            <View 
-                style = {[StyleSheet.absoluteFillObject, {
-                    flex: 1,
-                    //specialty blur for android
-                    overflow: 'hidden',
-                }]}
-            >
-            <BlurView
-                style = {{flex: 1, }}
-                blurType = {'light'}
-                blurAmount = {10}
-                
-                //ANDROID_PROPS
-                overlayColor={`${appStyle.lists.invertColorsHeader? Theme.basics.neutrals.secondary : Theme.basics.accents.primary}90`}
-                //overlayColor={'transparent'}
-                //blurRadius	= {10}
-                //downsampleFactor = {10}
-            />
-            </View>}
-        </Reanimated.View>
-        <Reanimated.View
-            style={[{
-                //top: statusBarHeight,
-                zIndex: 2,
-                height: headerPanel,
-                width: deviceWidth,
-                position: 'absolute',
-                //backgroundColor: 'red'
-                //justifyContent: 'flex-start',
-                //alignItems: 'center',
-                //flexDirection: appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
-            }, dynamicPanel]}
-        >
-            {changesTask.length == 0 &&
-            <Reanimated.View
-                entering={entering}
-                style = {{
-                    height: headerPanel,
-                    width: deviceWidth,
-                    position: 'absolute',
-                    justifyContent: 'flex-start',
-                    alignItems: 'center',
-                    //backgroundColor: 'red',
-                    paddingBottom: 5,
-                    flexDirection: appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
-                }}
-            >
-                <BasePressable 
-                    type="i"
-                    icon={{
-                        name: cogIconType, 
-                        size: iconsSize, 
-                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-                    }}
-                    style={[{
-                            flex: 1,
-                            height: 46, 
-                            width: 46, 
-                            paddingTop: 4,
-                            borderRadius: appStyle.borderRadius.additional,
-                            marginHorizontal: 12,
-                            opacity: cogButtonVisible? 1 : 0
-                        }, 
-                        //appStyle.navigationMenu.drawerPosition == 'left'? {marginLeft: 15,} : {marginRight: 15}
-                    ]}
-                    onPress={menuPress}
-                    disabled = {!cogButtonVisible}
-                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
+            <Rect x={0} y={0} width={size.width} height={size.height}>
+                <LinearGradient
+                    start={vec(0, 0)}
+                    end={vec(0, size.height)}
+                    colors={colors}
                 />
-
-                <BasePressable 
-                    type="i"
-                    icon={{
-                        name: "weather-partly-snowy-rainy", 
-                        size: iconsSize, 
-                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-                    }}
-                    style={[{
-                            flex: 1,
-                            height: 46, 
-                            width: 46, 
-                            paddingTop: 4,
-                            borderRadius: appStyle.borderRadius.additional,
-                            marginHorizontal: 12,
-                            opacity: (changesTask.length == 0 && (appConfig.weather.type == 'widget' && appConfig.weather.locationInfo.length>0))? 1 : 0
-                        }, 
-                    ]}
-                    onPress={()=>setWeatherModal(true)}
-                    disabled = {!(changesTask.length == 0 && (appConfig.weather.type == 'widget' && appConfig.weather.locationInfo.length>0))}
-                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
-                />
-                
-                <Text 
-                    style = {[{
-                        flex: 6,
-                        marginLeft: 8,
-                        textAlign: 'center',
-                        fontSize: 18,
-                        fontWeight: '500',
-                        letterSpacing: 0.5,
-                        fontVariant: ['small-caps'],
-                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-                    }, appStyle.navigationMenu.drawerPosition == 'left'? {marginRight: 60,} : {marginLeft: 60}]}
-                >
-                    {Language.HeaderTitle}
-                </Text>
-
-                <BasePressable 
-                    type="i"
-                    icon={{
-                        name: 'sticker-plus-outline', 
-                        size: iconsSize, 
-                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-                    }}
-                    style={[{
-                            flex: 2,
-                            height: 46, 
-                            width: 46, 
-                            paddingTop: 4,
-                            borderRadius: appStyle.borderRadius.additional,
-                            marginHorizontal: 12,
-                            opacity: (appStyle.functionButton.position == 'top')? 1 : 0
-                        }, 
-                    ]}
-                    onPress={fabPress}
-                    disabled = {!(appStyle.functionButton.position == 'top')}
-                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
-                />
-            </Reanimated.View>}
-            
-            {/*(changesTask.length == 0 && (appConfig.weather.type == 'widget' && appConfig.weather.locationInfo.length>0)) &&
-            //WEATHER
-            <Reanimated.View
-                entering={entering}
-                style={{
-                    height: 55,
-                    width: 180,
-                    //backgroundColor :'red'
-                }} //
-            >
-                <Pressable
-                    style={{flex: 1}}
-                    onPress = {()=>setWeatherModal(true)}
-                >
-                    <WeatherComponent type = {'widget'} />
-                </Pressable>        
-            </Reanimated.View>*/}
-
-            {changesTask.length > 0 &&
-            <Reanimated.View
-                entering={entering}
-                style = {{
-                    height: headerPanel,
-                    width: deviceWidth,
-                    position: 'absolute',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    paddingBottom: 5,
-                    //backgroundColor: 'red',
-                    flexDirection: appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
-                }}
-            >
-                <BasePressable 
-                    type="i"
-                    icon={{
-                        name: 'close', 
-                        size: iconsSize, 
-                        color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-                    }}
-                    style={[{
-                            height: 46, 
-                            width: 46, 
-                            paddingTop: 4,
-                            borderRadius: appStyle.borderRadius.additional,
-                            marginHorizontal: 12,
-                            //opacity: (appStyle.functionButton.position == 'top')? 1 : 0
-                        }, 
-                    ]}
-                    onPress={changesClose}
-                    android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
-                />
-
-                <View
-                    //entering={entering}
-                    style={{
-                        alignItems: 'center',
-                        flexDirection:  appStyle.navigationMenu.drawerPosition == 'left'? 'row' : 'row-reverse', 
-                        //backgroundColor: 'red'
-                    }}
-                >
-                    <View
-                        style={{
-                            width: 26,
-                            height: 26,
-                            backgroundColor: Theme.basics.accents.quaternary,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            borderRadius: appStyle.borderRadius.additional
-                        }}
-                    >
-                        <Text
-                            style={{
-                                fontSize: 15,
-                                color: Theme.texts.neutrals.secondary
-                            }}
-                        >
-                            {changesTask.length}
-                        </Text>
-                    </View>
-                    <BasePressable
-                        type="i"
-                        style={{
-                            width: 60
-                        }}
-                        icon = {{
-                            name: 'check',
-                            size: iconsSize,
-                            color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-                        }}
-                        android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
-                        onPress = {changesCheck}
-                    />
-                    <BasePressable
-                        type="i"
-                        style={{
-                            width: 60
-                        }}
-                        icon = {{
-                            name: 'delete',
-                            size: iconsSize,
-                            color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary
-                        }}
-                        android_ripple={appStyle.effects.ripple == 'all'? ripple(appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary) : false}
-                        onPress = {changesDelete}
-                        onLongPress = {clearAllTasks}
-                    />
-                </View>
-            </Reanimated.View>}
-        </Reanimated.View>
-
-        <Reanimated.View
-            style={[{
-                zIndex: 1,
-                //top: statusBarHeight+headerPanel,
-                width: deviceWidth,
-                height: headerParams,
-                position: 'absolute',
-                //backgroundColor: 'blue',
-                paddingLeft: paddingLeftCategorys
-            }, dynamicParams]}
-        >
-            <View
-                style={{
-                    flex: 1,
-                    //paddingHorizontal: 5,
-                    //backgroundColor: 'red',
-                    flexDirection: 'row'
-                }}
-            >
-                {categorys.map((item, index)=>{
-                    return (
-                        <Pressable
-                            key={item+index}
-                            style={{
-                                width: (deviceWidth-areaFrameBut)/2,
-                                justifyContent: 'center',
-                                alignItems: 'center'
-                            }}
-                            onPress={()=>changeCategory(item, index)}
-                        >
-                            <Text
-                                style={{
-                                    fontSize: 15,
-                                    fontWeight: '500',
-                                    fontVariant: ['small-caps'],
-                                    color: appStyle.lists.invertColorsHeader? Theme.texts.neutrals.secondary : Theme.texts.neutrals.primary,
-                                    //backgroundColor: 'red'
-                                }}
-                                onLayout={(event)=>{
-                                    indicatorLine.value.widths[index] = event.nativeEvent.layout.width+10
-                                    indicatorLine.value.left[index] = event.nativeEvent.layout.x-5+paddingLeftCategorys
-                                    //
-                                    if(index == categorys.length-1){
-                                        indicatorLine.value = JSON.parse(JSON.stringify(indicatorLine.value))
-                                    }
-                                }}
-                            >
-                                {Language.filtration[item]}
-                            </Text>
-                        </Pressable>
-                    )
-                })}
-                <View
-                    style={{
-                        flex: 1,
-                        width: areaFrameBut,
-                        //flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'center',//'space-around',
-                        //backgroundColor: 'blue'
-                    }}
-                >
-                    <BasePressable
-                        type="i"
-                        style={{
-                            width: areaFrameBut*0.9,
-                            height: headerParams,
-                            borderRadius: appStyle.borderRadius.additional
-                        }}
-                        icon = {{
-                            name: listFormatRow? "view-sequential-outline" : "view-grid-outline",
-                            size: 22,
-                            color: appStyle.lists.invertColorsHeader? Theme.icons.neutrals.secondary : Theme.icons.neutrals.primary,
-                        }}
-                        android_ripple={appStyle.effects.ripple != 'off'? ripple(appStyle.lists.invertColorsHeader? Theme.icons.neutrals.secondary : Theme.icons.neutrals.primary) : false}
-                        onPress = {()=>{setListFormatRow(!listFormatRow)}}                
-                    />
-                </View>
-            </View>
-            <Reanimated.View 
-                style={[animStyleIndicatorLine, {
-                    position: 'absolute',
-                    height: 2.5,
-                    minWidth: 5,
-                    borderRadius: 1,
-                    bottom: 0,
-                    backgroundColor: appStyle.lists.invertColorsHeader? Theme.basics.accents.primary : Theme.basics.accents.quaternary
-                }]}
-            />
-        </Reanimated.View>
-
-        <Reanimated_FlatList
-            key={listFormatRow? 'row' : 'half_row'}
-            data = {tasks}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={{
-                paddingTop: headerFullHeight,
-                paddingBottom: appStyle.functionButton.size+13+(appStyle.navigationMenu.type != 'not'? appStyle.navigationMenu.height : 0),
-            }}
-            onScroll = {onScrollList}
-            showsVerticalScrollIndicator = {false} 
-            numColumns={listFormatRow? 1 : 2}
-            style = {{
-                flex: 1, 
-                paddingBottom: 10, 
-                marginBottom: 0, 
-            }}
-            renderItem = {renderTasks}
-            ListHeaderComponent= {(appConfig.weather.type == 'lists' && appConfig.weather.locationInfo.length>0)? primaryComponent : undefined}
-        />
-
-        <BaseWindow
-            visible = {weatherModal}
-            dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
-            gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.quaternary : false}
-            blur={appStyle.effects.blur}
-            outPress = {()=>setWeatherModal(false)}
-            //onShow = {onShow}
-            modalStyle = {{
-                width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
-                left: appStyle.modals.fullWidth? 0 : horizontalProximity,
-            }}
-            style={{
-                backgroundColor: Theme.basics.neutrals.quaternary,
-                borderTopLeftRadius: appStyle.borderRadius.additional,
-                borderTopRightRadius: appStyle.borderRadius.additional,
-                borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
-                borderColor: Theme.basics.accents.tertiary,
-                flex: 1,
-            }}
-        > 
-            <View style = {[styles.ModalView,{height: 355}]}>
-            <WeatherComponent />
-            </View> 
-        </BaseWindow>
-        </>
-
+            </Rect>
+        </RCanvas>
     )
 }
 
-//====================================================================================================================================
+import { createrTaksStructure } from "./tools";
+import { Canvas, LinearGradient, Rect, vec } from "@shopify/react-native-skia";
+
+const ListItems = memo((props) => {
+        const {
+            LIST_ITEM_SIZE,
+            STATUS_BAR_HEIGHT,
+            DEVICE_H,
+        } = useTasksSizes()
+
+        const dataStructure = createrTaksStructure(props.tasksData)
+        console.log('dataStructure', dataStructure)
+        return (
+        <Reanimated.FlatList 
+            data={dataStructure} 
+            {...props} 
+            ref = {props.reff}
+            ListFooterComponent = {
+                <View 
+                    style={{
+                        height: dataStructure.length > 0? (DEVICE_H -LIST_ITEM_SIZE.h+STATUS_BAR_HEIGHT-3): 200,
+                        alignItems: 'center',
+                        justifyContent: 'flex-end'
+                    }}
+                />
+            } 
+        />
+        )
+    }, 
+    (prev, next)=>isEqual(prev.tasksData, next.tasksData)
+)
+const DataListItems = connect(mapStateToProps('TASKS_LIST'))(ListItems);
 
 
-const ModalItems = ({
-    visible,
-    task,
-    outModalPress,
 
-    handleTriggerEdit,
-    handleDeleteTask,
-    handleCheckTask,
+const TaskIntro = (props) => {
+    const {
+        uiStyle,
+        uiTheme
+    } = props
 
-    appStyle,
-    appConfig,
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex,
-    }) => {
+    const {
+        borderRadius : {
+            primary: borderRadius,
 
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].TasksScreen
+        },
+        lists: {
+            proximity: {
+                h: fullWidth
+            }
+        },
+        effects: {
+            shadows,
+        }
+    } = uiStyle
+
+    const {
+        basics: {
+            neutrals: {
+                secondary
+            },
+            accents: {
+                secondary: itemColor
+            }
+        },
+        icons: {
+            accents: {
+                tertiary: iconAT,
+            },
+            neutrals: {
+                secondary: iconNS,
+                tertiary: iconNT
+            }
+        },
+        texts: {
+            accents: {
+                tertiary: textAT,
+            },
+            neutrals: {
+                primary: textNP,
+                secondary: textNS,
+                tertiary: textNT
+            }
+        },
+        specials: {
+            shadow,/* : {
+                primary: shadowColorP,
+                secondary: shadowColorS
+            },*/
+            selector :{
+                primary: checkBoxP,
+                quaternary: checkBoxS,
+            },
+            separator,
+        },
+        
+    } = uiTheme
+
+    const {
+        LIST_ITEM_SIZE,
+    } = useTasksSizes()
+
+    const itemsMargin = useDerivedValue(()=>{
+        const margin = (fullWidth.value?? 0 )*0.5
+        return {
+            l: margin,
+            r: margin,
+            t: margin,
+            b: margin,
+        }
+    })
+    /* 
+    const aShadows = useDerivedValue(()=>{
+        return {
+            style: shadows.value,
+            colors: {
+                primary: shadowColorP.value,
+                secondary: shadowColorS.value,
+            } 
+        }
+    })*/
+
+    const paddingColums = useAnimatedStyle(()=>{
+        return {
+            paddingHorizontal: (fullWidth.value?? 0 )/2
+        }
+    })
+
+    const aSize = useDerivedValue(()=>{
+        const margin = (fullWidth.value?? 0 )/2
+        return {
+            width: 2 * (LIST_ITEM_SIZE.w-margin),
+            height: 1 * (LIST_ITEM_SIZE.h) -20,
+        }
+    })
+
+    const itemSize = useAnimatedStyle(()=>{
+        const margin = (fullWidth.value?? 0 )/2
+        return {
+            width: 2 * (LIST_ITEM_SIZE.w -margin),
+            height: 1 * (LIST_ITEM_SIZE.h) -20,
+        }
+    }) 
+
+    const dynamicStyleListItems = useAnimatedStyle(()=>{
+        return {
+            marginHorizontal: itemsMargin.value.l,
+            marginVertical: itemsMargin.value.t,
+
+            borderRadius: borderRadius.value, //itemsBR.value, // raStyle.borderRadius.basic.value,
+
+            width: aSize.value.width-2*itemsMargin.value.l,
+            height: aSize.value.height-2*itemsMargin.value.t
+        }
+    })
+
+    const text = useLanguage().TasksScreen.intro
+
+    const textColor = useAnimatedStyle(()=>({
+        color: textNP.value
+    }))
     
-    const handleCloseModal = () => {
-
-        outModalPress()
-    }
-
-    const checkTask = () => {
-        handleCheckTask(task? task.key : undefined);
-    }
-
-    const deleteTask = () => {
-        handleDeleteTask(task? task.key : undefined);
-    }
-
-    const editTask = () => {
-        handleTriggerEdit(task)
-    }
-
-    //const horizontalProximity = 10
-
     return (
+        <Reanimated.View
+            style={[paddingColums, itemSize, {
+                width: '100%',
+            }]}
+            exiting={FadeOut.duration(150)}
+        >   
+            <Reanimated.View 
+                style={[itemSize, {
 
-        <BaseWindow
-            visible = {visible}
-            dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
-            gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.quaternary : false}
-            blur={appStyle.effects.blur}
-            outPress = {handleCloseModal}
-            //onShow = {onShow}
-            modalStyle = {{
-                width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
-                left: appStyle.modals.fullWidth? 0 : horizontalProximity,
-            }}
-            style={{
-                backgroundColor: Theme.basics.neutrals.quaternary,
-                borderTopLeftRadius: appStyle.borderRadius.additional,
-                borderTopRightRadius: appStyle.borderRadius.additional,
-                borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
-                borderColor: Theme.basics.accents.tertiary,
-                flex: 1,
-            }}
-        > 
-            <View style = {[styles.ModalView,{height: 250}]}>
-            <ScrollView
-                style = {{
-                    height: 200,
-                    width: '96%',
-                }}
-            >
-                <Text 
-                    style = {[styles.TaskDate,{
-                        color: Theme.texts.neutrals.tertiary,
-                        width: '100%',
-                        textAlign: 'right'
+                }]}
+            > 
+                <SkiaViewDisign 
+                    aBorderRadius = {borderRadius} //itemsBR
+                    aBGColor = {itemColor} //itemsBG
+                    fullShadowMargin = {itemsMargin}
+        
+                    aShadowColor = {shadow}
+                    aShadowStyle = {shadows}
+
+                    aSize = {aSize}
+                    innerShadow={{
+                        used: true,
+                        borderWidth: 0
+                    }}
+                />
+                <Reanimated.View 
+                    style={[dynamicStyleListItems, {
+                        overflow: 'hidden',
+                        padding: 18
                     }]}
                 >
-                    {Language.listItems.to}: {task? task.toTime: '-'}  {task? task.toDate : '-'} 
-                </Text>
-                <Text
-                    style={{
-                        fontSize: 15,
-                        color: Theme.texts.neutrals.secondary
-                    }}
-                    
-                >
-                    {task? task.title : ''}
-                </Text>
-            </ScrollView>
-            <View 
-                style ={{
-                    flexDirection: 'row',
-                    height: 50
-                }}
-            >
-                <BasePressable
-                    type="ti"
-                    text={Language.taskAction['done']}
-                    textStyle={{
-                        fontSize: 12,
-                        color: Theme.texts.neutrals.secondary
-                    }}
-                    style={{
-                        width: '32%',
-                        borderRadius: appStyle.borderRadius.additional
-                    }}
-                    direction={'row-reverse'}
-                    icon = {{
-                        name: 'check',
-                        size: 22,
-                        color:Theme.texts.neutrals.secondary 
-                    }}
-                    android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
-                    onPress = {checkTask}
-                    
-                />
-                <BasePressable
-                    type="ti"
-                    text={Language.taskAction['edit']}
-                    textStyle={{
-                        fontSize: 12,
-                        color: Theme.texts.neutrals.secondary
-                    }}
-                    style={{
-                        width: '32%',
-                        borderRadius: appStyle.borderRadius.additional
-                    }}
-                    direction={'row-reverse'}
-                    icon = {{
-                        name: "pencil",
-                        size: 22,
-                        color:Theme.texts.neutrals.secondary 
-                    }}
-                    android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
-                    onPress = {editTask}                
-                />
-                <BasePressable
-                    type="ti"
-                    text={Language.taskAction['delete']}
-                    textStyle={{
-                        fontSize: 12,
-                        color: Theme.texts.neutrals.secondary
-                    }}
-                    style={{
-                        width: '32%',
-                        borderRadius: appStyle.borderRadius.additional
-                    }}
-                    direction={'row-reverse'}
-                    icon = {{
-                        name: 'delete',
-                        size: 22,
-                        color:Theme.texts.neutrals.secondary 
-                    }}
-                    android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
-                    onPress = {deleteTask}
-                />
-            </View>
-            </View>  
-        </BaseWindow>
+                    <Reanimated.Text
+                        style={[textColor, {
+                            fontSize: 16,
+                            lineHeight: 25
+                        }]}
+                    >
+                        {`  `}{text[0]}
+                        {`\n`}
+                        {`  `}{text[1]}
+                        {` `}<MaterialCommunityIcons name="sticker-plus-outline" size={24}/>
+                    </Reanimated.Text>
+                </Reanimated.View>
+            </Reanimated.View>
+        </Reanimated.View> 
     )
 }
 
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { DatePicker, TimePicker, TimerPicker } from "../../../general_components/DateTimePicker.js/DateTimePicker";
-
-const ModalInput = ({
-    visible,
-    task,
-
-    outModalPress,
-
-    getDateInfo,
-    inputTask,
-
-    appStyle,
-    appConfig,
-    ThemeColorsAppIndex,
-    ThemeSchema,
-    LanguageAppIndex,
-    }) => {
-
-    const Theme = themesColorsAppList[ThemeColorsAppIndex][ThemeSchema]
-    const Language = languagesAppList[LanguageAppIndex].TasksScreen
-        
-    const [picker, setPicker] = useState({type: undefined, value: undefined});
-
-    const [ inputValue, setInputValue ] = useState('');
-    const [toTimeValue, setToTimeValue] = useState(undefined);
-    const [toDateValue, setToDateValue] = useState(undefined);
-    const [inFireValue, setInFireValue] = useState(undefined);
-
-
-    const resetValues=()=>{
-        setInputValue('');
-        setToTimeValue(undefined);
-        setToDateValue(undefined);
-        setInFireValue(undefined);
-    }
-
-    const handleCloseModal = () => {
-        outModalPress()
-        resetValues()
-    }
-
-    const callPicker = (type) => {
-        setPicker({type: type, value: undefined})
-    }
-
-    const resetPicker = () => {
-        setPicker({type: undefined, value: undefined})
-    }
-
-    const closePicker = () => {
-        resetPicker()
-    }
-
-    const setPickerValue = (dataList) => {
-        //setPicker({type: picker.type, value: dataList})
-        picker.value = dataList
-    }
-
-    const accept = () => {
-        if(picker.type == 'time' && picker.value){
-            const time = `${picker.value[0].item}:${picker.value[1].item}`
-            setToTimeValue(time);
-        } 
-        if(picker.type == 'date' && picker.value) {
-            const date = `${picker.value[0].item}.${picker.value[1].item}.${picker.value[2].item}`
-            setToDateValue(date);
-        }
-        if(picker.type == 'timer' && picker.value) {
-            setInFireValue(picker.value.item);
-        }
-        closePicker()
-    }
-
-    const handleSubmit = () => {
-        inputTask({
-            title: inputValue,
-            toTime: toTimeValue,
-            toDate: toDateValue,
-            fireTarget: inFireValue,
-            //date: task.date,
-            //key: task.key
-        })
-        resetValues()
-    }
-
-    //const horizontalProximity = 8
-
-    return (
-        <> 
-            <BaseWindow
-                visible = {visible}
-                dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
-                gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.quaternary : false}
-                blur={appStyle.effects.blur}
-                outPress = {handleCloseModal}
-                //onShow = {onShow}
-                modalStyle = {{
-                    width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
-                    left: appStyle.modals.fullWidth? 0 : horizontalProximity,
-                }}
-                style={{
-                    backgroundColor: Theme.basics.neutrals.quaternary,
-                    borderTopLeftRadius: appStyle.borderRadius.additional,
-                    borderTopRightRadius: appStyle.borderRadius.additional,
-                    borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
-                    borderColor: Theme.basics.accents.tertiary,
-                    flex: 1,
-                }}
-            >
-                <ScrollView 
-                    style = {[{height: (deviceHeight*0.6)-50}]}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{
-                        paddingHorizontal: 10,
-                        paddingTop: 10,
-                        paddingBottom: 300,
-                        alignItems :'center'
-                    }}
-                > 
-                    <View
-                        style = {{
-                            width: 320,
-                            minHeight: 250,
-                        }}
-                    >
-                        <SkiaViewDisign 
-                            borderRadius = {appStyle.borderRadius.additional}
-                            backgroundColor = {Theme.basics.neutrals.secondary}
-                            shadowColors = {Theme.specials.shadow}
-                            shadowMargin={{horizontal: 10, vertical: 10}}
-                            shadowStyle = {appStyle.effects.shadows}
-                            adaptiveSizeForStyle={false}
-                            innerShadow={{
-                                used: true,
-                                borderWidth: 2
-                            }}
-                        />
-                        <TextInput 
-                            style = {{
-                                width: 300,
-                                margin: 10,
-                                minHeight: 230,
-                                textAlignVertical: 'top',
-                                //backgroundColor: Theme.basics.neutrals.secondary,
-                                padding: 10,
-                                fontSize: 16, 
-                                borderRadius: appStyle.borderRadius.additional,
-                                color: Theme.texts.neutrals.secondary,
-                                letterSpacing: 1,
-                            }}
-                            multiline
-                            placeholder = {Language.modalInput.placeholderInputArea}
-                            placeholderTextColor = {Theme.texts.neutrals.tertiary}//{Colors.alternative}
-                            selectionColor = {Theme.texts.neutrals.tertiary}//'black'//{Colors.secondary}
-                            autoFocus = {false}
-                            onChangeText = {(text) => setInputValue(text)}
-                            value = {inputValue? inputValue : (task? task.title : '')}
-                            //onSubmitEditing = {handleSubmit}
-                        />
-                    
-                    </View>
-                    
-                    
-                    <View style = {[styles.ModalText, {flexDirection: 'row', width: 320, alignItems: 'center', justifyContent: 'space-between'}]}>                     
-                        <Text 
-                            style = {{fontSize: 16, color: Theme.texts.neutrals.secondary}}
-                        >
-                            {Language.modalInput.to}:
-                        </Text>
-                        
-                        <View
-                            style={{
-                                width: 140,
-                                height: 60,
-                            }}
-                        >
-                            <SkiaViewDisign 
-                                borderRadius = {appStyle.borderRadius.additional}
-                                backgroundColor = {Theme.basics.accents.tertiary}
-                                shadowColors = {Theme.specials.shadow}
-                                shadowMargin={{horizontal: 10, vertical: 10}}
-                                shadowStyle = {appStyle.effects.shadows}
-                                adaptiveSizeForStyle={false}
-                                innerShadow={{
-                                    used: true,
-                                    borderWidth: 2
-                                }}
-                            />
-                            <BasePressable
-                                type="t"
-                                text={ toTimeValue? toTimeValue : (task? task.toTime : '23:59') }
-                                textStyle={{
-                                    fontSize: 14,
-                                    //textAlign: 'center',
-                                    color: Theme.texts.neutrals.primary
-                                }}
-                                style={{
-                                    margin: 10,
-                                    width: 120,
-                                    height: 40,
-                                    //;backgroundColor: Theme.basics.accents.quaternary,
-                                    borderRadius: appStyle.borderRadius.additional
-                                }}
-                                android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
-                                onPress = {()=>{
-                                    callPicker('time')
-                                }}
-                            />
-                        </View>
-
-                        <View
-                            style={{
-                                width: 140,
-                                height: 60,
-                            }}
-                        >
-                            <SkiaViewDisign 
-                                borderRadius = {appStyle.borderRadius.additional}
-                                backgroundColor = {Theme.basics.accents.tertiary}
-                                shadowColors = {Theme.specials.shadow}
-                                shadowMargin={{horizontal: 10, vertical: 10}}
-                                shadowStyle = {appStyle.effects.shadows}
-                                adaptiveSizeForStyle={false}
-                                innerShadow={{
-                                    used: true,
-                                    borderWidth: 2
-                                }}
-                            />
-                            <BasePressable
-                                type="t"
-                                text={ toDateValue? toDateValue : (task? task.toDate : getDateInfo().formatDate) }
-                                textStyle={{
-                                    fontSize: 14,
-                                    color: Theme.texts.neutrals.primary
-                                }}
-                                style={{
-                                    width: 120,
-                                    height: 40,
-                                    margin: 10,
-                                    //backgroundColor: Theme.basics.accents.quaternary,
-                                    borderRadius: appStyle.borderRadius.additional
-                                }}
-                                android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
-                                onPress = {()=>{
-                                    callPicker('date')
-                                }}
-                            />
-                        </View>
-                    </View>
-
-                    <View style = {[styles.ModalText, {width: 320,}]}>
-                        <Text 
-                            style = {{fontSize: 16, color: Theme.texts.neutrals.secondary}}
-                        >
-                            {Language.modalInput.deadline.title}:
-                        </Text>
-                        <View
-                            style={{
-                                width: 320,
-                                height: 60,
-                            }}
-                        >
-                            <SkiaViewDisign 
-                                borderRadius = {appStyle.borderRadius.additional}
-                                backgroundColor = {Theme.basics.accents.tertiary}
-                                shadowColors = {Theme.specials.shadow}
-                                shadowMargin={{horizontal: 10, vertical: 10}}
-                                shadowStyle = {appStyle.effects.shadows}
-                                adaptiveSizeForStyle={false}
-                                innerShadow={{
-                                    used: true,
-                                    borderWidth: 2
-                                }}
-                            />
-                            <BasePressable
-                                type="t"
-                                text={ inFireValue? inFireValue : (task? task.fireTarget : Language.modalInput.deadline.placeholder)}
-                                textStyle={{
-                                    fontSize: 14,
-                                    color: Theme.texts.neutrals.primary
-                                }}
-                                style={{
-                                    margin: 10,
-                                    width: 300,
-                                    height: 40,
-                                    borderRadius: appStyle.borderRadius.additional
-                                }}
-                                android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.primary) : false}
-                                onPress = {()=>{
-                                    callPicker('timer')
-                                }}
-                            />
-                        </View>
-                        
-
-                    </View>
-                </ScrollView>
-                <BasePressable
-                    type="ti"
-                    text={Language.taskAction[task? 'edit' : 'add' ]}
-                    textStyle={{
-                        fontSize: 14,
-                        color: Theme.texts.neutrals.secondary
-                    }}
-                    style={{
-                        height: 50,
-                        width: '100%',
-                        borderRadius: appStyle.borderRadius.additional
-                    }}
-                    direction={'row-reverse'}
-                    icon = {{
-                        name: task? 'pencil': "playlist-plus",
-                        size: 28,
-                        color: Theme.texts.neutrals.secondary
-                    }}
-                    android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
-                    onPress = {handleSubmit}
-                />
-            </BaseWindow>
-
-            <BaseWindow
-                visible = {picker.type != undefined}
-                dimOut = {appStyle.modals.highlightMethods.dimOutDark? `${Theme.specials.dimout}25`: false} 
-                gradient = {appStyle.modals.highlightMethods.gradient? Theme.basics.accents.quaternary : false}
-                blur={appStyle.effects.blur}
-                outPress = {closePicker}
-                //onShow = {onShow}
-                modalStyle = {{
-                    width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
-                    left: appStyle.modals.fullWidth? 0 : horizontalProximity,
-                }}
-                style={{
-                    backgroundColor: Theme.basics.neutrals.quaternary,
-                    borderTopLeftRadius: appStyle.borderRadius.additional,
-                    borderTopRightRadius: appStyle.borderRadius.additional,
-                    borderWidth: appStyle.modals.highlightMethods.outline? 1 : 0,
-                    borderColor: Theme.basics.accents.tertiary,
-                    flex: 1,
-                }}
-            >
-                <GestureHandlerRootView 
-                    style={{
-                        height: 210,
-                        width: deviceWidth - (appStyle.modals.fullWidth? 0 : 2*horizontalProximity),
-                        alignItems: 'center'
-                    }}
-                >
-                {picker.type == 'time' && 
-                <TimePicker 
-                    setValue = {setPickerValue}
-                    colors={{
-                        backgroundColor: Theme.basics.neutrals.quaternary,
-                        textColor: Theme.texts.neutrals.secondary,
-                        separatorColor: Theme.icons.neutrals.secondary,
-                    }}
-                />}
-                {picker.type == 'date' && 
-                <DatePicker 
-                    setValue = {setPickerValue}
-                    colors={{
-                        backgroundColor: Theme.basics.neutrals.quaternary,
-                        textColor: Theme.texts.neutrals.secondary,
-                        separatorColor: Theme.icons.neutrals.secondary,
-                    }}
-                    LanguageAppIndex = {LanguageAppIndex}
-                />}
-                {picker.type == 'timer' &&  
-                <TimerPicker 
-                    setValue = {setPickerValue}
-                    colors={{
-                        backgroundColor: Theme.basics.neutrals.quaternary,
-                        textColor: Theme.texts.neutrals.secondary,
-                        separatorColor: Theme.texts.neutrals.secondary,
-                    }}
-                />}
-                </GestureHandlerRootView>
-                <BasePressable
-                    type="ti"
-                    text={Language.modalInput.accept}
-                    textStyle={{
-                        fontSize: 14,
-                        color: Theme.texts.neutrals.secondary
-                    }}
-                    style={{
-                        height: 50,
-                        width: '100%',
-                        borderRadius: appStyle.borderRadius.additional
-                    }}
-                    direction={'row-reverse'}
-                    icon = {{
-                        name: "check",
-                        size: 28,
-                        color: Theme.texts.neutrals.secondary
-                    }}
-                    android_ripple={appStyle.effects.ripple != 'off'? ripple(Theme.texts.neutrals.secondary) : false}
-                    onPress = {accept}
-                />
-            </BaseWindow>
-        </>
-    );
-}
-
-
-
-const styles = StyleSheet.create({
-    BaseListView: {
-        //flex: 1,
-        minHeight: 100,
-        margin: 5, 
-        alignItems: 'flex-end',
-        justifyContent: 'space-around',
-        //backgroundColor: 'red',
-        //backgroundColor: ColorsApp.ground,
-        borderRadius: 12,
-        elevation: 0,
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-    },
-    ListView: {
-        flex: 1,
-        backgroundColor: 'white',
-        minHeight: 100, 
-        //padding: 10,
-        //padding: 10,
-        //marginRight: 15,
-        justifyContent: 'space-around',
-        borderBottomLeftRadius: 12,
-        borderTopRightRadius: 12,
-        borderTopLeftRadius: 12,
-        borderBottomRightRadius: 12,
-        elevation: 1,
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,   
-    },
-    ListViewHidden: {
-        margin: 7,
-        //marginLeft: 70,
-        flex: 1,
-        backgroundColor: 'red',//ColorsApp.sky,
-        minHeight: 85, 
-        justifyContent: 'space-around', 
-        alignItems: 'flex-end',
-        borderRadius: 12,
-        elevation: 4,
-        shadowColor: "black",
-        shadowOffset: {
-          width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,  
-    },
-    TaskText: {
-        fontSize: 16, 
-        letterSpacing: 1, 
-        //color:  ColorsApp.symbolDark
-    },
-    TaskDate: {
-        fontSize: 9,
-        //marginTop: 18, 
-        //letterSpacing: 1, 
-        //color: ColorsApp.symbolNeutral,
-       // textAlign: 'right',
-        textTransform: 'uppercase',
-        //position: 'absolute', bottom: 13, right: 25
-    },
+const staticStyles = StyleSheet.create({
     
-    ModalContainer: {
-        padding: 4,
-        justifyContent: 'flex-end', 
-        alignItems: 'center', 
-        flex: 1,
-        //backgroundColor: 'rgba(0, 0, 0, 0.4235)',
-    },
-    ModalView: {
-        //backgroundColor: 'red',//Theme.skyUp,//Colors.primaryUp,
-        //width: '98%',
-        height: '50%',
-        borderRadius: 12,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        padding: 10,
-        alignItems: 'center',
-        marginBottom: 3,
-        //flexDirection: 'row',
-        justifyContent: 'flex-start'
-    },
-    ModalAction: {
-        height: 50,
-        borderRadius: 12,
-        
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center', 
-        alignSelf: 'center',
-    },
-    ModalActionGroup: {
-        width: '98%',
-        borderRadius: 12,
-        borderTopLeftRadius: 0,
-        borderTopRightRadius: 0,
-        backgroundColor: 'blue',//Theme.skyUp,
-        flexDirection: 'row',
-        justifyContent: 'space-around', 
-        //marginBottom: keyboardVisible?10:'58%'
-    },
-    StyledInput: {
-        width: 300,
-        minHeight: 250,
-        textAlignVertical :'top',
-        //height: 50,
-        backgroundColor: "green",//ColorsApp.skyUpUp,//Colors.tertiary,
-        padding: 10,
-        fontSize: 16, 
-        borderRadius: 12,
-        color: "red",//ColorsApp.symbolDark,//'black',//Colors.secondary,
-        letterSpacing: 1,
-    },
-    ModalIcon: {
-        alignItems: 'center', 
-        marginBottom: 10,
-    },
-    ModalText: {
-        marginTop: 10,
-        alignItems: 'flex-start',
-    },
-    HeaderTitle: {
-        fontSize: 30, 
-        fontWeight: 'bold',
-        color: "green",//ColorsApp.symbolDark,//Colors.tertiary, 
-        letterSpacing: 2, 
-        fontStyle: 'italic'
-    },
 });
